@@ -126,18 +126,17 @@ class ScaleArraySet extends Recyclable.Root {
    */
   constructor( arrayLength ) {
     super();
-    ScaleArraySet.setAsConstructor_self.call( this, arrayLength );
+    this.#setAsConstructor_self( arrayLength );
   }
 
   /** @override */
-  static setAsConstructor( arrayLength ) {
+  setAsConstructor( arrayLength ) {
     super.setAsConstructor();
-    ScaleArraySet.setAsConstructor_self.call( this, arrayLength );
-    return this;
+    this.#setAsConstructor_self( arrayLength );
   }
 
-  /** @override */
-  static setAsConstructor_self( arrayLength ) {
+  /**  */
+  #setAsConstructor_self( arrayLength ) {
     this.do = FloatValue.ScaleArray.Pool.get_or_create_by( arrayLength );
     this.undo = FloatValue.ScaleArray.Pool.get_or_create_by( arrayLength );
   }

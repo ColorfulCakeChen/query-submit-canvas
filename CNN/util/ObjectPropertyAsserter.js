@@ -28,20 +28,17 @@ class ObjectPropertyAsserter_Base extends Recyclable.Root {
    */
   constructor( objectName, object, contextDescription ) {
     super();
-    ObjectPropertyAsserter_Base.setAsConstructor_self.call( this,
-      objectName, object, contextDescription );
+    this.#setAsConstructor_self( objectName, object, contextDescription );
   }
 
   /** @override */
-  static setAsConstructor( objectName, object, contextDescription ) {
+  setAsConstructor( objectName, object, contextDescription ) {
     super.setAsConstructor();
-    ObjectPropertyAsserter_Base.setAsConstructor_self.call( this,
-      objectName, object, contextDescription );
-    return this;
+    this.#setAsConstructor_self( objectName, object, contextDescription );
   }
 
-  /** @override */
-  static setAsConstructor_self( objectName, object, contextDescription ) {
+  /**  */
+  #setAsConstructor_self( objectName, object, contextDescription ) {
     this.objectName = objectName;
     this.object = object;
     this.contextDescription = contextDescription;

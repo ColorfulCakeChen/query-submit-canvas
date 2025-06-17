@@ -41,18 +41,17 @@ class Embedding_SplitReshapeGatherConcat extends Base {
    */
    constructor() {
     super();
-    Embedding_SplitReshapeGatherConcat.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor() {
+  setAsConstructor() {
     super.setAsConstructor();
-    Embedding_SplitReshapeGatherConcat.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
   }
 
   /** @override */

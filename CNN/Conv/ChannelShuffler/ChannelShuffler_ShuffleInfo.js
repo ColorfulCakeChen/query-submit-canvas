@@ -97,20 +97,17 @@ class ShuffleInfo extends Recyclable.Root {
    */
   constructor( concatenatedShape, outputGroupCount ) {
     super();
-    ShuffleInfo.setAsConstructor_self.call( this,
-      concatenatedShape, outputGroupCount );
+    this.#setAsConstructor_self( concatenatedShape, outputGroupCount );
   }
 
   /** @override */
-  static setAsConstructor( concatenatedShape, outputGroupCount ) {
+  setAsConstructor( concatenatedShape, outputGroupCount ) {
     super.setAsConstructor();
-    ShuffleInfo.setAsConstructor_self.call( this,
-      concatenatedShape, outputGroupCount );
-    return this;
+    this.#setAsConstructor_self( concatenatedShape, outputGroupCount );
   }
 
-  /** @override */
-  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
+  /**  */
+  #setAsConstructor_self( concatenatedShape, outputGroupCount ) {
 
     // At least one (means: no shuffle and split (i.e. just concatenate only)).
     outputGroupCount = Math.trunc( outputGroupCount || 1 );

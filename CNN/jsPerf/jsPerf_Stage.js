@@ -40,23 +40,22 @@ class PerformanceTestCase extends Recyclable.Root {
   constructor(
     testCaseId, testCaseName, stageTestParams, imageSourceBag ) {
     super();
-    PerformanceTestCase.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       testCaseId, testCaseName, stageTestParams, imageSourceBag
     );
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     testCaseId, testCaseName, stageTestParams, imageSourceBag ) {
     super.setAsConstructor();
-    PerformanceTestCase.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       testCaseId, testCaseName, stageTestParams, imageSourceBag
     );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     testCaseId, testCaseName, stageTestParams, imageSourceBag ) {
     this.testCaseId = testCaseId;
     this.testCaseName = testCaseName;

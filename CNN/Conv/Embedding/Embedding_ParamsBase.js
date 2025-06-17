@@ -26,7 +26,7 @@ class Embedding_ParamsBase extends Recyclable.Root {
     bTableLog
   ) {
     super();
-    Embedding_ParamsBase.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel,
       bEmbedVocabularyId,
@@ -36,7 +36,7 @@ class Embedding_ParamsBase extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     input_height, input_width, input_channelCount,
     channelMultiplier, vocabularyCountPerInputChannel,
     bEmbedVocabularyId,
@@ -44,18 +44,17 @@ class Embedding_ParamsBase extends Recyclable.Root {
     bTableLog
   ) {
     super.setAsConstructor();
-    Embedding_ParamsBase.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel,
       bEmbedVocabularyId,
       bKeepInputTensor,
       bTableLog
     );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     input_height, input_width, input_channelCount,
     channelMultiplier, vocabularyCountPerInputChannel,
     bEmbedVocabularyId,

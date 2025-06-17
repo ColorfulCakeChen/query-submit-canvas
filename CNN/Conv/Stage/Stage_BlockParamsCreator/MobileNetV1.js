@@ -42,18 +42,17 @@ class MobileNetV1 extends Base {
    */
   constructor( stageParams ) {
     super( stageParams );
-    MobileNetV1.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor( stageParams ) {
+  setAsConstructor( stageParams ) {
     super.setAsConstructor( stageParams );
-    MobileNetV1.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Do nothing.
   }
 

@@ -68,27 +68,26 @@ class NumberImage_Base extends Recyclable.Root {
     BoundsArraySetClass, aBounds ) {
 
     super();
-    NumberImage_Base.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       height, width, depth, preFilledValue,
       input0_ScaleBoundsArray, input1_ScaleBoundsArray,
       BoundsArraySetClass, aBounds );
   }
 
   /** @override */
-  static setAsConstructor( height, width, depth, preFilledValue,
+  setAsConstructor( height, width, depth, preFilledValue,
     input0_ScaleBoundsArray, input1_ScaleBoundsArray,
     BoundsArraySetClass, aBounds ) {
 
     super.setAsConstructor();
-    NumberImage_Base.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       height, width, depth, preFilledValue,
       input0_ScaleBoundsArray, input1_ScaleBoundsArray,
       BoundsArraySetClass, aBounds );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self( height, width, depth, preFilledValue,
+  /**  */
+  #setAsConstructor_self( height, width, depth, preFilledValue,
     input0_ScaleBoundsArray, input1_ScaleBoundsArray,
     BoundsArraySetClass, aBounds ) {
     this.height = height;
@@ -129,7 +128,7 @@ class NumberImage_Base extends Recyclable.Root {
         break;
 
       default:
-        throw Error( `NumberImage.Base.setAsConstructor_self(): `
+        throw Error( `NumberImage.Base.#setAsConstructor_self(): `
           + `Unknown BoundsArraySetClass ( ${BoundsArraySetClass} ).` );
         break;
     }

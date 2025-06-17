@@ -34,7 +34,7 @@ class Block_InferencedParams extends Recyclable.Root {
     nActivationId
   ) {
     super();
-    Block_InferencedParams.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
@@ -48,7 +48,7 @@ class Block_InferencedParams extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
@@ -60,7 +60,7 @@ class Block_InferencedParams extends Recyclable.Root {
     nActivationId
   ) {
     super.setAsConstructor();
-    Block_InferencedParams.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
@@ -71,11 +71,10 @@ class Block_InferencedParams extends Recyclable.Root {
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       nActivationId
     );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,

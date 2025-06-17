@@ -46,7 +46,7 @@ class OwnerUniqueStack extends Root {
    */
   constructor( ...restArgs ) {
     super();
-    OwnerUniqueStack.setAsConstructor_self.call( this, restArgs );
+    this.#setAsConstructor_self( restArgs ); // No need to spread restArgs.
   }
 
   /**
@@ -58,14 +58,13 @@ class OwnerUniqueStack extends Root {
    *
    * @override
    */
-  static setAsConstructor( ...restArgs ) {
+  setAsConstructor( ...restArgs ) {
     super.setAsConstructor();
-    OwnerUniqueStack.setAsConstructor_self.call( this, restArgs );
-    return this;
+    this.#setAsConstructor_self( restArgs ); // No need to spread restArgs.
   }
 
-  /** @override */
-  static setAsConstructor_self( objectArray ) {
+  /**  */
+  #setAsConstructor_self( objectArray ) {
     this.array = OwnerArray.Pool.get_or_create_by();
 
     if ( this.set ) {

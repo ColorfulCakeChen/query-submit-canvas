@@ -67,18 +67,17 @@ class AsyncWorker_Proxy extends Recyclable.Root {
   /** */
   constructor( workerModuleURL ) {
     super();
-    AsyncWorker_Proxy.setAsConstructor_self.call( this, workerModuleURL );
+    this.#setAsConstructor_self( workerModuleURL );
   }
 
   /** @override */
-  static setAsConstructor( workerModuleURL ) {
+  setAsConstructor( workerModuleURL ) {
     super.setAsConstructor();
-    AsyncWorker_Proxy.setAsConstructor_self.call( this, workerModuleURL );
-    return this;
+    this.#setAsConstructor_self( workerModuleURL );
   }
 
-  /** @override */
-  static setAsConstructor_self( workerModuleURL ) {
+  /**  */
+  #setAsConstructor_self( workerModuleURL ) {
     this.processingId_next = 0;
 
     if ( this.the_processingId_Resulter_Map )

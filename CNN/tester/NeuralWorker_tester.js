@@ -235,27 +235,26 @@ class PerformanceTestCase extends Recyclable.Root {
     nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId ) {
 
     super();
-    PerformanceTestCase.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       testCaseId, testCaseName, neuralNetParamsBase,
       nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId
     );
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     testCaseId, testCaseName, neuralNetParamsBase,
     nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId ) {
 
     super.setAsConstructor();
-    PerformanceTestCase.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       testCaseId, testCaseName, neuralNetParamsBase,
       nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId
     );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     testCaseId, testCaseName, neuralNetParamsBase,
     nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId ) {
 

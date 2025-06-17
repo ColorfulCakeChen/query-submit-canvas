@@ -52,13 +52,13 @@ class ConcatAlongAxisId2 extends Root {
     super(
       parentNameable, name, bTableLog,
       inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
-    ConcatAlongAxisId2.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inputTensorPlaceholder0, inputTensorPlaceholder1,
       bKeepInputTensor0, bKeepInputTensor1 );
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     parentNameable, name, bTableLog,
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
@@ -66,14 +66,13 @@ class ConcatAlongAxisId2 extends Root {
     super.setAsConstructor(
       parentNameable, name, bTableLog,
       inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
-    ConcatAlongAxisId2.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inputTensorPlaceholder0, inputTensorPlaceholder1,
       bKeepInputTensor0, bKeepInputTensor1 );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {

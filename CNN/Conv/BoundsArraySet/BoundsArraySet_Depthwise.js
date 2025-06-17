@@ -32,20 +32,19 @@ class Depthwise extends ConvBiasActivation {
     input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
     super(
       input0, outputChannelCount0, channelShuffler_inputGroupCount );
-    Depthwise.setAsConstructor_self.call( this, input0, outputChannelCount0 );
+    this.#setAsConstructor_self( input0, outputChannelCount0 );
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     input0, outputChannelCount0, channelShuffler_inputGroupCount ) {
     super.setAsConstructor(
       input0, outputChannelCount0, channelShuffler_inputGroupCount );
-    Depthwise.setAsConstructor_self.call( this, input0, outputChannelCount0 );
-    return this;
+    this.#setAsConstructor_self( input0, outputChannelCount0 );
   }
 
-  /** @override */
-  static setAsConstructor_self( input0, outputChannelCount0 ) {
+  /**  */
+  #setAsConstructor_self( input0, outputChannelCount0 ) {
     // Infer channelMultiplier.
     this.channelMultiplier = outputChannelCount0 / input0.channelCount;
   }

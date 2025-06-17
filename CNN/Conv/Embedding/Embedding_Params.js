@@ -86,11 +86,11 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
       bKeepInputTensor,
       bTableLog
     );
-    Embedding_Params.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     input_height, input_width, input_channelCount,
     channelMultiplier, vocabularyCountPerInputChannel = 256,
     bEmbedVocabularyId = true,
@@ -105,12 +105,11 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
       bKeepInputTensor,
       bTableLog
     );
-    Embedding_Params.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Do nothing.
   }
 

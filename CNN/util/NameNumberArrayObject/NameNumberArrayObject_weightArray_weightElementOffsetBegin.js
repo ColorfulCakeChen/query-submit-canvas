@@ -30,18 +30,17 @@ class weightArray_weightElementOffsetBegin extends Recyclable.Root {
    */
   constructor() {
     super();
-    weightArray_weightElementOffsetBegin.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor() {
+  setAsConstructor() {
     super.setAsConstructor();
-    weightArray_weightElementOffsetBegin.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     this.weightArray = Recyclable.Array.Pool.get_or_create_by( 0 );
   }
 

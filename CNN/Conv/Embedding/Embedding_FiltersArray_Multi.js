@@ -39,11 +39,11 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
-    Embedding_FiltersArray_Multi.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     input_height, input_width, input_channelCount,
     channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
   ) {
@@ -51,12 +51,11 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
-    Embedding_FiltersArray_Multi.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
   }
 
   /** @override */

@@ -81,18 +81,17 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
    */
   constructor() {
     super();
-    Embedding_Base.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor() {
+  setAsConstructor() {
     super.setAsConstructor();
-    Embedding_Base.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
   }
 
   /**

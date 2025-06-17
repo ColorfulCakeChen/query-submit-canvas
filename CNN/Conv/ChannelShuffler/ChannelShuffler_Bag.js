@@ -30,19 +30,18 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
   constructor(
     channelShufflerPool = ConcatPointwiseConv.Pool ) {
     super();
-    Bag.setAsConstructor_self.call( this, channelShufflerPool );
+    this.#setAsConstructor_self( channelShufflerPool );
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     channelShufflerPool = ConcatPointwiseConv.Pool ) {
     super.setAsConstructor();
-    Bag.setAsConstructor_self.call( this, channelShufflerPool );
-    return this;
+    this.#setAsConstructor_self( channelShufflerPool );
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     channelShufflerPool = ConcatPointwiseConv.Pool ) {
     this.channelShufflerPool = channelShufflerPool;
 

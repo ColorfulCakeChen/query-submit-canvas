@@ -71,12 +71,12 @@ class TwinArray extends Root {
       parentNameable, name, bTableLog,
       inputTensorPlaceholder0, inputTensorPlaceholder1, 0, ...restArgs );
 
-    TwinArray.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     parentNameable, name, bTableLog,
     inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount,
     ...restArgs ) {
@@ -86,14 +86,12 @@ class TwinArray extends Root {
       inputTensorPlaceholder0, inputTensorPlaceholder1, 0,
       bTableLog, ...restArgs );
 
-    TwinArray.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
-
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount
   ) {
 

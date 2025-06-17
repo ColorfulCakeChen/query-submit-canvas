@@ -32,18 +32,17 @@ class Block_TestParams_Base extends TestParams.Base {
    */
   constructor( id ) {
     super( id );
-    Block_TestParams_Base.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor( id ) {
+  setAsConstructor( id ) {
     super.setAsConstructor( id );
-    Block_TestParams_Base.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag
       = Pointwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool
           .get_or_create_by();

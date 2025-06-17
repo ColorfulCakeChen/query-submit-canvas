@@ -29,18 +29,17 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
    */
   constructor( nCountPerSameSpec = 10 ) {
     super();
-    Bag.setAsConstructor_self.call( this, nCountPerSameSpec );
+    this.#setAsConstructor_self( nCountPerSameSpec );
   }
 
   /** @override */
-  static setAsConstructor( nCountPerSameSpec = 10 ) {
+  setAsConstructor( nCountPerSameSpec = 10 ) {
     super.setAsConstructor();
-    Bag.setAsConstructor_self.call( this, nCountPerSameSpec );
-    return this;
+    this.#setAsConstructor_self( nCountPerSameSpec );
   }
 
-  /** @override */
-  static setAsConstructor_self( nCountPerSameSpec = 10 ) {
+  /**  */
+  #setAsConstructor_self( nCountPerSameSpec = 10 ) {
     this.nRandSpecIdMin = 0;
     this.nRandSpecIdMax = Math.max( 0, nCountPerSameSpec - 1 );
 

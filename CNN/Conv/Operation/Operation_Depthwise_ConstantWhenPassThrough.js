@@ -43,11 +43,11 @@ class Depthwise_ConstantWhenPassThrough extends Depthwise {
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
       nHigherHalfDifferent );
 
-    Depthwise_ConstantWhenPassThrough.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     parentNameable, name, bTableLog,
     inputTensorPlaceholder0,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
@@ -63,12 +63,11 @@ class Depthwise_ConstantWhenPassThrough extends Depthwise {
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_0_BIAS_1,
       nHigherHalfDifferent );
 
-    Depthwise_ConstantWhenPassThrough.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Do nothing.
   }
 

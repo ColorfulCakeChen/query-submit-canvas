@@ -39,11 +39,11 @@ class Dummy extends Root {
     super(
       parentNameable, name, bTableLog,
       input0, input1, outputTensorCount, ...restArgs );
-    Dummy.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     parentNameable, name, bTableLog,
     input0, input1, outputTensorCount, ...restArgs ) {
 
@@ -51,12 +51,11 @@ class Dummy extends Root {
       parentNameable, name, bTableLog,
       input0, input1, outputTensorCount, ...restArgs );
 
-    Dummy.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor_self() {
+  #setAsConstructor_self() {
     // Default is destroy0 and destroy1.
     Dummy.setup_apply_dummy.call( this, false, false );
   }

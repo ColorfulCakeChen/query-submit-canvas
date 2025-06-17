@@ -37,7 +37,7 @@ class Block_ParamsBase extends Recyclable.Root {
     bTableLog
   ) {
     super();
-    Block_ParamsBase.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
@@ -53,7 +53,7 @@ class Block_ParamsBase extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
@@ -67,7 +67,7 @@ class Block_ParamsBase extends Recyclable.Root {
     bTableLog
   ) {
     super.setAsConstructor();
-    Block_ParamsBase.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       input0_height, input0_width, input0_channelCount,
       nConvBlockTypeId,
       pointwise1ChannelCount,
@@ -80,11 +80,10 @@ class Block_ParamsBase extends Recyclable.Root {
       bKeepInputTensor,
       bTableLog
     );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,

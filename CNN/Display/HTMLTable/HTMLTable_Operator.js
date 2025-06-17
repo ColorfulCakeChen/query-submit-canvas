@@ -26,20 +26,17 @@ class HTMLTable_Operator extends Recyclable.Root {
   /** */
   constructor( htmlTableElementId, digitsCount = 4 ) {
     super();
-    HTMLTable_Operator.setAsConstructor_self.call( this,
-      htmlTableElementId, digitsCount );
+    this.#setAsConstructor_self( htmlTableElementId, digitsCount );
   }
 
   /** @override */
-  static setAsConstructor( htmlTableElementId, digitsCount ) {
+  setAsConstructor( htmlTableElementId, digitsCount ) {
     super.setAsConstructor();
-    HTMLTable_Operator.setAsConstructor_self.call( this,
-      htmlTableElementId, digitsCount );
-    return this;
+    this.#setAsConstructor_self( htmlTableElementId, digitsCount );
   }
 
-  /** @override */
-  static setAsConstructor_self( htmlTableElementId, digitsCount ) {
+  /**  */
+  #setAsConstructor_self( htmlTableElementId, digitsCount ) {
     this.htmlTableElementId = htmlTableElementId;
     this.digitsCount = digitsCount;
   }

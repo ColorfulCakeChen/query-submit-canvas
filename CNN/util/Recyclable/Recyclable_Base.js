@@ -36,13 +36,13 @@ let Recyclable_Base = ( ParentClass = Object ) => class Recyclable_Base
   extends ParentClass {
 
   /**
-   * Sub-class's constructor could call itself SubClassXxx.setAsConstructor_self()
+   * Sub-class's constructor could call itself SubClassXxx.#setAsConstructor_self()
    * (i.e. do NOT call .setAsConstructor() because super() will do revursively
    * already).
    */
   constructor( ...restArgs ) {
     super( ...restArgs );
-    Recyclable_Base.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /**
@@ -63,15 +63,13 @@ let Recyclable_Base = ( ParentClass = Object ) => class Recyclable_Base
    * @return {Base}
    *   Return the this object.
    */
-  static setAsConstructor( ...restArgs ) {
+  setAsConstructor( ...restArgs ) {
 
     // If parent class has the same method, call it.
     if ( super.setAsConstructor instanceof Function )
       super.setAsConstructor.apply( this, restArgs );
 
-    Recyclable_Base.setAsConstructor_self.call( this );
-
-    return this;
+    this.#setAsConstructor_self();
   }
 
   /**
@@ -86,7 +84,7 @@ let Recyclable_Base = ( ParentClass = Object ) => class Recyclable_Base
    * @param {Base} this
    *   The Recyclable.Base object to be initialized.
    */
-  static setAsConstructor_self() {
+  #setAsConstructor_self() {
     // Nothing to do here (for Recyclable.Base).
   }
 

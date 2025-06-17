@@ -30,18 +30,17 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
    */
   constructor( id ) {
     super( id );
-    NeuralNet_TestParams_Base.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor( id ) {
+  setAsConstructor( id ) {
     super.setAsConstructor( id );
-    NeuralNet_TestParams_Base.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     this.stageArray = Recyclable.OwnerArray.Pool.get_or_create_by();
     this.out = NeuralNet.ParamsBase.Pool.get_or_create_by();
   }

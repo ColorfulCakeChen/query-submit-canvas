@@ -353,18 +353,17 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
    */
   constructor( parentNameable, name ) {
     super( parentNameable, name );
-    Block_Base.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor( parentNameable, name ) {
+  setAsConstructor( parentNameable, name ) {
     super.setAsConstructor( parentNameable, name );
-    Block_Base.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Nothing to do here (for Block.Base).
   }
 

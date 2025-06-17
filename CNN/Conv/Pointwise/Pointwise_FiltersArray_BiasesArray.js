@@ -164,7 +164,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     super( ...restArgs );
       
-    FiltersArray_BiasesArray.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inputChannelCount, outputChannelCount,
       bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent,
@@ -173,7 +173,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     inputChannelCount, outputChannelCount,
     bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent,
@@ -183,18 +183,16 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     super.setAsConstructor( ...restArgs );
 
-    FiltersArray_BiasesArray.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inputChannelCount, outputChannelCount,
       bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent,
       inputChannelCount_lowerHalf, outputChannelCount_lowerHalf,
       channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
-
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     inputChannelCount, outputChannelCount,
     bBias, nActivationId, nPassThroughStyleId,
     nHigherHalfDifferent,
@@ -217,7 +215,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     if ( inputChannelCount <= 0 )
       throw Error( `Pointwise.FiltersArray_BiasesArray`
-        + `.setAsConstructor_self(): `
+        + `.#setAsConstructor_self(): `
         + `inputChannelCount ( ${inputChannelCount} ) `
         + `must be positive integer.`
       );
@@ -225,7 +223,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     if ( this.bHigherHalfDifferent ) {
       if ( this.inputChannelCount_lowerHalf > inputChannelCount )
         throw Error( `Pointwise.FiltersArray_BiasesArray`
-          + `.setAsConstructor_self(): `
+          + `.#setAsConstructor_self(): `
           + `inputChannelCount_lowerHalf ( ${inputChannelCount_lowerHalf} ) `
           + `can not be larger than `
           + `inputChannelCount ( ${inputChannelCount} ).`
@@ -233,7 +231,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
       if ( outputChannelCount_lowerHalf > outputChannelCount )
         throw Error( `Pointwise.FiltersArray_BiasesArray`
-          + `.setAsConstructor_self(): `
+          + `.#setAsConstructor_self(): `
           + `outputChannelCount_lowerHalf ( ${outputChannelCount_lowerHalf} ) `
           + `can not be larger than `
           + `outputChannelCount ( ${outputChannelCount} ).`
@@ -242,7 +240,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       if ( ( inputChannelCount_lowerHalf > 0 )
              != ( outputChannelCount_lowerHalf > 0 ) )
         throw Error( `Pointwise.FiltersArray_BiasesArray`
-          + `.setAsConstructor_self(): `
+          + `.#setAsConstructor_self(): `
           + `inputChannelCount_lowerHalf ( ${inputChannelCount_lowerHalf} ) `
           + `and `
           + `outputChannelCount_lowerHalf ( ${outputChannelCount_lowerHalf} ) `

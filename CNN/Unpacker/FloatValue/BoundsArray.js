@@ -32,18 +32,17 @@ class BoundsArray extends Recyclable.Root {
    */
   constructor( length ) {
     super();
-    BoundsArray.setAsConstructor_self.call( this, length );
+    this.#setAsConstructor_self( length );
   }
 
   /** @override */
-  static setAsConstructor( length ) {
+  setAsConstructor( length ) {
     super.setAsConstructor();
-    BoundsArray.setAsConstructor_self.call( this, length );
-    return this;
+    this.#setAsConstructor_self( length );
   }
 
-  /** @override */
-  static setAsConstructor_self( length = 0 ) {
+  /**  */
+  #setAsConstructor_self( length = 0 ) {
     if ( this.lowers )
       this.lowers.length = length;
     else

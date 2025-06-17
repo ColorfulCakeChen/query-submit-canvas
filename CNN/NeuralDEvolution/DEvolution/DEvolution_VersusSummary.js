@@ -137,22 +137,17 @@ class DEvolution_VersusSummary extends
    */
   constructor( weightsSpreadsheetId, weightsAPIKey ) {
     super();
-    DEvolution_VersusSummary.setAsConstructor_self.call( this,
-      weightsSpreadsheetId, weightsAPIKey
-    );
+    this.#setAsConstructor_self( weightsSpreadsheetId, weightsAPIKey );
   }
 
   /** @override */
-  static setAsConstructor( weightsSpreadsheetId, weightsAPIKey ) {
+  setAsConstructor( weightsSpreadsheetId, weightsAPIKey ) {
     super.setAsConstructor();
-    DEvolution_VersusSummary.setAsConstructor_self.call( this,
-      weightsSpreadsheetId, weightsAPIKey
-    );
-    return this;
+    this.#setAsConstructor_self( weightsSpreadsheetId, weightsAPIKey );
   }
 
-  /** @override */
-  static setAsConstructor_self( weightsSpreadsheetId, weightsAPIKey ) {
+  /**  */
+  #setAsConstructor_self( weightsSpreadsheetId, weightsAPIKey ) {
     this.urlComposer = GSheets.UrlComposer_Pool_get_or_create_by(
       weightsSpreadsheetId, undefined, weightsAPIKey ); // range is undefined.
 

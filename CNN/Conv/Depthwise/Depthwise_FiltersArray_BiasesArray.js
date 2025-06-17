@@ -125,7 +125,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       ...restArgs );
 
-    FiltersArray_BiasesArray.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inputHeight, inputWidth, inputChannelCount,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId, nPassThroughStyleId,
@@ -133,7 +133,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     inputHeight, inputWidth, inputChannelCount,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
@@ -145,17 +145,15 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       ...restArgs );
 
-    FiltersArray_BiasesArray.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inputHeight, inputWidth, inputChannelCount,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, nActivationId, nPassThroughStyleId,
       nHigherHalfDifferent, inputChannelCount_lowerHalf );
-
-    return this;
   }
 
   /** @override */
-  static setAsConstructor_self(
+  #setAsConstructor_self(
     inputHeight, inputWidth, inputChannelCount,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, nActivationId, nPassThroughStyleId,
@@ -179,7 +177,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       if ( nHigherHalfDifferent
              != ValueDesc.Depthwise_HigherHalfDifferent.Singleton.Ids.NONE ) {
 
-        let msg = `Depthwise.FiltersArray_BiasesArray.setAsConstructor_self(): `
+        let msg = `Depthwise.FiltersArray_BiasesArray.#setAsConstructor_self(): `
           + `nHigherHalfDifferent `
           + `( ${ValueDesc.Depthwise_HigherHalfDifferent.Singleton.getNameWithInt_byId( nHigherHalfDifferent )} ) `
           + `should be ( NONE ) when `
@@ -203,7 +201,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     if ( AvgMax_Or_ChannelMultiplier != 0 ) {
       if ( ( filterWidth == 1 ) && ( tf.getBackend() == "wasm" ) ) {
         throw Error( `Depthwise.FiltersArray_BiasesArray`
-          + `.setAsConstructor_self(): `
+          + `.#setAsConstructor_self(): `
           + `In backend WASM, it seems that tf.pool() (both AVG and MAX) `
           + `and tf.depthwiseConv2d() can not work with filterWidth = 1.`
         );
@@ -213,7 +211,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     if ( this.bHigherHalfDifferent ) {
       if ( inputChannelCount_lowerHalf > inputChannelCount )
         throw Error( `Depthwise.FiltersArray_BiasesArray`
-          + `.setAsConstructor_self(): `
+          + `.#setAsConstructor_self(): `
           + `inputChannelCount_lowerHalf `
           + `( ${this.inputChannelCount_lowerHalf} ) `
           + `can not be larger than `

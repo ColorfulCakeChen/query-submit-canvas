@@ -42,18 +42,17 @@ class Embedding_AddGatherReshape extends Base {
    */
   constructor() {
     super();
-    Embedding_AddGatherReshape.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor() {
+  setAsConstructor() {
     super.setAsConstructor();
-    Embedding_AddGatherReshape.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Nothing to do here (for Embedding_AddGatherReshape).
   }
 

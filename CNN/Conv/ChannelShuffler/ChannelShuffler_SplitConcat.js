@@ -66,20 +66,17 @@ class SplitConcat extends Recyclable.Root {
    */
   constructor( concatenatedShape, outputGroupCount ) {
     super();
-    SplitConcat.setAsConstructor_self.call( this,
-      concatenatedShape, outputGroupCount );
+    this.#setAsConstructor_self( concatenatedShape, outputGroupCount );
   }
 
   /** @override */
-  static setAsConstructor( concatenatedShape, outputGroupCount ) {
+  setAsConstructor( concatenatedShape, outputGroupCount ) {
     super.setAsConstructor();
-    SplitConcat.setAsConstructor_self.call( this,
-      concatenatedShape, outputGroupCount );
-    return this;
+    this.#setAsConstructor_self( concatenatedShape, outputGroupCount );
   }
 
-  /** @override */
-  static setAsConstructor_self( concatenatedShape, outputGroupCount ) {
+  /**  */
+  #setAsConstructor_self( concatenatedShape, outputGroupCount ) {
 
     this.tensorWeightCountExtracted = 0;
     this.tensorWeightCountTotal = 0;

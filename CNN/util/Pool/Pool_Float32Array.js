@@ -43,7 +43,7 @@ class Float32ArrayPool extends Root {
    *   - Otherise, a new ArrayBuffer will be created to create (and return) a
    *       new Float32Array object.
    */
-  static setAsConstructor_by_length( newLength ) {
+  setAsConstructor_by_length( newLength ) {
 
     // 1.
     if ( this.length == newLength )

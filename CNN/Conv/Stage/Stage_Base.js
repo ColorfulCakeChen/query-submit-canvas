@@ -341,18 +341,17 @@ class Stage_Base extends Recyclable.Root {
    */
   constructor() {
     super();
-    Stage_Base.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor() {
+  setAsConstructor() {
     super.setAsConstructor();
-    Stage_Base.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Nothing to do here (for Stage.Base).
   }
 

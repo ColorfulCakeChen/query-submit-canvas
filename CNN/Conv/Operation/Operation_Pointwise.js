@@ -75,11 +75,11 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
       outputChannelCount_lowerHalf,
       channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
-    Pointwise.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     parentNameable, name, bTableLog,
     inputTensorPlaceholder0,
     outputChannelCount, bBias, nActivationId, nPassThroughStyleId,
@@ -96,12 +96,11 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
       outputChannelCount_lowerHalf,
       channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
-    Pointwise.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Do nothing.
   }
 

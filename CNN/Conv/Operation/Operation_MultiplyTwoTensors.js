@@ -50,13 +50,13 @@ class MultiplyTwoTensors extends Root {
     super(
       parentNameable, name, bTableLog,
       inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
-    MultiplyTwoTensors.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inputTensorPlaceholder0, inputTensorPlaceholder1,
       bKeepInputTensor0, bKeepInputTensor1 );
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     parentNameable, name, bTableLog,
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
@@ -64,14 +64,13 @@ class MultiplyTwoTensors extends Root {
     super.setAsConstructor(
       parentNameable, name, bTableLog,
       inputTensorPlaceholder0, inputTensorPlaceholder1, 1 );
-    MultiplyTwoTensors.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inputTensorPlaceholder0, inputTensorPlaceholder1,
       bKeepInputTensor0, bKeepInputTensor1 );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     bKeepInputTensor0, bKeepInputTensor1
   ) {

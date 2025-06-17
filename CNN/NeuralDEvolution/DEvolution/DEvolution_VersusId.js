@@ -54,18 +54,17 @@ class DEvolution_VersusId extends Recyclable.Root {
   /** */
   constructor( versusIdString ) {
     super();
-    DEvolution_VersusId.setAsConstructor_self.call( this, versusIdString );
+    this.#setAsConstructor_self( versusIdString );
   }
 
   /** @override */
-  static setAsConstructor( versusIdString ) {
+  setAsConstructor( versusIdString ) {
     super.setAsConstructor();
-    DEvolution_VersusId.setAsConstructor_self.call( this, versusIdString );
-    return this;
+    this.#setAsConstructor_self( versusIdString );
   }
 
-  /** @override */
-  static setAsConstructor_self( versusIdString ) {
+  /**  */
+  #setAsConstructor_self( versusIdString ) {
     this.set_byVersusIdString( versusIdString );
   }
 

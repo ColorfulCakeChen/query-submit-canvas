@@ -422,18 +422,17 @@ class NeuralOrchestra_Base extends
   /** */
   constructor() {
     super();
-    NeuralOrchestra_Base.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor() {
+  setAsConstructor() {
     super.setAsConstructor();
-    NeuralOrchestra_Base.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     NeuralOrchestra_Base.params_loading_retryWaiting_create.call( this );
   }
 

@@ -93,22 +93,19 @@ import { Base } from "./Weights_Base.js";
     // Note: The restArgs is not passed to parent class here. The parent class'
     //       data members should be initialized by other methods.
     super();
-    Weights_Params.setAsConstructor_self.call( this,
-      paramDescSequenceArray, ...restArgs );
+    this.#setAsConstructor_self( paramDescSequenceArray, ...restArgs );
   }
 
   /** @override */
-  static setAsConstructor( paramDescSequenceArray, ...restArgs ) {
+  setAsConstructor( paramDescSequenceArray, ...restArgs ) {
     // Note: The restArgs is not passed to parent class here. The parent class'
     //       data members should be initialized by other methods.
     super.setAsConstructor();
-    Weights_Params.setAsConstructor_self.call( this,
-      paramDescSequenceArray, ...restArgs );
-    return this;
+    this.#setAsConstructor_self( paramDescSequenceArray, ...restArgs );
   }
 
-  /** @override */
-  static setAsConstructor_self( paramDescSequenceArray, ...restArgs ) {
+  /**  */
+  #setAsConstructor_self( paramDescSequenceArray, ...restArgs ) {
     this.paramDescSequenceArray = paramDescSequenceArray;
     const parameterCount = paramDescSequenceArray.array.length;
 

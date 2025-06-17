@@ -87,25 +87,24 @@ let PassThrough_FiltersArray_BiasesArray
     bBias, filterValue = 1, biasValue = 0 ) {
 
     super();
-    PassThrough_FiltersArray_BiasesArray.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inputChannelCount, outputChannelCount, inputChannelIndexStart,
       bBias, filterValue, biasValue );
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     inputChannelCount, outputChannelCount, inputChannelIndexStart,
     bBias, filterValue = 1, biasValue = 0 ) {
 
     super.setAsConstructor();
-    PassThrough_FiltersArray_BiasesArray.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inputChannelCount, outputChannelCount, inputChannelIndexStart,
       bBias, filterValue, biasValue );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     inputChannelCount, outputChannelCount, inputChannelIndexStart,
     bBias, filterValue = 1, biasValue = 0 ) {
 
@@ -238,18 +237,17 @@ class PassThrough_FiltersArray_BiasesArray_Bag
    */
   constructor() {
     super();
-    PassThrough_FiltersArray_BiasesArray_Bag.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor() {
+  setAsConstructor() {
     super.setAsConstructor();
-    PassThrough_FiltersArray_BiasesArray_Bag.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
   }
 
   /** @override */
@@ -338,11 +336,11 @@ class PassThrough
       inputChannelCount, outputChannelCount, inputChannelIndexStart,
       bBias, filterValue, biasValue );
 
-    PassThrough.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     inputChannelCount, outputChannelCount, inputChannelIndexStart,
     bBias, filterValue = 1, biasValue = 0 ) {
 
@@ -350,12 +348,11 @@ class PassThrough
       inputChannelCount, outputChannelCount, inputChannelIndexStart,
       bBias, filterValue, biasValue );
 
-    PassThrough.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     this.filtersTensor4d = tf.tensor4d( this.filtersArray, this.filtersShape );
     if ( this.bBias ) {
       this.biasesTensor3d = tf.tensor3d( this.biasesArray, this.biasesShape );
@@ -402,31 +399,30 @@ class AllZeros
    */
   constructor( inputChannelCount, outputChannelCount, bBias ) {
     super();
-    AllZeros.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inputChannelCount, outputChannelCount, bBias );
   }
 
   /** @override */
-  static setAsConstructor( inputChannelCount, outputChannelCount, bBias ) {
+  setAsConstructor( inputChannelCount, outputChannelCount, bBias ) {
     super.setAsConstructor();
-    AllZeros.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inputChannelCount, outputChannelCount, bBias );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self( inputChannelCount, outputChannelCount, bBias ) {
+  /**  */
+  #setAsConstructor_self( inputChannelCount, outputChannelCount, bBias ) {
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;
     this.bBias = bBias;
 
     if ( inputChannelCount <= 0 )
-      throw Error( `Pointwise.AllZeros.setAsConstructor_self(): `
+      throw Error( `Pointwise.AllZeros.#setAsConstructor_self(): `
         + `inputChannelCount ( ${inputChannelCount} ) `
         + `must be positive integer.` );
 
     if ( outputChannelCount <= 0 )
-      throw Error ( `Pointwise.AllZeros.setAsConstructor_self(): `
+      throw Error ( `Pointwise.AllZeros.#setAsConstructor_self(): `
         + `outputChannelCount ( ${outputChannelCount} ) `
         + `must be positive integer.` );
 

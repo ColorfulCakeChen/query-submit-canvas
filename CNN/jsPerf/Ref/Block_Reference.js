@@ -38,18 +38,17 @@ class TestCorrectnessInfo extends Recyclable.Root {
    */
   constructor() {
     super();
-    TestCorrectnessInfo.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor() {
+  setAsConstructor() {
     super.setAsConstructor();
-    TestCorrectnessInfo.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // For reducing memory allocation.
 
     // imageInArraySelected[ 0 ] is input0, imageInArraySelected[ 1 ] is input1.
@@ -282,18 +281,17 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
    */
   constructor( parentNameable, name ) {
     super( parentNameable, name );
-    Block_Reference_Base.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor( parentNameable, name ) {
+  setAsConstructor( parentNameable, name ) {
     super.setAsConstructor( parentNameable, name );
-    Block_Reference_Base.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     this.channelShufflerBag = ChannelShuffler.Bag.Pool.get_or_create_by(
       ChannelShuffler.ShuffleInfo.Pool );
 

@@ -80,18 +80,17 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
   /** */
   constructor() {
     super( NeuralWorker_Proxy.workerModuleURL );
-    NeuralWorker_Proxy.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor() {
+  setAsConstructor() {
     super.setAsConstructor( NeuralWorker_Proxy.workerModuleURL );
-    NeuralWorker_Proxy.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
   }
 
 

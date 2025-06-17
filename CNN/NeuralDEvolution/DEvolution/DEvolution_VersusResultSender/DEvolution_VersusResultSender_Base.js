@@ -30,20 +30,17 @@ class DEvolution_VersusResultSender_Base extends Recyclable.Root {
   /** */
   constructor( clientId ) {
     super();
-    DEvolution_VersusResultSender_Base.setAsConstructor_self.call( this,
-      clientId );
+    this.#setAsConstructor_self( clientId );
   }
 
   /** @override */
-  static setAsConstructor( clientId ) {
+  setAsConstructor( clientId ) {
     super.setAsConstructor();
-    DEvolution_VersusResultSender_Base.setAsConstructor_self.call( this,
-      clientId );
-    return this;
+    this.#setAsConstructor_self( clientId );
   }
 
-  /** @override */
-  static setAsConstructor_self( clientId ) {
+  /**  */
+  #setAsConstructor_self( clientId ) {
     this.clientId = clientId;
   }
 

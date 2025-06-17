@@ -43,11 +43,11 @@ class Pointwise_SameWhenPassThrough extends Pointwise {
       nHigherHalfDifferent, outputChannelCount_lowerHalf,
       channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
-    Pointwise_SameWhenPassThrough.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     parentNameable, name, bTableLog,
     inputTensorPlaceholder0,
     outputChannelCount, bBias, nActivationId,
@@ -62,12 +62,11 @@ class Pointwise_SameWhenPassThrough extends Pointwise {
       nHigherHalfDifferent, outputChannelCount_lowerHalf,
       channelShuffler_inputGroupCount, channelShuffler_outputGroupCount );
 
-    Pointwise_SameWhenPassThrough.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Do nothing.
   }
 

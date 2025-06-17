@@ -42,18 +42,17 @@ class ScaleBoundsArray extends Recyclable.Root {
    */
   constructor( channelCount ) {
     super();
-    ScaleBoundsArray.setAsConstructor_self.call( this, channelCount );
+    this.#setAsConstructor_self( channelCount );
   }
 
   /** @override */
-  static setAsConstructor( channelCount ) {
+  setAsConstructor( channelCount ) {
     super.setAsConstructor();
-    ScaleBoundsArray.setAsConstructor_self.call( this, channelCount );
-    return this;
+    this.#setAsConstructor_self( channelCount );
   }
 
-  /** @override */
-  static setAsConstructor_self( channelCount ) {
+  /**  */
+  #setAsConstructor_self( channelCount ) {
     this.boundsArray
       = FloatValue.BoundsArray.Pool.get_or_create_by( channelCount );
     this.scaleArraySet

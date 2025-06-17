@@ -30,22 +30,17 @@ class DEvolution_VersusResultSender_SingleEventName
   /** */
   constructor( clientId, measurementId, apiSecret ) {
     super( clientId );
-    DEvolution_VersusResultSender_SingleEventName
-      .setAsConstructor_self.call( this,
-        measurementId, apiSecret );
+    this.#setAsConstructor_self( measurementId, apiSecret );
   }
 
   /** @override */
-  static setAsConstructor( clientId, measurementId, apiSecret ) {
+  setAsConstructor( clientId, measurementId, apiSecret ) {
     super.setAsConstructor( clientId );
-    DEvolution_VersusResultSender_SingleEventName
-      .setAsConstructor_self.call( this,
-        measurementId, apiSecret );
-    return this;
+    this.#setAsConstructor_self( measurementId, apiSecret );
   }
 
-  /** @override */
-  static setAsConstructor_self( measurementId, apiSecret ) {
+  /**  */
+  #setAsConstructor_self( measurementId, apiSecret ) {
     this.measurementId = measurementId;
     this.apiSecret = apiSecret;
   }

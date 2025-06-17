@@ -30,18 +30,17 @@ class ImageSourceBag_Base extends Recyclable.Root {
    */
   constructor( tensor_dtype = "float32" ) {
     super();
-    ImageSourceBag_Base.setAsConstructor_self.call( this, tensor_dtype );
+    this.#setAsConstructor_self( tensor_dtype );
   }
 
   /** @override */
-  static setAsConstructor( tensor_dtype ) {
+  setAsConstructor( tensor_dtype ) {
     super.setAsConstructor();
-    ImageSourceBag_Base.setAsConstructor_self.call( this, tensor_dtype );
-    return this;
+    this.#setAsConstructor_self( tensor_dtype );
   }
 
-  /** @override */
-  static setAsConstructor_self( tensor_dtype ) {
+  /**  */
+  #setAsConstructor_self( tensor_dtype ) {
 
     this.tensor_dtype = tensor_dtype;
 

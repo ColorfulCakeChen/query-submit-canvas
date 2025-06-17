@@ -54,20 +54,17 @@ class HigherHalfPassThrough extends Recyclable.Root {
    */
   constructor( inputChannelCount, outputChannelCount ) {
     super();
-    HigherHalfPassThrough.setAsConstructor_self.call( this,
-      inputChannelCount, outputChannelCount );
+    this.#setAsConstructor_self( inputChannelCount, outputChannelCount );
   }
 
   /** @override */
-  static setAsConstructor( inputChannelCount, outputChannelCount ) {
+  setAsConstructor( inputChannelCount, outputChannelCount ) {
     super.setAsConstructor();
-    HigherHalfPassThrough.setAsConstructor_self.call( this,
-      inputChannelCount, outputChannelCount );
-    return this;
+    this.#setAsConstructor_self( inputChannelCount, outputChannelCount );
   }
 
-  /** @override */
-  static setAsConstructor_self( inputChannelCount, outputChannelCount ) {
+  /**  */
+  #setAsConstructor_self( inputChannelCount, outputChannelCount ) {
 
     this.inputChannelCount = inputChannelCount;
     this.outputChannelCount = outputChannelCount;

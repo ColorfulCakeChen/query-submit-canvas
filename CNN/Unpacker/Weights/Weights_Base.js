@@ -49,18 +49,17 @@ let Weights_Base = ( ParentClass = Object ) =>
    */ 
   constructor( ...restArgs ) {
     super( ...restArgs );
-    Weights_Base.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor( ...restArgs ) {
+  setAsConstructor( ...restArgs ) {
     super.setAsConstructor( ...restArgs );
-    Weights_Base.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Do nothing.
   }
 

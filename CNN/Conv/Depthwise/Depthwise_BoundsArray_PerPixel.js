@@ -33,20 +33,17 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
    */
   constructor( imageInfo ) {
     super();
-    Depthwise_BoundsArray_PerPixel.setAsConstructor_self.call( this,
-      imageInfo );
+    this.#setAsConstructor_self( imageInfo );
   }
 
   /** @override */
-  static setAsConstructor( imageInfo ) {
+  setAsConstructor( imageInfo ) {
     super.setAsConstructor();
-    Depthwise_BoundsArray_PerPixel.setAsConstructor_self.call( this,
-      imageInfo );
-    return this;
+    this.#setAsConstructor_self( imageInfo );
   }
 
-  /** @override */
-  static setAsConstructor_self( imageInfo ) {
+  /**  */
+  #setAsConstructor_self( imageInfo ) {
     this.imageInfo = imageInfo;
 
     if ( this.accumulationCounts )

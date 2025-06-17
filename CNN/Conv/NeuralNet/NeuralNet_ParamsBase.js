@@ -100,7 +100,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     bKeepInputTensor
   ) {
     super();
-    NeuralNet_ParamsBase.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       explicit_input_height, explicit_input_width, explicit_input_channelCount,
       has_implicit_input,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
@@ -112,7 +112,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
     has_implicit_input,
     vocabularyChannelCount, vocabularyCountPerInputChannel,
@@ -122,7 +122,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     bKeepInputTensor
   ) {
     super.setAsConstructor();
-    NeuralNet_ParamsBase.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       explicit_input_height, explicit_input_width, explicit_input_channelCount,
       has_implicit_input,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
@@ -131,11 +131,10 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
       output_channelCount, output_asInputValueRange,
       bKeepInputTensor
     );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
     has_implicit_input,
     vocabularyChannelCount, vocabularyCountPerInputChannel,

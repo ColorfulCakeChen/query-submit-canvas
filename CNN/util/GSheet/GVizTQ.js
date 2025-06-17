@@ -179,27 +179,26 @@ class GVizTQ_UrlComposer
     headers = 0, responseHandler = null, sheetId = null, sheetName = null
   ) {
     super();
-    GVizTQ_UrlComposer.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       spreadsheetId, range,
       headers, responseHandler, sheetId, sheetName
     );
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     spreadsheetId, range,
     headers = 0, responseHandler = null, sheetId = null, sheetName = null
   ) {
     super.setAsConstructor();
-    GVizTQ_UrlComposer.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       spreadsheetId, range,
       headers, responseHandler, sheetId, sheetName
     );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     spreadsheetId, range,
     headers, responseHandler, sheetId, sheetName
   ) {

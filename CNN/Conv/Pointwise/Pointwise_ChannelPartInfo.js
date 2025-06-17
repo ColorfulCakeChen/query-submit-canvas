@@ -38,21 +38,20 @@ class ChannelPartInfo extends Recyclable.Root {
   constructor(
     inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough ) {
     super();
-    ChannelPartInfo.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough );
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough ) {
     super.setAsConstructor();
-    ChannelPartInfo.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     inChannelBegin, inChannelEnd, outputChannelCount, bPassThrough ) {
     this.inChannelBegin = inChannelBegin;
     this.inChannelEnd = inChannelEnd;    
@@ -97,18 +96,17 @@ class FiltersBiasesPartInfo extends Recyclable.OwnerArray {
    */
   constructor( ...restArgs ) {
     super( ...restArgs );
-    FiltersBiasesPartInfo.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor( ...restArgs ) {
+  setAsConstructor( ...restArgs ) {
     super.setAsConstructor( ...restArgs );
-    FiltersBiasesPartInfo.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Do nothing.
   }
 

@@ -44,7 +44,7 @@ class OwnerArray extends Recyclable_Array {
    */
   constructor( ...restArgs ) {
     super( restArgs.length );
-    OwnerArray.setAsConstructor_self.call( this, restArgs );
+    this.#setAsConstructor_self( restArgs );
   }
 
   /**
@@ -56,14 +56,13 @@ class OwnerArray extends Recyclable_Array {
    *
    * @override
    */
-  static setAsConstructor( ...restArgs ) {
+  setAsConstructor( ...restArgs ) {
     super.setAsConstructor( restArgs.length );
-    OwnerArray.setAsConstructor_self.call( this, restArgs );
-    return this;
+    this.#setAsConstructor_self( restArgs ); // No need to spread restArgs.
   }
 
-  /** @override */
-  static setAsConstructor_self( objectArray ) {
+  /**  */
+  #setAsConstructor_self( objectArray ) {
     for ( let i = 0; i < objectArray.length; ++i ) {
       this[ i ] = objectArray[ i ];
     }

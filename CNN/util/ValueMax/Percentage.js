@@ -33,18 +33,17 @@ class ValueMax_Percentage_Base extends Recyclable.Root {
    */
   constructor( weight = 1 ) {
     super();
-    ValueMax_Percentage_Base.setAsConstructor_self.call( this, weight );
+    this.#setAsConstructor_self( weight );
   }
 
   /** @override */
-  static setAsConstructor( weight = 1 ) {
+  setAsConstructor( weight = 1 ) {
     super.setAsConstructor();
-    ValueMax_Percentage_Base.setAsConstructor_self.call( this,  weight );
-    return this;
+    this.#setAsConstructor_self( weight );
   }
 
-  /** @override */
-  static setAsConstructor_self( weight) {
+  /**  */
+  #setAsConstructor_self( weight) {
     this.parent = null;
     this.weight = weight;
   }
@@ -154,18 +153,17 @@ class ValueMax_Percentage_Concrete extends ValueMax_Percentage_Base {
    */
   constructor( max = -1, weight = 1 ) {
     super( weight );
-    ValueMax_Percentage_Concrete.setAsConstructor_self.call( this, max );
+    this.#setAsConstructor_self( max );
   }
 
   /** @override */
-  static setAsConstructor( max = -1, weight = 1 ) {
+  setAsConstructor( max = -1, weight = 1 ) {
     super.setAsConstructor( weight );
-    ValueMax_Percentage_Concrete.setAsConstructor_self.call( this, max );
-    return this;
+    this.#setAsConstructor_self( max );
   }
 
-  /** @override */
-  static setAsConstructor_self( max = -1 ) {
+  /**  */
+  #setAsConstructor_self( max = -1 ) {
     this.#value = 0;
     this.#max = max; // Negative indicates not initialized.
   }
@@ -336,18 +334,17 @@ class ValueMax_Percentage_Aggregate extends ValueMax_Percentage_Base {
    */
   constructor( weight = 1 ) {
     super( weight );
-    ValueMax_Percentage_Aggregate.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor( weight = 1 ) {
+  setAsConstructor( weight = 1 ) {
     super.setAsConstructor( weight );
-    ValueMax_Percentage_Aggregate.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     //this.#treeDepth_cached = undefined;
     this.children = Recyclable.OwnerArray.Pool.get_or_create_by();
   }

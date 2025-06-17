@@ -25,20 +25,17 @@ class DEvolution_VersusResultSender_MultiEventName
   /** */
   constructor( clientId, measurementId_apiSecret_array_array ) {
     super( clientId, measurementId_apiSecret_array_array );
-    DEvolution_VersusResultSender_MultiEventName
-      .setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor( clientId, measurementId_apiSecret_array_array ) {
+  setAsConstructor( clientId, measurementId_apiSecret_array_array ) {
     super.setAsConstructor( clientId, measurementId_apiSecret_array_array );
-    DEvolution_VersusResultSender_MultiEventName
-      .setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
   }
 
   /** @override */

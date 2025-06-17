@@ -107,18 +107,17 @@ function NonReentrant_asyncPromise(
      */
     constructor( ...restArgs ) {
       super( ...restArgs );
-      NonReentrant_asyncPromise.setAsConstructor_self.call( this );
+      this.#setAsConstructor_self();
     }
 
     /** @override */
-    static setAsConstructor( ...restArgs ) {
+    setAsConstructor( ...restArgs ) {
       super.setAsConstructor.apply( this, restArgs );
-      NonReentrant_asyncPromise.setAsConstructor_self.call( this );
-      return this;
+      this.#setAsConstructor_self();
     }
 
-    /** @override */
-    static setAsConstructor_self() {
+    /**  */
+    #setAsConstructor_self() {
 
       // Define read-only and enumerable instance (i.e. this.Abc) properties.
       {

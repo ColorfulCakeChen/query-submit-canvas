@@ -135,18 +135,17 @@ class NeuralNet_Base extends Recyclable.Root {
   /** */
   constructor() {
     super();
-    NeuralNet_Base.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor() {
+  setAsConstructor() {
     super.setAsConstructor();
-    NeuralNet_Base.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Nothing to do here (for NeuralNet.Base).
   }
 

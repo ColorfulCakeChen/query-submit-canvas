@@ -39,18 +39,17 @@ class Stage_Reference_Base extends Recyclable.Root {
    */
   constructor() {
     super();
-    Stage_Reference_Base.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor() {
+  setAsConstructor() {
     super.setAsConstructor();
-    Stage_Reference_Base.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     this.Block_Reference = Block_Reference.Base.Pool.get_or_create_by(
       this, "Block_Reference" );
 

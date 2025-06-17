@@ -28,18 +28,17 @@ let HierarchicalNameable_SeparatorUnderline_Base
    */
   constructor( parentNameable, name, ...restArgs ) {
     super( parentNameable, "_", name, ...restArgs );
-    HierarchicalNameable_SeparatorUnderline_Base.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor( parentNameable, name, ...restArgs ) {
+  setAsConstructor( parentNameable, name, ...restArgs ) {
     super.setAsConstructor( parentNameable, "_", name, ...restArgs );
-    HierarchicalNameable_SeparatorUnderline_Base.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Nothing to do.
   }
 

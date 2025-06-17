@@ -49,11 +49,11 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
       output_channelCount, output_asInputValueRange,
       bKeepInputTensor
     );
-    NeuralNet_Params.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
     has_implicit_input,
     vocabularyChannelCount, vocabularyCountPerInputChannel = 256,
@@ -72,12 +72,11 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
       output_channelCount, output_asInputValueRange,
       bKeepInputTensor
     );
-    NeuralNet_Params.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Do nothing.
   }
 

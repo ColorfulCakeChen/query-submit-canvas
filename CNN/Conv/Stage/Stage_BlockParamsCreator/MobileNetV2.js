@@ -25,18 +25,17 @@ class MobileNetV2 extends MobileNetV2_Thin {
    */
   constructor( stageParams ) {
     super( stageParams );
-    MobileNetV2.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor( stageParams ) {
+  setAsConstructor( stageParams ) {
     super.setAsConstructor( stageParams );
-    MobileNetV2.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Do nothing.
   }
 

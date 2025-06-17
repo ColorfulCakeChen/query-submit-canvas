@@ -44,18 +44,17 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
    */
   constructor() {
     super();
-    NeuralNet_Reference_Base.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor() {
+  setAsConstructor() {
     super.setAsConstructor();
-    NeuralNet_Reference_Base.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     this.Embedding_Reference
       = Embedding_Reference.Base.Pool.get_or_create_by();
     this.Stage_Reference = Stage_Reference.Base.Pool.get_or_create_by();

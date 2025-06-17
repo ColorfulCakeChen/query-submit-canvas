@@ -35,7 +35,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
     bKeepInputTensor
   ) {
     super();
-    Stage_ParamsBase.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       input_height, input_width, input_channelCount,
       nConvStageTypeId,
       blockCountRequested,
@@ -48,7 +48,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     input_height, input_width, input_channelCount,
     nConvStageTypeId,
     blockCountRequested,
@@ -59,7 +59,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
     bKeepInputTensor
   ) {
     super.setAsConstructor();
-    Stage_ParamsBase.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       input_height, input_width, input_channelCount,
       nConvStageTypeId,
       blockCountRequested,
@@ -69,11 +69,10 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
       nActivationId,
       bKeepInputTensor
     );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     input_height, input_width, input_channelCount,
     nConvStageTypeId,
     blockCountRequested,

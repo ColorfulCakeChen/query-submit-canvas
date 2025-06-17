@@ -30,20 +30,17 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
    */
   constructor( stageParams ) {
     super();
-    Stage_BlockParamsCreator_Base.setAsConstructor_self.call( this,
-      stageParams );
+    this.#setAsConstructor_self( stageParams );
   }
 
   /** @override */
-  static setAsConstructor( stageParams ) {
+  setAsConstructor( stageParams ) {
     super.setAsConstructor();
-    Stage_BlockParamsCreator_Base.setAsConstructor_self.call( this,
-      stageParams );
-    return this;
+    this.#setAsConstructor_self( stageParams );
   }
 
-  /** @override */
-  static setAsConstructor_self( stageParams ) {
+  /**  */
+  #setAsConstructor_self( stageParams ) {
     this.stageParams = stageParams;
   }
 

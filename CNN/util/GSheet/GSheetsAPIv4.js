@@ -137,22 +137,17 @@ class GSheetsAPIv4_UrlComposer
    */
   constructor( spreadsheetId, range, apiKey ) {
     super();
-    GSheetsAPIv4_UrlComposer.setAsConstructor_self.call( this,
-      spreadsheetId, range, apiKey
-    );
+    this.#setAsConstructor_self( spreadsheetId, range, apiKey );
   }
 
   /** @override */
-  static setAsConstructor( spreadsheetId, range, apiKey ) {
+  setAsConstructor( spreadsheetId, range, apiKey ) {
     super.setAsConstructor();
-    GSheetsAPIv4_UrlComposer.setAsConstructor_self.call( this,
-      spreadsheetId, range, apiKey
-    );
-    return this;
+    this.#setAsConstructor_self( spreadsheetId, range, apiKey );
   }
 
-  /** @override */
-  static setAsConstructor_self( spreadsheetId, range, apiKey ) {
+  /**  */
+  #setAsConstructor_self( spreadsheetId, range, apiKey ) {
     this.set_by_spreadsheetId_range_apiKey( spreadsheetId, range, apiKey );
   }
 

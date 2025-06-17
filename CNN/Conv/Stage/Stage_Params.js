@@ -128,11 +128,11 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
       nActivationId,
       bKeepInputTensor
     );
-    Stage_Params.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     input_height, input_width, input_channelCount,
     nConvStageTypeId,
     blockCountRequested,
@@ -153,12 +153,11 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
       nActivationId,
       bKeepInputTensor
     );
-    Stage_Params.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Do nothing.
   }
 

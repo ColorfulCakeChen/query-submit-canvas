@@ -30,18 +30,17 @@ class Embedding_TestParams_Base extends TestParams.Base {
    */
   constructor( id ) {
     super( id );
-    Embedding_TestParams_Base.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor( id ) {
+  setAsConstructor( id ) {
     super.setAsConstructor( id );
-    Embedding_TestParams_Base.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     this.out = Embedding.ParamsBase.Pool.get_or_create_by();
 
     // Every output channel's value bounds.

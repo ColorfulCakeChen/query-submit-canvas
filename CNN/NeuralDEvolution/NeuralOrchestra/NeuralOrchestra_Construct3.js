@@ -212,18 +212,17 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
   /** */
   constructor() {
     super();
-    NeuralOrchestra_Construct3.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor() {
+  setAsConstructor() {
     super.setAsConstructor();
-    NeuralOrchestra_Construct3.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     this.base = new NeuralOrchestra_Base();
   }
 

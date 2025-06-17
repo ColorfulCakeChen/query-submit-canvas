@@ -38,22 +38,21 @@ class PerformanceTestCase extends Recyclable.Root {
    */
   constructor( testCaseId, testCaseName, neuralNetParamsBase ) {
     super();
-    PerformanceTestCase.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       testCaseId, testCaseName, neuralNetParamsBase
     );
   }
 
   /** @override */
-  static setAsConstructor( testCaseId, testCaseName, neuralNetParamsBase ) {
+  setAsConstructor( testCaseId, testCaseName, neuralNetParamsBase ) {
     super.setAsConstructor();
-    PerformanceTestCase.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       testCaseId, testCaseName, neuralNetParamsBase
     );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     testCaseId, testCaseName, neuralNetParamsBase ) {
 
     this.testCaseId = testCaseId;

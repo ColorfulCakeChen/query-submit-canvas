@@ -39,18 +39,17 @@ class Embedding_Reference_Base extends Recyclable.Root {
    */
   constructor() {
     super();
-    Embedding_Reference_Base.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor() {
+  setAsConstructor() {
     super.setAsConstructor();
-    Embedding_Reference_Base.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     this.asserter_Equal
       = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
   }

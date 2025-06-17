@@ -75,22 +75,21 @@ class InputsOutputs extends Recyclable.Root {
     input0, input1, outputChannelCount0, outputChannelCount1 ) {
 
     super();
-    InputsOutputs.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       input0, input1, outputChannelCount0, outputChannelCount1 );
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     input0, input1, outputChannelCount0, outputChannelCount1 ) {
 
     super.setAsConstructor();
-    InputsOutputs.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       input0, input1, outputChannelCount0, outputChannelCount1 );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     input0, input1, outputChannelCount0, outputChannelCount1 ) {
 
     if ( !( input0 instanceof ActivationEscaping.ScaleBoundsArray ) )

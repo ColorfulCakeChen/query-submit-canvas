@@ -417,11 +417,11 @@ class Block_Params extends Weights.Params( ParamsBase ) {
       bKeepInputTensor,
       bTableLog
     );
-    Block_Params.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     input0_height, input0_width, input0_channelCount,
     nConvBlockTypeId,
     pointwise1ChannelCount,
@@ -448,12 +448,11 @@ class Block_Params extends Weights.Params( ParamsBase ) {
       bKeepInputTensor,
       bTableLog
     );
-    Block_Params.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Do nothing.
   }
 

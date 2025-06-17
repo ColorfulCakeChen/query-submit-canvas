@@ -27,18 +27,17 @@ let HierarchicalNameable_SeparatorDot_Base
    */
   constructor( parentNameable, name, ...restArgs ) {
     super( parentNameable, ".", name, ...restArgs );
-    HierarchicalNameable_SeparatorDot_Base.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor( parentNameable, name, ...restArgs ) {
+  setAsConstructor( parentNameable, name, ...restArgs ) {
     super.setAsConstructor( parentNameable, ".", name, ...restArgs );
-    HierarchicalNameable_SeparatorDot_Base.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Nothing to do.
   }
 

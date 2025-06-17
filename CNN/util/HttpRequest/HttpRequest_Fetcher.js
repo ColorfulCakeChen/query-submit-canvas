@@ -126,20 +126,17 @@ class HttpRequest_Fetcher
    */
   constructor( bLogEventToConsole , ...restArgs ) {
     super( ...restArgs );
-    HttpRequest_Fetcher.setAsConstructor_self.call( this,
-      bLogEventToConsole );
+    this.#setAsConstructor_self( bLogEventToConsole );
   }
 
   /** @override */
-  static setAsConstructor( bLogEventToConsole , ...restArgs ) {
+  setAsConstructor( bLogEventToConsole , ...restArgs ) {
     super.setAsConstructor.apply( this, restArgs );
-    HttpRequest_Fetcher.setAsConstructor_self.call( this,
-      bLogEventToConsole );
-    return this;
+    this.#setAsConstructor_self( bLogEventToConsole );
   }
 
-  /** @override */
-  static setAsConstructor_self( bLogEventToConsole ) {
+  /**  */
+  #setAsConstructor_self( bLogEventToConsole ) {
     this.bLogEventToConsole = bLogEventToConsole;
     this.allPromiseSet = new Set();
   }

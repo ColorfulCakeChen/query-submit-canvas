@@ -69,7 +69,7 @@ class ParamValueChangeRecord extends Recyclable.Root {
     outValue_specified ) {
 
     super();
-    ParamValueChangeRecord.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       paramDesc,
       inValue_original, outValue_original,
       inValue_new, outValue_new,
@@ -77,22 +77,21 @@ class ParamValueChangeRecord extends Recyclable.Root {
   }
 
   /** @override */
-  static setAsConstructor( paramDesc,
+  setAsConstructor( paramDesc,
     inValue_original, outValue_original,
     inValue_new, outValue_new,
     outValue_specified ) {
 
     super.setAsConstructor();
-    ParamValueChangeRecord.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       paramDesc,
       inValue_original, outValue_original,
       inValue_new, outValue_new,
       outValue_specified );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self( paramDesc,
+  /**  */
+  #setAsConstructor_self( paramDesc,
     inValue_original, outValue_original,
     inValue_new, outValue_new,
     outValue_specified ) {
@@ -176,18 +175,17 @@ class TestParams_Base extends Recyclable.Root {
    */
   constructor( id = -1 ) {
     super();
-    TestParams_Base.setAsConstructor_self.call( this, id );
+    this.#setAsConstructor_self( id );
   }
 
   /** @override */
-  static setAsConstructor( id = -1 ) {
+  setAsConstructor( id = -1 ) {
     super.setAsConstructor();
-    TestParams_Base.setAsConstructor_self.call( this, id );
-    return this;
+    this.#setAsConstructor_self( id );
   }
 
-  /** @override */
-  static setAsConstructor_self( id = -1 ) {
+  /**  */
+  #setAsConstructor_self( id = -1 ) {
     this.id = id;
     this.yieldCount = 0;
 

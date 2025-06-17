@@ -89,12 +89,12 @@ let PassThrough_FiltersArray_BiasesArray
     super( inputHeight, inputWidth, inputChannelCount,
        AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
 
-    PassThrough_FiltersArray_BiasesArray.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       bBias, effectFilterValue, surroundingFilterValue, biasValue );
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     inputHeight, inputWidth, inputChannelCount,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, effectFilterValue = 1, surroundingFilterValue = 0, biasValue = 0 ) {
@@ -102,13 +102,12 @@ let PassThrough_FiltersArray_BiasesArray
     super.setAsConstructor( inputHeight, inputWidth, inputChannelCount,
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
 
-    PassThrough_FiltersArray_BiasesArray.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       bBias, effectFilterValue, surroundingFilterValue, biasValue );
-    return this;
   }
 
   /** @override */
-  static setAsConstructor_self( bBias,
+  #setAsConstructor_self( bBias,
     effectFilterValue = 1, surroundingFilterValue = 0, biasValue = 0 ) {
 
     this.bBias = bBias;
@@ -296,18 +295,17 @@ class PassThrough_FiltersArray_BiasesArray_Bag
    */
   constructor() {
     super();
-    PassThrough_FiltersArray_BiasesArray_Bag.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor() {
+  setAsConstructor() {
     super.setAsConstructor();
-    PassThrough_FiltersArray_BiasesArray_Bag.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
   }
 
   /** @override */
@@ -405,11 +403,11 @@ class PassThrough
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, effectFilterValue, surroundingFilterValue, biasValue );
 
-    PassThrough.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     inputHeight, inputWidth, inputChannelCount,
     AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
     bBias, effectFilterValue = 1, surroundingFilterValue = 0, biasValue = 0 ) {
@@ -418,12 +416,11 @@ class PassThrough
       AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad,
       bBias, effectFilterValue, surroundingFilterValue, biasValue );
 
-    PassThrough.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     this.filtersTensor4d = tf.tensor4d( this.filtersArray, this.filtersShape );
     if ( this.bBias ) {
       this.biasesTensor3d = tf.tensor3d( this.biasesArray, this.biasesShape );

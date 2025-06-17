@@ -45,18 +45,17 @@ class ShuffleNetV2 extends Base {
    */
   constructor( stageParams ) {
     super( stageParams );
-    ShuffleNetV2.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor( stageParams ) {
+  setAsConstructor( stageParams ) {
     super.setAsConstructor( stageParams );
-    ShuffleNetV2.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     // Do nothing.
   }
 

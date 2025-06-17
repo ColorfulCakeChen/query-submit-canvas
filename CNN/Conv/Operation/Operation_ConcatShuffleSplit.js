@@ -86,7 +86,7 @@ class ConcatShuffleSplit extends Root {
       parentNameable, name, bTableLog,
       inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
-    ConcatShuffleSplit.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inputTensorPlaceholder0, inputTensorPlaceholder1,
       channelShuffler, bShuffleSplit,
       bKeepInputTensor0, bKeepInputTensor1
@@ -94,7 +94,7 @@ class ConcatShuffleSplit extends Root {
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     parentNameable, name, bTableLog,
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     channelShuffler, bShuffleSplit = true,
@@ -112,16 +112,15 @@ class ConcatShuffleSplit extends Root {
       parentNameable, name, bTableLog,
       inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
-    ConcatShuffleSplit.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       inputTensorPlaceholder0, inputTensorPlaceholder1,
       channelShuffler, bShuffleSplit,
       bKeepInputTensor0, bKeepInputTensor1
     );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     inputTensorPlaceholder0, inputTensorPlaceholder1,
     channelShuffler, bShuffleSplit = true,
     bKeepInputTensor0, bKeepInputTensor1

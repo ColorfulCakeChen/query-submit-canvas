@@ -75,23 +75,22 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     // All other arguments passed to parent class's constructor.
     super( parentNameable, name, ...restArgs );
 
-    Operation_Base.setAsConstructor_self.call( this, bTableLog,
+    this.#setAsConstructor_self( bTableLog,
       input0, input1, outputTensorCount );
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     parentNameable, name, bTableLog,
     input0, input1, outputTensorCount, ...restArgs ) {
 
     super.setAsConstructor( parentNameable, name, ...restArgs );
-    Operation_Base.setAsConstructor_self.call( this, bTableLog,
+    this.#setAsConstructor_self( bTableLog,
       input0, input1, outputTensorCount );
-    return this;
   }
 
   /** @override */
-  static setAsConstructor_self( bTableLog,
+  #setAsConstructor_self( bTableLog,
     input0, input1, outputTensorCount ) {
 
     // 1.

@@ -22,18 +22,17 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
   /** */
   constructor() {
     super( AsyncWorker_Proxy_tester.workerModuleURL );
-    AsyncWorker_Proxy_tester.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor() {
+  setAsConstructor() {
     super.setAsConstructor( AsyncWorker_Proxy_tester.workerModuleURL );
-    AsyncWorker_Proxy_tester.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
   }
 
   /** @override */

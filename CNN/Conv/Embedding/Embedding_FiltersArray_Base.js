@@ -52,14 +52,14 @@ class Embedding_FiltersArray_Base extends Weights.Base( InferencedParams ) {
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
-    Embedding_FiltersArray_Base.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
   }
 
   /** @override */
-  static setAsConstructor(
+  setAsConstructor(
     input_height, input_width, input_channelCount,
     channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
   ) {
@@ -67,15 +67,14 @@ class Embedding_FiltersArray_Base extends Weights.Base( InferencedParams ) {
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
-    Embedding_FiltersArray_Base.setAsConstructor_self.call( this,
+    this.#setAsConstructor_self(
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
     );
-    return this;
   }
 
-  /** @override */
-  static setAsConstructor_self(
+  /**  */
+  #setAsConstructor_self(
     input_height, input_width, input_channelCount,
     channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId
   ) {

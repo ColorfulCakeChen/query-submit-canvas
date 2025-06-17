@@ -246,18 +246,17 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   /** */
   constructor() {
     super();
-    NeuralWorker_Proxies.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor() {
+  setAsConstructor() {
     super.setAsConstructor();
-    NeuralWorker_Proxies.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
   }
 
 

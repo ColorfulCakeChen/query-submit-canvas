@@ -46,20 +46,17 @@ class Stage_InferencedParams extends Recyclable.Root {
    */
   constructor( stageParamsBase ) {
     super();
-    Stage_InferencedParams.setAsConstructor_self.call( this,
-      stageParamsBase );
+    this.#setAsConstructor_self( stageParamsBase );
   }
 
   /** @override */
-  static setAsConstructor( stageParamsBase ) {
+  setAsConstructor( stageParamsBase ) {
     super.setAsConstructor();
-    Stage_InferencedParams.setAsConstructor_self.call( this,
-      stageParamsBase );
-    return this;
+    this.#setAsConstructor_self( stageParamsBase );
   }
 
-  /** @override */
-  static setAsConstructor_self( stageParamsBase ) {
+  /**  */
+  #setAsConstructor_self( stageParamsBase ) {
     this.blockParamsArray_create( stageParamsBase );
   }
 

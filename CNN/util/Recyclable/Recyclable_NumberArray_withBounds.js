@@ -31,18 +31,17 @@ class NumberArray_withBounds extends Recyclable_Array {
    */
   constructor( ...restArgs ) {
     super( ...restArgs );
-    NumberArray_withBounds.setAsConstructor_self.call( this );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  static setAsConstructor( ...restArgs ) {
+  setAsConstructor( ...restArgs ) {
     super.setAsConstructor( ...restArgs );
-    NumberArray_withBounds.setAsConstructor_self.call( this );
-    return this;
+    this.#setAsConstructor_self();
   }
 
-  /** @override */
-  static setAsConstructor_self() {
+  /**  */
+  #setAsConstructor_self() {
     this.boundsArray_byChannel
       = FloatValue.BoundsArray.Pool.get_or_create_by();
   }
