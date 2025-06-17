@@ -819,36 +819,6 @@ function *testerCircularly( progressParent ) {
   yield progressRoot;
 }
 
-/** */
-function *testerThree( progressParent ) {
-
-//!!! ...unfinished... (2025/06/11)
-
-  const testCaseCount = 1;
-
-  let progressRoot = progressParent.root_get();
-  let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
-
-  progressToAdvance.value_advance();
-  yield progressRoot;
-}
-
-/** */
-function *testerSix( progressParent ) {
-
-//!!! ...unfinished... (2025/06/11)
-
-  const testCaseCount = 1;
-
-  let progressRoot = progressParent.root_get();
-  let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
-
-  progressToAdvance.value_advance();
-  yield progressRoot;
-}
-
 /**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
@@ -881,14 +851,6 @@ function* tester( progressParent ) {
 
   // 2.
   yield *testerCircularly( progressCircularly );
-
-//!!! ...unfinished... (2025/06/11)
-
-  // 3.
-  yield *testerThree( progressThree );
-
-  // 4.
-  yield *testerSix( progressSix );
 
   console.log( "HierarchicalNameable testing... Done." );
 }
