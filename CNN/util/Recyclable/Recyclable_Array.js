@@ -31,7 +31,7 @@ class Recyclable_Array extends Base( Array ) {
     this.#setAsConstructor_self( restArgs ); // No need to spread restArgs.
   }
 
-  /** @override */
+  /**  */
   #setAsConstructor_self( restArgs ) {
     if ( 0 == restArgs.length ) { // 0. No argument: empty array.
       this.length = 0;
