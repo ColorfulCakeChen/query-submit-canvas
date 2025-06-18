@@ -438,14 +438,10 @@ class NumberImage_Base extends Recyclable.Root {
 
     // Bias
     imageOut.modify_byBias( bPointwiseBias, pointwiseBiasesArray,
-      parametersDesc, ...pointwiseNames, "bias" );
+      bTableLog, parametersDesc, ...pointwiseNames, "bias" );
 
     // For debug pixel value bounds.
     imageOut.assert_pixels_byBoundsArray( imageOut.boundsArraySet.afterBias );
-
-    if ( bTableLog )
-      imageOut.TableLog_header_body(
-        imageHeaderPrefix_forTableLog + "_afterBias" );
 
     // Activation Escaping.
     {
@@ -927,15 +923,11 @@ class NumberImage_Base extends Recyclable.Root {
     // Bias
     imageOut.modify_byBias(
       bDepthwiseBias, depthwiseBiasesArray,
-      parametersDesc, ...depthwiseNames, "bias" );
+      bTableLog, parametersDesc, ...depthwiseNames, "bias" );
 
     // For debug pixel value bounds.
     imageOut.assert_pixels_byBoundsArray(
       imageOut.boundsArraySet.afterBias );
-
-    if ( bTableLog )
-      imageOut.TableLog_header_body(
-        imageHeaderPrefix_forTableLog + "_afterBias" );
 
     // Activation Escaping.
     {
@@ -1017,6 +1009,10 @@ class NumberImage_Base extends Recyclable.Root {
    * @param {number[]} biasesArray
    *   The bias values.
    *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
+   *
    * @param {Object} parametersDesc
    *   Its .toString() for debug message of this block.
    *
@@ -1026,7 +1022,9 @@ class NumberImage_Base extends Recyclable.Root {
    * @return {NumberImage.Base}
    *   Return this which may or may not be added bias (according to bBias).
    */
-  modify_byBias( bBias, biasesArray, parametersDesc, ...biasNames ) {
+  modify_byBias( bBias, biasesArray,
+    bTableLog, parametersDesc, ...biasNames ) {
+
     let imageIn = this;
 
     imageIn.boundsArraySet.afterBias.set_all_byBoundsArray(
@@ -1064,6 +1062,9 @@ class NumberImage_Base extends Recyclable.Root {
       imageIn.boundsArraySet.afterBias.add_one_byN(
         inChannel, biasesArray[ inChannel ] );
     }
+
+    if ( bTableLog )
+      imageOut.TableLog_header_body( `${biasNames.join( "_" )}` );
 
     return imageIn;
   }
