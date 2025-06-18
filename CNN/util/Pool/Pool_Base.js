@@ -74,8 +74,8 @@ let Pool_Base
 
       if ( !returnedObject.setAsConstructor )
         throw Error( `Pool.Base.get_or_create_by(): `
-        + `Any instance ( ${returnedObject} ) of class ( ${this.objectClass} `
-        + `should have an .setAsConstructor() instance method.`
+          + `Any instance ( ${returnedObject} ) of class ( ${this.objectClass} `
+          + `should have an .setAsConstructor() instance method.`
         );
 
       returnedObject.setAsConstructor( ...restArgs );
