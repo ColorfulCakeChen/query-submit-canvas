@@ -2,6 +2,9 @@ export { Float32ArrayPool as Float32Array };
 
 import { Root } from "./Pool_Base.js";
 
+//!!! (2025/06/18 Deprecated)
+// Please use MultiLayerMap instead.
+
 /**
  * Providing Float32Array by specifying length.
  *
@@ -22,7 +25,7 @@ import { Root } from "./Pool_Base.js";
  *
  */
 class Float32ArrayPool extends Root {
-  
+
   constructor() {
     super( "Pool.Float32Array",
       Float32Array, Float32ArrayPool.setAsConstructor_by_length );
@@ -62,6 +65,15 @@ class Float32ArrayPool extends Root {
 
     // 3.
     let newFloat32Array = new Float32Array( arrayBuffer, 0, newLength );
+
+//!!! (2025/06/18 Deprecated)
+//
+// Currently, Pool.Base will always call this.setAsConstructor() (i.e. call
+// it as an instance method, not not a static method) and not use the
+// returned object of .setAsConstructor().
+//
+// So, this returned value is no longer workable.
+
     return newFloat32Array;
   }
 
