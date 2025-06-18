@@ -527,16 +527,15 @@ class Block_TestParams_Base extends TestParams.Base {
    * convolution, bias and activation.
    */
   use_pointwise1( inputImage, pointwise1ChannelCount,
-    io_imageNeedDisposeUniqueStack, bTableLog,
-    parametersDesc, ...pointwiseNames ) {
+    io_imageNeedDisposeUniqueStack,
+    bTableLog, parametersDesc, ...pointwiseNames ) {
     let result = inputImage.clone_byPointwise_NonPassThrough(
       pointwise1ChannelCount,
       this.in.paramsNumberArrayObject.pointwise1Filters,
       this.out.inferencedParams.pointwise1Bias,
       this.in.paramsNumberArrayObject.pointwise1Biases,
       this.out.inferencedParams.pointwise1ActivationId,
-      bTableLog,
-      parametersDesc, ...pointwiseNames );
+      bTableLog, parametersDesc, ...pointwiseNames );
     io_imageNeedDisposeUniqueStack.push( inputImage );
     return result;
   }
@@ -563,16 +562,15 @@ class Block_TestParams_Base extends TestParams.Base {
    * convolution, bias and activation.
    */
   use_pointwise1_PassThrough( inputImage, pointwise1ChannelCount,
-    io_imageNeedDisposeUniqueStack, bTableLog,
-    parametersDesc, ...pointwiseNames ) {
+    io_imageNeedDisposeUniqueStack,
+    bTableLog, parametersDesc, ...pointwiseNames ) {
     let result = inputImage.clone_byPointwise_PassThrough(
       pointwise1ChannelCount,
       this.out.inferencedParams.pointwise1Bias,
       this.out.inferencedParams.pointwise1ActivationId,
       this.Pointwise_PassThrough_FiltersArray_BiasesArray_Bag,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0, // SameWhenPassThrough.
-      bTableLog,
-      parametersDesc, ...pointwiseNames );
+      bTableLog, parametersDesc, ...pointwiseNames );
     io_imageNeedDisposeUniqueStack.push( inputImage );
     return result;
   }
@@ -596,8 +594,8 @@ class Block_TestParams_Base extends TestParams.Base {
    * convolution, bias and activation.
    */
   use_depthwise1( inputImage,
-    io_imageNeedDisposeUniqueStack, bTableLog,
-    parametersDesc, ...depthwiseNames ) {
+    io_imageNeedDisposeUniqueStack,
+    bTableLog, parametersDesc, ...depthwiseNames ) {
     let result = inputImage.clone_byDepthwise_NonPassThrough(
       this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight_real,
@@ -607,8 +605,7 @@ class Block_TestParams_Base extends TestParams.Base {
       this.out.inferencedParams.depthwiseBias,
       this.in.paramsNumberArrayObject.depthwise1Biases,
       this.out.depthwiseActivationId,
-      bTableLog,
-      parametersDesc, ...depthwiseNames );
+      bTableLog, parametersDesc, ...depthwiseNames );
     io_imageNeedDisposeUniqueStack.push( inputImage );
     return result;
   }
@@ -632,8 +629,8 @@ class Block_TestParams_Base extends TestParams.Base {
    * convolution, bias and activation.
    */
   use_depthwise1_PassThrough( inputImage,
-    io_imageNeedDisposeUniqueStack, bTableLog,
-    parametersDesc, ...depthwiseNames ) {
+    io_imageNeedDisposeUniqueStack,
+    bTableLog, parametersDesc, ...depthwiseNames ) {
     let result = inputImage.clone_byDepthwise_PassThrough(
       this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight_real,
@@ -643,8 +640,7 @@ class Block_TestParams_Base extends TestParams.Base {
       this.out.depthwiseActivationId,
       this.Depthwise_PassThrough_FiltersArray_BiasesArray_Bag,
       ValueDesc.PassThroughStyle.Singleton.Ids.PASS_THROUGH_STYLE_FILTER_1_BIAS_0, // SameWhenPassThrough.
-      bTableLog,
-      parametersDesc, ...depthwiseNames );
+      bTableLog, parametersDesc, ...depthwiseNames );
     io_imageNeedDisposeUniqueStack.push( inputImage );
     return result;
   }
@@ -668,8 +664,8 @@ class Block_TestParams_Base extends TestParams.Base {
    * convolution, bias and activation.
    */
   use_depthwise2( inputImage,
-    io_imageNeedDisposeUniqueStack, bTableLog,
-    parametersDesc, ...depthwiseNames ) {
+    io_imageNeedDisposeUniqueStack,
+    bTableLog, parametersDesc, ...depthwiseNames ) {
     let result = inputImage.clone_byDepthwise_NonPassThrough(
       this.out.depthwise_AvgMax_Or_ChannelMultiplier,
       this.out.depthwiseFilterHeight_real,
@@ -679,8 +675,7 @@ class Block_TestParams_Base extends TestParams.Base {
       this.out.inferencedParams.depthwiseBias,
       this.in.paramsNumberArrayObject.depthwise2Biases,
       this.out.depthwiseActivationId,
-      bTableLog,
-      parametersDesc, ...depthwiseNames );
+      bTableLog, parametersDesc, ...depthwiseNames );
     io_imageNeedDisposeUniqueStack.push( inputImage );
     return result;
   }
@@ -707,8 +702,8 @@ class Block_TestParams_Base extends TestParams.Base {
    * convolution, bias and activation.
    */
   use_pointwise20( inputImage, pointwise20ChannelCount,
-    io_imageNeedDisposeUniqueStack, bTableLog,
-    parametersDesc, ...pointwiseNames ) {
+    io_imageNeedDisposeUniqueStack,
+    bTableLog, parametersDesc, ...pointwiseNames ) {
 
     let squeezeExcitationPrefixOut = inputImage;
     if ( this.out.bSqueezeExcitationPrefix ) {
@@ -787,8 +782,8 @@ class Block_TestParams_Base extends TestParams.Base {
    * convolution, bias and activation.
    */
   use_pointwise202( inputImage, pointwise20ChannelCount,
-    io_imageNeedDisposeUniqueStack, bTableLog,
-    parametersDesc, ...pointwiseNames ) {
+    io_imageNeedDisposeUniqueStack,
+    bTableLog, parametersDesc, ...pointwiseNames ) {
 
     let squeezeExcitationPrefixOut = inputImage;
     if ( this.out.bSqueezeExcitationPrefix ) {
@@ -861,8 +856,8 @@ class Block_TestParams_Base extends TestParams.Base {
    * pass-through convolution and bias.
    */
   use_pointwise20_PassThrough( inputImage, pointwise20ChannelCount,
-    io_imageNeedDisposeUniqueStack, bTableLog,
-    parametersDesc, ...pointwiseNames ) {
+    io_imageNeedDisposeUniqueStack,
+    bTableLog, parametersDesc, ...pointwiseNames ) {
 
     // Note: Since pass-through, the squeeze-and-excitation is not necessary
     //       here.
@@ -901,8 +896,8 @@ class Block_TestParams_Base extends TestParams.Base {
    * convolution, bias and activation.
    */
   use_pointwise21( inputImage, pointwise21ChannelCount,
-    io_imageNeedDisposeUniqueStack, bTableLog,
-    parametersDesc, ...pointwiseNames ) {
+    io_imageNeedDisposeUniqueStack,
+    bTableLog, parametersDesc, ...pointwiseNames ) {
     
     let squeezeExcitationPrefixOut = inputImage;
     if ( this.out.bSqueezeExcitationPrefix ) {
