@@ -1943,9 +1943,11 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut0.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
     imageOut1.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
-!!! ...unfinished... (2025/06/18)
-// should use bTableLog
-
+    if ( bTableLog ) {
+      const imageHeaderPrefix_forTableLog = `${splitNames.join( "_" )}`;
+      imageOut0.TableLog_header_body( `${imageHeaderPrefix_forTableLog}_out0` );
+      imageOut1.TableLog_header_body( `${imageHeaderPrefix_forTableLog}_out1` );
+    }
   }
 
   /**
@@ -2129,8 +2131,8 @@ class NumberImage_Base extends Recyclable.Root {
     // 3.
     if ( bSplit ) {
       NumberImage_Base.calcSplitAlongAxisId2(
-        shuffleResult, imageOutArray, parametersDesc,
-        "concatShuffleSplitName", "split" );
+        shuffleResult, imageOutArray,
+        bTableLog, parametersDesc, "concatShuffleSplitName", "split" );
       shuffleResult.disposeResources_and_recycleToPool();
       shuffleResult = null;
     } else {

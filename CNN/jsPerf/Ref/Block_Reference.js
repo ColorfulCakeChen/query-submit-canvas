@@ -1243,8 +1243,8 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
     } else if ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY_or_TAIL() ) { // (6 or 7)
 
       NumberImage.Base.calcSplitAlongAxisId2(
-        imageInArray[ 0 ], this.imageInArray_Fake, testParams.out,
-        "Split_imageIn_to_imageInArray_0_1" );
+        imageInArray[ 0 ], this.imageInArray_Fake,
+        bTableLog, testParams.out, "Split_imageIn_to_imageInArray_0_1" );
 
       imageIn0 = this.imageInArray_Fake[ 0 ];
       imageIn1 = this.imageInArray_Fake[ 1 ];
