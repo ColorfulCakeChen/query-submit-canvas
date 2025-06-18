@@ -1432,7 +1432,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
       // Concatenate depthwise1's result and depthwise2's result.
       concat1Result = NumberImage.Base.calcConcatAlongAxisId2(
         depthwise1Result, depthwise2Result,
-        testParams.out,
+        bTableLog, testParams.out,
         "Concat1_depthwise1_depthwise2 (SHUFFLE_NET_V2_BY_POINTWISE21_HEAD)" );
       this.imageNeedDisposeUniqueStack.push( depthwise1Result, depthwise2Result );
 
@@ -1441,7 +1441,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
       // Concatenate depthwise1's result and input1.
       concat1Result = NumberImage.Base.calcConcatAlongAxisId2(
         depthwise1Result, imageIn1,
-        testParams.out,
+        bTableLog, testParams.out,
         "Concat1_depthwise1_input1 (SHUFFLE_NET_V2_BY_POINTWISE21_BODY_or_TAIL)" );
       this.imageNeedDisposeUniqueStack.push( depthwise1Result, imageIn1 );
     }

@@ -2039,11 +2039,8 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut.boundsArraySet.set_outputs_all_by_concat_input0_input1();
     imageOut.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
-
-
-!!! ...unfinished... (2025/06/18)
-// should use bTableLog
-
+    if ( bTableLog )
+      imageOut.TableLog_header_body( `${concatNames.join( "_" )}` );
 
     return imageOut;
   }
@@ -2111,14 +2108,14 @@ class NumberImage_Base extends Recyclable.Root {
     // 1.
     let concatResult = NumberImage_Base.calcConcatAlongAxisId2(
       imageInArray[ 0 ], imageInArray[ 1 ],
-      parametersDesc, "concatShuffleSplitName", "concat" );
+      bTableLog, parametersDesc, "concatShuffleSplitName", "concat" );
 
     // 2.
     let shuffleResult;
     if ( bShuffle ) {
       shuffleResult = concatResult.modify_byInterleave_asGrouptTwo(
-        bTableLog,
-        parametersDesc, "concatShuffleSplitName", "interleave_asGrouptTwo" );
+        bTableLog, parametersDesc,
+        "concatShuffleSplitName", "interleave_asGrouptTwo" );
 
       // Note: The concatResult is just modified (i.e. not cloned). So do not
       //       dispose concatResult.
