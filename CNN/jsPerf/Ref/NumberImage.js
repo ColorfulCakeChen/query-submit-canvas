@@ -916,7 +916,7 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut.assert_pixels_byBoundsArray(
       imageOut.boundsArraySet.afterFilter );
 
-    if ( bTableLog ) {
+    if ( bTableLog )
       imageOut.TableLog_header_body(
         imageHeaderPrefix_forTableLog + "_afterFilter" );
 
