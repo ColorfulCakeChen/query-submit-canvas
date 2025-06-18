@@ -19,9 +19,17 @@ import { IssuedObjects } from "./Pool_IssuedObjects.js"
  *   The string name of this pool.
  *
  * @member {Class} objectClass
- *   The class for all newly created objects. If the instance of this
- * objectClass has a method .disposeResources(), it will be called when
- * .sessionCall()'s ending (i.e. in .session_pop()) to release more resources.
+ *   The class for all newly created objects.
+ *
+ *   - The instance of the class must have an instance method named
+ *       .setAsConstructor(). It is responsible for initializing the object
+ *       just like the object itself's constructor. Before .get_or_create_by()
+ *       returns a recycled object, its .setAsConstructor() method will be
+ *       called to (re-)initilaize the object.
+ *
+ *   - If the instance of this objectClass has a method .disposeResources(),
+ *       it will be called when .sessionCall()'s ending (i.e. in
+ *       .session_pop()) to release more resources.
  *
  * @member {function} pfn_SetAsConstructor
  *   A function setups contents just like the object itself's constructor.
