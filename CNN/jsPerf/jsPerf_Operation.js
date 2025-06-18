@@ -62,6 +62,8 @@ class Case {
       this.input1 = TensorPlaceholder.Base.Pool.get_or_create_by();
 
     this.operation = this.classTested.Pool.get_or_create_by(
+      null,                  // parentNameable
+      this.classTested.name, // operation class name
       this.input0, this.input1, this.outputTensorCount );
     this.operation.setKeepInputTensor(
       this.bKeepInputTensor0, this.bKeepInputTensor1 );
