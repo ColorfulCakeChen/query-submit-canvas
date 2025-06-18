@@ -65,19 +65,18 @@ let Pool_Base = ( ParentClass = Object ) => class Pool_Base extends ParentClass 
    *
    * @return {object}
    *   An obeject which is an instance of this.ObjectClass. If it is newly
-   * created, all RestArgs will be passed into its constructor. If it is
-   * re-used (i.e. from recycled) object, all RestArgs will be passed into its
+   * created, all restArgs will be passed into its constructor. If it is
+   * re-used (i.e. from recycled) object, all restArgs will be passed into its
    * .pfnSetAsConstructor() method.
    */
   get_or_create_by( ...restArgs ) {
-    let returnedObject;
 
     // 1.
 
     // 1.1 Get recycled object.
-    let candicatedObject = Pool_Base.recycled_pop.call( this );
-    if ( candicatedObject != null ) {
-      this.pfn_SetAsConstructor.apply( candicatedObject, restArgs );
+    let returnedObject = Pool_Base.recycled_pop.call( this );
+    if ( returnedObject != null ) {
+      this.pfn_SetAsConstructor.apply( returnedObject, restArgs );
 
     // 1.2 Create new object.
     } else {
