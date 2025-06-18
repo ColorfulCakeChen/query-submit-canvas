@@ -29,6 +29,8 @@ class Case {
     this.bKeepInputTensor0 = bKeepInputTensor0;
     this.bKeepInputTensor1 = bKeepInputTensor1;
 
+    this.bTableLog = true;
+
     this.assertPrefix
       = `jsPerf_Operation.Case( this.caseId == ${this.caseId} )`;
 
@@ -64,6 +66,7 @@ class Case {
     this.operation = this.classTested.Pool.get_or_create_by(
       null,                  // parentNameable
       this.classTested.name, // operation class name
+      this.bTableLog,
       this.input0, this.input1, this.outputTensorCount );
     this.operation.setKeepInputTensor(
       this.bKeepInputTensor0, this.bKeepInputTensor1 );
