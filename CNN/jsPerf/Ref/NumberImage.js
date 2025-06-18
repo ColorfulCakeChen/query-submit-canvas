@@ -286,13 +286,18 @@ class NumberImage_Base extends Recyclable.Root {
     bTableLog,
     parametersDesc, ...pointwiseNames ) {
 
-!!! ...unfinished... (2025/06/11)
-// should use bTableLog
+    let imageHeaderPrefix_forTableLog;
+    if ( bTableLog )
+      imageHeaderPrefix_forTableLog = pointwiseNames.join( "_" );
 
     let imageIn = this;
 
-    if ( pointwiseChannelCount <= 0 )
-      return imageIn.clone(); // No pointwise operation.
+    if ( pointwiseChannelCount <= 0 ) {
+      const imageOut = imageIn.clone(); // No pointwise operation.
+      if ( bTableLog )
+        imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog );
+      return imageOut;
+    }
 
     let pointwisePassThrough;
     if ( bPassThrough ) { // Generate pass-through filters and biases.
@@ -417,12 +422,20 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut.assert_pixels_byBoundsArray(
       imageOut.boundsArraySet.afterFilter );
 
+    if ( bTableLog )
+      imageOut.TableLog_header_body(
+        imageHeaderPrefix_forTableLog + "_afterFilter" );
+
     // Bias
     imageOut.modify_byBias( bPointwiseBias, pointwiseBiasesArray,
       parametersDesc, ...pointwiseNames, "bias" );
 
     // For debug pixel value bounds.
     imageOut.assert_pixels_byBoundsArray( imageOut.boundsArraySet.afterBias );
+
+    if ( bTableLog )
+      imageOut.TableLog_header_body(
+        imageHeaderPrefix_forTableLog + "_afterBias" );
 
     // Activation Escaping.
     {
@@ -438,13 +451,29 @@ class NumberImage_Base extends Recyclable.Root {
       NumberImage_Base.scale_byChannel_withoutAffect_BoundsArraySet(
         imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
         parametersDesc, ...pointwiseNames, "ActivationEscapingScale" );
+
+      if ( bTableLog )
+        imageOut.TableLog_header_body(
+          imageHeaderPrefix_forTableLog + "_afterActivationEscaping" );
     }
 
     // Activation
     NumberImage_Base.modify_byActivation_withoutAffect_BoundsArraySet(
-      imageOut, pointwiseActivationId, parametersDesc );
+      imageOut, pointwiseActivationId,
+      bTableLog, parametersDesc, imageHeaderPrefix_forTableLog );
 
     imageOut.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
+
+    if ( bTableLog )
+      if ( pointwiseActivationId ???  )
+      imageOut.TableLog_header_body(
+        imageHeaderPrefix_forTableLog + "_afterActivation" );
+
+
+
+!!! ...unfinished... (2025/06/18)
+// should use bTableLog
+
 
     return imageOut;
   }
@@ -946,7 +975,13 @@ class NumberImage_Base extends Recyclable.Root {
 
         // Activation
         NumberImage_Base.modify_byActivation_withoutAffect_BoundsArraySet(
-          imageOut, depthwiseActivationId, parametersDesc );
+          imageOut, depthwiseActivationId,
+          bTableLog, parametersDesc, imageHeaderPrefix_forTableLog );
+
+
+!!! ...unfinished... (2025/06/18)
+// should use bTableLog
+          
       }
     }
 
@@ -1142,8 +1177,15 @@ class NumberImage_Base extends Recyclable.Root {
    * @param {string} nActivationId
    *   The name string of this activation function.
    *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
+   *
    * @param {Object} parametersDesc
-   *   Its .toString() for debug message of this block.
+   *   Its .toString() will be used for debug message of this block.
+   *
+   * @param {string} imageHeaderPrefix_forTableLog
+   *   The image header prefix before this activation function for table log.
    *
    * @return {NumberImage.Base}
    *   Return this which may or may not be modified by activation function
@@ -1151,24 +1193,53 @@ class NumberImage_Base extends Recyclable.Root {
    * this.dataArray directly.
    */
   static modify_byActivation_withoutAffect_BoundsArraySet(
-    imageIn, nActivationId, parametersDesc ) {
+    imageIn, nActivationId,
+    bTableLog, parametersDesc, imageHeaderPrefix_forTableLog ) {
 
     let theActivationFunctionInfo
       = ValueDesc.ActivationFunction.Singleton.getInfo_byId( nActivationId );
 
-    if ( !theActivationFunctionInfo )
-      return imageIn;
+    // 0.1
+    if ( !theActivationFunctionInfo ) {
 
+      if ( bTableLog )
+        imageIn.TableLog_header_body(
+          imageHeaderPrefix_forTableLog
+            + `_unknownActivation_Info ( nActivationId = ${nActivationId} )` );
+
+      return imageIn;
+    }
+
+    let strActivationNameWithInt;
+    if ( bTableLog )
+      strActivationNameWithInt
+        = ValueDesc.ActivationFunction.Singleton.getNameWithInt_byId(
+            nActivationId );
+
+    // 0.2
     let pfnActivation = theActivationFunctionInfo.pfnReference;
-    if ( !pfnActivation )
-      return imageIn;
+    if ( !pfnActivation ) {
 
+      if ( bTableLog )
+        imageIn.TableLog_header_body(
+          imageHeaderPrefix_forTableLog
+            + `_unknownActivation_pfn ( ${strActivationNameWithInt} )` );
+
+      return imageIn;
+    }
+
+    // 1.
     for ( let i = 0; i < imageIn.dataArray.length; ++i ) {
       // (2022/08/11 Remarked) .pfnReference() has Math.fround() internally.
       //imageIn.dataArray[ i ] = Math.fround( pfnActivation( Math.fround(
       //  imageIn.dataArray[ i ] ) ) );
       imageIn.dataArray[ i ] = pfnActivation( imageIn.dataArray[ i ] );
     }
+
+    if ( bTableLog )
+      imageIn.TableLog_header_body(
+        imageHeaderPrefix_forTableLog
+          + `_afterActivation ( ${strActivationNameWithInt} )` );
 
     return imageIn;
   }
