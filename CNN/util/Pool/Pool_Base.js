@@ -39,7 +39,8 @@ import { IssuedObjects } from "./Pool_IssuedObjects.js"
  *   The quantity of recycled objects.
  *
  */
-let Pool_Base = ( ParentClass = Object ) => class Pool_Base extends ParentClass {
+let Pool_Base
+  = ( ParentClass = Object ) => class Pool_Base extends ParentClass {
 
   /**
    * This constructor will register this object to Pool.All.registeredPoolArray
