@@ -538,13 +538,6 @@ class Block_TestParams_Base extends TestParams.Base {
       bTableLog,
       parametersDesc, ...pointwiseNames );
     io_imageNeedDisposeUniqueStack.push( inputImage );
-
-!!! ...unfinshed... (2025/06/05)
-// Perhaps, use this.out.bTableLog to log as table.
-
-//!!! ...unfinshed... (2025/06/10)
-// Perhaps, should assert Operation bTableLog flag? name?
-
     return result;
   }
 
@@ -554,6 +547,10 @@ class Block_TestParams_Base extends TestParams.Base {
    *
    * @param {number} pointwise1ChannelCount
    *   The output channel count of this pointwise1 pass-through convolution.
+   *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
    *
    * @param {Object} parametersDesc
    *   Its .toString() will be used for debug message of the block.
@@ -583,6 +580,10 @@ class Block_TestParams_Base extends TestParams.Base {
   /**
    * @param {NumberImage.Base} inputImage
    *   The source image to be processed.
+   *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
    *
    * @param {Object} parametersDesc
    *   Its .toString() will be used for debug message of the block.
@@ -616,6 +617,10 @@ class Block_TestParams_Base extends TestParams.Base {
    * @param {NumberImage.Base} inputImage
    *   The source image to be processed.
    *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
+   *
    * @param {Object} parametersDesc
    *   Its .toString() will be used for debug message of the block.
    *
@@ -647,6 +652,10 @@ class Block_TestParams_Base extends TestParams.Base {
   /**
    * @param {NumberImage.Base} inputImage
    *   The source image to be processed.
+   *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
    *
    * @param {Object} parametersDesc
    *   Its .toString() will be used for debug message of the block.
@@ -682,6 +691,10 @@ class Block_TestParams_Base extends TestParams.Base {
    *
    * @param {number} pointwise20ChannelCount
    *   The output channel count of the pointwise20 convolution.
+   *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
    *
    * @param {Object} parametersDesc
    *   Its .toString() will be used for debug message of the block.
@@ -759,6 +772,10 @@ class Block_TestParams_Base extends TestParams.Base {
    * @param {number} pointwise20ChannelCount
    *   The output channel count of the pointwise202 convolution.
    *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
+   *
    * @param {Object} parametersDesc
    *   Its .toString() will be used for debug message of the block.
    *
@@ -829,6 +846,10 @@ class Block_TestParams_Base extends TestParams.Base {
    * @param {number} pointwise20ChannelCount
    *   The output channel count of this pointwise20 pass-through convolution.
    *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
+   *
    * @param {Object} parametersDesc
    *   Its .toString() will be used for debug message of the block.
    *
@@ -864,6 +885,10 @@ class Block_TestParams_Base extends TestParams.Base {
    *
    * @param {number} pointwise21ChannelCount
    *   The output channel count of the pointwise21 convolution.
+   *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
    *
    * @param {Object} parametersDesc
    *   Its .toString() will be used for debug message of the block.
