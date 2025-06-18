@@ -455,7 +455,10 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
     // Test memory leakage of block create/dispose.
     let memoryInfo_beforeCreate = tf.memory();
 
-    let block = Block_Reference_Base.block_create( testParams,
+    let block = Block_Reference_Base.block_create(
+      null,              // parentNameable
+      "Block_Reference", // blockName
+      testParams,
       imageInArraySelected[ 0 ].boundsArraySet.output0,
       imageInArraySelected[ 1 ]?.boundsArraySet.output0,
       channelShuffler_ConcatPointwiseConv );

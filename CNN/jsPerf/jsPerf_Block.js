@@ -74,7 +74,7 @@ class PerformanceTestCase extends Recyclable.Root {
   /**
    * 
    */
-  prepare() {
+  prepare( testCaseName ) {
 
     try {
       const blockTestParams = this.blockTestParams;
@@ -84,7 +84,10 @@ class PerformanceTestCase extends Recyclable.Root {
         imageInArraySelected, channelShuffler_ConcatPointwiseConv
       } = testCorrectnessInfo;
  
-      let block = Block_Reference.Base.block_create( blockTestParams,
+      let block = Block_Reference.Base.block_create(
+        null,                              // parentNameable
+        `Block_Reference_${testCaseName}`, // blockName
+        blockTestParams,
         imageInArraySelected[ 0 ].boundsArraySet.output0,
         imageInArraySelected[ 1 ]?.boundsArraySet.output0,
         channelShuffler_ConcatPointwiseConv );
@@ -372,7 +375,7 @@ class HeightWidthDepth {
     // (so that there will be enough memory). Create the specified block.
     if ( !testCase.block ) {
       this.block_PerformanceTest_release_block();
-      testCase.prepare();
+      testCase.prepare( testCaseName );
     }
 
     let block = testCase.block;
