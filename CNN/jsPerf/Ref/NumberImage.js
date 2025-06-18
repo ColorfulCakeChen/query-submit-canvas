@@ -1823,9 +1823,8 @@ class NumberImage_Base extends Recyclable.Root {
 
     this.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
-!!! ...unfinished... (2025/06/18)
-// should use bTableLog
-
+    if ( bTableLog )
+      imageOutNew.TableLog_header_body( `${interleaveNames.join( "_" )}` );
 
     return this;
   }
@@ -2116,11 +2115,7 @@ class NumberImage_Base extends Recyclable.Root {
     let shuffleResult;
     if ( bShuffle ) {
       shuffleResult = concatResult.modify_byInterleave_asGrouptTwo(
-
-!!! ...unfinished... (2025/06/18)
-// should use bTableLog
-
-
+        bTableLog,
         parametersDesc, "concatShuffleSplitName", "interleave_asGrouptTwo" );
 
       // Note: The concatResult is just modified (i.e. not cloned). So do not
