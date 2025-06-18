@@ -1205,7 +1205,7 @@ class NumberImage_Base extends Recyclable.Root {
       if ( bTableLog )
         imageIn.TableLog_header_body(
           imageHeaderPrefix_forTableLog
-            + `_unknownActivation_Info ( nActivationId = ${nActivationId} )` );
+            + `_Activation_unknownInfo ( nActivationId = ${nActivationId} )` );
 
       return imageIn;
     }
@@ -1223,7 +1223,7 @@ class NumberImage_Base extends Recyclable.Root {
       if ( bTableLog )
         imageIn.TableLog_header_body(
           imageHeaderPrefix_forTableLog
-            + `_unknownActivation_pfn ( ${strActivationNameWithInt} )` );
+            + `_Activation_unknown_pfn ( ${strActivationNameWithInt} )` );
 
       return imageIn;
     }
