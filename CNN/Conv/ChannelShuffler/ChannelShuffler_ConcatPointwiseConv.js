@@ -72,7 +72,7 @@ class ConcatPointwiseConv extends Recyclable.Root {
    * conforming to Recyclable interface.
    */
   static Pool = new Pool.Root( "ChannelShuffler.ConcatPointwiseConvPool",
-    ConcatPointwiseConv, ConcatPointwiseConv.setAsConstructor );
+    ConcatPointwiseConv );
 
   /**
    *

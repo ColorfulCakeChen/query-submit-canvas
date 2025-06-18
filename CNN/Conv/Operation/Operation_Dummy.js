@@ -28,7 +28,7 @@ class Dummy extends Root {
    * interface.
    */
   static Pool = new Pool.Root( "Operation.Dummy.Pool",
-    Dummy, Dummy.setAsConstructor );
+    Dummy );
 
   /**
    */

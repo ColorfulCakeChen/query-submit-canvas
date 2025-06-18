@@ -38,7 +38,7 @@ class MultiplyTwoTensors extends Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Operation.MultiplyTwoTensors.Pool",
-    MultiplyTwoTensors, MultiplyTwoTensors.setAsConstructor );
+    MultiplyTwoTensors );
 
   /**
    */

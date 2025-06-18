@@ -55,7 +55,7 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    * interface.
    */
   static Pool = new Pool.Root( "Operation.Base.Pool",
-    Operation_Base, Operation_Base.setAsConstructor );
+    Operation_Base );
 
   /**
    * This constructor will register this operation as the input

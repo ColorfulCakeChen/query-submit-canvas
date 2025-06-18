@@ -61,8 +61,7 @@ class ShuffleNetV2_ByMobileNetV1 extends Base {
    */
   static Pool = new Pool.Root(
     "Stage.BlockParamsCreator.ShuffleNetV2_ByMobileNetV1.Pool",
-    ShuffleNetV2_ByMobileNetV1,
-    ShuffleNetV2_ByMobileNetV1.setAsConstructor );
+    ShuffleNetV2_ByMobileNetV1 );
 
   /**
    */

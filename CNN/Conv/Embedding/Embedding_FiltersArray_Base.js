@@ -38,8 +38,7 @@ class Embedding_FiltersArray_Base extends Weights.Base( InferencedParams ) {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Embedding.FiltersArray_Base.Pool",
-    Embedding_FiltersArray_Base,
-    Embedding_FiltersArray_Base.setAsConstructor );
+    Embedding_FiltersArray_Base );
 
   /**
    *

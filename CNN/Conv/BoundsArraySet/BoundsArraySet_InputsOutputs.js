@@ -60,7 +60,7 @@ class InputsOutputs extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "BoundsArraySet.InputsOutputs.Pool",
-    InputsOutputs, InputsOutputs.setAsConstructor );
+    InputsOutputs );
 
   /**
    *

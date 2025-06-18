@@ -17,7 +17,7 @@ class AsyncWorker_Proxy_tester extends AsyncWorker.Proxy {
    * interface.
    */
   static Pool = new Pool.Root( "AsyncWorker.Proxy_tester.Pool",
-    AsyncWorker_Proxy_tester, AsyncWorker_Proxy_tester.setAsConstructor );
+    AsyncWorker_Proxy_tester );
 
   /** */
   constructor() {

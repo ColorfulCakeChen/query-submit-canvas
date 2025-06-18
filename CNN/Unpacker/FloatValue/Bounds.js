@@ -24,7 +24,7 @@ class Bounds extends Recyclable.Root {
    * interface.
    */
   static Pool = new Pool.Root( "FloatValue.Bounds.Pool",
-    Bounds, Bounds.setAsConstructor );
+    Bounds );
 
   /**
    */

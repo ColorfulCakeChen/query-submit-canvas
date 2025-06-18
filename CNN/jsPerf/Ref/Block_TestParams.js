@@ -26,7 +26,7 @@ class Block_TestParams_Base extends TestParams.Base {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Block_TestParams.Base.Pool",
-    Block_TestParams_Base, Block_TestParams_Base.setAsConstructor );
+    Block_TestParams_Base );
 
   /**
    */

@@ -23,8 +23,7 @@ class weightArray_weightElementOffsetBegin extends Recyclable.Root {
    */
   static Pool = new Pool.Root(
     "NameNumberArrayObject.weightArray_weightElementOffsetBegin.Pool",
-    weightArray_weightElementOffsetBegin,
-    weightArray_weightElementOffsetBegin.setAsConstructor );
+    weightArray_weightElementOffsetBegin );
 
   /**
    */

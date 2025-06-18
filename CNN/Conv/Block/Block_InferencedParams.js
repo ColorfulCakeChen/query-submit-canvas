@@ -17,7 +17,7 @@ class Block_InferencedParams extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Block.InferencedParams.Pool",
-    Block_InferencedParams, Block_InferencedParams.setAsConstructor );
+    Block_InferencedParams );
 
   /**
    *

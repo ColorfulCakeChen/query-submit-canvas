@@ -13,7 +13,7 @@ class Recyclable_Array extends Base( Array ) {
    * interface.
    */
   static Pool = new Pool.Root( "Recyclable.Array.Pool",
-    Recyclable_Array, Recyclable_Array.setAsConstructor );
+    Recyclable_Array );
 
   /**
    */

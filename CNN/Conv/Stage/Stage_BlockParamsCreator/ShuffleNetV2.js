@@ -39,7 +39,7 @@ class ShuffleNetV2 extends Base {
    */
   static Pool = new Pool.Root(
     "Stage.BlockParamsCreator.ShuffleNetV2.Pool",
-    ShuffleNetV2, ShuffleNetV2.setAsConstructor );
+    ShuffleNetV2 );
 
   /**
    */

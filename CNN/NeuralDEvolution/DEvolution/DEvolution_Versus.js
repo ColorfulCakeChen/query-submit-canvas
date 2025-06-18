@@ -71,7 +71,7 @@ class DEvolution_Versus extends
    * interface.
    */
   static Pool = new Pool.Root( "DEvolution.Versus.Pool",
-    DEvolution_Versus, DEvolution_Versus.setAsConstructor );
+    DEvolution_Versus );
 
   /** */
   constructor() {

@@ -22,7 +22,7 @@ class Pointwise extends ConvBiasActivation {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "BoundsArraySet.Pointwise.Pool",
-    Pointwise, Pointwise.setAsConstructor );
+    Pointwise );
 
   /**
    *   - The .input0 will be set as input0.

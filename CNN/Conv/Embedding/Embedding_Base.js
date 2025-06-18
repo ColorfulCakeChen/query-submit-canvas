@@ -75,7 +75,7 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
    * interface.
    */
   static Pool = new Pool.Root( "Embedding.Base.Pool",
-    Embedding_Base, Embedding_Base.setAsConstructor );
+    Embedding_Base );
 
   /**
    */

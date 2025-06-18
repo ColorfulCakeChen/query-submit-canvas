@@ -26,8 +26,7 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Depthwise.BoundsArray_PerPixel.Pool",
-    Depthwise_BoundsArray_PerPixel,
-    Depthwise_BoundsArray_PerPixel.setAsConstructor );
+    Depthwise_BoundsArray_PerPixel );
 
   /**
    */

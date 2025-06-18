@@ -119,8 +119,7 @@ class ShuffleNetV2_ByPointwise21 extends Base {
    */
   static Pool = new Pool.Root(
     "Stage.BlockParamsCreator.ShuffleNetV2_ByPointwise21.Pool",
-    ShuffleNetV2_ByPointwise21,
-    ShuffleNetV2_ByPointwise21.setAsConstructor );
+    ShuffleNetV2_ByPointwise21 );
 
   /**
    */

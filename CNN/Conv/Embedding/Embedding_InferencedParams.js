@@ -46,8 +46,7 @@ class Embedding_InferencedParams extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Embedding.InferencedParams.Pool",
-    Embedding_InferencedParams,
-    Embedding_InferencedParams.setAsConstructor );
+    Embedding_InferencedParams );
 
   /**
    *

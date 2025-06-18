@@ -64,7 +64,7 @@ import { InferencedParams } from "./Embedding_InferencedParams.js";
    * interface.
    */
   static Pool = new Pool.Root( "Embedding.Params.Pool",
-    Embedding_Params, Embedding_Params.setAsConstructor );
+    Embedding_Params );
 
   /**
    * If a parameter's value is null, it will be extracted from inputWeightArray

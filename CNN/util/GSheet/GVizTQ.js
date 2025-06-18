@@ -143,7 +143,7 @@ class GVizTQ_UrlComposer
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "GSheet.GVizTQ.UrlComposer.Pool",
-    GVizTQ_UrlComposer, GVizTQ_UrlComposer.setAsConstructor );
+    GVizTQ_UrlComposer );
 
   /**
    * If sheetId is null, sheetName is null, and no sheet name in the range's A1

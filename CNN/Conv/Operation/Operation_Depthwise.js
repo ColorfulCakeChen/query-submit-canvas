@@ -66,7 +66,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
    * interface.
    */
   static Pool = new Pool.Root( "Operation.Depthwise.Pool",
-    Depthwise, Depthwise.setAsConstructor );
+    Depthwise );
 
   /**
    */

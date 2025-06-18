@@ -62,8 +62,7 @@ class ShuffleNetV2_ByMobileNetV1_padValid extends ShuffleNetV2_ByMobileNetV1 {
    */
   static Pool = new Pool.Root(
     "Stage.BlockParamsCreator.ShuffleNetV2_ByMobileNetV1_padValid.Pool",
-    ShuffleNetV2_ByMobileNetV1_padValid,
-    ShuffleNetV2_ByMobileNetV1_padValid.setAsConstructor );
+    ShuffleNetV2_ByMobileNetV1_padValid );
 
   /**
    */

@@ -33,7 +33,7 @@ class ChannelPartInfo extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Depthwise.ChannelPartInfo.Pool",
-    ChannelPartInfo, ChannelPartInfo.setAsConstructor );
+    ChannelPartInfo );
 
   /**
    */
@@ -109,7 +109,7 @@ class FiltersBiasesPartInfo extends Recyclable.OwnerArray {
    * to Recyclable interface.
    */
   static Pool = new Pool.Root( "Depthwise.FiltersBiasesPartInfo.Pool",
-    FiltersBiasesPartInfo, FiltersBiasesPartInfo.setAsConstructor );
+    FiltersBiasesPartInfo );
 
   /**
    * Every element of restArgs should be instance of ChannelPartInfo (even if

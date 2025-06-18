@@ -19,7 +19,7 @@ class Block_ParamsBase extends Recyclable.Root {
    * interface.
    */
   static Pool = new Pool.Root( "Block.ParamsBase.Pool",
-    Block_ParamsBase, Block_ParamsBase.setAsConstructor );
+    Block_ParamsBase );
 
   /**
    */

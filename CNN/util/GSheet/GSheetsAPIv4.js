@@ -122,7 +122,7 @@ class GSheetsAPIv4_UrlComposer
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "GSheet.GSheetsAPIv4.UrlComposer.Pool",
-    GSheetsAPIv4_UrlComposer, GSheetsAPIv4_UrlComposer.setAsConstructor );
+    GSheetsAPIv4_UrlComposer );
 
   /**
    * If no sheet name in the range's A1 notation, the first (most left) visible

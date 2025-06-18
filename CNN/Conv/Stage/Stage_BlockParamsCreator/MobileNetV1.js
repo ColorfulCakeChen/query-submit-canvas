@@ -36,7 +36,7 @@ class MobileNetV1 extends Base {
    */
   static Pool = new Pool.Root(
     "Stage.BlockParamsCreator.MobileNetV1.Pool",
-    MobileNetV1, MobileNetV1.setAsConstructor );
+    MobileNetV1 );
 
   /**
    */

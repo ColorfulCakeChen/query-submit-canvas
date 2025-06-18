@@ -26,7 +26,7 @@ class BoundsArray extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "FloatValue.BoundsArray.Pool",
-    BoundsArray, BoundsArray.setAsConstructor );
+    BoundsArray );
 
   /**
    */

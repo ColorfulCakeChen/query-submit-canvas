@@ -90,7 +90,7 @@ class ShuffleInfo extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "ChannelShuffler.ShuffleInfoPool",
-    ShuffleInfo, ShuffleInfo.setAsConstructor );
+    ShuffleInfo );
 
   /**
    *

@@ -19,7 +19,7 @@ class MobileNetV2_Thin extends MobileNetV1 {
    */
   static Pool = new Pool.Root(
     "Stage.BlockParamsCreator.MobileNetV2_Thin.Pool",
-    MobileNetV2_Thin, MobileNetV2_Thin.setAsConstructor );
+    MobileNetV2_Thin );
 
   /**
    */

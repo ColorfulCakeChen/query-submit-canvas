@@ -33,8 +33,7 @@ class Embedding_SplitReshapeGatherConcat extends Base {
    * to Recyclable interface.
    */
   static Pool = new Pool.Root( "Embedding.SplitReshapeGatherConcat.Pool",
-    Embedding_SplitReshapeGatherConcat,
-    Embedding_SplitReshapeGatherConcat.setAsConstructor );
+    Embedding_SplitReshapeGatherConcat );
 
   /**
    *

@@ -40,7 +40,7 @@ class ConcatAlongAxisId2 extends Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Operation.ConcatAlongAxisId2.Pool",
-    ConcatAlongAxisId2, ConcatAlongAxisId2.setAsConstructor );
+    ConcatAlongAxisId2 );
 
   /**
    */

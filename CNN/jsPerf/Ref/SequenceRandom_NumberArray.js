@@ -19,7 +19,7 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "SequenceRandom_NumberArray.Bag.Pool",
-    Bag, Bag.setAsConstructor );
+    Bag );
 
   /**
    *

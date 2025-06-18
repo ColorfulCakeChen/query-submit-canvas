@@ -21,8 +21,7 @@ let HierarchicalNameable_SeparatorUnderline_Base
    */
   static Pool = new Pool.Root(
     "HierarchicalNameable.SeparatorUnderline.Base.Pool",
-    HierarchicalNameable_SeparatorUnderline_Base,
-    HierarchicalNameable_SeparatorUnderline_Base.setAsConstructor );
+    HierarchicalNameable_SeparatorUnderline_Base );
 
   /**
    */

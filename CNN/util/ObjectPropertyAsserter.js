@@ -13,8 +13,7 @@ class ObjectPropertyAsserter_Base extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "ObjectPropertyAsserter.Base.Pool",
-    ObjectPropertyAsserter_Base,
-    ObjectPropertyAsserter_Base.setAsConstructor );
+    ObjectPropertyAsserter_Base );
 
   /**
    * @param {string} objectName

@@ -23,7 +23,7 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
    * interface.
    */
   static Pool = new Pool.Root( "ChannelShuffler.Bag.Pool",
-    Bag, Bag.setAsConstructor );
+    Bag );
 
   /**
    */

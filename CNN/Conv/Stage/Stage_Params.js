@@ -19,7 +19,7 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
    * interface.
    */
   static Pool = new Pool.Root( "Stage.Params.Pool",
-    Stage_Params, Stage_Params.setAsConstructor );
+    Stage_Params );
 
   /**
    * If a parameter's value is null, it will be extracted from inputWeightArray

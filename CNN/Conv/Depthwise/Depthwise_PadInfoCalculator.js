@@ -55,7 +55,7 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Depthwise.PadInfoCalculator.Pool",
-    PadInfoCalculator, PadInfoCalculator.setAsConstructor );
+    PadInfoCalculator );
 
   /**
    *

@@ -54,7 +54,7 @@ class Asserter_Equal extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "TensorTools.Asserter_Equal.Pool",
-    Asserter_Equal, Asserter_Equal.setAsConstructor );
+    Asserter_Equal );
 
   /**
    * If ( differenceRate <= acceptableDifferenceRate )

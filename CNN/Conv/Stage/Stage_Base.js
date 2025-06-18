@@ -335,7 +335,7 @@ class Stage_Base extends Recyclable.Root {
    * interface.
    */
   static Pool = new Pool.Root( "Stage.Base.Pool",
-    Stage_Base, Stage_Base.setAsConstructor );
+    Stage_Base );
 
   /**
    */

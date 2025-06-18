@@ -26,7 +26,7 @@ class Stage_TestParams_Base extends TestParams.Base {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Stage_TestParams.Base.Pool",
-    Stage_TestParams_Base, Stage_TestParams_Base.setAsConstructor );
+    Stage_TestParams_Base );
 
   /**
    */

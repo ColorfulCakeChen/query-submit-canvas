@@ -206,8 +206,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
    */
   static Pool = new Pool.Root(
     "NeuralOrchestra.Construct3.Pool",
-    NeuralOrchestra_Construct3,
-    NeuralOrchestra_Construct3.setAsConstructor );
+    NeuralOrchestra_Construct3 );
 
   /** */
   constructor() {

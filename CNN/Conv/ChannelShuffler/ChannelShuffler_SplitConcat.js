@@ -50,7 +50,7 @@ class SplitConcat extends Recyclable.Root {
    * conforming to Recyclable interface.
    */
   static Pool = new Pool.Root( "ChannelShuffler.SplitConcatPool",
-    SplitConcat, SplitConcat.setAsConstructor );
+    SplitConcat );
 
   /**
    *

@@ -86,7 +86,7 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "NeuralNet.ParamsBase.Pool",
-    NeuralNet_ParamsBase, NeuralNet_ParamsBase.setAsConstructor );
+    NeuralNet_ParamsBase );
 
   /**
    */

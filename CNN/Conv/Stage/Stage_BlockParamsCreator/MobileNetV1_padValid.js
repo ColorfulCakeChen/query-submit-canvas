@@ -22,7 +22,7 @@ class MobileNetV1_padValid extends MobileNetV1 {
    */
   static Pool = new Pool.Root(
     "Stage.BlockParamsCreator.MobileNetV1_padValid.Pool",
-    MobileNetV1_padValid, MobileNetV1_padValid.setAsConstructor );
+    MobileNetV1_padValid );
 
   /**
    */

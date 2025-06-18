@@ -131,7 +131,7 @@ class DEvolution_VersusSummary extends
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "DEvolution.VersusSummary.Pool",
-    DEvolution_VersusSummary, DEvolution_VersusSummary.setAsConstructor );
+    DEvolution_VersusSummary );
 
   /**
    */

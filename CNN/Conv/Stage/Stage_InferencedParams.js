@@ -38,7 +38,7 @@ class Stage_InferencedParams extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Stage.InferencedParams.Pool",
-    Stage_InferencedParams, Stage_InferencedParams.setAsConstructor );
+    Stage_InferencedParams );
 
   /**
    * @param {Stage.ParamsBase} stageParamsBase

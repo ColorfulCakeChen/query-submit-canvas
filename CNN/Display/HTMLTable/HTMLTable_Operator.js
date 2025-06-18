@@ -21,7 +21,7 @@ class HTMLTable_Operator extends Recyclable.Root {
    * interface.
    */
   static Pool = new Pool.Root( "HTMLTable.Operator.Pool",
-    HTMLTable_Operator, HTMLTable_Operator.setAsConstructor );
+    HTMLTable_Operator );
 
   /** */
   constructor( htmlTableElementId, digitsCount = 4 ) {

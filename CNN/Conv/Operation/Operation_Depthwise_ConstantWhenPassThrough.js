@@ -23,8 +23,7 @@ class Depthwise_ConstantWhenPassThrough extends Depthwise {
    */
   static Pool = new Pool.Root(
     "Operation.Depthwise_ConstantWhenPassThrough.Pool",
-    Depthwise_ConstantWhenPassThrough,
-    Depthwise_ConstantWhenPassThrough.setAsConstructor );
+    Depthwise_ConstantWhenPassThrough );
 
   /**
    */

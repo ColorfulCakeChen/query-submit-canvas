@@ -24,8 +24,7 @@ class DEvolution_VersusResultSender_SingleEventName
    */
   static Pool = new Pool.Root(
     "DEvolution.VersusResultSender.SingleEventName.Pool",
-    DEvolution_VersusResultSender_SingleEventName,
-    DEvolution_VersusResultSender_SingleEventName.setAsConstructor );
+    DEvolution_VersusResultSender_SingleEventName );
 
   /** */
   constructor( clientId, measurementId, apiSecret ) {

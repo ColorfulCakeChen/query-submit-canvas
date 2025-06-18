@@ -64,7 +64,7 @@ class ConcatShuffleSplit extends Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Operation.ConcatShuffleSplit.Pool",
-    ConcatShuffleSplit, ConcatShuffleSplit.setAsConstructor );
+    ConcatShuffleSplit );
 
   /**
    */

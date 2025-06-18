@@ -21,7 +21,7 @@ class Depthwise extends ConvBiasActivation {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "BoundsArraySet.Depthwise.Pool",
-    Depthwise, Depthwise.setAsConstructor );
+    Depthwise );
 
   /**
    *   - The .input0 will be set as input0.

@@ -62,7 +62,7 @@ class AsyncWorker_Proxy extends Recyclable.Root {
    * interface.
    */
   static Pool = new Pool.Root( "AsyncWorker.Proxy.Pool",
-    AsyncWorker_Proxy, AsyncWorker_Proxy.setAsConstructor );
+    AsyncWorker_Proxy );
 
   /** */
   constructor( workerModuleURL ) {

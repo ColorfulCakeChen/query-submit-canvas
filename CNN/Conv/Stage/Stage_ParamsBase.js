@@ -20,7 +20,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
    * interface.
    */
   static Pool = new Pool.Root( "Stage.ParamsBase.Pool",
-    Stage_ParamsBase, Stage_ParamsBase.setAsConstructor );
+    Stage_ParamsBase );
 
   /**
    */

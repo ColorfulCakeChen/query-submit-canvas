@@ -55,7 +55,7 @@ class TwinArray extends Root {
    * interface.
    */
   static Pool = new Pool.Root( "Operation.TwinArray.Pool",
-    TwinArray, TwinArray.setAsConstructor );
+    TwinArray );
 
   /**
    *

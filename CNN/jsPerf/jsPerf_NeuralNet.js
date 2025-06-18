@@ -32,7 +32,7 @@ class PerformanceTestCase extends Recyclable.Root {
    * interface.
    */
   static Pool = new Pool.Root( "PerformanceTestCase.Pool",
-    PerformanceTestCase, PerformanceTestCase.setAsConstructor );
+    PerformanceTestCase );
 
   /**
    */

@@ -241,7 +241,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * interface.
    */
   static Pool = new Pool.Root( "NeuralWorker.Proxies.Pool",
-    NeuralWorker_Proxies, NeuralWorker_Proxies.setAsConstructor );
+    NeuralWorker_Proxies );
 
   /** */
   constructor() {

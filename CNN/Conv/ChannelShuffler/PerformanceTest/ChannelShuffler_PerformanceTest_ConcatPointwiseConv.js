@@ -15,7 +15,7 @@ class ConcatPointwiseConv extends ChannelShuffler_ConcatPointwiseConv {
    */
   static Pool = new Pool.Root(
     "ChannelShuffler.PerformanceTest.ConcatPointwiseConvPool",
-    ConcatPointwiseConv, ConcatPointwiseConv.setAsConstructor );
+    ConcatPointwiseConv );
 
   /**
    */

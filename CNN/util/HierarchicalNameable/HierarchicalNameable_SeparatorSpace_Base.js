@@ -20,8 +20,7 @@ let HierarchicalNameable_SeparatorSpace_Base
    */
   static Pool = new Pool.Root(
     "HierarchicalNameable.SeparatorSpace.Base.Pool",
-    HierarchicalNameable_SeparatorSpace_Base,
-    HierarchicalNameable_SeparatorSpace_Base.setAsConstructor );
+    HierarchicalNameable_SeparatorSpace_Base );
 
   /**
    */

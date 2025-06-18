@@ -417,7 +417,7 @@ class NeuralOrchestra_Base extends
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "NeuralOrchestra.Base.Pool",
-    NeuralOrchestra_Base, NeuralOrchestra_Base.setAsConstructor );
+    NeuralOrchestra_Base );
 
   /** */
   constructor() {

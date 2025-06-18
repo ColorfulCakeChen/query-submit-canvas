@@ -20,7 +20,7 @@ class ScaleArray extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "FloatValue.ScaleArray.Pool",
-    ScaleArray, ScaleArray.setAsConstructor );
+    ScaleArray );
 
   /**
    */

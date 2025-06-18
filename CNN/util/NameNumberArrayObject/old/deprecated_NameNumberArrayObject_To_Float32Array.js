@@ -17,7 +17,7 @@ class Base extends Recyclable.Root {
    */
   static Pool = new Pool.Root(
     "NameNumberArrayObject_To_Float32Array.Base.Pool",
-    Base, Base.setAsConstructor );
+    Base );
 
   /**
    */

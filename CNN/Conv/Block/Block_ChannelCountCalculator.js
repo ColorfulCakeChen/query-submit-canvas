@@ -47,7 +47,7 @@ class HigherHalfPassThrough extends Recyclable.Root {
    */
   static Pool = new Pool.Root(
     "ChannelCountCalculator.HigherHalfPassThrough.Pool",
-    HigherHalfPassThrough, HigherHalfPassThrough.setAsConstructor );
+    HigherHalfPassThrough );
 
   /**
    *

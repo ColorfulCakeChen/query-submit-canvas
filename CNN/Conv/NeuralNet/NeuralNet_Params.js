@@ -23,7 +23,7 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
    * interface.
    */
   static Pool = new Pool.Root( "NeuralNet.Params.Pool",
-    NeuralNet_Params, NeuralNet_Params.setAsConstructor );
+    NeuralNet_Params );
 
   /**
    * If a parameter's value is null, it will be extracted from inputWeightArray

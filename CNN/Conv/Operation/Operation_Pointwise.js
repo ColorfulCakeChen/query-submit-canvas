@@ -54,7 +54,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
    * interface.
    */
   static Pool = new Pool.Root( "Operation.Pointwise.Pool",
-    Pointwise, Pointwise.setAsConstructor );
+    Pointwise );
 
   /**
    */

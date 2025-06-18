@@ -33,7 +33,7 @@ class OwnerArray extends Recyclable_Array {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Recyclable.OwnerArray.Pool",
-    OwnerArray, OwnerArray.setAsConstructor );
+    OwnerArray );
 
   /**
    * Every element of restArgs should be instance of Recyclable.Base (even if
@@ -44,7 +44,7 @@ class OwnerArray extends Recyclable_Array {
    */
   constructor( ...restArgs ) {
     super( restArgs.length );
-    this.#setAsConstructor_self( restArgs );
+    this.#setAsConstructor_self( restArgs ); // No need to spread restArgs.
   }
 
   /**

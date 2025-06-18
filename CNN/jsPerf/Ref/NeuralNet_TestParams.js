@@ -24,7 +24,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "NeuralNet_TestParams.Base.Pool",
-    NeuralNet_TestParams_Base, NeuralNet_TestParams_Base.setAsConstructor );
+    NeuralNet_TestParams_Base );
 
   /**
    */

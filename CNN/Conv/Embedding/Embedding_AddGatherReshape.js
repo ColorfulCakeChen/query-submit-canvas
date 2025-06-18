@@ -36,7 +36,7 @@ class Embedding_AddGatherReshape extends Base {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Embedding.AddGatherReshape.Pool",
-    Embedding_AddGatherReshape, Embedding_AddGatherReshape.setAsConstructor );
+    Embedding_AddGatherReshape );
 
   /**
    */

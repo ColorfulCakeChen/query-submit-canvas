@@ -24,8 +24,7 @@ class DEvolution_VersusResultSender_Base extends Recyclable.Root {
    * to Recyclable interface.
    */
   static Pool = new Pool.Root( "DEvolution.VersusResultSender.Base.Pool",
-    DEvolution_VersusResultSender_Base,
-    DEvolution_VersusResultSender_Base.setAsConstructor );
+    DEvolution_VersusResultSender_Base );
 
   /** */
   constructor( clientId ) {

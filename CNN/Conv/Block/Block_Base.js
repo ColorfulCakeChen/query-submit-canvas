@@ -347,7 +347,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
    * interface.
    */
   static Pool = new Pool.Root( "Block.Base.Pool",
-    Block_Base, Block_Base.setAsConstructor );
+    Block_Base );
 
   /**
    */

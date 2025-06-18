@@ -6,13 +6,16 @@ import * as Pool from "../Pool.js";
  * The base class representing a object could be recycled (i.e. disposed
  * without release its main object memory for re-using in the future).
  *
+ *
+ * 1.
+ *
  * Every sub-class of this Recyclable.Base MUST define a static propery named
  * Pool which is usually an instance of Pool.Base:
  * <pre>
  * class SomeClass extends Recyclable.Base {
  *
  *   static Pool = new Pool.Root( "SomeNamespace.SomeClass",
- *     SomeClass, SomeClass.setAsConstructor );
+ *     SomeClass );
  *
  * }
  * </pre>
@@ -26,18 +29,42 @@ import * as Pool from "../Pool.js";
  * }
  *
  * SomeClass.Pool = new Pool.Root( "SomeNamespace.SomeClass",
- *   SomeClass, SomeClass.setAsConstructor );
+ *   SomeClass );
  *
  * </pre>
  *
+ *
+ * 2.
+ *
+ * Every sub-class of this Recyclable.Base MUST define:
+ *
+ *   - An instance method named .setAsConstructor().
+ *
+ *       - It is responsible for initializing the object just like the object
+ *           itself's constructor.
+ *
+ *       - (That is, call super.setAsConstructor() and then initialize itself's
+ *           data members.)
+ *
+ *       - Before Pool.Base.get_or_create_by() returns a  recycled object, the
+ *           recycled object's .setAsConstructor() method will be called to
+ *           (re-)initilaize the object.
+ *
+ *   - An instance method named .disposeResources().
+ *
+ *       - It should release itself's resources and then call
+ *           super.disposeResources() in cascade.
+ *
+ *       - It is called by
+ *           Recyclable_Base.disposeResources_and_recycleToPool().
  *
  */
 let Recyclable_Base = ( ParentClass = Object ) => class Recyclable_Base
   extends ParentClass {
 
   /**
-   * Sub-class's constructor could call itself SubClassXxx.#setAsConstructor_self()
-   * (i.e. do NOT call .setAsConstructor() because super() will do revursively
+   * Sub-class's constructor could call itself .#setAsConstructor_self() (i.e.
+   * do NOT call .setAsConstructor() because super() will do revursively
    * already).
    */
   constructor( ...restArgs ) {
@@ -51,23 +78,14 @@ let Recyclable_Base = ( ParentClass = Object ) => class Recyclable_Base
    * Sub-class should override this static method:
    *   - Call super.setAsConstructor( ... ) in the beginning of this method.
    *       And then,
-   *   - Call SelfClassXxx.setAsConstructor_self.call( this, ... ).
+   *   - Call this.#setAsConstructor_self( ... ).
    *
-   * Note: This method MUST return "this" because Pool.Base.get_or_create_by()
-   *       needs it.
-   *
-   *
-   * @param {Base} this
-   *   The Recyclable.Base object to be initialized.
-   *
-   * @return {Base}
-   *   Return the this object.
    */
   setAsConstructor( ...restArgs ) {
 
     // If parent class has the same method, call it.
     if ( super.setAsConstructor instanceof Function )
-      super.setAsConstructor.apply( this, restArgs );
+      super.setAsConstructor( ...restArgs );
 
     this.#setAsConstructor_self();
   }

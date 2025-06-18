@@ -130,7 +130,7 @@ class NeuralNet_Base extends Recyclable.Root {
    * interface.
    */
   static Pool = new Pool.Root( "NeuralNet.Base.Pool",
-    NeuralNet_Base, NeuralNet_Base.setAsConstructor );
+    NeuralNet_Base );
 
   /** */
   constructor() {

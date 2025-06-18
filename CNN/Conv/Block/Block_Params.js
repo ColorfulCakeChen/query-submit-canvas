@@ -245,7 +245,7 @@ class Block_Params extends Weights.Params( ParamsBase ) {
    * interface.
    */
   static Pool = new Pool.Root( "Block.Params.Pool",
-    Block_Params, Block_Params.setAsConstructor );
+    Block_Params );
 
   /**
    * If a parameter's value is null, it will be extracted from inputWeightArray

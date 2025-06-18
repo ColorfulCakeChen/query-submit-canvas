@@ -76,8 +76,7 @@ let PassThrough_FiltersArray_BiasesArray
    */
   static Pool = new Pool.Root(
     "Depthwise.PassThrough_FiltersArray_BiasesArray.Pool",
-    PassThrough_FiltersArray_BiasesArray,
-    PassThrough_FiltersArray_BiasesArray.setAsConstructor );
+    PassThrough_FiltersArray_BiasesArray );
 
   /**
    */
@@ -288,8 +287,7 @@ class PassThrough_FiltersArray_BiasesArray_Bag
    */
   static Pool = new Pool.Root(
     "Depthwise.PassThrough_FiltersArray_BiasesArray_Bag.Pool",
-    PassThrough_FiltersArray_BiasesArray_Bag,
-    PassThrough_FiltersArray_BiasesArray_Bag.setAsConstructor );
+    PassThrough_FiltersArray_BiasesArray_Bag );
 
   /**
    */
@@ -390,7 +388,7 @@ class PassThrough
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Depthwise.PassThrough.Pool",
-    PassThrough, PassThrough.setAsConstructor );
+    PassThrough );
 
   /**
    */

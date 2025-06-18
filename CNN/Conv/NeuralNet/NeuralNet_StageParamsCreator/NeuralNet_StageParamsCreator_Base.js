@@ -18,8 +18,7 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
    * to Recyclable interface.
    */
   static Pool = new Pool.Root( "NeuralNet.StageParamsCreator.Base.Pool",
-    NeuralNet_StageParamsCreator_Base,
-    NeuralNet_StageParamsCreator_Base.setAsConstructor );
+    NeuralNet_StageParamsCreator_Base );
 
   /**
    * @param {Params} neuralNetParams

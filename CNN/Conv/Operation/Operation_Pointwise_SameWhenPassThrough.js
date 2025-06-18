@@ -23,8 +23,7 @@ class Pointwise_SameWhenPassThrough extends Pointwise {
    */
   static Pool = new Pool.Root(
     "Operation.Pointwise_SameWhenPassThrough.Pool",
-    Pointwise_SameWhenPassThrough,
-    Pointwise_SameWhenPassThrough.setAsConstructor );
+    Pointwise_SameWhenPassThrough );
 
   /**
    */

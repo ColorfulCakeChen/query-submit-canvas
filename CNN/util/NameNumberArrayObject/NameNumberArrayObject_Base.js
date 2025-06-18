@@ -23,7 +23,7 @@ class NameNumberArrayObject_Base extends Recyclable.Array {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "NameNumberArrayObject.Base.Pool",
-    NameNumberArrayObject_Base, NameNumberArrayObject_Base.setAsConstructor );
+    NameNumberArrayObject_Base );
 
   /**
    */

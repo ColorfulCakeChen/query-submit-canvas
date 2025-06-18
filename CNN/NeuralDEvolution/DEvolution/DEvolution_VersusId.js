@@ -49,7 +49,7 @@ class DEvolution_VersusId extends Recyclable.Root {
    * interface.
    */
   static Pool = new Pool.Root( "DEvolution.VersusId.Pool",
-    DEvolution_VersusId, DEvolution_VersusId.setAsConstructor );
+    DEvolution_VersusId );
 
   /** */
   constructor( versusIdString ) {

@@ -23,8 +23,7 @@ class Depthwise_SameWhenPassThrough extends Depthwise {
    */
   static Pool = new Pool.Root(
     "Operation.Depthwise_SameWhenPassThrough.Pool",
-    Depthwise_SameWhenPassThrough,
-    Depthwise_SameWhenPassThrough.setAsConstructor );
+    Depthwise_SameWhenPassThrough );
 
   /**
    */

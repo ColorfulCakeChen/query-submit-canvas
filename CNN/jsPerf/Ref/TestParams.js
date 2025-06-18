@@ -59,7 +59,7 @@ class ParamValueChangeRecord extends Recyclable.Root {
    * conforming to Recyclable interface.
    */
   static Pool = new Pool.Root( "TestParams.ParamValueChangeRecord.Pool",
-    ParamValueChangeRecord, ParamValueChangeRecord.setAsConstructor );
+    ParamValueChangeRecord );
 
   /**
    */
@@ -169,7 +169,7 @@ class TestParams_Base extends Recyclable.Root {
    * interface.
    */
   static Pool = new Pool.Root( "TestParams.Base.Pool",
-    TestParams_Base, TestParams_Base.setAsConstructor );
+    TestParams_Base );
 
   /**
    */

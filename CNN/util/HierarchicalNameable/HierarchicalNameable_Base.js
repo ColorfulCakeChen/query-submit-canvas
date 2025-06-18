@@ -42,8 +42,7 @@ let HierarchicalNameable_Base
    */
   static Pool = new Pool.Root(
     "HierarchicalNameable.Base.Pool",
-    HierarchicalNameable_Base,
-    HierarchicalNameable_Base.setAsConstructor );
+    HierarchicalNameable_Base );
 
   /**
    */

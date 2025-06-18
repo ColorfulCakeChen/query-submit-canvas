@@ -38,7 +38,7 @@ class AddTwoTensors extends Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Operation.AddTwoTensors.Pool",
-    AddTwoTensors, AddTwoTensors.setAsConstructor );
+    AddTwoTensors );
 
   /**
    */

@@ -23,8 +23,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Embedding_TestParams.Base.Pool",
-    Embedding_TestParams_Base,
-    Embedding_TestParams_Base.setAsConstructor );
+    Embedding_TestParams_Base );
 
   /**
    */

@@ -47,7 +47,7 @@ class ConvBiasActivation extends InputsOutputs {
    * to Recyclable interface.
    */
   static Pool = new Pool.Root( "BoundsArraySet.ConvBiasActivation.Pool",
-    ConvBiasActivation, ConvBiasActivation.setAsConstructor );
+    ConvBiasActivation );
 
   /**
    *   - The .input0 will be set as input0.

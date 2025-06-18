@@ -71,7 +71,7 @@ import { Base } from "./Weights_Base.js";
    * interface.
    */
   static Pool = new Pool.Root( "Weights.Params.Pool",
-    Weights_Params, Weights_Params.setAsConstructor );
+    Weights_Params );
 
   /**
    *

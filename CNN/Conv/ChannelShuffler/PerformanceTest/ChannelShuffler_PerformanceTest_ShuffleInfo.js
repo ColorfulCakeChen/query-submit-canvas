@@ -15,7 +15,7 @@ class ShuffleInfo extends ChannelShuffler_ShuffleInfo {
    */
   static Pool = new Pool.Root(
     "ChannelShuffler.PerformanceTest.ShuffleInfoPool",
-    ShuffleInfo, ShuffleInfo.setAsConstructor );
+    ShuffleInfo );
 
   /**
    */

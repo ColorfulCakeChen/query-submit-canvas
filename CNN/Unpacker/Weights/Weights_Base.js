@@ -41,7 +41,7 @@ let Weights_Base = ( ParentClass = Object ) =>
    * interface.
    */
   static Pool = new Pool.Root( "Weights.Base.Pool",
-    Weights_Base, Weights_Base.setAsConstructor );
+    Weights_Base );
 
   /**
    * Just record the begin and length without checking them. Please call init()

@@ -25,8 +25,7 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Embedding.FiltersArray_Multi.Pool",
-    Embedding_FiltersArray_Multi,
-    Embedding_FiltersArray_Multi.setAsConstructor );
+    Embedding_FiltersArray_Multi );
 
   /**
    *

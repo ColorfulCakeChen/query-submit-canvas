@@ -19,8 +19,7 @@ class DEvolution_VersusResultSender_MultiEventName
    */
   static Pool = new Pool.Root(
     "DEvolution.VersusResultSender.MultiEventName.Pool",
-    DEvolution_VersusResultSender_MultiEventName,
-    DEvolution_VersusResultSender_MultiEventName.setAsConstructor );
+    DEvolution_VersusResultSender_MultiEventName );
 
   /** */
   constructor( clientId, measurementId_apiSecret_array_array ) {

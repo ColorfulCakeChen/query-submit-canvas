@@ -73,8 +73,7 @@ class NeuralNet_InferencedParams extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "NeuralNet.InferencedParams.Pool",
-    NeuralNet_InferencedParams,
-    NeuralNet_InferencedParams.setAsConstructor );
+    NeuralNet_InferencedParams );
 
   /**
    *

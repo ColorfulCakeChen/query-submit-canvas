@@ -53,7 +53,7 @@ class ConcatGather extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "ChannelShuffler.ConcatGatherPool",
-    ConcatGather, ConcatGather.setAsConstructor );
+    ConcatGather );
 
   /**
    *

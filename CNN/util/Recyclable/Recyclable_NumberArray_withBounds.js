@@ -20,7 +20,7 @@ class NumberArray_withBounds extends Recyclable_Array {
    * to Recyclable interface.
    */
   static Pool = new Pool.Root( "Recyclable.NumberArray_withBounds.Pool",
-    NumberArray_withBounds, NumberArray_withBounds.setAsConstructor );
+    NumberArray_withBounds );
 
   /**
    * Every element of restArgs should be instance of Recyclable.Base (even if

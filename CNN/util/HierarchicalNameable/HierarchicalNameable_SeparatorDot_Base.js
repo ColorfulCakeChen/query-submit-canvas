@@ -20,8 +20,7 @@ let HierarchicalNameable_SeparatorDot_Base
    */
   static Pool = new Pool.Root(
     "HierarchicalNameable.SeparatorDot.Base.Pool",
-    HierarchicalNameable_SeparatorDot_Base,
-    HierarchicalNameable_SeparatorDot_Base.setAsConstructor );
+    HierarchicalNameable_SeparatorDot_Base );
 
   /**
    */

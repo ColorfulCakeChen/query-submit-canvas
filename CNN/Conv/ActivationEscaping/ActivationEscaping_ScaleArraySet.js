@@ -120,7 +120,7 @@ class ScaleArraySet extends Recyclable.Root {
    */
   static Pool = new Pool.Root(
     "ActivationEscaping.ScaleArraySet.Pool",
-    ScaleArraySet, ScaleArraySet.setAsConstructor );
+    ScaleArraySet );
 
   /**
    */

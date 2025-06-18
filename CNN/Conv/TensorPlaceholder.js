@@ -38,7 +38,7 @@ class TensorPlaceholder_Base extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "TensorPlaceholder.Base.Pool",
-    TensorPlaceholder_Base, TensorPlaceholder_Base.setAsConstructor );
+    TensorPlaceholder_Base );
 
   /**
    *

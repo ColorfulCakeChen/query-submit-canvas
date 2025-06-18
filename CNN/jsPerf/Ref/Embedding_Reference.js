@@ -32,7 +32,7 @@ class Embedding_Reference_Base extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Embedding_Reference.Base.Pool",
-    Embedding_Reference_Base, Embedding_Reference_Base.setAsConstructor );
+    Embedding_Reference_Base );
 
   /**
    *

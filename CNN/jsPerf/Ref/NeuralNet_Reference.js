@@ -37,7 +37,7 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "NeuralNet_Reference.Base.Pool",
-    NeuralNet_Reference_Base, NeuralNet_Reference_Base.setAsConstructor );
+    NeuralNet_Reference_Base );
 
   /**
    *

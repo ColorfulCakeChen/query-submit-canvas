@@ -35,7 +35,7 @@ class OwnerUniqueStack extends Root {
    * Recyclable interface.
    */
   static Pool = new Pool.Root( "Recyclable.OwnerUniqueStack.Pool",
-    OwnerUniqueStack, OwnerUniqueStack.setAsConstructor );
+    OwnerUniqueStack );
 
   /**
    * Every element of restArgs should be instance of Recyclable.Base (even if

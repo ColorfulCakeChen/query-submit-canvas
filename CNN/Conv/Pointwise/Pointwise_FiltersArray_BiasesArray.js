@@ -150,7 +150,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
    * to Recyclable interface.
    */
   static Pool = new Pool.Root( "Pointwise.FiltersArray_BiasesArray.Pool",
-    FiltersArray_BiasesArray, FiltersArray_BiasesArray.setAsConstructor );
+    FiltersArray_BiasesArray );
 
   /**
    */

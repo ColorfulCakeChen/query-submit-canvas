@@ -23,8 +23,7 @@ class Pointwise_ConstantWhenPassThrough extends Pointwise {
    */
   static Pool = new Pool.Root(
     "Operation.Pointwise_ConstantWhenPassThrough.Pool",
-    Pointwise_ConstantWhenPassThrough,
-    Pointwise_ConstantWhenPassThrough.setAsConstructor );
+    Pointwise_ConstantWhenPassThrough );
 
   /**
    */

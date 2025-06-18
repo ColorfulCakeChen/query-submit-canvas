@@ -32,7 +32,7 @@ class Stage_Reference_Base extends Recyclable.Root {
    * Used as default Stage_Reference.Base provider for conforming to Recyclable interface.
    */
   static Pool = new Pool.Root( "Stage_Reference.Base.Pool",
-    Stage_Reference_Base, Stage_Reference_Base.setAsConstructor );
+    Stage_Reference_Base );
 
   /**
    *

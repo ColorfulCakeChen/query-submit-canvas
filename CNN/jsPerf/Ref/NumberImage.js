@@ -36,7 +36,7 @@ class NumberImage_Base extends Recyclable.Root {
    * interface.
    */
   static Pool = new Pool.Root( "NumberImage.Base.Pool",
-    NumberImage_Base, NumberImage_Base.setAsConstructor );
+    NumberImage_Base );
 
   /**
    *

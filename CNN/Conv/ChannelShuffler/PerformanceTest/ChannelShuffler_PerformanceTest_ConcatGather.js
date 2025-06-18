@@ -15,7 +15,7 @@ class ConcatGather extends ChannelShuffler_ConcatGather {
    */
   static Pool = new Pool.Root(
     "ChannelShuffler.PerformanceTest.ConcatGatherPool",
-    ConcatGather, ConcatGather.setAsConstructor );
+    ConcatGather );
 
   /**
    */

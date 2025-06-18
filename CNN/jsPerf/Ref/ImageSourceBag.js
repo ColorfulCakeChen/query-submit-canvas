@@ -21,7 +21,7 @@ class ImageSourceBag_Base extends Recyclable.Root {
    * interface.
    */
   static Pool = new Pool.Root( "ImageSource.Bag.Pool",
-    ImageSourceBag_Base, ImageSourceBag_Base.setAsConstructor );
+    ImageSourceBag_Base );
 
   /**
    * @param {string} tensor_dtype

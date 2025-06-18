@@ -75,7 +75,7 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * interface.
    */
   static Pool = new Pool.Root( "NeuralWorker.Proxy.Pool",
-    NeuralWorker_Proxy, NeuralWorker_Proxy.setAsConstructor );
+    NeuralWorker_Proxy );
 
   /** */
   constructor() {

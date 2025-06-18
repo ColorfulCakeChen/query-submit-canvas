@@ -19,8 +19,7 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
    */
   static Pool = new Pool.Root(
     "Stage.BlockParamsCreator.Base.Pool",
-    Stage_BlockParamsCreator_Base,
-    Stage_BlockParamsCreator_Base.setAsConstructor );
+    Stage_BlockParamsCreator_Base );
 
   /**
    * @param {Stage.ParamsBase} stageParams

@@ -15,7 +15,7 @@ class SplitConcat extends ChannelShuffler_SplitConcat {
    */
   static Pool = new Pool.Root(
     "ChannelShuffler.PerformanceTest.SplitConcatPool",
-    SplitConcat, SplitConcat.setAsConstructor );
+    SplitConcat );
 
   /**
    */

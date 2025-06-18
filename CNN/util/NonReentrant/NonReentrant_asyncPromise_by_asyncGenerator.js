@@ -160,8 +160,7 @@ function NonReentrant_asyncPromise_by_asyncGenerator(
      */
     static Pool = new Pool.Root(
       "NonReentrant.asyncPromise_by_asyncGenerator.Pool",
-      NonReentrant_asyncPromise_by_asyncGenerator,
-      NonReentrant_asyncPromise_by_asyncGenerator.setAsConstructor );
+      NonReentrant_asyncPromise_by_asyncGenerator );
 
 
     #asyncPromise_running;

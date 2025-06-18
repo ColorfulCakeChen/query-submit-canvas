@@ -838,12 +838,6 @@ function* tester( progressParent ) {
   let progressCircularly = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progressThree = progressParent.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-
-  let progressSix = progressParent.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-
   // 0.1 Prepare test objects.
 
   // 1.

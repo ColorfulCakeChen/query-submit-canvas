@@ -32,7 +32,7 @@ class TestCorrectnessInfo extends Recyclable.Root {
    */
   static Pool = new Pool.Root(
     "Block_Reference.TestCorrectnessInfo.Pool",
-    TestCorrectnessInfo, TestCorrectnessInfo.setAsConstructor );
+    TestCorrectnessInfo );
 
   /**
    */
@@ -274,7 +274,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
    * interface.
    */
   static Pool = new Pool.Root( "Block_Reference.Base.Pool",
-    Block_Reference_Base, Block_Reference_Base.setAsConstructor );
+    Block_Reference_Base );
 
   /**
    *
