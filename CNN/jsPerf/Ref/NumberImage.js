@@ -1194,10 +1194,11 @@ class NumberImage_Base extends Recyclable.Root {
       }
     }
 
-!!! ...unfinished... (2025/06/18)
-// Since this method does not adjust BoundArraySet,
-// it should not table log here.
-
+    // Note: Although this method does not adjust BoundArraySet, the
+    //       BoundArraySet usually has been adjusted before calling this
+    //       method. So, still table log here.
+    //
+    // (2025/06/18)
     if ( bTableLog )
       imageOut.TableLog_header_body( `${scaleNames.join( "_" )}` );
 
