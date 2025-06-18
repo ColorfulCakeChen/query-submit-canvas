@@ -2108,14 +2108,19 @@ class NumberImage_Base extends Recyclable.Root {
     // 1.
     let concatResult = NumberImage_Base.calcConcatAlongAxisId2(
       imageInArray[ 0 ], imageInArray[ 1 ],
-      bTableLog, parametersDesc, "concatShuffleSplitName", "concat" );
+      bTableLog, parametersDesc,
+      ...concatShuffleSplitNames,
+      // "concatShuffleSplitName",
+      "concat" );
 
     // 2.
     let shuffleResult;
     if ( bShuffle ) {
       shuffleResult = concatResult.modify_byInterleave_asGrouptTwo(
         bTableLog, parametersDesc,
-        "concatShuffleSplitName", "interleave_asGrouptTwo" );
+        ...concatShuffleSplitNames,
+        // "concatShuffleSplitName",
+        "interleave_asGrouptTwo" );
 
       // Note: The concatResult is just modified (i.e. not cloned). So do not
       //       dispose concatResult.
@@ -2129,7 +2134,10 @@ class NumberImage_Base extends Recyclable.Root {
     if ( bSplit ) {
       NumberImage_Base.calcSplitAlongAxisId2(
         shuffleResult, imageOutArray,
-        bTableLog, parametersDesc, "concatShuffleSplitName", "split" );
+        bTableLog, parametersDesc,
+        ...concatShuffleSplitNames,
+        // "concatShuffleSplitName",
+        "split" );
       shuffleResult.disposeResources_and_recycleToPool();
       shuffleResult = null;
     } else {
@@ -2137,12 +2145,6 @@ class NumberImage_Base extends Recyclable.Root {
       imageOutArray[ 0 ] = shuffleResult;
       imageOutArray[ 1 ] = null;
     }
-
-
-!!! ...unfinished... (2025/06/18)
-// should use bTableLog
-
-
   }
 
   /**

@@ -255,10 +255,10 @@ class HeightWidthDepthGroup {
 //         let imageOutArray = new Array( this.dataTensor3dArray.length );
 // //!!! (2021/10/11 Remarked)
 // //         PointDepthPoint_Reference.Base.calcConcatShuffleSplit( this.concatPointwiseConv,
-// //           imageInArray, imageOutArray, "PointDepthPoint_Reference.calcConcatShuffleSplit", "" );
+// //           imageInArray, imageOutArray, ?bTableLog, "PointDepthPoint_Reference.calcConcatShuffleSplit", "" );
 //         PointDepthPoint_Reference.Base.calcConcatShuffleSplit(
 //           this.concatPointwiseConv.concatenatedShape, this.concatPointwiseConv.outputGroupCount,
-//           imageInArray, imageOutArray, "PointDepthPoint_Reference.calcConcatShuffleSplit", "" );
+//           imageInArray, imageOutArray, ?bTableLog, "PointDepthPoint_Reference.calcConcatShuffleSplit", "" );
 //
 //         for ( let i = 0; i < t1Array.length; ++i ) {
 //           this.asserter_Equal.assert_Tensor_NumberArray(

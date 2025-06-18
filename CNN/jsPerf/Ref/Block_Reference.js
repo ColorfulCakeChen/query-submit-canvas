@@ -1652,7 +1652,12 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
 
       NumberImage.Base.calcConcatShuffleSplit(
         imageOutArray, imageOutArray, bShuffle, bSplit,
-        testParams.out, concat2Name );
+        bTableLog, testParams.out,
+
+!!! ...unfinished... (202/06/18)
+// should ...xxxNames should include all the parentNameables' names
+
+        concat2Name );
     }
 
     { // Release all intermediate images.
