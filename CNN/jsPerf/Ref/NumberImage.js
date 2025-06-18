@@ -450,11 +450,7 @@ class NumberImage_Base extends Recyclable.Root {
       // channel.
       NumberImage_Base.scale_byChannel_withoutAffect_BoundsArraySet(
         imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
-        parametersDesc, ...pointwiseNames, "ActivationEscapingScale" );
-
-      if ( bTableLog )
-        imageOut.TableLog_header_body(
-          imageHeaderPrefix_forTableLog + "_afterActivationEscaping" );
+        bTableLog, parametersDesc, ...pointwiseNames, "ActivationEscapingScale" );
     }
 
     // Activation
@@ -463,17 +459,6 @@ class NumberImage_Base extends Recyclable.Root {
       bTableLog, parametersDesc, imageHeaderPrefix_forTableLog );
 
     imageOut.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
-
-    if ( bTableLog )
-      if ( pointwiseActivationId ???  )
-      imageOut.TableLog_header_body(
-        imageHeaderPrefix_forTableLog + "_afterActivation" );
-
-
-
-!!! ...unfinished... (2025/06/18)
-// should use bTableLog
-
 
     return imageOut;
   }
@@ -579,14 +564,20 @@ class NumberImage_Base extends Recyclable.Root {
     bTableLog,
     parametersDesc, ...depthwiseNames ) {
 
-!!! ...unfinished... (2025/06/11)
-// should use bTableLog
+    let imageHeaderPrefix_forTableLog;
+    if ( bTableLog )
+      imageHeaderPrefix_forTableLog = pointwiseNames.join( "_" );
 
     let imageIn = this;
 
     if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE
-           === depthwise_AvgMax_Or_ChannelMultiplier )
+           === depthwise_AvgMax_Or_ChannelMultiplier ) {
+
+!!! ...unfinished... (2025/06/18)
+// should use bTableLog
+
       return imageIn.clone(); // No depthwise operation.
+    }
 
     let depthwisePassThrough;
     if ( bPassThrough ) { // Generate pass-through filters and biases.
@@ -912,6 +903,11 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut.assert_pixels_byBoundsArray(
       imageOut.boundsArraySet.afterFilter );
 
+
+!!! ...unfinished... (2025/06/18)
+// should use bTableLog
+
+
     // Bias
     imageOut.modify_byBias(
       bDepthwiseBias, depthwiseBiasesArray,
@@ -920,6 +916,10 @@ class NumberImage_Base extends Recyclable.Root {
     // For debug pixel value bounds.
     imageOut.assert_pixels_byBoundsArray(
       imageOut.boundsArraySet.afterBias );
+
+!!! ...unfinished... (2025/06/18)
+// should use bTableLog
+
 
     // Activation Escaping.
     {
@@ -971,17 +971,12 @@ class NumberImage_Base extends Recyclable.Root {
         // channel.
         NumberImage_Base.scale_byChannel_withoutAffect_BoundsArraySet(
           imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
-          parametersDesc, ...depthwiseNames, "ActivationEscapingScale" );
+          bTableLog, parametersDesc, ...depthwiseNames, "ActivationEscapingScale" );
 
         // Activation
         NumberImage_Base.modify_byActivation_withoutAffect_BoundsArraySet(
           imageOut, depthwiseActivationId,
           bTableLog, parametersDesc, imageHeaderPrefix_forTableLog );
-
-
-!!! ...unfinished... (2025/06/18)
-// should use bTableLog
-          
       }
     }
 
@@ -1129,6 +1124,10 @@ class NumberImage_Base extends Recyclable.Root {
    * @param {FloatValue.ScaleArray} scaleArray
    *   The scales for every channel.
    *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
+   *
    * @param {Object} parametersDesc
    *   Its .toString() for debug message of this block.
    *
@@ -1140,7 +1139,8 @@ class NumberImage_Base extends Recyclable.Root {
    * its channel.
    */
   static scale_byChannel_withoutAffect_BoundsArraySet(
-    imageIn, scaleArray, parametersDesc, ...scaleNames ) {
+    imageIn, scaleArray,
+    bTableLog, parametersDesc, ...scaleNames ) {
 
     if ( scaleArray == null )
       throw Error( `${scaleNames.join( "_" )}: `
@@ -1164,6 +1164,9 @@ class NumberImage_Base extends Recyclable.Root {
         }
       }
     }
+
+    if ( bTableLog )
+      imageOut.TableLog_header_body( `${scaleNames.join( "_" )}` );
 
     return imageIn;
   }
