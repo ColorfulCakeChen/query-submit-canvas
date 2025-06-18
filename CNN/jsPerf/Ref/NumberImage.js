@@ -1515,9 +1515,8 @@ class NumberImage_Base extends Recyclable.Root {
       imageOutNew.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
     }
 
-!!! ...unfinished... (2025/06/11)
-// should use bTableLog
-
+    if ( bTableLog )
+      imageOutNew.TableLog_header_body( `${multiplyNames.join( "_" )}` );
 
     return imageOutNew;
   }
