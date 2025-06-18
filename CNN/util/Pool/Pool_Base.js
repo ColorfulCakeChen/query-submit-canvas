@@ -2,13 +2,6 @@ export { Pool_Base as Base, Root };
 
 import { IssuedObjects } from "./Pool_IssuedObjects.js"
 
-//!!! ...unfinished... (2025/06/13)
-// Perhaps,
-//   - Let pfn_SetAsConstructor no longer needs return any object.
-//   - Let setAsConstructor() become instance (not class) method.
-//   - Let setAsConstructor_self() become private instance (not class) method.
-//       (i.e. #setAsConstructor_self())
-
 /**
  * A pool for recycling (re-using) objects. It collects all recycled (i.e.
  * could be re-issued) objects of Pool.Base. This could improve performance by
@@ -31,11 +24,6 @@ import { IssuedObjects } from "./Pool_IssuedObjects.js"
  *       it will be called when .sessionCall()'s ending (i.e. in
  *       .session_pop()) to release more resources.
  *
- * @member {function} pfn_SetAsConstructor
- *   A function setups contents just like the object itself's constructor.
- * Before .get_or_create_by() returns a recycled object, its
- * .pfn_SetAsConstructor() method will be called to re-initilaize the object.
- *
  * @member {Object[]} recycledObjectArray
  *   For fetching object efficiently (without creating iterator).
  *
@@ -54,14 +42,12 @@ let Pool_Base
    * This constructor will register this object to Pool.All.registeredPoolArray
    * list. And it will never be removed from the list.
    */
-  constructor(
-    poolName, objectClass, pfn_SetAsConstructor, ...restArgs ) {
+  constructor( poolName, objectClass, ...restArgs ) {
 
     super( ...restArgs );
 
     this.poolName = poolName;
     this.objectClass = objectClass;
-    this.pfn_SetAsConstructor = pfn_SetAsConstructor;
 
     this.recycledObjectArray = new Array();
     this.recycledObjectSet = new Set();
@@ -85,7 +71,14 @@ let Pool_Base
     // 1.1 Get recycled object.
     let returnedObject = Pool_Base.recycled_pop.call( this );
     if ( returnedObject != null ) {
-      this.pfn_SetAsConstructor.apply( returnedObject, restArgs );
+
+      if ( !returnedObject.setAsConstructor )
+        throw Error( `Pool.Base.get_or_create_by(): `
+        + `Any instance ( ${returnedObject} ) of class ( ${this.objectClass} `
+        + `should have an instance method named .setAsConstructor().`
+        );
+
+      returnedObject.setAsConstructor( ...restArgs );
 
     // 1.2 Create new object.
     } else {
