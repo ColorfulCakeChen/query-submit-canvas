@@ -336,10 +336,11 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    * as table.
    *
    * @param {string} extraLeafName
-   *   - If null or undefined, the .nameString_recursively will be used as
-   *       the header of table log.
-   *   - If provided, it will be appended to the end of .nameString_recursively
-   *       with joinSeparator. And then, be used as the header of table log.
+   *   - If null or undefined, the .nameString_recursively_get() will be used
+   *       as the header of table log.
+   *   - If provided, it will be appended to the end of
+   *       .nameString_recursively_get() with joinSeparator. And then, be used
+   *       as the header of table log.
    */
   TableLog_tensor3d_if_requested(
     extraName, aTensor3d, aBoundsArray_or_aScaleBoundsArray ) {
@@ -348,7 +349,7 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
       return;
 
     // Prefix with the hierarchical name of this operation and extra name.
-    let headerPrefix = this.nameString_recursively;
+    let headerPrefix = this.nameString_recursively_get();
     headerPrefix = this.nameJoinSeparator_join( headerPrefix, extraName );
 
     TableLogger.Base.Singleton.log_tensor3d_along_depth(
@@ -390,13 +391,8 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     if ( !this.bTableLog )
       return;
 
-//!!! (2025/06/10 Remarked) Use .nameString_recursively instead. 
-//     // Prefix with the most derved class name.
-//     const mostDerivedClassName = this.constructor.name;
-//     const headerPrefix = mostDerivedClassName;
-
     // Prefix with the hierarchical name of this operation.
-    const headerPrefix = this.nameString_recursively;
+    const headerPrefix = this.nameString_recursively_get();
 
     this.output0.TableLog_header_body( headerPrefix );
   }
@@ -409,13 +405,8 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     if ( !this.bTableLog )
       return;
 
-//!!! (2025/06/10 Remarked) Use .nameString_recursively instead. 
-//     // Prefix with the most derved class name.
-//     const mostDerivedClassName = this.constructor.name;
-//     const headerPrefix = mostDerivedClassName;
-
     // Prefix with the hierarchical name of this operation.
-    const headerPrefix = this.nameString_recursively;
+    const headerPrefix = this.nameString_recursively_get();
 
     this.output0.TableLog_header_body( headerPrefix );
     this.output1.TableLog_header_body( headerPrefix );
