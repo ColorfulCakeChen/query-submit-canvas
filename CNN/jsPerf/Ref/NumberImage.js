@@ -286,9 +286,19 @@ class NumberImage_Base extends Recyclable.Root {
     bTableLog,
     parametersDesc, ...pointwiseNames ) {
 
+    let str_ChannelCount_NameWithInt;
     let imageHeaderPrefix_forTableLog;
-    if ( bTableLog )
+    if ( bTableLog ) {
+
+      if ( pointwiseChannelCount <= 0 )
+        str_ChannelCount_NameWithInt = `NONE( ${pointwiseChannelCount} )`;
+      else
+        str_ChannelCount_NameWithInt = `${pointwiseChannelCount}`;
+
       imageHeaderPrefix_forTableLog = pointwiseNames.join( "_" );
+      imageHeaderPrefix_forTableLog
+       += `( ${str_AvgMax_Or_ChannelMultiplier_NameWithInt} )`;
+    }
 
     let imageIn = this;
 
@@ -564,19 +574,26 @@ class NumberImage_Base extends Recyclable.Root {
     bTableLog,
     parametersDesc, ...depthwiseNames ) {
 
+    let str_AvgMax_Or_ChannelMultiplier_NameWithInt;
     let imageHeaderPrefix_forTableLog;
-    if ( bTableLog )
-      imageHeaderPrefix_forTableLog = pointwiseNames.join( "_" );
+    if ( bTableLog ) {
+      str_AvgMax_Or_ChannelMultiplier_NameWithInt
+        = ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getNameWithInt_byId(
+            depthwise_AvgMax_Or_ChannelMultiplier );
+
+      imageHeaderPrefix_forTableLog = depthwiseNames.join( "_" );
+      imageHeaderPrefix_forTableLog
+       += `( ${str_AvgMax_Or_ChannelMultiplier_NameWithInt} )`;
+    }
 
     let imageIn = this;
 
     if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE
            === depthwise_AvgMax_Or_ChannelMultiplier ) {
-
-!!! ...unfinished... (2025/06/18)
-// should use bTableLog
-
-      return imageIn.clone(); // No depthwise operation.
+      const imageOut = imageIn.clone(); // No depthwise operation.
+      if ( bTableLog )
+        imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog );
+      return imageOut;
     }
 
     let depthwisePassThrough;
@@ -903,10 +920,9 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut.assert_pixels_byBoundsArray(
       imageOut.boundsArraySet.afterFilter );
 
-
-!!! ...unfinished... (2025/06/18)
-// should use bTableLog
-
+    if ( bTableLog ) {
+      imageOut.TableLog_header_body(
+        imageHeaderPrefix_forTableLog + "_afterFilter" );
 
     // Bias
     imageOut.modify_byBias(
@@ -917,9 +933,9 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut.assert_pixels_byBoundsArray(
       imageOut.boundsArraySet.afterBias );
 
-!!! ...unfinished... (2025/06/18)
-// should use bTableLog
-
+    if ( bTableLog )
+      imageOut.TableLog_header_body(
+        imageHeaderPrefix_forTableLog + "_afterBias" );
 
     // Activation Escaping.
     {
@@ -956,6 +972,10 @@ class NumberImage_Base extends Recyclable.Root {
         } else {
           imageOut.boundsArraySet.set_outputs_all_by_input0();
         }
+
+        if ( bTableLog )
+          imageOut.TableLog_header_body(
+            imageHeaderPrefix_forTableLog + "_ActivationEscapingScale" );
 
         // Note1: Since there is no undo previous scales, it needs not
         //          .scale_byChannel_withoutAffect_BoundsArraySet().
@@ -1199,7 +1219,7 @@ class NumberImage_Base extends Recyclable.Root {
     imageIn, nActivationId,
     bTableLog, parametersDesc, imageHeaderPrefix_forTableLog ) {
 
-    let theActivationFunctionInfo
+    const theActivationFunctionInfo
       = ValueDesc.ActivationFunction.Singleton.getInfo_byId( nActivationId );
 
     // 0.1
