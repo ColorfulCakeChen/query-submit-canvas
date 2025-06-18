@@ -1081,6 +1081,10 @@ class NumberImage_Base extends Recyclable.Root {
    * @param {number} upperBound
    *   The upper bound of clamp.
    *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
+   *
    * @param {Object} parametersDesc
    *   Its .toString() for debug message of this block.
    *
@@ -1092,7 +1096,8 @@ class NumberImage_Base extends Recyclable.Root {
    * upperBound ] and converted to integers.
    */
   modify_byClamp_toInt(
-    lowerBound, upperBound, parametersDesc, ...clampNames ) {
+    lowerBound, upperBound,
+    bTableLog, parametersDesc, ...clampNames ) {
 
     let imageIn = this;
 
@@ -1133,15 +1138,14 @@ class NumberImage_Base extends Recyclable.Root {
 
     this.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
-
-!!! ...unfinished... (2025/06/11)
-// should use bTableLog
+    if ( bTableLog )
+      imageOut.TableLog_header_body( `${clampNames.join( "_" )}` );
 
     return imageIn;
   }
 
   /**
-   * Note: This method does not adjust any BoundsArraySet.
+   * Note: This method does NOT adjust any BoundsArraySet.
    *
    * @param {NumberImage.Base} imageIn
    *   The imageIn.dataArray[] will be multiplied by scaleArray in place.
@@ -1189,6 +1193,10 @@ class NumberImage_Base extends Recyclable.Root {
         }
       }
     }
+
+!!! ...unfinished... (2025/06/18)
+// Since this method does not adjust BoundArraySet,
+// it should not table log here.
 
     if ( bTableLog )
       imageOut.TableLog_header_body( `${scaleNames.join( "_" )}` );
@@ -1780,8 +1788,9 @@ class NumberImage_Base extends Recyclable.Root {
    *   - Only ( outputGroupCount == 2 ) is supported.
    *   - The channel count must be even (i.e. divisible by 2).
    *
-   * @param {NumberImage.Base} this
-   *   The source image to be processed.
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
    *
    * @param {Object} parametersDesc
    *   Its .toString() for debug message of this block.
@@ -1792,7 +1801,8 @@ class NumberImage_Base extends Recyclable.Root {
    * @return {NumberImage.Base}
    *   Return this object which has been modifed in place.
    */
-  modify_byInterleave_asGrouptTwo( parametersDesc, ...interleaveNames ) {
+  modify_byInterleave_asGrouptTwo(
+    bTableLog, parametersDesc, ...interleaveNames ) {
 
     // Shuffle dataArray
     {
@@ -1812,6 +1822,10 @@ class NumberImage_Base extends Recyclable.Root {
 
     this.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
+!!! ...unfinished... (2025/06/18)
+// should use bTableLog
+
+
     return this;
   }
 
@@ -1828,6 +1842,10 @@ class NumberImage_Base extends Recyclable.Root {
    * @param {NumberImage.Base} imageOutArray[ 1 ]
    *   The second output image.
    *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
+   *
    * @param {Object} parametersDesc
    *   Its .toString() for debug message of this block.
    *
@@ -1835,7 +1853,8 @@ class NumberImage_Base extends Recyclable.Root {
    *   The strings for debug message of this splitting.
    */
   static calcSplitAlongAxisId2(
-    imageIn, imageOutArray, parametersDesc, ...splitNames ) {
+    imageIn, imageOutArray,
+    bTableLog, parametersDesc, ...splitNames ) {
 
     imageOutArray.length = 2;
     imageOutArray[ 0 ] = null;
@@ -1923,6 +1942,10 @@ class NumberImage_Base extends Recyclable.Root {
 
     imageOut0.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
     imageOut1.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
+
+!!! ...unfinished... (2025/06/18)
+// should use bTableLog
+
   }
 
   /**
@@ -1931,6 +1954,10 @@ class NumberImage_Base extends Recyclable.Root {
    *
    * @param {NumberImage.Base} imageIn2
    *   The source image2 to be processed.
+   *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
    *
    * @param {Object} parametersDesc
    *   Its .toString() for debug message of this block.
@@ -1944,7 +1971,8 @@ class NumberImage_Base extends Recyclable.Root {
    * both imageIn1 and imageIn2 is null, return null.
    */
   static calcConcatAlongAxisId2(
-    imageIn1, imageIn2, parametersDesc, ...concatNames ) {
+    imageIn1, imageIn2,
+    bTableLog, parametersDesc, ...concatNames ) {
 
     if ( null == imageIn1 ) {
       if ( null == imageIn2 )
@@ -2009,6 +2037,12 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut.boundsArraySet.set_outputs_all_by_concat_input0_input1();
     imageOut.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
+
+
+!!! ...unfinished... (2025/06/18)
+// should use bTableLog
+
+
     return imageOut;
   }
 
@@ -2036,6 +2070,10 @@ class NumberImage_Base extends Recyclable.Root {
    *     - If true, channels will be splitted into imageOutArray[ 0 ] and
    *         imageOutArray[ 1 ].
    *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
+   *
    * @param {Object} parametersDesc
    *   Its .toString() for debug message of this block.
    *
@@ -2044,7 +2082,7 @@ class NumberImage_Base extends Recyclable.Root {
    */
   static calcConcatShuffleSplit(
     imageInArray, imageOutArray, bShuffle, bSplit,
-    parametersDesc, ...concatShuffleSplitNames ) {
+    bTableLog, parametersDesc, ...concatShuffleSplitNames ) {
 
     if ( imageInArray.length != 2 )
       throw Error( `${concatShuffleSplitNames.join( "_" )}: `
@@ -2077,6 +2115,11 @@ class NumberImage_Base extends Recyclable.Root {
     let shuffleResult;
     if ( bShuffle ) {
       shuffleResult = concatResult.modify_byInterleave_asGrouptTwo(
+
+!!! ...unfinished... (2025/06/18)
+// should use bTableLog
+
+
         parametersDesc, "concatShuffleSplitName", "interleave_asGrouptTwo" );
 
       // Note: The concatResult is just modified (i.e. not cloned). So do not
@@ -2099,6 +2142,12 @@ class NumberImage_Base extends Recyclable.Root {
       imageOutArray[ 0 ] = shuffleResult;
       imageOutArray[ 1 ] = null;
     }
+
+
+!!! ...unfinished... (2025/06/18)
+// should use bTableLog
+
+
   }
 
   /**
@@ -2151,9 +2200,6 @@ class NumberImage_Base extends Recyclable.Root {
       this.depth,
       this.boundsArraySet.output0 // Only log .output0 should be enough.
     );
-
-//!!! (2025/06/04 Remarked) Only log .output0 should be enough.
-//    this.boundsArraySet.TableLog_header_body();
   }
 
   /**

@@ -951,9 +951,15 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       const lowerBound = 0;
       const upperBound = ( testParams.out.vocabularyCountPerInputChannel - 1 );
       imageOut.modify_byClamp_toInt(
-        lowerBound, upperBound, testParams.out, "output_clamp_int" );
+        lowerBound, upperBound,
+
+!!! ...unfinished... (2025/06/18)
+// should use bTableLog
+
+        ???bTableLog,
+        testParams.out, "output_clamp_int" );
     }
-    
+
     return imageOut;
   }
 
