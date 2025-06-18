@@ -1133,6 +1133,10 @@ class NumberImage_Base extends Recyclable.Root {
 
     this.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
+
+!!! ...unfinished... (2025/06/11)
+// should use bTableLog
+
     return imageIn;
   }
 
@@ -1208,9 +1212,6 @@ class NumberImage_Base extends Recyclable.Root {
    * @param {Object} parametersDesc
    *   Its .toString() will be used for debug message of this block.
    *
-   * @param {string} imageHeaderPrefix_forTableLog
-   *   The image header prefix before this activation function for table log.
-   *
    * @return {NumberImage.Base}
    *   Return this which may or may not be modified by activation function
    * (according to nActivationId). The this.dataArray will be just the original
@@ -1263,7 +1264,7 @@ class NumberImage_Base extends Recyclable.Root {
     if ( bTableLog )
       imageIn.TableLog_header_body(
         imageHeaderPrefix_forTableLog
-          + `_afterActivation ( ${strActivationNameWithInt} )` );
+          + `_Activation ( ${strActivationNameWithInt} )` );
 
     return imageIn;
   }
@@ -1389,9 +1390,8 @@ class NumberImage_Base extends Recyclable.Root {
       imageOutNew.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
     }
 
-!!! ...unfinished... (2025/06/11)
-// should use bTableLog
-
+    if ( bTableLog )
+      imageOutNew.TableLog_header_body( `${addNames.join( "_" )}` );
 
     return imageOutNew;
   }
