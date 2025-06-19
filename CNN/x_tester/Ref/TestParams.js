@@ -665,10 +665,8 @@ class TestParams_Base extends Recyclable.Root {
     {
       let paramValuePairArray = config.paramValuePairArray;
       if ( !paramValuePairArray ) {
-        
         paramValuePairArray = config.paramValuePairArray
           = new Array( paramDescConfigArray.length );
-
         for ( let i = 0; i < paramValuePairArray.length; ++i ) {
           paramValuePairArray[ i ] = {};
         }

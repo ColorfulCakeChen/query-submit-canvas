@@ -92,13 +92,13 @@ class Int extends Same {
 
     // Rearrange valueInt between min and max fairly (in probability).
     //
-    // A1: Why not use remainder operator (%) directly?
-    // Q1: Because remainder always has the same sign as dividend, this can not
+    // Q1: Why not use remainder operator (%) directly?
+    // A1: Because remainder always has the same sign as dividend, this can not
     //     handle the situation which min and max have different sign.
     //
-    // A2: Why not just restrict all value less than min to valueMin and value
+    // Q2: Why not just restrict all value less than min to valueMin and value
     //     greater than max to max?
-    // Q2: Although this could restrict value in range, it will skew the
+    // A2: Although this could restrict value in range, it will skew the
     //     probability of every value in the range. Unfair probability could be
     //     harmful to evolution algorithm.
     //
