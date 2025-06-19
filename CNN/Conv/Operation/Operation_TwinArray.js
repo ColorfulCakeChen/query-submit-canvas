@@ -98,11 +98,16 @@ class TwinArray extends Root {
     // In order to handle keep-input-flag correctly (even if no sub operation
     // at all), an ending dummy operation is used.
     {
+      // The parent of the dummy operation should be this Operation.TwinArray
+      // because the dummy operation is not visible from outside. (This is
+      // different from all other appended operations which are created (and
+      // known and visible) by outside caller.)
+      const dummy_parentNameable = this;
+      const dummy_name = "DummyFinal";
+      const dummy_bTableLog = this.bTableLog;
+
       this.endingDummyOperation = Dummy.Pool.get_or_create_by(
-
-!!! ...unfinished... (2025/06/19)
-// parentNameable, name, bTableLog,
-
+        dummy_parentNameable, dummy_name, dummy_bTableLog,
         inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
       // The ending dummy operation's output will be the output of this
