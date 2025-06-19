@@ -692,9 +692,9 @@ class TestParams_Base extends Recyclable.Root {
       // Randomly place the parameter directly or in weights array.
 
       //!!! (2021/07/19 Temp Used) For testing without randomly.
-      //let dice = 0;
-      //let dice = 1;
-      let dice = Math.random();
+      //const dice = 0;
+      //const dice = 1;
+      const dice = Math.random();
       if ( dice < 0.5 ) {
         // Try parameter value assigned directly (i.e. by specifying).      
         this.in[ paramDesc.paramName ] = pair.valueInput;
