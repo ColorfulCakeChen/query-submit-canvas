@@ -143,9 +143,9 @@ class Int extends Same {
       valueInputIntSign = 1;
     }
 
-    // A: Why not use Math.random() to generate value between [ 0, 1 )
+    // Q: Why not use Math.random() to generate value between [ 0, 1 )
     //    directly?
-    // Q: In order to avoid rounded into another integer when converted from
+    // A: In order to avoid rounded into another integer when converted from
     //    Float64 (here) to Float32 (weights array), the random value should
     //    not too close to 1. For example, 1.9999999999999999999 might become
     //    2.0 when converted from Float64 to Float32.
