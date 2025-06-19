@@ -253,8 +253,8 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
       // to be kept.
       //
       // Note: This assumption is not always correct. If the .input1 is used
-      //       (and will be disposed) before .input0, then a disposed might be
-      //       used by this operation.
+      //       (and will be disposed) before .input0, then a disposed tensor
+      //       might be used by this operation (i.e. has problem).
       // 
       input0_bKeep = true;
     }
