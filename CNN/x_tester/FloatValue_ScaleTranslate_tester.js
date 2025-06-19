@@ -367,22 +367,22 @@ function* tester( progressParent ) {
   let progressCases = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progress_ValueRange_valueInputOutputGenerator = progressParent.child_add(
+  let progress_Weights_Float32Array_RestrictedClone = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progress_Weights_Float32Array_RestrictedClone = progressParent.child_add(
+  let progress_ValueRange_valueInputOutputGenerator = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   // 1.
   yield *testerCases( progressCases );
 
   // 2.
-  yield *tester_ValueRange_valueInputOutputGenerator(
-    progress_ValueRange_valueInputOutputGenerator );
-
-  // 3.
   yield *tester_Weights_Float32Array_RestrictedClone(
     progress_Weights_Float32Array_RestrictedClone );
+
+  // 3.
+  yield *tester_ValueRange_valueInputOutputGenerator(
+    progress_ValueRange_valueInputOutputGenerator );
 
   console.log( "FloatValue_ScaleTranslate testing... Done." );
 }
