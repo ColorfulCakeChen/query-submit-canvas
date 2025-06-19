@@ -395,141 +395,6 @@ class HeightWidthDepth {
     tf.dispose( outputTensor3dArray );
   }
 
-!!! ...unfinished... (2025/06/19)
-// Moved to itself's xxx_tester
-
-  test_Weights_Float32Array_RestrictedClone() {
-
-    let inputArray = new Float32Array( [
-      undefined, null, "", "A", "2", Number.NaN,
-      Number.NEGATIVE_INFINITY,
-           -Math.pow( 2, +25 ), -Math.pow( 2, +24 ), -Math.pow( 2, +23 ),
-           -Math.pow( 2, -23 ), -Math.pow( 2, -24 ), -Math.pow( 2, -25 ),
-                             0,
-           +Math.pow( 2, -25 ), +Math.pow( 2, -24 ), +Math.pow( 2, -23 ),
-           +Math.pow( 2, +23 ), +Math.pow( 2, +24 ), +Math.pow( 2, +25 ),
-      Number.POSITIVE_INFINITY,
-    ] );
-
-    const POSITIVE_MAX = Weights.Base.ValueBounds.upper;
-    const NEGATIVE_MIN = Weights.Base.ValueBounds.lower;
-
-    let verifyArray = new Float32Array( [
-      0, 0, 0, 0, 2, 0,
-       NEGATIVE_MIN,
-       NEGATIVE_MIN,  NEGATIVE_MIN, -( 2 ** +23 ),
-      -( 2 ** -23 ), -( 2 ** -24 ), -( 2 ** -25 ),
-                  0,
-      +( 2 ** -25 ), +( 2 ** -24 ), +( 2 ** -23 ),
-      +( 2 ** +23 ),  POSITIVE_MAX,  POSITIVE_MAX,
-       POSITIVE_MAX,
-    ] );
-
-    let outputArray = Weights.Base.ValueBounds.Float32Array_RestrictedClone( inputArray );
-
-    if ( inputArray.length != outputArray.length )
-      throw Error( `test_Weights_Float32Array_RestrictedClone(): `
-        + `inputArray.length ( ${inputArray.length} ) `
-        + `should be the same as outputArray.length ( ${outputArray.length} ).`
-      );
-
-    for ( let i = 0; i < inputArray.length; ++i ) {
-      let inputElement = inputArray[ i ];
-      let verifyElement = verifyArray[ i ];
-      let outputElement = outputArray[ i ];
-
-      if ( outputElement !== verifyElement )
-        throw Error( `test_Weights_Float32Array_RestrictedClone(): `
-          + `Weights.Base.ValueBounds.Float32Array_RestrictedClone( `
-          + `inputArray[ ${i} ] = ${inputElement} ) `
-          + `should be ( ${verifyElement} ) but got `
-          + `( ${outputElement} ).`
-        );
-
-      let outputElementSingle
-        = Weights.Base.ValueBounds.clamp_or_zeroIfNaN( inputElement );
-
-      if ( outputElementSingle !== verifyElement )
-        throw Error( `test_Weights_Float32Array_RestrictedClone(): `
-          + `Weights.Base.ValueBounds.clamp_or_zeroIfNaN( `
-          + `inputArray[ ${i} ] = ${inputElement} ) `
-          + `should be ( ${verifyElement} ) but got `
-          + `( ${outputElementSingle} ).`
-        );
-    }
-  }
-
-  test_ValueRange_valueInputOutputGenerator() {
-    let valuePair = {};
-
-    // Test ValueRange.Bool().valueInputOutputGenerator().
-    {
-      let paramDesc = Block.Params.bKeepInputTensor;
-
-      for ( let offsetMultiplier = -100;
-        offsetMultiplier <= +100; ++offsetMultiplier ) {
-
-        for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator(
-          valuePair, offsetMultiplier ) ) {
-
-          let adjustedInput
-            = paramDesc.valueDesc.range.adjust( pair.valueInput );
-
-          if ( adjustedInput != pair.valueOutput )
-            throw Error( `ValueRange.Bool()`
-              + `.valueInputOutputGenerator( ${offsetMultiplier} ): `
-              + `this.adjust( ${pair.valueInput} ) return `
-              + `( ${adjustedInput} ) should be ( ${pair.valueOutput} ).` );
-        }
-      }
-    }
-
-    // Test ValueRange.Int().valueInputOutputGenerator().
-    {
-      let paramDesc = Block.Params.pointwise20ChannelCount;
-
-      for ( let offsetMultiplier = -10;
-        offsetMultiplier <= +10; ++offsetMultiplier ) {
-        
-        let valueOutMinMax;
-        {
-          let dice = Math.random();
-          if ( dice < 0.5 ) {
-            valueOutMinMax = [
-              RandTools.getRandomIntInclusive(
-                paramDesc.valueDesc.range.min,
-                paramDesc.valueDesc.range.max ),
-              RandTools.getRandomIntInclusive(
-                paramDesc.valueDesc.range.min,
-                paramDesc.valueDesc.range.max ),
-            ];
-          }
-        }
-
-        for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator(
-          valuePair, offsetMultiplier, valueOutMinMax ) ) {
-
-          let adjustedInput
-            = paramDesc.valueDesc.range.adjust( pair.valueInput );
-
-          if ( adjustedInput != pair.valueOutput )
-            throw Error( `ValueRange.Int( `
-              + `${paramDesc.min}, ${paramDesc.max} )`
-              + `.valueInputOutputGenerator( ${offsetMultiplier} ): `
-              + `this.adjust( ${pair.valueInput} ) return `
-              + `( ${adjustedInput} ) should be ( ${pair.valueOutput} ).` );
-        }
-      }
-
-    }
-  }
-
-//!!! ...unfinished... (2025/06/19)
-// Moved to Operation_tester.js
-//   test_Operation() {
-//     jsPerf_Operation.testCorrectness();
-//   }
-
   // Testing whether the results of different implementation are the same.
   * testCorrectness() {
 
@@ -541,19 +406,16 @@ class HeightWidthDepth {
 
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
-      Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
-        "jsPerf_Block.HeightWidthDepth.testCorrectness()", () => {
-
-!!! ...unfinished... (2025/06/19)
+//!!! ...unfinished... (2025/06/19)
 // Moved to itself's xxx_tester
-
-          this.test_Weights_Float32Array_RestrictedClone();
-          this.test_ValueRange_valueInputOutputGenerator();
-
-        }, this
-      );
-
-      yield;
+//       Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
+//         "jsPerf_Block.HeightWidthDepth.testCorrectness()", () => {
+//           this.test_Weights_Float32Array_RestrictedClone();
+//           this.test_ValueRange_valueInputOutputGenerator();
+//         }, this
+//       );
+//
+//       yield;
 
       {
         // Test memory leakage of imageSourceBag and channelShufflerBag.

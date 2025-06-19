@@ -4,6 +4,7 @@ import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
 import * as RandTools from "../util/RandTools.js";
 import * as TensorTools from "../util/TensorTools.js";
+import * as ValueMax from "../util/ValueMax.js";
 import * as FloatValue from "../Unpacker/FloatValue.js";
 
 /**
@@ -190,6 +191,164 @@ function *testerCases( progressParent ) {
   yield progressRoot;
 }
 
+
+/** */
+function *tester_Weights_Float32Array_RestrictedClone( progressParent ) {
+  const funcNameInMessage = "tester_Weights_Float32Array_RestrictedClone";
+
+  let testCaseCount = 1;
+
+  let progressRoot = progressParent.root_get();
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+
+
+  let inputArray = new Float32Array( [
+    undefined, null, "", "A", "2", Number.NaN,
+    Number.NEGATIVE_INFINITY,
+          -Math.pow( 2, +25 ), -Math.pow( 2, +24 ), -Math.pow( 2, +23 ),
+          -Math.pow( 2, -23 ), -Math.pow( 2, -24 ), -Math.pow( 2, -25 ),
+                            0,
+          +Math.pow( 2, -25 ), +Math.pow( 2, -24 ), +Math.pow( 2, -23 ),
+          +Math.pow( 2, +23 ), +Math.pow( 2, +24 ), +Math.pow( 2, +25 ),
+    Number.POSITIVE_INFINITY,
+  ] );
+
+  const POSITIVE_MAX = Weights.Base.ValueBounds.upper;
+  const NEGATIVE_MIN = Weights.Base.ValueBounds.lower;
+
+  let verifyArray = new Float32Array( [
+    0, 0, 0, 0, 2, 0,
+      NEGATIVE_MIN,
+      NEGATIVE_MIN,  NEGATIVE_MIN, -( 2 ** +23 ),
+    -( 2 ** -23 ), -( 2 ** -24 ), -( 2 ** -25 ),
+                0,
+    +( 2 ** -25 ), +( 2 ** -24 ), +( 2 ** -23 ),
+    +( 2 ** +23 ),  POSITIVE_MAX,  POSITIVE_MAX,
+      POSITIVE_MAX,
+  ] );
+
+  let outputArray
+    = Weights.Base.ValueBounds.Float32Array_RestrictedClone( inputArray );
+
+  if ( inputArray.length != outputArray.length )
+    throw Error( `${funcNameInMessage}(): `
+      + `inputArray.length ( ${inputArray.length} ) `
+      + `should be the same as outputArray.length ( ${outputArray.length} ).`
+    );
+
+  for ( let i = 0; i < inputArray.length; ++i ) {
+    let inputElement = inputArray[ i ];
+    let verifyElement = verifyArray[ i ];
+    let outputElement = outputArray[ i ];
+
+    if ( outputElement !== verifyElement )
+      throw Error( `${funcNameInMessage}(): `
+        + `Weights.Base.ValueBounds.Float32Array_RestrictedClone( `
+        + `inputArray[ ${i} ] = ${inputElement} ) `
+        + `should be ( ${verifyElement} ) but got `
+        + `( ${outputElement} ).`
+      );
+
+    let outputElementSingle
+      = Weights.Base.ValueBounds.clamp_or_zeroIfNaN( inputElement );
+
+    if ( outputElementSingle !== verifyElement )
+      throw Error( `${funcNameInMessage}(): `
+        + `Weights.Base.ValueBounds.clamp_or_zeroIfNaN( `
+        + `inputArray[ ${i} ] = ${inputElement} ) `
+        + `should be ( ${verifyElement} ) but got `
+        + `( ${outputElementSingle} ).`
+      );
+  }
+
+  progressToAdvance.value_advance();
+  yield progressRoot;
+}
+
+/** */
+function *tester_ValueRange_valueInputOutputGenerator( progressParent ) {
+  const funcNameInMessage = "tester_ValueRange_valueInputOutputGenerator";
+
+  let testCaseCount = 2;
+
+  let progressRoot = progressParent.root_get();
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+
+
+  let valuePair = {};
+
+  // Test ValueRange.Bool().valueInputOutputGenerator().
+  {
+    let paramDesc = Block.Params.bKeepInputTensor;
+
+    for ( let offsetMultiplier = -100;
+      offsetMultiplier <= +100; ++offsetMultiplier ) {
+
+      for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator(
+        valuePair, offsetMultiplier ) ) {
+
+        let adjustedInput
+          = paramDesc.valueDesc.range.adjust( pair.valueInput );
+
+        if ( adjustedInput != pair.valueOutput )
+          throw Error( `${funcNameInMessage}(): `
+            + `ValueRange.Bool()`
+            + `.valueInputOutputGenerator( ${offsetMultiplier} ): `
+            + `this.adjust( ${pair.valueInput} ) return `
+            + `( ${adjustedInput} ) should be ( ${pair.valueOutput} ).` );
+      }
+    }
+  }
+
+  progressToAdvance.value_advance();
+  yield progressRoot;
+
+  // Test ValueRange.Int().valueInputOutputGenerator().
+  {
+    let paramDesc = Block.Params.pointwise20ChannelCount;
+
+    for ( let offsetMultiplier = -10;
+      offsetMultiplier <= +10; ++offsetMultiplier ) {
+      
+      let valueOutMinMax;
+      {
+        let dice = Math.random();
+        if ( dice < 0.5 ) {
+          valueOutMinMax = [
+            RandTools.getRandomIntInclusive(
+              paramDesc.valueDesc.range.min,
+              paramDesc.valueDesc.range.max ),
+            RandTools.getRandomIntInclusive(
+              paramDesc.valueDesc.range.min,
+              paramDesc.valueDesc.range.max ),
+          ];
+        }
+      }
+
+      for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator(
+        valuePair, offsetMultiplier, valueOutMinMax ) ) {
+
+        let adjustedInput
+          = paramDesc.valueDesc.range.adjust( pair.valueInput );
+
+        if ( adjustedInput != pair.valueOutput )
+          throw Error( `${funcNameInMessage}(): `
+            + `ValueRange.Int( `
+            + `${paramDesc.min}, ${paramDesc.max} )`
+            + `.valueInputOutputGenerator( ${offsetMultiplier} ): `
+            + `this.adjust( ${pair.valueInput} ) return `
+            + `( ${adjustedInput} ) should be ( ${pair.valueOutput} ).` );
+      }
+    }
+
+  }
+
+  progressToAdvance.value_advance();
+  yield progressRoot;
+}
+
 /**
  *
  * @param {ValueMax.Percentage.Aggregate} progressParent
@@ -206,8 +365,22 @@ function* tester( progressParent ) {
   let progressCases = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
+  let progress_ValueRange_valueInputOutputGenerator = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progress_Weights_Float32Array_RestrictedClone = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
   // 1.
   yield *testerCases( progressCases );
+
+  // 2.
+  yield *tester_ValueRange_valueInputOutputGenerator(
+    progress_ValueRange_valueInputOutputGenerator );
+
+  // 3.
+  yield *tester_Weights_Float32Array_RestrictedClone(
+    progress_Weights_Float32Array_RestrictedClone );
 
   console.log( "FloatValue_ScaleTranslate testing... Done." );
 }
