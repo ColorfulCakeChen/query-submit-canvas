@@ -611,7 +611,21 @@ class TestParams_Base extends Recyclable.Root {
    * should not be modified because it will be re-used.
    */
   static *ParamsGenerator( paramDescConfigArray ) {
-    this.config = { paramDescConfigArray: paramDescConfigArray };
+    const config = this.config
+      = { paramDescConfigArray: paramDescConfigArray };
+
+    // Prepare an re-usable object for placing the value pair of current
+    // ParamDesc. (For reducing memory re-allocation.)
+    //
+    // (2025/06/19)
+    {
+      const paramValuePairArray = config.paramValuePairArray
+        = new Array( paramDescConfigArray.length );
+
+      for ( let i = 0; i < paramValuePairArray.length; ++i ) {
+        paramValuePairArray[ i ] = {};
+      }
+    }
 
     // Note: this.in and this.in.paramsNumberArrayObject will not be cleared.
     //       They will be reused directly.
@@ -631,7 +645,7 @@ class TestParams_Base extends Recyclable.Root {
    *   Every time one kind of parameters' combination is generated, the
    * "this" will be yielded.
    */
-  static * permuteParamRecursively( currentParamDescConfigIndex ) {
+  static *permuteParamRecursively( currentParamDescConfigIndex ) {
     const config = this.config;
     const paramDescConfigArray = config.paramDescConfigArray;
 
@@ -659,20 +673,23 @@ class TestParams_Base extends Recyclable.Root {
       return;
     }
 
-    // Prepare an re-usable object for placing the value pair of current
-    // ParamDesc. (For reducing memory re-allocation.)
-    let valuePair;
-    {
-      let paramValuePairArray = config.paramValuePairArray;
-      if ( !paramValuePairArray ) {
-        paramValuePairArray = config.paramValuePairArray
-          = new Array( paramDescConfigArray.length );
-        for ( let i = 0; i < paramValuePairArray.length; ++i ) {
-          paramValuePairArray[ i ] = {};
-        }
-      }
-      valuePair = paramValuePairArray[ currentParamDescConfigIndex ];
-    }
+    let valuePair = config.paramValuePairArray[ currentParamDescConfigIndex ];
+
+//!!! (2025/06/19 Modified) create config.paramValuePairArray when config created.
+//     // Prepare an re-usable object for placing the value pair of current
+//     // ParamDesc. (For reducing memory re-allocation.)
+//     let valuePair;
+//     {
+//       let paramValuePairArray = config.paramValuePairArray;
+//       if ( !paramValuePairArray ) {
+//         paramValuePairArray = config.paramValuePairArray
+//           = new Array( paramDescConfigArray.length );
+//         for ( let i = 0; i < paramValuePairArray.length; ++i ) {
+//           paramValuePairArray[ i ] = {};
+//         }
+//       }
+//       valuePair = paramValuePairArray[ currentParamDescConfigIndex ];
+//     }
 
     let nextParamDescConfigIndex = currentParamDescConfigIndex + 1;
 
