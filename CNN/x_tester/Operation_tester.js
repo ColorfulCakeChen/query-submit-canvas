@@ -169,21 +169,21 @@ class Case {
 Case.testTensorShape = [ 1 ];
 
 /** */
-function *tester???Circularly( progressParent ) {
-  const funcNameInMessage = ???"testerCircularly";
-
-  let testCaseCount = 3;
-
-  let progressRoot = progressParent.root_get();
-  let progressToAdvance = progressParent.child_add(
-    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
-
-!!! ...unfinished... (2025/06/19)
+function *testerCases( progressParent ) {
+  const funcNameInMessage = "testerCases";
 
   let classOperationDummy = Operation.Dummy;
   let classOperationTwinArray = Operation.TwinArray;
   let classTestedArray = Recyclable.Array.Pool.get_or_create_by(
     classOperationDummy, classOperationTwinArray );
+
+
+  let testCaseCount = classTestedArray.length;
+
+  let progressRoot = progressParent.root_get();
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+
 
   let caseId = -1;
   let bInput0, bInput1,
@@ -229,16 +229,13 @@ function *tester???Circularly( progressParent ) {
         }
       }
     }
+
+    progressToAdvance.value_advance();
+    yield progressRoot;
   }
 
   classTestedArray.disposeResources_and_recycleToPool();
   classTestedArray = null;
-
-!!! ...unfinished... (2025/06/19)
-
-  progressToAdvance.value_advance();
-  yield progressRoot;
-
 }
 
 /**
@@ -252,21 +249,13 @@ function *tester???Circularly( progressParent ) {
 function* tester( progressParent ) {
   console.log( "Operation testing..." );
 
-!!! ...unfinished... (2025/06/19)
-
   // 0. Prepare progressParent for every TestCase.
 
-  let progressOne = progressParent.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
-
-  let progressCircularly = progressParent.child_add(
+  let progressCases = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   // 1.
-  yield *testerOne( progressOne );
-
-  // 2.
-  yield *testerCircularly( progressCircularly );
+  yield *testerCases( progressCases );
 
   console.log( "Operation testing... Done." );
 }
