@@ -25,10 +25,7 @@ import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 async function *testerBackend( progressParent, backendName ) {
   const funcNameInMessage = "testerBackend";
 
-!!! ...unfinished... (2025/06/19)
-// Perhaps, get testCaseCount from ParamDescConfigAll
-
-  let testCaseCount = 1;
+  let testCaseCount = 1; // Temporary value because it is unknown here.
 
   let progressRoot = progressParent.root_get();
   let progressToAdvance = progressParent.child_add(
@@ -64,6 +61,13 @@ async function *testerBackend( progressParent, backendName ) {
         null, "Block_Reference" );
 
       let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
+
+
+!!! ...unfinished... (2025/06/19)
+// Perhaps, get testCaseCount from ParamDescConfigAll
+      // Set up correct test case count.
+      testCaseCount = testParams.config.???;
+      progressToAdvance.max = testCaseCount;
 
       try {
         for ( let testParams of testParamsGenerator ) {
