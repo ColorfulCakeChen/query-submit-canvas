@@ -18,10 +18,12 @@ import * as ImageSourceBag from "./Ref/ImageSourceBag.js";
 import * as Block from "../Conv/Block.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 
-/** */
-function *testerCases( progressParent ) {
-  const funcNameInMessage = "testerCases";
-
+/**
+ * @param {string} backendName
+ *   The backend name string of tensorflow.js
+ */
+async function *testerBackend( progressParent, backendName ) {
+  const funcNameInMessage = "testerBackend";
 
 !!! ...unfinished... (2025/06/19)
 
@@ -31,8 +33,16 @@ function *testerCases( progressParent ) {
   let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
 
-!!! ...unfinished... (2025/06/19)
-// Moved to itself's xxx_tester
+  // Ensure backend of tensorflow.js
+  {
+    await tf.ready(); // Ensure tf.getBackend() workable.
+
+    let currentBackendName = tf.getBackend();
+    if ( currentBackendName != backendName ) {
+      let setBackendOkPromise = tf.setBackend( backendName );
+      let setBackendOk = await setBackendOkPromise;
+    }
+  }
 
   {
     // Test memory leakage of imageSourceBag and channelShufflerBag.
@@ -71,9 +81,9 @@ function *testerCases( progressParent ) {
       // A: To catch testParamsGenerator's exception.
       } catch ( e ) {
         let backendName = tf.getBackend();
-        let msg = `jsPerf_Block.js: testCorrectness(): `
+        let msg = `CNN_Block_tester.${funcNameInMessage}(): `
           + `backendName=${backendName}, `
-          + `Block, (yieldCount == ${testParams.yieldCount}), `
+          + `Block, ( yieldCount == ${testParams.yieldCount} ), `
           + `testParams.id == ${testParams.id}`;
 
         console.log( msg );
@@ -101,16 +111,21 @@ function *testerCases( progressParent ) {
     let memoryInfo_testCorrectness_after = tf.memory();
 
     if ( memoryInfo_testCorrectness_after.numTensors
-            != memoryInfo_testCorrectness_before.numTensors )
-      throw Error( `testCorrectness() memory leak. `
+            != memoryInfo_testCorrectness_before.numTensors ) {
+
+      const backendName = tf.getBackend();
+      const msg = `CNN_Block_tester.${funcNameInMessage}(): `
+        + `backendName=${backendName}, `
+        + ` memory leak. `
         + `result tensor count `
         + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
         + `should be `
         + `( ${memoryInfo_testCorrectness_before.numTensors} ) `
-      );
+      throw Error( msg );
+    }
   }
 
-
+!!! ...unfinished... (2025/06/19)
 
 
   progressToAdvance.value_advance();
@@ -125,16 +140,30 @@ function *testerCases( progressParent ) {
  * The progressParent.root_get() will be returned when every time yield.
  *
  */
-function* tester( progressParent ) {
+async function* tester( progressParent ) {
   console.log( "CNN_Block testing..." );
 
   // 0. Prepare progressParent for every TestCase.
 
-  let progressCases = progressParent.child_add(
+  let progressCPU = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
+  let progressWebGL = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  // (2025/06/19 Remarked)
+  // let progressWASM = progressParent.child_add(
+  //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
   // 1.
-  yield *testerCases( progressCases );
+  yield *testerBackend( progressCPU, "cpu" );
+
+  // 2.
+  yield *testerBackend( progressWebGL, "webgl" );
+
+  // (2025/06/19 Remarked)
+  // // 3.
+  // yield *testerBackend( progressWASM, "wasm" );
 
   console.log( "CNN_Block testing... Done." );
 }
