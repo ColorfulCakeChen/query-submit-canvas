@@ -230,8 +230,8 @@ class TwinArray extends Root {
    */
   setKeepInputTensor( bKeepInputTensor0, bKeepInputTensor1 ) {
 
-    // Q: Why not recorded bKeepInputTensor0 and bKeepInputTensor1 as data
-    //    members.
+    // Q: Why not record bKeepInputTensor0 and bKeepInputTensor1 as data
+    //    members?
     // A: The operation appending is complex so that the keep-input state will
     //    be changed in complicated way. Recording them is not helpful.
 
@@ -249,7 +249,7 @@ class TwinArray extends Root {
    */
   static setKeepInputTensor_by_operationArray_endingDummyOperation_alwaysKeepSet() {
 
-    // 2. Every input tensors' final operation is responsible for releasing
+    // 1. Every input tensors' final operation is responsible for releasing
     //    the tensor (except the input tensors which are requested to be kept
     //    (i.e. inside alwaysKeepSet)).
     //
@@ -259,7 +259,7 @@ class TwinArray extends Root {
         this.alwaysKeepSet );
     }
 
-    // 3.
+    // 2.
     this.endingDummyOperation.setKeepInputTensor_IfNotFinalOperation_Or_In(
       this.alwaysKeepSet );
   }
