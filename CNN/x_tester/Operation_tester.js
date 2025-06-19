@@ -32,14 +32,14 @@ class Case {
     this.bTableLog = true;
 
     this.assertPrefix
-      = `jsPerf_Operation.Case( this.caseId == ${this.caseId} )`;
+      = `Operation_tester.Case( this.caseId == ${this.caseId} )`;
 
     try {
 
       Pool.All.sessionCall(
         Pool.Asserter.assert_Pool_issuedCount_same_after_as_before,
         null, // The "this" when calling Pool.Asserter.assert_Pool_issuedCount_same_after_as_before().
-        "jsPerf_Operation.Case()",
+        "Operation_tester.Case()",
         Case.test_sessionCall_internal,
         this, // The "this" when calling Case.test_sessionCall_internal().
       );
@@ -161,7 +161,7 @@ class Case {
     }
 
     if ( thisValue != rhsValue )
-      throw Error( `jsPerf_Operation.`
+      throw Error( `Operation_tester.`
         + `${strWholeName} ( ${thisValue} ) should be ( ${rhsValue} ).` );
   }
 }
