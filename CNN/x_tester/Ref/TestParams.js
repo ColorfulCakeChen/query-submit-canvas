@@ -33,6 +33,34 @@ class ParamDescConfig {
 
 
 /**
+ * Describe all ParamDescConfig.
+ *
+ */
+class ParamsConfig {
+
+  /**
+   * 
+   */
+  constructor( paramDescConfigArray ) {
+    this.paramDescConfigArray = paramDescConfigArray;
+
+    // Prepare an re-usable object for placing the value pair of every
+    // ParamDesc. (For reducing memory re-allocation.)
+    //
+    // (2025/06/19)
+    {
+      const paramValuePairArray = this.paramValuePairArray
+        = new Array( paramDescConfigArray.length );
+
+      for ( let i = 0; i < paramValuePairArray.length; ++i ) {
+        paramValuePairArray[ i ] = {};
+      }
+    }
+  }
+}
+
+
+/**
  * @member {ParamDesc.Xxx} paramDesc
  *   Which parameter is changed.
  *
@@ -611,6 +639,8 @@ class TestParams_Base extends Recyclable.Root {
    * should not be modified because it will be re-used.
    */
   static *ParamsGenerator( paramDescConfigArray ) {
+
+!!!
     const config = this.config = {
       paramDescConfigArray: paramDescConfigArray,
       paramValuePairArray: new Array( paramDescConfigArray.length )
