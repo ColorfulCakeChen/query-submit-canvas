@@ -629,7 +629,7 @@ class TestParams_Base extends Recyclable.Root {
    *
    * @yield {Base}
    *   Every time one kind of parameters' combination is generated, the
-   * this.result will be yielded.
+   * "this" will be yielded.
    */
   static * permuteParamRecursively( currentParamDescConfigIndex ) {
 
