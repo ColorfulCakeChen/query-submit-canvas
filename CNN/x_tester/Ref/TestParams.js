@@ -1,4 +1,5 @@
-export { ParamDescConfig, TestParams_Base as Base };
+export { ParamDescConfig, ParamDescConfigAll };
+export { TestParams_Base as Base };
 
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
