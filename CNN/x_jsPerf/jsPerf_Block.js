@@ -398,99 +398,99 @@ class HeightWidthDepth {
   // Testing whether the results of different implementation are the same.
   * testCorrectness() {
 
-    // (2025/05/25) Control whether test correctness.
-    const shouldCorrectnessTest = true;
-    //const shouldCorrectnessTest = false;
-
-    if ( shouldCorrectnessTest ) {
-
-      let pool_all_issuedCount_before = Pool.All.issuedCount;
-
-!!! ...unfinished... (2025/06/19)
-// Moved to itself's xxx_tester
-
-      {
-        // Test memory leakage of imageSourceBag and channelShufflerBag.
-        let memoryInfo_testCorrectness_before = tf.memory();
-
-        {
-          // Note: imageSourceBag and channelShufflerBag should not be created
-          //       outside tidy() because tidy() will dispose tensors
-          //       dynamically created in them.
-          let imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by();
-          let channelShufflerBag
-            = ChannelShuffler.Bag.Pool.get_or_create_by(
-                ChannelShuffler.ConcatPointwiseConv.Pool );
-
-          let testParams = Block_TestParams.Base.Pool.get_or_create_by();
-          let testParamsGenerator = testParams.ParamsGenerator();
-          let testReference = Block_Reference.Base.Pool.get_or_create_by(
-            null, "Block_Reference" );
-
-          let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
-
-          try {
-            for ( let testParams of testParamsGenerator ) {
-              let bDisplayed = batchIdCalculator.checkAndDisplay( testParams.id );
-
-              // Since just entering a new batch section, take a break so that
-              // memory garbage collector could be activated to work.
-              if ( bDisplayed )
-                yield;
-
-              testReference.testCorrectness(
-                imageSourceBag, testParams, channelShufflerBag );
-            }
-
-          // Q: Why not catch exception inside Block_Reference.testCorrectness()?
-          // A: To catch testParamsGenerator's exception.
-          } catch ( e ) {
-            let backendName = tf.getBackend();
-            let msg = `jsPerf_Block.js: testCorrectness(): `
-              + `backendName=${backendName}, `
-              + `Block, (yieldCount == ${testParams.yieldCount}), `
-              + `testParams.id == ${testParams.id}`;
-
-            console.log( msg );
-            alert( `${msg}\n${e}` );
-
-            //debugger;
-            throw e;
-          }
-
-          batchIdCalculator.checkAndDisplay( testParams.id );
-
-          testReference.disposeResources_and_recycleToPool();
-          testReference = null;
-
-          testParams.disposeResources_and_recycleToPool();
-          testParams = null;
-
-          channelShufflerBag.disposeResources_and_recycleToPool();
-          channelShufflerBag = null;
-
-          imageSourceBag.disposeResources_and_recycleToPool();
-          imageSourceBag = null;
-        }
-
-        let memoryInfo_testCorrectness_after = tf.memory();
-
-        if ( memoryInfo_testCorrectness_after.numTensors
-               != memoryInfo_testCorrectness_before.numTensors )
-          throw Error( `testCorrectness() memory leak. `
-            + `result tensor count `
-            + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
-            + `should be `
-            + `( ${memoryInfo_testCorrectness_before.numTensors} ) `
-          );
-      }
-
-      Pool.Asserter.assert_Pool_issuedCount(
-        "jsPerf_Block.HeightWidthDepth.testCorrectness()",
-        pool_all_issuedCount_before );
-
-      yield;
-    }
+// !!! ...unfinished... (2025/06/19)
+// Moved to CNN_Block_tester
+//
+//     // (2025/05/25) Control whether test correctness.
+//     const shouldCorrectnessTest = true;
+//     //const shouldCorrectnessTest = false;
+//
+//     if ( shouldCorrectnessTest ) {
+//
+//       let pool_all_issuedCount_before = Pool.All.issuedCount;
+//
+//       {
+//         // Test memory leakage of imageSourceBag and channelShufflerBag.
+//         let memoryInfo_testCorrectness_before = tf.memory();
+//
+//         {
+//           // Note: imageSourceBag and channelShufflerBag should not be created
+//           //       outside tidy() because tidy() will dispose tensors
+//           //       dynamically created in them.
+//           let imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by();
+//           let channelShufflerBag
+//             = ChannelShuffler.Bag.Pool.get_or_create_by(
+//                 ChannelShuffler.ConcatPointwiseConv.Pool );
+//
+//           let testParams = Block_TestParams.Base.Pool.get_or_create_by();
+//           let testParamsGenerator = testParams.ParamsGenerator();
+//           let testReference = Block_Reference.Base.Pool.get_or_create_by(
+//             null, "Block_Reference" );
+//
+//           let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
+//
+//           try {
+//             for ( let testParams of testParamsGenerator ) {
+//               let bDisplayed = batchIdCalculator.checkAndDisplay( testParams.id );
+//
+//               // Since just entering a new batch section, take a break so that
+//               // memory garbage collector could be activated to work.
+//               if ( bDisplayed )
+//                 yield;
+//
+//               testReference.testCorrectness(
+//                 imageSourceBag, testParams, channelShufflerBag );
+//             }
+//
+//           // Q: Why not catch exception inside Block_Reference.testCorrectness()?
+//           // A: To catch testParamsGenerator's exception.
+//           } catch ( e ) {
+//             let backendName = tf.getBackend();
+//             let msg = `jsPerf_Block.js: testCorrectness(): `
+//               + `backendName=${backendName}, `
+//               + `Block, (yieldCount == ${testParams.yieldCount}), `
+//               + `testParams.id == ${testParams.id}`;
+//
+//             console.log( msg );
+//             alert( `${msg}\n${e}` );
+//
+//             //debugger;
+//             throw e;
+//           }
+//
+//           batchIdCalculator.checkAndDisplay( testParams.id );
+//
+//           testReference.disposeResources_and_recycleToPool();
+//           testReference = null;
+//
+//           testParams.disposeResources_and_recycleToPool();
+//           testParams = null;
+//
+//           channelShufflerBag.disposeResources_and_recycleToPool();
+//           channelShufflerBag = null;
+//
+//           imageSourceBag.disposeResources_and_recycleToPool();
+//           imageSourceBag = null;
+//         }
+//
+//         let memoryInfo_testCorrectness_after = tf.memory();
+//
+//         if ( memoryInfo_testCorrectness_after.numTensors
+//                != memoryInfo_testCorrectness_before.numTensors )
+//           throw Error( `testCorrectness() memory leak. `
+//             + `result tensor count `
+//             + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
+//             + `should be `
+//             + `( ${memoryInfo_testCorrectness_before.numTensors} ) `
+//           );
+//       }
+//
+//       Pool.Asserter.assert_Pool_issuedCount(
+//         "jsPerf_Block.HeightWidthDepth.testCorrectness()",
+//         pool_all_issuedCount_before );
+//
+//       yield;
+//     }
 
     try {
       // After correctness testing done, create all Block for performance
