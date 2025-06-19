@@ -1,4 +1,4 @@
-export { testCorrectness };
+export { tester };
 
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
@@ -168,8 +168,17 @@ class Case {
 
 Case.testTensorShape = [ 1 ];
 
+/** */
+function *tester???Circularly( progressParent ) {
+  const funcNameInMessage = ???"testerCircularly";
 
-function testCorrectness() {
+  let testCaseCount = 3;
+
+  let progressRoot = progressParent.root_get();
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+
+!!! ...unfinished... (2025/06/19)
 
   let classOperationDummy = Operation.Dummy;
   let classOperationTwinArray = Operation.TwinArray;
@@ -224,4 +233,40 @@ function testCorrectness() {
 
   classTestedArray.disposeResources_and_recycleToPool();
   classTestedArray = null;
+
+!!! ...unfinished... (2025/06/19)
+
+  progressToAdvance.value_advance();
+  yield progressRoot;
+
+}
+
+/**
+ *
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   Some new progressToAdvance will be created and added to progressParent.
+ * The created progressToAdvance will be increased when every time advanced.
+ * The progressParent.root_get() will be returned when every time yield.
+ *
+ */
+function* tester( progressParent ) {
+  console.log( "Operation testing..." );
+
+!!! ...unfinished... (2025/06/19)
+
+  // 0. Prepare progressParent for every TestCase.
+
+  let progressOne = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  let progressCircularly = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  // 1.
+  yield *testerOne( progressOne );
+
+  // 2.
+  yield *testerCircularly( progressCircularly );
+
+  console.log( "Operation testing... Done." );
 }
