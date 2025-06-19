@@ -219,7 +219,7 @@ class Int extends Same {
     if ( io_valueOutMinMax ) {
 
       const [ valueOutMin, valueOutMax ]
-        = this.valueOutMinMax_adjust( valueOutMinMax );
+        = this.valueOutMinMax_adjust( io_valueOutMinMax );
 
       const difference = valueOutMax - valueOutMin
       return difference;
