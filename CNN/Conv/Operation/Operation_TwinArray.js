@@ -136,12 +136,14 @@ class TwinArray extends Root {
       this.tempLastOutputTensorPlaceholderArray = null;
     }
 
-    // Because outputs are not created by this operation, they should not be
+    // Because outputs are NOT created by this operation, they should NOT be
     // released by this operation.
     //
-    // Note: The this.output0 and this.output1 are created by
-    //       .endingDummyOperation (i.e. not by this), they should be released
-    //       by .endingDummyOperation.
+    // Note1: This behavior is different from the base class Operation_Base.
+    //
+    // Note2: The this.output0 and this.output1 are created by
+    //        .endingDummyOperation (i.e. not by this), they should be released
+    //        by .endingDummyOperation.
     //
     // Q: Why not just use read-only property to return
     //    .endingDummyOperation.outputX?
@@ -169,7 +171,7 @@ class TwinArray extends Root {
       this.operationArray = null;
     }
 
-    // Because inputs are not created by this operation, they should not be
+    // Because inputs are NOT created by this operation, they should NOT be
     // released by this operation.
     {
       if ( this.input1 )

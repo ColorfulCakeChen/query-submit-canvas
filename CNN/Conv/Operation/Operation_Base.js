@@ -164,7 +164,7 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
       }
     }
 
-    // Because inputs are not created by this operation, they should not be
+    // Because inputs are NOT created by this operation, they should NOT be
     // released by this operation.
     {
       if ( this.input1 )
@@ -483,7 +483,7 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    * oldTensorPlaceholder and newTensorPlaceholder always may be
    * modifed by this method.
    *
-   * The mehod is used for setting oldTensorPlaceholder (which must be one of
+   * This mehod is used for setting oldTensorPlaceholder (which must be one of
    * this operation object's input tensor placeholder property, e.g.
    * this.input0) as newTensorPlaceholder. It will register this operation as
    * the new input TensorPlaceholder's final operation.
