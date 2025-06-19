@@ -35,8 +35,11 @@ class ParamDescConfig {
 /**
  * Describe all ParamDescConfig.
  *
+ *
+ * @member {ParamDescConfig[]} paramDescConfigArray
+ *   List all the parameters to be used in permutation combination.
  */
-class ParamsConfig {
+class ParamDescConfigAll {
 
   /**
    * 
@@ -627,19 +630,18 @@ class TestParams_Base extends Recyclable.Root {
     );
   }
 
-
   /**
    * Responsible for generating testing paramters combinations.
    *
-   * @param {ParamDescConfig[]} paramDescConfigArray
+   * @param {ParamDescConfigAll} aParamDescConfigAll
    *   List all the parameters to be used in permutation combination.
    *
    * @yield {Base}
    *   Yield this object itself. The returned object (it is this object itself)
    * should not be modified because it will be re-used.
    */
-  static *ParamsGenerator( paramDescConfigArray ) {
-    this.config = new ParamsConfig( paramDescConfigArray );
+  static *ParamsGenerator( aParamDescConfigAll ) {
+    this.config = aParamDescConfigAll;
 
     // Note: this.in and this.in.paramsNumberArrayObject will not be cleared.
     //       They will be reused directly.
@@ -690,7 +692,7 @@ class TestParams_Base extends Recyclable.Root {
     let valuePair = config.paramValuePairArray[ currentParamDescConfigIndex ];
 
 //!!! (2025/06/19 Modified)
-// Create config.paramValuePairArray when config created (at class ParamsConfig).
+// Create config.paramValuePairArray when config created (at class ParamDescConfigAll).
 //     // Prepare an re-usable object for placing the value pair of current
 //     // ParamDesc. (For reducing memory re-allocation.)
 //     let valuePair;

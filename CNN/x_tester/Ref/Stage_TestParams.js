@@ -456,8 +456,11 @@ class Stage_TestParams_Base extends TestParams.Base {
         valueOutMinMax.bKeepInputTensor ),
     ];
 
+    const theParamDescConfigAll
+      = new ParamDescConfigAll( paramDescConfigArray );
+
     yield *Stage_TestParams_Base.ParamsGenerator.call( this,
-      paramDescConfigArray );
+      theParamDescConfigAll );
   }
 
 }

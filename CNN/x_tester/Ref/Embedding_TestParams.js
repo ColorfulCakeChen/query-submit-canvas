@@ -376,8 +376,11 @@ class Embedding_TestParams_Base extends TestParams.Base {
         valueOutMinMax.bTableLog ),
     ];
 
+    const theParamDescConfigAll
+      = new ParamDescConfigAll( paramDescConfigArray );
+
     yield *Embedding_TestParams_Base.ParamsGenerator.call( this,
-      paramDescConfigArray );
+      theParamDescConfigAll );
   }
 
 }
