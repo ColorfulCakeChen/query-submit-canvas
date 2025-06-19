@@ -611,17 +611,17 @@ class TestParams_Base extends Recyclable.Root {
    * should not be modified because it will be re-used.
    */
   static *ParamsGenerator( paramDescConfigArray ) {
-    const config = this.config
-      = { paramDescConfigArray: paramDescConfigArray };
+    const config = this.config = {
+      paramDescConfigArray: paramDescConfigArray,
+      paramValuePairArray: new Array( paramDescConfigArray.length )
+    };
 
     // Prepare an re-usable object for placing the value pair of current
     // ParamDesc. (For reducing memory re-allocation.)
     //
     // (2025/06/19)
     {
-      const paramValuePairArray = config.paramValuePairArray
-        = new Array( paramDescConfigArray.length );
-
+      const paramValuePairArray = config.paramValuePairArray;
       for ( let i = 0; i < paramValuePairArray.length; ++i ) {
         paramValuePairArray[ i ] = {};
       }
