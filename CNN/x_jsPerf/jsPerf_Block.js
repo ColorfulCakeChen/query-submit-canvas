@@ -12,15 +12,15 @@ import * as Recyclable from "../util/Recyclable.js";
 import * as BatchIdCalculator from "./BatchIdCalculator.js";
 import * as Block from "../Conv/Block.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
-import * as TensorPlaceholder from "../Conv/TensorPlaceholder.js";
-import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
-import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
-import * as Depthwise from "../Conv/Depthwise.js";
-import * as Pointwise from "../Conv/Pointwise.js";
+// import * as TensorPlaceholder from "../Conv/TensorPlaceholder.js";
+// import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
+// import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
+// import * as Depthwise from "../Conv/Depthwise.js";
+// import * as Pointwise from "../Conv/Pointwise.js";
 import * as Block_Reference from "./Ref/Block_Reference.js";
 import * as Block_TestParams from "./Ref/Block_TestParams.js"; 
 import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
-import * as NumberImage from "./Ref/NumberImage.js"; 
+// import * as NumberImage from "./Ref/NumberImage.js"; 
 
 /**
  * Test CNN Block.
