@@ -616,7 +616,7 @@ class TestParams_Base extends Recyclable.Root {
       paramValuePairArray: new Array( paramDescConfigArray.length )
     };
 
-    // Prepare an re-usable object for placing the value pair of current
+    // Prepare an re-usable object for placing the value pair of every
     // ParamDesc. (For reducing memory re-allocation.)
     //
     // (2025/06/19)
