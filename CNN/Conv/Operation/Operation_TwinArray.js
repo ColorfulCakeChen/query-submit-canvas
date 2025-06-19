@@ -99,6 +99,10 @@ class TwinArray extends Root {
     // at all), an ending dummy operation is used.
     {
       this.endingDummyOperation = Dummy.Pool.get_or_create_by(
+
+!!! ...unfinished... (2025/06/19)
+// parentNameable, name, bTableLog,
+
         inputTensorPlaceholder0, inputTensorPlaceholder1, outputTensorCount );
 
       // The ending dummy operation's output will be the output of this
