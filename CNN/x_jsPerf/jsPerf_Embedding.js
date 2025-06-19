@@ -8,11 +8,11 @@ import * as Weights from "../Unpacker/Weights.js";
 import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
 //import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
 import * as Embedding from "../Conv/Embedding.js";
-import * as Embedding_Reference from "./Ref/Embedding_Reference.js";
-import * as Embedding_TestParams from "./Ref/Embedding_TestParams.js"; 
-import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
-import * as NumberImage from "./Ref/NumberImage.js"; 
-import * as BatchIdCalculator from "./BatchIdCalculator.js";
+import * as Embedding_Reference from "../x_tester/Ref/Embedding_Reference.js";
+import * as Embedding_TestParams from "../x_tester/Ref/Embedding_TestParams.js"; 
+import * as ImageSourceBag from "../x_tester/Ref/ImageSourceBag.js"; 
+import * as NumberImage from "../x_tester/Ref/NumberImage.js"; 
+import * as BatchIdCalculator from "../x_tester/Ref/BatchIdCalculator.js";
 
 /**
  * Test CNN Embedding.

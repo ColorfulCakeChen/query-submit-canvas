@@ -4,7 +4,7 @@ import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
 import * as RandTools from "../util/RandTools.js";
 import * as TensorTools from "../util/TensorTools.js";
-//import * as BatchIdCalculator from "./BatchIdCalculator.js";
+//import * as BatchIdCalculator from "../x_tester/Ref/BatchIdCalculator.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
 
 /**

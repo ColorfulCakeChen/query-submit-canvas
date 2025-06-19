@@ -3,7 +3,7 @@ export { init, testCorrectness, disposeResources };
 //import * as Weights from "../Unpacker/Weights.js";
 //import * as TensorTools from "../util/TensorTools.js";
 import * as RandTools from "../util/RandTools.js";
-//import * as BatchIdCalculator from "./BatchIdCalculator.js";
+//import * as BatchIdCalculator from "../x_tester/Ref/BatchIdCalculator.js";
 
 /**
  * Test depthwise-pointwise-bias and fused convolution.

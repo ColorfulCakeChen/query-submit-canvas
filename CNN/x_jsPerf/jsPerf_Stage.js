@@ -7,11 +7,11 @@ import * as Weights from "../Unpacker/Weights.js";
 import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
 import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
 import * as Stage from "../Conv/Stage.js";
-import * as Stage_Reference from "./Ref/Stage_Reference.js";
-import * as Stage_TestParams from "./Ref/Stage_TestParams.js"; 
-import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
-import * as NumberImage from "./Ref/NumberImage.js"; 
-import * as BatchIdCalculator from "./BatchIdCalculator.js";
+import * as Stage_Reference from "../x_tester/Ref/Stage_Reference.js";
+import * as Stage_TestParams from "../x_tester/Ref/Stage_TestParams.js"; 
+import * as ImageSourceBag from "../x_tester/Ref/ImageSourceBag.js"; 
+import * as NumberImage from "../x_tester/Ref/NumberImage.js"; 
+import * as BatchIdCalculator from "../x_tester/Ref/BatchIdCalculator.js";
 
 /**
  * Test CNN Stage.

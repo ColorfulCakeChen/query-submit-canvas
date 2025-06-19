@@ -9,7 +9,7 @@ import * as Weights from "../Unpacker/Weights.js";
 import * as RandTools from "../util/RandTools.js";
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
-import * as BatchIdCalculator from "./BatchIdCalculator.js";
+import * as BatchIdCalculator from "../x_tester/Ref/BatchIdCalculator.js";
 import * as Block from "../Conv/Block.js";
 import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 // import * as TensorPlaceholder from "../Conv/TensorPlaceholder.js";
@@ -17,10 +17,10 @@ import * as ChannelShuffler from "../Conv/ChannelShuffler.js";
 // import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
 // import * as Depthwise from "../Conv/Depthwise.js";
 // import * as Pointwise from "../Conv/Pointwise.js";
-import * as Block_Reference from "./Ref/Block_Reference.js";
-import * as Block_TestParams from "./Ref/Block_TestParams.js"; 
-import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
-// import * as NumberImage from "./Ref/NumberImage.js"; 
+import * as Block_Reference from "../x_tester/Ref/Block_Reference.js";
+import * as Block_TestParams from "../x_tester/Ref/Block_TestParams.js"; 
+import * as ImageSourceBag from "../x_tester/Ref/ImageSourceBag.js"; 
+// import * as NumberImage from "../x_tester/Ref/NumberImage.js"; 
 
 /**
  * Test CNN Block.
@@ -406,16 +406,8 @@ class HeightWidthDepth {
 
       let pool_all_issuedCount_before = Pool.All.issuedCount;
 
-//!!! ...unfinished... (2025/06/19)
+!!! ...unfinished... (2025/06/19)
 // Moved to itself's xxx_tester
-//       Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
-//         "jsPerf_Block.HeightWidthDepth.testCorrectness()", () => {
-//           this.test_Weights_Float32Array_RestrictedClone();
-//           this.test_ValueRange_valueInputOutputGenerator();
-//         }, this
-//       );
-//
-//       yield;
 
       {
         // Test memory leakage of imageSourceBag and channelShufflerBag.
