@@ -23,6 +23,9 @@ import * as ImageSourceBag from "./Ref/ImageSourceBag.js";
 import * as NumberImage from "./Ref/NumberImage.js"; 
 import * as jsPerf_FloatValue_ScaleTranslate from "./jsPerf_FloatValue_ScaleTranslate.js";
 import * as jsPerf_FloatValue_Bounds from "./jsPerf_FloatValue_Bounds.js";
+
+!!! ...unfinished... (2025/06/19)
+// Move to Operation_tester.js
 import * as jsPerf_Operation from "./jsPerf_Operation.js";
 
 /**
@@ -529,6 +532,9 @@ class HeightWidthDepth {
     }
   }
 
+
+!!! ...unfinished... (2025/06/19)
+// Move to Operation_tester.js
   test_Operation() {
     jsPerf_Operation.testCorrectness();
   }
@@ -549,6 +555,10 @@ class HeightWidthDepth {
           this.test_FloatValue();
           this.test_Weights_Float32Array_RestrictedClone();
           this.test_ValueRange_valueInputOutputGenerator();
+
+!!! ...unfinished... (2025/06/19)
+// Move to Operation_tester.js
+
           this.test_Operation();
         }, this
       );
