@@ -184,7 +184,7 @@ class Int extends Same {
    * at most.
    *
    * @return {number[]}
-   *   Return the io_valueOutMinMax whose contents have been adjusted
+   *   Return the io_valueOutMinMax whose contents may have been adjusted
    * (modified).
    */
   valueOutMinMax_adjust( io_valueOutMinMax ) {
@@ -202,6 +202,31 @@ class Int extends Same {
       io_valueOutMinMax[ 1 ] = valueOutMax;
     }
     return io_valueOutMinMax;
+  }
+
+  /**
+   * @param {number[]} io_valueOutMinMax
+   *   An integer array restricts the generator range to [ valueOutMin,
+   * valueOutMax ]. It will be restricted (modified) to [ this.min, this.max ]
+   * at most.
+   *
+   * @return {number}
+   *   - If io_valueOutMinMax is null, return 1.
+   *   - Otherwise, return ( io_valueOutMinMax[ 1 ] - io_valueOutMinMax[ 0 ] ).
+   *       The io_valueOutMinMax contents may have been adjusted (modified).
+   */
+  valueOutMinMax_adjust_and_calcDifference( io_valueOutMinMax ) {
+    if ( io_valueOutMinMax ) {
+
+      const [ valueOutMin, valueOutMax ]
+        = this.valueOutMinMax_adjust( valueOutMinMax );
+
+      const difference = valueOutMax - valueOutMin
+      return difference;
+
+    } else {
+      return 1; 
+    }
   }
 
   /**
