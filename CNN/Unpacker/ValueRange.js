@@ -184,7 +184,8 @@ class Int extends Same {
    * at most.
    *
    * @return {number[]}
-   *   Return the io_valueOutMinMax.
+   *   Return the io_valueOutMinMax whose contents have been adjusted
+   * (modified).
    */
   valueOutMinMax_adjust( io_valueOutMinMax ) {
     if ( io_valueOutMinMax ) {
