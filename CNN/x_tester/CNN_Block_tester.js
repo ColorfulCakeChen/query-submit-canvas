@@ -65,6 +65,8 @@ async function *testerBackend( progressParent, backendName ) {
 
 !!! ...unfinished... (2025/06/19)
 // Perhaps, get testCaseCount from ParamDescConfigAll
+// .calcPermutationCombinationCount()
+
       // Set up correct test case count.
       testCaseCount = testParams.config.???;
       progressToAdvance.max = testCaseCount;
