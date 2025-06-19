@@ -6,6 +6,7 @@ import * as RandTools from "../util/RandTools.js";
 import * as TensorTools from "../util/TensorTools.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as FloatValue from "../Unpacker/FloatValue.js";
+import * as Block from "../Conv/Block.js";
 
 /**
  * Test ScaleTranslate.
