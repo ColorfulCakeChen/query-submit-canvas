@@ -26,6 +26,7 @@ async function *testerBackend( progressParent, backendName ) {
   const funcNameInMessage = "testerBackend";
 
 !!! ...unfinished... (2025/06/19)
+// Perhaps, get testCaseCount from ParamDescConfigAll
 
   let testCaseCount = 1;
 
