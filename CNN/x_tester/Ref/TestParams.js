@@ -639,23 +639,7 @@ class TestParams_Base extends Recyclable.Root {
    * should not be modified because it will be re-used.
    */
   static *ParamsGenerator( paramDescConfigArray ) {
-
-!!!
-    const config = this.config = {
-      paramDescConfigArray: paramDescConfigArray,
-      paramValuePairArray: new Array( paramDescConfigArray.length )
-    };
-
-    // Prepare an re-usable object for placing the value pair of every
-    // ParamDesc. (For reducing memory re-allocation.)
-    //
-    // (2025/06/19)
-    {
-      const paramValuePairArray = config.paramValuePairArray;
-      for ( let i = 0; i < paramValuePairArray.length; ++i ) {
-        paramValuePairArray[ i ] = {};
-      }
-    }
+    this.config = new ParamsConfig( paramDescConfigArray );
 
     // Note: this.in and this.in.paramsNumberArrayObject will not be cleared.
     //       They will be reused directly.
@@ -706,7 +690,7 @@ class TestParams_Base extends Recyclable.Root {
     let valuePair = config.paramValuePairArray[ currentParamDescConfigIndex ];
 
 //!!! (2025/06/19 Modified)
-// Create config.paramValuePairArray when config created (at .ParamsGenerator()).
+// Create config.paramValuePairArray when config created (at class ParamsConfig).
 //     // Prepare an re-usable object for placing the value pair of current
 //     // ParamDesc. (For reducing memory re-allocation.)
 //     let valuePair;
