@@ -103,7 +103,7 @@ class TwinArray extends Root {
       // different from all other appended operations which are created (and
       // known and visible) by outside caller.)
       const dummy_parentNameable = this;
-      const dummy_name = "DummyFinal";
+      const dummy_name = "finalDummy";
       const dummy_bTableLog = this.bTableLog;
 
       this.endingDummyOperation = Dummy.Pool.get_or_create_by(
