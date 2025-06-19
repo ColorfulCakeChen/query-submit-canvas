@@ -397,7 +397,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     ];
 
     const theParamDescConfigAll
-      = new ParamDescConfigAll( paramDescConfigArray );
+      = new TestParams.ParamDescConfigAll( paramDescConfigArray );
 
     yield *NeuralNet_TestParams_Base.ParamsGenerator.call( this,
       theParamDescConfigAll );

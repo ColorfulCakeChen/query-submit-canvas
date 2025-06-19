@@ -506,7 +506,7 @@ class Block_TestParams_Base extends TestParams.Base {
     ];
 
     const theParamDescConfigAll
-      = new ParamDescConfigAll( paramDescConfigArray );
+      = new TestParams.ParamDescConfigAll( paramDescConfigArray );
 
     yield *Block_TestParams_Base.ParamsGenerator.call( this,
       theParamDescConfigAll );
