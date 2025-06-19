@@ -10,7 +10,7 @@ class Same {
   /**
    */
   constructor() {
-    this.kinds = 1; // Since smae value, there is only one kind value.
+    this.kinds = 1; // Since same value, there is only one kind value.
   }
 
   /** @return {any} Return the input value directly. */
