@@ -21,12 +21,6 @@ import * as Block_Reference from "./Ref/Block_Reference.js";
 import * as Block_TestParams from "./Ref/Block_TestParams.js"; 
 import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
 import * as NumberImage from "./Ref/NumberImage.js"; 
-import * as jsPerf_FloatValue_ScaleTranslate from "./jsPerf_FloatValue_ScaleTranslate.js";
-import * as jsPerf_FloatValue_Bounds from "./jsPerf_FloatValue_Bounds.js";
-
-//!!! ...unfinished... (2025/06/19)
-// Moved to Operation_tester.js
-//import * as jsPerf_Operation from "./jsPerf_Operation.js";
 
 /**
  * Test CNN Block.
@@ -401,10 +395,8 @@ class HeightWidthDepth {
     tf.dispose( outputTensor3dArray );
   }
 
-  test_FloatValue() {
-    jsPerf_FloatValue_ScaleTranslate.testCorrectness();
-    jsPerf_FloatValue_Bounds.testCorrectness();
-  }
+!!! ...unfinished... (2025/06/19)
+// Moved to itself's xxx_tester
 
   test_Weights_Float32Array_RestrictedClone() {
 
@@ -551,13 +543,12 @@ class HeightWidthDepth {
 
       Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
         "jsPerf_Block.HeightWidthDepth.testCorrectness()", () => {
-          this.test_FloatValue();
+
+!!! ...unfinished... (2025/06/19)
+// Moved to itself's xxx_tester
+
           this.test_Weights_Float32Array_RestrictedClone();
           this.test_ValueRange_valueInputOutputGenerator();
-
-//!!! ...unfinished... (2025/06/19)
-// Moved to Operation_tester.js
-//          this.test_Operation();
 
         }, this
       );

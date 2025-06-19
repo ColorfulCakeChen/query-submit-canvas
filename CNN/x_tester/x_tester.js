@@ -9,6 +9,8 @@ import * as BoundsArraySet_tester from "./BoundsArraySet_tester.js";
 import * as DEvolution_tester from "./DEvolution_tester.js";
 import * as FeedbackShape_tester from "./FeedbackShape_tester.js";
 import * as Float12_tester from "./Float12_tester.js";
+import * as FloatValue_Bounds_tester from "./FloatValue_Bounds_tester.js";
+import * as FloatValue_ScaleTranslate_tester from "./FloatValue_ScaleTranslate_tester.js";
 import * as GSheets_tester from "./GSheets_tester.js";
 import * as HierarchicalNameable_tester from "./HierarchicalNameable_tester.js";
 import * as NeuralOrchestra_tester from "./NeuralOrchestra_tester.js";
@@ -35,6 +37,9 @@ const gTestGeneratorFuncMap = new Map( [
   // [ Float12_tester.tester, true ],
   // [ Uint12_tester.tester, true ],
 
+  [ FloatValue_Bounds_tester.tester, true ],
+  [ FloatValue_ScaleTranslate_tester.tester, true ],
+
   // [ HierarchicalNameable_tester.tester, true ],
 
   // [ BoundsArraySet_tester.tester, true ],
@@ -47,7 +52,7 @@ const gTestGeneratorFuncMap = new Map( [
 
   // [ NeuralOrchestra_tester.tester, true ],
 
-  [ Operation_tester.tester, true ],
+  // [ Operation_tester.tester, true ],
 
 ] );
 

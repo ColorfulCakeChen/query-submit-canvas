@@ -1,4 +1,4 @@
-export { testCorrectness };
+export { tester };
 
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
@@ -834,7 +834,15 @@ function test_enlarge_contain_in() {
 }
 
 
-function testCorrectness() {
+/** */
+function *testerCases( progressParent ) {
+  const funcNameInMessage = "testerCases";
+
+  let testCaseCount = 2;
+
+  let progressRoot = progressParent.root_get();
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
 
   let casesArray = [
     new Cases( 0, [
@@ -896,6 +904,33 @@ function testCorrectness() {
 
   ];
 
+  progressToAdvance.value_advance();
+  yield progressRoot;
+
   test_enlarge_contain_in();
 
+  progressToAdvance.value_advance();
+  yield progressRoot;
+}
+
+/**
+ *
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   Some new progressToAdvance will be created and added to progressParent.
+ * The created progressToAdvance will be increased when every time advanced.
+ * The progressParent.root_get() will be returned when every time yield.
+ *
+ */
+function* tester( progressParent ) {
+  console.log( "FloatValue_Bounds testing..." );
+
+  // 0. Prepare progressParent for every TestCase.
+
+  let progressCases = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  // 1.
+  yield *testerCases( progressCases );
+
+  console.log( "FloatValue_Bounds testing... Done." );
 }

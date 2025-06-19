@@ -1,4 +1,4 @@
-export { testCorrectness };
+export { tester };
 
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
