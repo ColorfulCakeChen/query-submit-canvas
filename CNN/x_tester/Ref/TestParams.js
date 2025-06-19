@@ -72,6 +72,9 @@ class ParamDescConfigAll {
     for ( let i = 0; i < paramDescConfigArray.length; ++i ) {
       paramDescConfig = paramDescConfigArray[ i ];
       const valueRange = paramDescConfig.paramDesc.valueDesc.range;
+
+!!! ...unfinished... (2025/06/19)
+      .valueOutMinMax_adjust_and_calcDifference
     }
 
 
