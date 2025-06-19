@@ -610,7 +610,7 @@ class TestParams_Base extends Recyclable.Root {
    *   Yield this object itself. The returned object (it is this object itself)
    * should not be modified because it will be re-used.
    */
-  static * ParamsGenerator( paramDescConfigArray ) {
+  static *ParamsGenerator( paramDescConfigArray ) {
     this.config = { paramDescConfigArray: paramDescConfigArray };
 
     // Note: this.in and this.in.paramsNumberArrayObject will not be cleared.
@@ -632,9 +632,10 @@ class TestParams_Base extends Recyclable.Root {
    * "this" will be yielded.
    */
   static * permuteParamRecursively( currentParamDescConfigIndex ) {
+    const config = this.config;
+    const paramDescConfigArray = config.paramDescConfigArray;
 
-    if ( currentParamDescConfigIndex
-           >= this.config.paramDescConfigArray.length ) {
+    if ( currentParamDescConfigIndex >= paramDescConfigArray.length ) {
       // All parameters are used to be composed as one kind of combination.
 
       // Every combination has unique id no matter whether is legal to be
@@ -662,21 +663,22 @@ class TestParams_Base extends Recyclable.Root {
     // ParamDesc. (For reducing memory re-allocation.)
     let valuePair;
     {
-      if ( !this.config.paramValuePairArray ) {
-        this.config.paramValuePairArray = new Array(
-          this.config.paramDescConfigArray.length );
-        for ( let i = 0; i < this.config.paramValuePairArray.length; ++i ) {
-          this.config.paramValuePairArray[ i ] = {};
+      let paramValuePairArray = config.paramValuePairArray;
+      if ( !paramValuePairArray ) {
+        
+        paramValuePairArray = config.paramValuePairArray
+          = new Array( paramDescConfigArray.length );
+
+        for ( let i = 0; i < paramValuePairArray.length; ++i ) {
+          paramValuePairArray[ i ] = {};
         }
       }
-      valuePair
-        = this.config.paramValuePairArray[ currentParamDescConfigIndex ];
+      valuePair = paramValuePairArray[ currentParamDescConfigIndex ];
     }
 
     let nextParamDescConfigIndex = currentParamDescConfigIndex + 1;
 
-    let paramDescConfig
-      = this.config.paramDescConfigArray[ currentParamDescConfigIndex ];
+    let paramDescConfig = paramDescConfigArray[ currentParamDescConfigIndex ];
 
     let paramDesc = paramDescConfig.paramDesc;
     for ( let pair of paramDesc.valueDesc.range.valueInputOutputGenerator(
