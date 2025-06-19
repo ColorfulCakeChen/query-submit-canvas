@@ -14,7 +14,7 @@ import * as FloatValue_ScaleTranslate_tester from "./FloatValue_ScaleTranslate_t
 import * as GSheets_tester from "./GSheets_tester.js";
 import * as HierarchicalNameable_tester from "./HierarchicalNameable_tester.js";
 import * as NeuralOrchestra_tester from "./NeuralOrchestra_tester.js";
-import * as Operation_tester from "./Operation_tester.js";
+import * as CNN_Operation_tester from "./CNN_Operation_tester.js";
 import * as Percentage_tester from "./Percentage_tester.js";
 import * as Uint12_tester from "./Uint12_tester.js";
 
@@ -52,7 +52,7 @@ const gTestGeneratorFuncMap = new Map( [
 
   // [ NeuralOrchestra_tester.tester, true ],
 
-  // [ Operation_tester.tester, true ],
+  // [ CNN_Operation_tester.tester, true ],
 
 ] );
 
