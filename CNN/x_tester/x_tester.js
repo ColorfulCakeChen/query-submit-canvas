@@ -60,7 +60,7 @@ function test() {
 
   let pool_all_issuedCount_before = Pool.All.issuedCount;
 
-  // Aggregate all progress about util_tester.
+  // Aggregate all progress about x_tester.
   let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
   for ( let testGeneratorFunc of gTestGeneratorFuncMap.keys() ) {
@@ -112,25 +112,25 @@ function test() {
     () => { // Release resource.
 
       if ( 100 != progress.valuePercentage )
-        throw Error( `util_tester.test(): `
+        throw Error( `x_tester.test(): `
           + `Progress (${progress.valuePercentage}) should be 100 `
           + `after testing done.`);
 
       if ( 100 != progressReceiver.getValue() )
-        throw Error( `util_tester.test(): `
+        throw Error( `x_tester.test(): `
           + `ProgressReceiver.getValue() (${progressReceiver.getValue()}) `
           + `should be 100 after testing done.`);
 
       progress.disposeResources_and_recycleToPool();
       progress = null;
 
-      Pool.Asserter.assert_Pool_issuedCount( "util_tester.test()",
+      Pool.Asserter.assert_Pool_issuedCount( "x_tester.test()",
         pool_all_issuedCount_before );
 
       let tensorflow_memoryInfo_after = tf.memory();
       if ( tensorflow_memoryInfo_after.numTensors
               != tensorflow_memoryInfo_before.numTensors )
-        throw Error( `util_tester.test(): `
+        throw Error( `x_tester.test(): `
           + `tensorflow.js memory leak. `
           + `result tensor count `
           + `( ${tensorflow_memoryInfo_after.numTensors} ) `

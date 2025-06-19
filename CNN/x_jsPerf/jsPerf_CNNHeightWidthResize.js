@@ -99,7 +99,7 @@ globalThis.testCaseLoader = async function () {
 
   // Check memory.
   if ( 100 != progress.valuePercentage )
-    throw Error( `util_tester.test(): `
+    throw Error( `jsPerf_CNNHeightWidthResize.test(): `
       + `Progress (${progress.valuePercentage}) should be 100 `
       + `after testing done.`);
 
