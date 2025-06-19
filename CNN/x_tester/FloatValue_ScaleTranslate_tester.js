@@ -170,11 +170,44 @@ class Cases extends Base {
 }
 
 
-function testCorrectness() {
+/** */
+function *testerCases( progressParent ) {
+  const funcNameInMessage = "testerCases";
+
+  let testCaseCount = 1;
+
+  let progressRoot = progressParent.root_get();
+  let progressToAdvance = progressParent.child_add(
+    ValueMax.Percentage.Concrete.Pool.get_or_create_by( testCaseCount ) );
+
   let casesArray = [
     new Cases( [
       new Case(),
     ] ),
   ];
 
+  progressToAdvance.value_advance();
+  yield progressRoot;
+}
+
+/**
+ *
+ * @param {ValueMax.Percentage.Aggregate} progressParent
+ *   Some new progressToAdvance will be created and added to progressParent.
+ * The created progressToAdvance will be increased when every time advanced.
+ * The progressParent.root_get() will be returned when every time yield.
+ *
+ */
+function* tester( progressParent ) {
+  console.log( "FloatValue_ScaleTranslate testing..." );
+
+  // 0. Prepare progressParent for every TestCase.
+
+  let progressCases = progressParent.child_add(
+    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+
+  // 1.
+  yield *testerCases( progressCases );
+
+  console.log( "FloatValue_ScaleTranslate testing... Done." );
 }
