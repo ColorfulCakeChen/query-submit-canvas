@@ -53,7 +53,7 @@ const gTestGeneratorFuncMap = new Map( [
 
 
 function test() {
-  console.log("util testing...");
+  console.log("x testing...");
   let delayMilliseconds = 100;
 
   let tensorflow_memoryInfo_before = tf.memory();
@@ -141,7 +141,7 @@ function test() {
   );
 
   testPromise.then( value => {
-    console.log( "util testing... Done." );
+    console.log( "x testing... Done." );
     //progressReceiver.informDone(r); // Inform UI progress done.
 
   }).catch( reason => {
