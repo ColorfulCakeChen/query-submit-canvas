@@ -232,7 +232,7 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     // Note: If ( this.input0 != this.input1 ) but
     //       ( this.input0.realTensor == this.input1.realTensor ), that will be
     //       also a problem. But it can not be detected here because
-    //       .realTensor is only known when .apply() is called (i.e. not here).
+    //       .realTensor is only known inside .apply() (i.e. not here).
     //
     if (
            // If both inputs are the same tensor placeholder (so the same
