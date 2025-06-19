@@ -178,6 +178,32 @@ class Int extends Same {
   }
 
   /**
+   * @param {number[]} io_valueOutMinMax
+   *   An integer array restricts the generator range to [ valueOutMin,
+   * valueOutMax ]. It will be restricted (modified) to [ this.min, this.max ]
+   * at most.
+   *
+   * @return {number[]}
+   *   Return the io_valueOutMinMax.
+   */
+  valueOutMinMax_adjust( io_valueOutMinMax ) {
+    if ( io_valueOutMinMax ) {
+
+      // The smaller one of valueOutMinMax.
+      const valueOutMin = Math.max( Math.min(
+        valueOutMinMax[ 0 ], valueOutMinMax[ 1 ] ), this.min );
+
+      // The larger one of valueOutMinMax.
+      const valueOutMax = Math.min( Math.max(
+        valueOutMinMax[ 0 ], valueOutMinMax[ 1 ] ), this.max );
+
+      io_valueOutMinMax[ 0 ] = valueOutMin;
+      io_valueOutMinMax[ 1 ] = valueOutMax;
+    }
+    return io_valueOutMinMax;
+  }
+
+  /**
    * For ValueRange.Int, this.kinds two-value pairs will be generated in
    * sequence.
    *
@@ -195,7 +221,7 @@ class Int extends Same {
    *
    * @param {number[]} valueOutMinMax
    *   An integer array restricts the generator range to [ valueOutMin,
-   * valueOutMax ].* Itself will be restricted to [ this.min, this.max ] at
+   * valueOutMax ]. Itself will be restricted to [ this.min, this.max ] at
    * most. When this.kinds is large, this parameter could lower the kinds to
    * reduce test cases quantity. If null or undefined, only one value (between
    * [ this.min, this.max ] randomly) will be generated.
@@ -214,13 +240,17 @@ class Int extends Same {
 
     if ( valueOutMinMax ) {
 
-      // The smaller one of valueOutMinMax.
-      let valueOutMin = Math.max( Math.min(
-        valueOutMinMax[ 0 ], valueOutMinMax[ 1 ] ), this.min );
+      const [ valueOutMin, valueOutMax ]
+        = this.valueOutMinMax_adjust( valueOutMinMax );
 
-      // The larger one of valueOutMinMax.
-      let valueOutMax = Math.min( Math.max(
-        valueOutMinMax[ 0 ], valueOutMinMax[ 1 ] ), this.max );
+//!!! (2025/06/19 Remarked) Use .valueOutMinMax_adjust() instead.
+//       // The smaller one of valueOutMinMax.
+//       let valueOutMin = Math.max( Math.min(
+//         valueOutMinMax[ 0 ], valueOutMinMax[ 1 ] ), this.min );
+//
+//       // The larger one of valueOutMinMax.
+//       let valueOutMax = Math.min( Math.max(
+//         valueOutMinMax[ 0 ], valueOutMinMax[ 1 ] ), this.max );
 
       let indexLower = valueOutMin - this.min; // index is 0-base.
       let indexUpper = valueOutMax - this.min;

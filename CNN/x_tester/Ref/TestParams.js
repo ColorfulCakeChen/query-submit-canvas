@@ -61,6 +61,21 @@ class ParamDescConfigAll {
       }
     }
   }
+
+  /**
+   * @return {number}
+   *   Return the amount of all the parameters permutation combination.
+   */
+  calcPermutationCombinationCount() {
+    let paramDescConfig;
+    const paramDescConfigArray = this.paramDescConfigArray;
+    for ( let i = 0; i < paramDescConfigArray.length; ++i ) {
+      paramDescConfig = paramDescConfigArray[ i ];
+      const valueRange = paramDescConfig.paramDesc.valueDesc.range;
+    }
+
+
+  }
 }
 
 
