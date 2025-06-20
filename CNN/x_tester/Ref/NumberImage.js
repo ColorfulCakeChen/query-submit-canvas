@@ -434,7 +434,8 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog )
       imageOut.TableLog_header_body(
-        imageHeaderPrefix_forTableLog + "_afterFilter" );
+        imageHeaderPrefix_forTableLog + "_afterFilter",
+        imageOut.boundsArraySet.afterFilter );
 
     // Bias
     imageOut.modify_byBias( bPointwiseBias, pointwiseBiasesArray,
@@ -923,7 +924,8 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog )
       imageOut.TableLog_header_body(
-        imageHeaderPrefix_forTableLog + "_afterFilter" );
+        imageHeaderPrefix_forTableLog + "_afterFilter",
+        imageOut.boundsArraySet.afterFilter );
 
     // Bias
     imageOut.modify_byBias(
@@ -972,7 +974,7 @@ class NumberImage_Base extends Recyclable.Root {
 
         if ( bTableLog )
           imageOut.TableLog_header_body(
-            imageHeaderPrefix_forTableLog + "_ActivationEscapingScale" );
+            imageHeaderPrefix_forTableLog + "_Activation( NONE )" );
 
         // Note1: Since there is no undo previous scales, it needs not
         //          .scale_byChannel_withoutAffect_BoundsArraySet().
@@ -1069,7 +1071,8 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     if ( bTableLog )
-      imageOut.TableLog_header_body( `${biasNames.join( "_" )}` );
+      imageIn.TableLog_header_body( `${biasNames.join( "_" )}`,
+        imageIn.boundsArraySet.afterBias );
 
     return imageIn;
   }
@@ -1144,7 +1147,7 @@ class NumberImage_Base extends Recyclable.Root {
     this.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
     if ( bTableLog )
-      imageOut.TableLog_header_body( `${clampNames.join( "_" )}` );
+      imageIn.TableLog_header_body( `${clampNames.join( "_" )}` );
 
     return imageIn;
   }
@@ -1205,7 +1208,7 @@ class NumberImage_Base extends Recyclable.Root {
     //
     // (2025/06/18)
     if ( bTableLog )
-      imageOut.TableLog_header_body( `${scaleNames.join( "_" )}` );
+      imageIn.TableLog_header_body( `${scaleNames.join( "_" )}` );
 
     return imageIn;
   }
@@ -2192,15 +2195,25 @@ class NumberImage_Base extends Recyclable.Root {
    *
    * @param {string} imageHeaderPrefix
    *   A string will be logged before the image header.
+   *
+   * @param {FloatValue.BoundsArray|ActivationEscaping.ScaleBoundsArray} aBoundsArray_or_aScaleBoundsArray
+   *   The element value bounds (per channel) of the dataArray number array
+   * (viewed as 2d image with multiple channels). If it is null (or
+   * undefined), the .boundsArraySet.output0 will be used.
    */
-  TableLog_header_body( imageHeaderPrefix ) {
+  TableLog_header_body( imageHeaderPrefix,
+    aBoundsArray_or_aScaleBoundsArray
+   ) {
+    if ( !aBoundsArray_or_aScaleBoundsArray )
+      aBoundsArray_or_aScaleBoundsArray = this.boundsArraySet.output0;
+
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
       imageHeaderPrefix,
       this.dataArray,
       this.height,
       this.width,
       this.depth,
-      this.boundsArraySet.output0 // Only log .output0 should be enough.
+      aBoundsArray_or_aScaleBoundsArray
     );
   }
 
