@@ -62,13 +62,8 @@ async function *testerBackend( progressParent, backendName ) {
 
       let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
 
-
-!!! ...unfinished... (2025/06/19)
-// Perhaps, get testCaseCount from ParamDescConfigAll
-// .valueOutMinMax_adjust_and_calcAmount()
-
-      // Set up correct test case count.
-      testCaseCount = testParams.config.???;
+      // Set up correct test case count (all permuattion combination count).
+      testCaseCount = testParams.config.permutationCombination_count();
       progressToAdvance.max = testCaseCount;
 
       try {
@@ -82,6 +77,12 @@ async function *testerBackend( progressParent, backendName ) {
 
           testReference.testCorrectness(
             imageSourceBag, testParams, channelShufflerBag );
+
+
+!!! ...unfinished... (2025/06/20)
+// 
+          progressToAdvance.value = testParams.id;
+
         }
 
       // Q: Why not catch exception inside Block_Reference.testCorrectness()?

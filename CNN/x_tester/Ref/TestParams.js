@@ -677,6 +677,10 @@ class TestParams_Base extends Recyclable.Root {
   static *ParamsGenerator( aParamDescConfigAll ) {
     this.config = aParamDescConfigAll;
 
+    // Re-start the TestParams id and yield count.
+    this.id = -1;
+    this.yieldCount = 0;
+
     // Note: this.in and this.in.paramsNumberArrayObject will not be cleared.
     //       They will be reused directly.
 
