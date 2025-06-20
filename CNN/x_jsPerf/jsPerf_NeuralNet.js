@@ -468,7 +468,8 @@ class HeightWidthDepth {
             = testParams.ParamsGenerator( theParamDescConfigAll );
           let testReference = NeuralNet_Reference.Base.Pool.get_or_create_by();
 
-          let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
+          let batchIdCalculator = new BatchIdCalculator.Base(
+            testCaseCount, 100 * 1000 );
 
           try {
             for ( testParams of testParamsGenerator ) {

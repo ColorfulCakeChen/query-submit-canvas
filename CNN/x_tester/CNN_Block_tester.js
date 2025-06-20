@@ -68,8 +68,9 @@ async function *testerBackend( progressParent, backendName ) {
       testCaseCount = theParamDescConfigAll.permutationCombination_count();
       progressToAdvance.max = testCaseCount;
 
-      let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
-      batchIdCalculator.displayPermutationCombinationCount( testCaseCount );
+      let batchIdCalculator = new BatchIdCalculator.Base(
+        testCaseCount, 100 * 1000 );
+      batchIdCalculator.displayTotalCount();
 
       try {
         for ( let testParams of testParamsGenerator ) {

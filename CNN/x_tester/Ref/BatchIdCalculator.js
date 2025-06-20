@@ -6,10 +6,19 @@ export { BatchIdCalculator_Base as Base };
 class BatchIdCalculator_Base {
   
   /**
+   * @param {number} totalCount
+   *   Total test cast count.
+   *
    * @param {number} batchMessageInterval
    *   Every so many test cases, display a message.
    */
-  constructor( batchMessageInterval = ( 50 * 1000 ) ) {
+  constructor(
+    totalCount,
+    batchMessageInterval = ( 50 * 1000 ) ) {
+
+    this.totalCount = totalCount;
+    this.id_max = totalCount - 1;
+
     this.batchMessageInterval = batchMessageInterval;
     this.lastBatchId = -1;
   }
@@ -18,11 +27,11 @@ class BatchIdCalculator_Base {
    * @param {number} count
    *   An integer to be logged to console.
    */
-  displayPermutationCombinationCount( count ) {
+  displayTotalCount( count ) {
     const idMax = count - 1;
     console.log( `${tf.getBackend()}, `
-      + `testParams.id between `
-      + `[0 - ${idMax}] ...` );
+      + `testParams, `
+      + `totalCount ( ${this.totalCount} )` );
   }
 
   /**
@@ -43,6 +52,9 @@ class BatchIdCalculator_Base {
 
     let beginTestParamsId = ( this.lastBatchId + 1 ) * batchMessageInterval;
     let endTestParamsId = ( currentBatchId + 1 ) * batchMessageInterval - 1;
+
+    if ( endTestParamsId > this.id_max )
+      endTestParamsId = this.id_max; // Do not exceed maximun id.
 
     console.log( `${tf.getBackend()}, `
       + `testParams.id between `
