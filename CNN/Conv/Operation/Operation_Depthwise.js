@@ -419,6 +419,11 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     const t0 = tf.pool( inputTensor,
       this.poolWindowShape, "avg", this.pad, 1, this.strides );
 
+
+!!! ...unfinished... (2025/06/20)
+// log depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+// avg_hxw_strides_pad
+
     this.TableLog_tensor3d_if_requested(
       "avg", t0, this.boundsArraySet.afterFilter );
 
@@ -430,6 +435,11 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       // dilations = 1
       const t0 = tf.pool( inputTensor,
         this.poolWindowShape, "avg", this.pad, 1, this.strides );
+
+
+!!! ...unfinished... (2025/06/20)
+// log depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+// avg_hxw_strides_pad
 
       this.TableLog_tensor3d_if_requested(
         "avg", t0, this.boundsArraySet.afterFilter );
@@ -447,6 +457,11 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     const t0 = tf.pool( inputTensor,
       this.poolWindowShape, "max", this.pad, 1, this.strides );
 
+
+!!! ...unfinished... (2025/06/20)
+// log depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+// max_hxw_strides_pad
+
     this.TableLog_tensor3d_if_requested(
       "max", t0, this.boundsArraySet.afterFilter );
 
@@ -458,6 +473,11 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       // dilations = 1
       const t0 = tf.pool( inputTensor,
         this.poolWindowShape, "max", this.pad, 1, this.strides );
+
+
+!!! ...unfinished... (2025/06/20)
+// log depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+// max_hxw_strides_pad
 
       this.TableLog_tensor3d_if_requested(
         "max", t0, this.boundsArraySet.afterFilter );
@@ -479,8 +499,15 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     const t0 = tf.depthwiseConv2d( inputTensor,
       this.filtersTensor4d, this.strides, this.pad );
 
-    this.TableLog_tensor3d_if_requested(
-      "conv", t0, this.boundsArraySet.afterFilter );
+    if ( this.bTableLog ) {
+
+!!! ...unfinished... (2025/06/20)
+// log depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+// conv_hxw_strides_pad
+
+      this.TableLog_tensor3d_if_requested(
+        "conv", t0, this.boundsArraySet.afterFilter );
+    }
 
     return t0;
   }
@@ -494,6 +521,11 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
 
       const t0 = tf.depthwiseConv2d( inputTensor,
         this.filtersTensor4d, this.strides, this.pad );
+
+
+!!! ...unfinished... (2025/06/20)
+// log depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+// conv_hxw_strides_pad
 
       this.TableLog_tensor3d_if_requested(
         "conv", t0, this.boundsArraySet.afterFilter );

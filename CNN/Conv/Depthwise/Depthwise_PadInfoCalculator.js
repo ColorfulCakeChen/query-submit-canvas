@@ -28,6 +28,7 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  * @member {number} effectFilterSize      The effect size of the depthwise convolution's filter. (= effectFilterHeight * effectFilterWidth)
  *
  * @member {ValueDesc.StridesPad.Info} stridesPadInfo  The information getted according to stridesPad.
+ * @member {string}                    stridesPad_NameWithInt  The debug name of stridesPad. (e.g. STRIDES_1_PAD_VALID(0))
  *
  * @member {number} strides               The strides along the image's height and width dimension (according to stridesPad).
  * @member {number} stridesHeight         The strides along the image's height dimension (according to stridesPad).
@@ -46,6 +47,9 @@ import * as ValueDesc from "../../Unpacker/ValueDesc.js";
  * @member {number} outputChannelCount    Output image channel count.
  * @member {number} outputElementCountY   Output image elements count per height (= ( outputWidth * outputChannelCount ) ).
  * @member {number} outputElementCount    Output image elements count (= ( outputHeight * outputElementCountY ) ).
+ * 
+ * @member {string} TableLog_filterName   The debug name of this depthwise operation. (e.g. conv_3x2_STRIDES_1_PAD_VALID(0))
+ *
  */
 let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
   extends Recyclable.Base( ParentClass ) {
@@ -106,6 +110,7 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
     this.filterSize = undefined;
 
     this.stridesPadInfo = undefined;
+    this.stridesPad_NameWithInt = undefined;
 
     this.strides = undefined;
     this.pad = undefined;
@@ -134,6 +139,8 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
     this.outputChannelCount = undefined;
     this.outputElementCountY = undefined;
     this.outputElementCount = undefined;
+
+    this.TableLog_filterName = undefined;
 
     super.disposeResources();
   }
@@ -170,8 +177,19 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
     {
       // If not found, using default which could let add-input-to-output possible.
       if ( !this.stridesPadInfo ) {
+        const stridesPad_default
+          = ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME;
+
         this.stridesPadInfo = ValueDesc.StridesPad.Singleton.getInfo_byId(
-          ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME );
+          stridesPad_default );
+
+        this.stridesPad_NameWithInt
+          = ValueDesc.StridesPad.Singleton.getNameWithInt_byId(
+              stridesPad_default );
+
+      } else {
+        this.stridesPad_NameWithInt
+          = ValueDesc.StridesPad.Singleton.getNameWithInt_byId( stridesPad );
       }
 
       this.strides = this.stridesPadInfo.strides;
@@ -245,6 +263,52 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
     this.outputChannelCount = inputChannelCount * this.channelMultiplier;
     this.outputElementCountY = this.outputWidth * this.outputChannelCount;
     this.outputElementCount = this.outputHeight * this.outputElementCountY;
+  }
+
+  /**
+   * @return {string}
+   *   A string describing this depthwise operation for table log.
+   */
+  TableLog_filterName_set() {
+
+!!! ...unfinished... (2025/06/20)
+
+    // this.AvgMax_Or_ChannelMultiplier;
+    // this.filterHeight;
+    // this.filterWidth;
+    // this.stridesPad_NameWithInt;
+
+    if ( this.AvgMax_Or_ChannelMultiplier < 0 ) {
+
+      switch ( this.AvgMax_Or_ChannelMultiplier ) {
+        case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG:
+          this.TableLog_filterName = ;
+          break;
+
+        case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX:
+          this.TableLog_filterName = ;
+          break;
+
+        default:
+          this.TableLog_filterName = ;
+          break;
+      }
+
+    } else if ( this.AvgMax_Or_ChannelMultiplier == 0 ) {
+      this.TableLog_filterName = ;
+
+    } else { // ( this.AvgMax_Or_ChannelMultiplier > 0 )
+      this.TableLog_filterName = ;
+      
+    }
+
+
+!!! ...unfinished... (2025/06/20)
+// log depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
+// avg_hxw_strides_pad
+// max_hxw_strides_pad
+// conv_hxw_strides_pad
+
   }
 
 
