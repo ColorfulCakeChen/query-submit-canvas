@@ -196,6 +196,8 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
       this.pad = this.stridesPadInfo.pad;
     }
 
+    this.TableLog_filterName_set();
+
     // Assume strides width equals strides height.
     this.stridesHeight = this.strides;
     this.stridesWidth = this.strides;
