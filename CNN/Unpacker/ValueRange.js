@@ -216,7 +216,7 @@ class Int extends Same {
    *       is ( io_valueOutMinMax[ 1 ] - io_valueOutMinMax[ 0 ] + 1 ). Note:
    *       The io_valueOutMinMax contents may have been adjusted (modified).
    */
-  valueOutMinMax_adjust_and_calcAmount( io_valueOutMinMax ) {
+  valueOutMinMax_adjust_and_count( io_valueOutMinMax ) {
     if ( io_valueOutMinMax ) {
       const [ valueOutMin, valueOutMax ]
         = this.valueOutMinMax_adjust( io_valueOutMinMax );
