@@ -293,7 +293,8 @@ class NumberImage_Base extends Recyclable.Root {
       if ( pointwiseChannelCount <= 0 )
         str_ChannelCount_NameWithInt = `NONE( ${pointwiseChannelCount} )`;
       else
-        str_ChannelCount_NameWithInt = `${pointwiseChannelCount}`;
+        str_ChannelCount_NameWithInt
+          = `channelCount = ${pointwiseChannelCount}`;
 
       imageHeaderPrefix_forTableLog = pointwiseNames.join( "_" );
       imageHeaderPrefix_forTableLog += `( ${str_ChannelCount_NameWithInt} )`;
@@ -572,9 +573,14 @@ class NumberImage_Base extends Recyclable.Root {
     let str_AvgMax_Or_ChannelMultiplier_NameWithInt;
     let imageHeaderPrefix_forTableLog;
     if ( bTableLog ) {
+
       str_AvgMax_Or_ChannelMultiplier_NameWithInt
         = ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getNameWithInt_byId(
             depthwise_AvgMax_Or_ChannelMultiplier );
+
+      if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 )
+        str_AvgMax_Or_ChannelMultiplier_NameWithInt
+          = `channelMultiplier = ${str_AvgMax_Or_ChannelMultiplier_NameWithInt}`;
 
       imageHeaderPrefix_forTableLog = depthwiseNames.join( "_" );
       imageHeaderPrefix_forTableLog
