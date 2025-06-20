@@ -1258,7 +1258,7 @@ class NumberImage_Base extends Recyclable.Root {
         imageIn.TableLog_header_body(
             `${activationNames.join( NumberImage_Base.debugNamesSeparator )}`
           + `${NumberImage_Base.debugNamesSeparator}`
-          + `( unknown_Info, nActivationId = ${nActivationId} )` );
+          + `unknown_Info ( nActivationId = ${nActivationId} )` );
 
       return imageIn;
     }
@@ -1277,7 +1277,7 @@ class NumberImage_Base extends Recyclable.Root {
         imageIn.TableLog_header_body(
             `${activationNames.join( NumberImage_Base.debugNamesSeparator )}`
           + `${NumberImage_Base.debugNamesSeparator}`
-          + `( no_pfn, ${strActivationNameWithInt} )` );
+          + `${strActivationNameWithInt} ( no_pfn )` );
 
       return imageIn;
     }
@@ -1294,7 +1294,7 @@ class NumberImage_Base extends Recyclable.Root {
       imageIn.TableLog_header_body(
           `${activationNames.join( NumberImage_Base.debugNamesSeparator )}`
         + `${NumberImage_Base.debugNamesSeparator}`
-        + `( ${strActivationNameWithInt} )` );
+        + `${strActivationNameWithInt}` );
 
     return imageIn;
   }
