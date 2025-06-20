@@ -78,11 +78,11 @@ async function *testerBackend( progressParent, backendName ) {
           testReference.testCorrectness(
             imageSourceBag, testParams, channelShufflerBag );
 
-
-!!! ...unfinished... (2025/06/20)
-// 
-          progressToAdvance.value = testParams.id;
-
+          // Q: Why not use .value_advance()?
+          // A: Because some TestParams combination is illegal and will not be
+          //    yielded to be tested, incremental advancing (i.e.
+          //    .value_advance()) may not reach the final progress.
+          progressToAdvance.value = testParams.id + 1;
         }
 
       // Q: Why not catch exception inside Block_Reference.testCorrectness()?
