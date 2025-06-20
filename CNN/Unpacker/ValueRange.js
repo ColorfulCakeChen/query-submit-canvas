@@ -212,18 +212,16 @@ class Int extends Same {
    *
    * @return {number}
    *   - If io_valueOutMinMax is null, return 1.
-   *   - Otherwise, return ( io_valueOutMinMax[ 1 ] - io_valueOutMinMax[ 0 ] ).
+   *   - Otherwise, return the amount between the lower and upper bound. That
+   *       is ( io_valueOutMinMax[ 1 ] - io_valueOutMinMax[ 0 ] + 1 ). Note:
    *       The io_valueOutMinMax contents may have been adjusted (modified).
    */
-  valueOutMinMax_adjust_and_calcDifference( io_valueOutMinMax ) {
+  valueOutMinMax_adjust_and_calcAmount( io_valueOutMinMax ) {
     if ( io_valueOutMinMax ) {
-
       const [ valueOutMin, valueOutMax ]
         = this.valueOutMinMax_adjust( io_valueOutMinMax );
-
-      const difference = valueOutMax - valueOutMin
-      return difference;
-
+      const amount = valueOutMax - valueOutMin + 1;
+      return amount;
     } else {
       return 1; 
     }
