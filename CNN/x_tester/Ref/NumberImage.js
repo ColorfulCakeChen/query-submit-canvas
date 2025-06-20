@@ -299,7 +299,8 @@ class NumberImage_Base extends Recyclable.Root {
         str_ChannelCount_NameWithInt
           = `channelCount = ${pointwiseChannelCount}`;
 
-      imageHeaderPrefix_forTableLog = pointwiseNames.join( NumberImage_Base.debugNameSeparator );
+      imageHeaderPrefix_forTableLog
+        = pointwiseNames.join( NumberImage_Base.debugNameSeparator );
       imageHeaderPrefix_forTableLog += `( ${str_ChannelCount_NameWithInt} )`;
     }
 
@@ -333,7 +334,8 @@ class NumberImage_Base extends Recyclable.Root {
       let filtersWeightCount = imageIn.depth * pointwiseChannelCount;
 
       if ( pointwiseFiltersArray.length != filtersWeightCount )
-        throw Error( `${pointwiseNames.join( NumberImage_Base.debugNameSeparator )}: `
+        throw Error(
+            `${pointwiseNames.join( NumberImage_Base.debugNameSeparator )}: `
           + `filters weight count ( ${pointwiseFiltersArray.length} ) `
           + `should be ( ${filtersWeightCount} ). (${parametersDesc})` );
 
@@ -348,7 +350,8 @@ class NumberImage_Base extends Recyclable.Root {
       }
 
       if ( biasesWeightCountInFact != biasesWeightCountShouldBe )
-        throw Error( `${pointwiseNames.join( NumberImage_Base.debugNameSeparator )}: `
+        throw Error(
+            `${pointwiseNames.join( NumberImage_Base.debugNameSeparator )}: `
           + `biases weight count ( ${biasesWeightCountInFact} ) `
           + `should be ( ${biasesWeightCountShouldBe} ). (${parametersDesc})` );
     }
@@ -586,9 +589,10 @@ class NumberImage_Base extends Recyclable.Root {
         str_AvgMax_Or_ChannelMultiplier_NameWithInt
           = `channelMultiplier = ${str_AvgMax_Or_ChannelMultiplier_NameWithInt}`;
 
-      imageHeaderPrefix_forTableLog = depthwiseNames.join( NumberImage_Base.debugNameSeparator );
       imageHeaderPrefix_forTableLog
-       += `( ${str_AvgMax_Or_ChannelMultiplier_NameWithInt} )`;
+        = depthwiseNames.join( NumberImage_Base.debugNameSeparator );
+      imageHeaderPrefix_forTableLog
+        += `( ${str_AvgMax_Or_ChannelMultiplier_NameWithInt} )`;
     }
 
     let imageIn = this;
@@ -651,7 +655,8 @@ class NumberImage_Base extends Recyclable.Root {
             * imageIn.depth * channelMultiplier ;
 
       if ( depthwiseFiltersArray.length != filtersWeightCount )
-        throw Error( `${depthwiseNames.join( NumberImage_Base.debugNameSeparator )}: `
+        throw Error(
+            `${depthwiseNames.join( NumberImage_Base.debugNameSeparator )}: `
           + `filters weight count ( ${depthwiseFiltersArray.length} ) `
           + `should be ( ${filtersWeightCount} ). (${parametersDesc})` );
     }
@@ -687,7 +692,8 @@ class NumberImage_Base extends Recyclable.Root {
       }
 
       if ( biasesWeightCountInFact != biasesWeightCountShouldBe )
-        throw Error( `${depthwiseNames.join( NumberImage_Base.debugNameSeparator )}: `
+        throw Error(
+            `${depthwiseNames.join( NumberImage_Base.debugNameSeparator )}: `
           + `biases weight count ( ${biasesWeightCountInFact} ) `
           + `should be ( ${biasesWeightCountShouldBe} ). `
           + `(${parametersDesc})` );
@@ -1074,7 +1080,8 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     if ( bTableLog )
-      imageIn.TableLog_header_body( `${biasNames.join( NumberImage_Base.debugNameSeparator )}`,
+      imageIn.TableLog_header_body(
+        `${biasNames.join( NumberImage_Base.debugNameSeparator )}`,
         imageIn.boundsArraySet.afterBias );
 
     return imageIn;
@@ -1150,7 +1157,8 @@ class NumberImage_Base extends Recyclable.Root {
     this.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
     if ( bTableLog )
-      imageIn.TableLog_header_body( `${clampNames.join( NumberImage_Base.debugNameSeparator )}` );
+      imageIn.TableLog_header_body(
+        `${clampNames.join( NumberImage_Base.debugNameSeparator )}` );
 
     return imageIn;
   }
@@ -1183,12 +1191,14 @@ class NumberImage_Base extends Recyclable.Root {
     bTableLog, parametersDesc, ...scaleNames ) {
 
     if ( scaleArray == null )
-      throw Error( `${scaleNames.join( NumberImage_Base.debugNameSeparator )}: `
+      throw Error(
+          `${scaleNames.join( NumberImage_Base.debugNameSeparator )}: `
         + `scaleArray (${scaleArray}) `
         + `should not be null. (${parametersDesc})` );
 
     if ( scaleArray.length != imageIn.depth )
-      throw Error( `${scaleNames.join( NumberImage_Base.debugNameSeparator )}: `
+      throw Error(
+          `${scaleNames.join( NumberImage_Base.debugNameSeparator )}: `
         + `shape (${scaleArray.length}) `
         + `should match input image channel count (${imageIn.depth}). `
         + `(${parametersDesc})` );
@@ -1211,7 +1221,8 @@ class NumberImage_Base extends Recyclable.Root {
     //
     // (2025/06/18)
     if ( bTableLog )
-      imageIn.TableLog_header_body( `${scaleNames.join( NumberImage_Base.debugNameSeparator )}` );
+      imageIn.TableLog_header_body(
+        `${scaleNames.join( NumberImage_Base.debugNameSeparator )}` );
 
     return imageIn;
   }
@@ -1411,7 +1422,8 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     if ( bTableLog )
-      imageOutNew.TableLog_header_body( `${addNames.join( NumberImage_Base.debugNameSeparator )}` );
+      imageOutNew.TableLog_header_body(
+        `${addNames.join( NumberImage_Base.debugNameSeparator )}` );
 
     return imageOutNew;
   }
@@ -1536,7 +1548,8 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     if ( bTableLog )
-      imageOutNew.TableLog_header_body( `${multiplyNames.join( NumberImage_Base.debugNameSeparator )}` );
+      imageOutNew.TableLog_header_body(
+        `${multiplyNames.join( NumberImage_Base.debugNameSeparator )}` );
 
     return imageOutNew;
   }
@@ -1644,7 +1657,8 @@ class NumberImage_Base extends Recyclable.Root {
         || ( nSqueezeExcitationChannelCountDivisor <
                ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE )
        )
-      throw Error( `${squeezeExcitationNames.join( NumberImage_Base.debugNameSeparator )}: `
+      throw Error(
+          `${squeezeExcitationNames.join( NumberImage_Base.debugNameSeparator )}: `
         + `nSqueezeExcitationChannelCountDivisor `
         + `( ${nSqueezeExcitationChannelCountDivisor} ) `
         + `should be >= `
@@ -1835,7 +1849,8 @@ class NumberImage_Base extends Recyclable.Root {
     this.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
     if ( bTableLog )
-      imageOutNew.TableLog_header_body( `${interleaveNames.join( NumberImage_Base.debugNameSeparator )}` );
+      imageOutNew.TableLog_header_body(
+        `${interleaveNames.join( NumberImage_Base.debugNameSeparator )}` );
 
     return this;
   }
@@ -1955,7 +1970,8 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut1.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
     if ( bTableLog ) {
-      const imageHeaderPrefix_forTableLog = `${splitNames.join( NumberImage_Base.debugNameSeparator )}`;
+      const imageHeaderPrefix_forTableLog
+        = `${splitNames.join( NumberImage_Base.debugNameSeparator )}`;
       imageOut0.TableLog_header_body( `${imageHeaderPrefix_forTableLog}_out0` );
       imageOut1.TableLog_header_body( `${imageHeaderPrefix_forTableLog}_out1` );
     }
@@ -2000,13 +2016,15 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     if ( imageIn1.height != imageIn2.height )
-      throw Error( `${concatNames.join( NumberImage_Base.debugNameSeparator )}: `
+      throw Error(
+          `${concatNames.join( NumberImage_Base.debugNameSeparator )}: `
         + `shape imageIn1.height (${imageIn1.height}) `
         + `should match imageIn2.height (${imageIn2.height}). `
         + `(${parametersDesc})` );
 
     if ( imageIn1.width != imageIn2.width )
-      throw Error( `${concatNames.join( NumberImage_Base.debugNameSeparator )}: `
+      throw Error(
+          `${concatNames.join( NumberImage_Base.debugNameSeparator )}: `
         + `shape imageIn1.width (${imageIn1.width}) `
         + `should match imageIn2.width (${imageIn2.width}). `
         + `(${parametersDesc})` );
@@ -2051,7 +2069,8 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
     if ( bTableLog )
-      imageOut.TableLog_header_body( `${concatNames.join( NumberImage_Base.debugNameSeparator )}` );
+      imageOut.TableLog_header_body(
+        `${concatNames.join( NumberImage_Base.debugNameSeparator )}` );
 
     return imageOut;
   }
@@ -2095,7 +2114,8 @@ class NumberImage_Base extends Recyclable.Root {
     bTableLog, parametersDesc, ...concatShuffleSplitNames ) {
 
     if ( imageInArray.length != 2 )
-      throw Error( `${concatShuffleSplitNames.join( NumberImage_Base.debugNameSeparator )}: `
+      throw Error(
+          `${concatShuffleSplitNames.join( NumberImage_Base.debugNameSeparator )}: `
         + `The length of imageInArray[] ( ${imageInArray.length} ) must be 2. `
         + `(${parametersDesc})`
       );
@@ -2106,7 +2126,8 @@ class NumberImage_Base extends Recyclable.Root {
          || ( imageInArray[ 0 ].width !=  imageInArray[ 1 ].width )
          //|| ( imageInArray[ 0 ].depth !=  imageInArray[ 1 ].depth )
        )
-      throw Error( `${concatShuffleSplitNames.join( NumberImage_Base.debugNameSeparator )}: `
+      throw Error(
+          `${concatShuffleSplitNames.join( NumberImage_Base.debugNameSeparator )}: `
         + `The first input image's shape ( height, width, depth ) = `
         + `( ${imageInArray[ 0 ].height}, ${imageInArray[ 0 ].width}, `
           + `${imageInArray[ 0 ].depth} ) `
