@@ -364,7 +364,7 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
     // All the parameters to be tried.
     //
-    // Note: The order of these element could be adjusted to change testing order. The last element will be tested (changed) first.
+    // Note: The order of these elements could be adjusted to change testing order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
       new TestParams.ParamDescConfig( NeuralNet.Params.explicit_input_height,
         valueOutMinMax.explicit_input_height ),

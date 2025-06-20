@@ -56,6 +56,9 @@ async function *testerBackend( progressParent, backendName ) {
             ChannelShuffler.ConcatPointwiseConv.Pool );
 
       let testParams = Block_TestParams.Base.Pool.get_or_create_by();
+
+!!! ...unfinished... (2025/06/20)
+
       let testParamsGenerator = testParams.ParamsGenerator();
       let testReference = Block_Reference.Base.Pool.get_or_create_by(
         null, "Block_Reference" );

@@ -298,7 +298,7 @@ class Block_TestParams_Base extends TestParams.Base {
    */
   * ParamsGenerator() {
 
-    // (2022/04/30 Remarked) For speed up testing by reduce testing space.
+    // (2022/04/30 Remarked) For speed up testing by reducing testing space.
     //let depthwiseFilterMaxSize = 5;
     let depthwiseFilterMaxSize = 3;
 
@@ -452,7 +452,7 @@ class Block_TestParams_Base extends TestParams.Base {
 
     // All the parameters to be tried.
     //
-    // Note: The order of these element could be adjusted to change testing
+    // Note: The order of these elements could be adjusted to change testing
     //       order. The last element will be tested (changed) first.
     let paramDescConfigArray = [
 
