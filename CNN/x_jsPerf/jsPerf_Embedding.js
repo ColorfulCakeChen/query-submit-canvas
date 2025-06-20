@@ -252,7 +252,9 @@ class HeightWidthDepth {
             = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
           let testParams = Embedding_TestParams.Base.Pool.get_or_create_by();
-          let testParamsGenerator = testParams.ParamsGenerator();
+          let theParamDescConfigAll = testParams.ParamDescConfigAll_create();
+          let testParamsGenerator
+            = testParams.ParamsGenerator( theParamDescConfigAll );
           let testReference = Embedding_Reference.Base.Pool.get_or_create_by();
 
           let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );

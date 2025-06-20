@@ -294,13 +294,11 @@ class Embedding_TestParams_Base extends TestParams.Base {
   }
 
   /**
-   * Responsible for generating testing paramters combinations.
-   *
-   * @yield {Base}
-   *   Yield this object itself. The returned object (it is this object itself)
-   * should not be modified because it will be re-used.
+   * @return {TestParams.ParamDescConfigAll}
+   *   Create and return the configuration for generating testing paramters
+   * combinations. It can be used to call .ParamsGenerator().
    */
-  * ParamsGenerator() {
+  ParamDescConfigAll_create() {
 
     // Restrict some parameter's large kinds. Otherwise, too many combination
     // will be generated.
@@ -379,8 +377,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
     const theParamDescConfigAll
       = new TestParams.ParamDescConfigAll( paramDescConfigArray );
 
-    yield *Embedding_TestParams_Base.ParamsGenerator.call( this,
-      theParamDescConfigAll );
+    return theParamDescConfigAll;
   }
 
 }

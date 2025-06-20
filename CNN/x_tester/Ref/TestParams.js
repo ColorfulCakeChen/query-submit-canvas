@@ -668,13 +668,14 @@ class TestParams_Base extends Recyclable.Root {
    * Responsible for generating testing paramters combinations.
    *
    * @param {ParamDescConfigAll} aParamDescConfigAll
-   *   List all the parameters to be used in permutation combination.
+   *   List all the parameters to be used in permutation combination of testing
+   * parameters.
    *
    * @yield {Base}
    *   Yield this object itself. The returned object (it is this object itself)
    * should not be modified because it will be re-used.
    */
-  static *ParamsGenerator( aParamDescConfigAll ) {
+  * ParamsGenerator( aParamDescConfigAll ) {
     this.config = aParamDescConfigAll;
 
     // Re-start the TestParams id and yield count.

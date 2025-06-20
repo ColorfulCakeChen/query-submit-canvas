@@ -395,7 +395,9 @@ class HeightWidthDepth {
           let imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by();
 
           let testParams = Stage_TestParams.Base.Pool.get_or_create_by();
-          let testParamsGenerator = testParams.ParamsGenerator();
+          let theParamDescConfigAll = testParams.ParamDescConfigAll_create();
+          let testParamsGenerator
+            = testParams.ParamsGenerator( theParamDescConfigAll );
           let testReference = Stage_Reference.Base.Pool.get_or_create_by();
 
           let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
