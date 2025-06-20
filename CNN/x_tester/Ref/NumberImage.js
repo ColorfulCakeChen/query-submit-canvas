@@ -301,7 +301,7 @@ class NumberImage_Base extends Recyclable.Root {
       const imageOut = imageIn.clone(); // No pointwise operation.
       if ( bTableLog )
         imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog
-          + `${NumberImage_Base.debugNamesSeparator}no_conv` );
+          + `${NumberImage_Base.debugNamesSeparator}conv_none` );
       return imageOut;
     }
 
@@ -583,7 +583,7 @@ class NumberImage_Base extends Recyclable.Root {
       const imageOut = imageIn.clone(); // No depthwise operation.
       if ( bTableLog )
         imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog
-          + `${NumberImage_Base.debugNamesSeparator}no_conv` );
+          + `${NumberImage_Base.debugNamesSeparator}conv_none` );
       return imageOut;
     }
 
@@ -976,7 +976,7 @@ class NumberImage_Base extends Recyclable.Root {
 
         if ( bTableLog )
           imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog
-            + `${NumberImage_Base.debugNamesSeparator}activation( NONE )` );
+            + `${NumberImage_Base.debugNamesSeparator}activation_none` );
 
         // Note1: Since there is no undo previous scales, it needs not
         //          .scale_byChannel_withoutAffect_BoundsArraySet().
