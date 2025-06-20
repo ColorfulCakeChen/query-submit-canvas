@@ -88,7 +88,7 @@ class ParamDescConfigAll {
     const paramDescConfigArray = this.paramDescConfigArray;
     for ( let i = 0; i < paramDescConfigArray.length; ++i ) {
       const paramDescConfig = paramDescConfigArray[ i ];
-      const count = paramDescConfig.valueOutMinMax_adjust_and_count;
+      const count = paramDescConfig.valueOutMinMax_adjust_and_count();
       totalCount += count;
     }
     return totalCount;
