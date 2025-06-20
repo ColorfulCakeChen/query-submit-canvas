@@ -274,6 +274,7 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
   TableLog_filterName_set() {
 
 !!! ...unfinished... (2025/06/20)
+// should only do if ( bTableLog == true )
 
     // this.AvgMax_Or_ChannelMultiplier;
     // this.filterHeight;
