@@ -192,11 +192,11 @@ class Int extends Same {
 
       // The smaller one of valueOutMinMax.
       const valueOutMin = Math.max( Math.min(
-        valueOutMinMax[ 0 ], valueOutMinMax[ 1 ] ), this.min );
+        io_valueOutMinMax[ 0 ], io_valueOutMinMax[ 1 ] ), this.min );
 
       // The larger one of valueOutMinMax.
       const valueOutMax = Math.min( Math.max(
-        valueOutMinMax[ 0 ], valueOutMinMax[ 1 ] ), this.max );
+        io_valueOutMinMax[ 0 ], io_valueOutMinMax[ 1 ] ), this.max );
 
       io_valueOutMinMax[ 0 ] = valueOutMin;
       io_valueOutMinMax[ 1 ] = valueOutMax;
