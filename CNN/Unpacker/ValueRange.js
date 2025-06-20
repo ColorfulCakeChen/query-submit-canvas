@@ -212,7 +212,7 @@ class Int extends Same {
    *
    * @return {number}
    *   - If io_valueOutMinMax is null, return 1.
-   *   - Otherwise, return the amount between the lower and upper bound. That
+   *   - Otherwise, return the quantity between the lower and upper bound. That
    *       is ( io_valueOutMinMax[ 1 ] - io_valueOutMinMax[ 0 ] + 1 ). Note:
    *       The io_valueOutMinMax contents may have been adjusted (modified).
    */

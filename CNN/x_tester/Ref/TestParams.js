@@ -26,10 +26,27 @@ import * as SequenceRandom_NumberArray from "./SequenceRandom_NumberArray.js";
  *
  */
 class ParamDescConfig {
+
+  /**
+   * 
+   */
   constructor( paramDesc, valueOutMinMax ) {
     this.paramDesc = paramDesc;
     this.valueOutMinMax = valueOutMinMax;
   }
+
+  /**
+   *
+   * @return {number}
+   *   Return the quantity between .valueOutMinMax's lower and upper bound.
+   */
+  valueOutMinMax_adjust_and_count() {
+    const valueRange = this.paramDesc.valueDesc.range;
+    const count
+      = valueRange.valueOutMinMax_adjust_and_count( this.valueOutMinMax );
+    return count;
+  }
+
 }
 
 
@@ -64,21 +81,19 @@ class ParamDescConfigAll {
 
   /**
    * @return {number}
-   *   Return the amount of all the parameters permutation combination.
+   *   Return the quantity of the permutation combination of all parameters.
    */
-  calcPermutationCombinationCount() {
-    let paramDescConfig;
+  permutationCombination_count() {
+    let totalCount = 0;
     const paramDescConfigArray = this.paramDescConfigArray;
     for ( let i = 0; i < paramDescConfigArray.length; ++i ) {
-      paramDescConfig = paramDescConfigArray[ i ];
-      const valueRange = paramDescConfig.paramDesc.valueDesc.range;
-
-!!! ...unfinished... (2025/06/19)
-      .valueOutMinMax_adjust_and_calcDifference
+      const paramDescConfig = paramDescConfigArray[ i ];
+      const count = paramDescConfig.valueOutMinMax_adjust_and_count;
+      totalCount += count;
     }
-
-
+    return totalCount;
   }
+
 }
 
 
