@@ -296,8 +296,7 @@ class NumberImage_Base extends Recyclable.Root {
         str_ChannelCount_NameWithInt = `${pointwiseChannelCount}`;
 
       imageHeaderPrefix_forTableLog = pointwiseNames.join( "_" );
-      imageHeaderPrefix_forTableLog
-       += `( ${str_AvgMax_Or_ChannelMultiplier_NameWithInt} )`;
+      imageHeaderPrefix_forTableLog += `( ${str_ChannelCount_NameWithInt} )`;
     }
 
     let imageIn = this;
