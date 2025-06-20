@@ -15,6 +15,15 @@ class BatchIdCalculator_Base {
   }
 
   /**
+   * @param {number} count
+   *   An integer to be logged to console.
+   */
+  displayPermutationCombinationCount( count ) {
+    console.log( `${tf.getBackend()}, `
+      + `testParams, permutation combination count = ${count}.` );
+  }
+
+  /**
    * @return {boolean}
    *   Return true, if a batch id section is displayed. Return false, if there
    * is no new batch id section should be displayed.

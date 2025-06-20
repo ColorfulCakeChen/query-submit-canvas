@@ -64,11 +64,12 @@ async function *testerBackend( progressParent, backendName ) {
       let testReference = Block_Reference.Base.Pool.get_or_create_by(
         null, "Block_Reference" );
 
-      let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
-
       // Set up correct test case count (all permuattion combination count).
       testCaseCount = theParamDescConfigAll.permutationCombination_count();
       progressToAdvance.max = testCaseCount;
+
+      let batchIdCalculator = new BatchIdCalculator.Base( 100 * 1000 );
+      batchIdCalculator.displayPermutationCombinationCount( testCaseCount );
 
       try {
         for ( let testParams of testParamsGenerator ) {
