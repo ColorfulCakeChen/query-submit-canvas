@@ -196,8 +196,6 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
       this.pad = this.stridesPadInfo.pad;
     }
 
-    this.TableLog_filterName_set();
-
     // Assume strides width equals strides height.
     this.stridesHeight = this.strides;
     this.stridesWidth = this.strides;
@@ -271,10 +269,11 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
    * @return {string}
    *   A string describing this depthwise operation for table log.
    */
-  TableLog_filterName_set() {
+  TableLog_filterName_get() {
 
 !!! ...unfinished... (2025/06/20)
-// should only do if ( bTableLog == true )
+// Only if ( !this.TableLog_filterName ), then create it.
+// Otherwise, just return this.TableLog_filterName
 
     // this.AvgMax_Or_ChannelMultiplier;
     // this.filterHeight;
