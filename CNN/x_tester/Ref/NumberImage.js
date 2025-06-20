@@ -464,13 +464,13 @@ class NumberImage_Base extends Recyclable.Root {
       // channel.
       NumberImage_Base.scale_byChannel_withoutAffect_BoundsArraySet(
         imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
-        bTableLog, parametersDesc, ...pointwiseNames, "ActivationEscapingScale" );
+        bTableLog, parametersDesc, ...pointwiseNames, "activationEscapingScale" );
     }
 
     // Activation
     NumberImage_Base.modify_byActivation_withoutAffect_BoundsArraySet(
       imageOut, pointwiseActivationId,
-      bTableLog, parametersDesc, ...pointwiseNames );
+      bTableLog, parametersDesc, ...pointwiseNames, "activation" );
 
     imageOut.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
@@ -1001,12 +1001,12 @@ class NumberImage_Base extends Recyclable.Root {
         // channel.
         NumberImage_Base.scale_byChannel_withoutAffect_BoundsArraySet(
           imageOut, imageOut.boundsArraySet.output0.scaleArraySet.do,
-          bTableLog, parametersDesc, ...depthwiseNames, "ActivationEscapingScale" );
+          bTableLog, parametersDesc, ...depthwiseNames, "activationEscapingScale" );
 
         // Activation
         NumberImage_Base.modify_byActivation_withoutAffect_BoundsArraySet(
           imageOut, depthwiseActivationId,
-          bTableLog, parametersDesc, ...depthwiseNames );
+          bTableLog, parametersDesc, ...depthwiseNames, "activation" );
       }
     }
 
@@ -1245,6 +1245,9 @@ class NumberImage_Base extends Recyclable.Root {
    * @param {Object} parametersDesc
    *   Its .toString() will be used for debug message of this block.
    *
+   * @param {string[]} activationNames
+   *   The strings for debug message of this activation function.
+   *
    * @return {NumberImage.Base}
    *   Return this which may or may not be modified by activation function
    * (according to nActivationId). The this.dataArray will be just the original
@@ -1252,7 +1255,7 @@ class NumberImage_Base extends Recyclable.Root {
    */
   static modify_byActivation_withoutAffect_BoundsArraySet(
     imageIn, nActivationId,
-    bTableLog, parametersDesc, imageHeaderPrefix_forTableLog ) {
+    bTableLog, parametersDesc, ...activationNames ) {
 
     const theActivationFunctionInfo
       = ValueDesc.ActivationFunction.Singleton.getInfo_byId( nActivationId );
@@ -1261,9 +1264,10 @@ class NumberImage_Base extends Recyclable.Root {
     if ( !theActivationFunctionInfo ) {
 
       if ( bTableLog )
-        imageIn.TableLog_header_body( imageHeaderPrefix_forTableLog
-          + NumberImage_Base.debugNamesSeparator
-          + `Activation_unknownInfo ( nActivationId = ${nActivationId} )` );
+        imageIn.TableLog_header_body(
+            `${activationNames.join( NumberImage_Base.debugNamesSeparator )}`
+          + `${NumberImage_Base.debugNamesSeparator}`
+          + `( unknown_Info, nActivationId = ${nActivationId} )` );
 
       return imageIn;
     }
@@ -1279,9 +1283,10 @@ class NumberImage_Base extends Recyclable.Root {
     if ( !pfnActivation ) { // Usually, activation function NONE( 0 ).
 
       if ( bTableLog )
-        imageIn.TableLog_header_body( imageHeaderPrefix_forTableLog
-          + NumberImage_Base.debugNamesSeparator
-          + `Activation_no_pfn ( ${strActivationNameWithInt} )` );
+        imageIn.TableLog_header_body(
+            `${activationNames.join( NumberImage_Base.debugNamesSeparator )}`
+          + `${NumberImage_Base.debugNamesSeparator}`
+          + `( no_pfn, ${strActivationNameWithInt} )` );
 
       return imageIn;
     }
@@ -1295,9 +1300,10 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     if ( bTableLog )
-      imageIn.TableLog_header_body( imageHeaderPrefix_forTableLog
-        + NumberImage_Base.debugNamesSeparator
-        + `Activation ( ${strActivationNameWithInt} )` );
+      imageIn.TableLog_header_body(
+          `${activationNames.join( NumberImage_Base.debugNamesSeparator )}`
+        + `${NumberImage_Base.debugNamesSeparator}`
+        + `( ${strActivationNameWithInt} )` );
 
     return imageIn;
   }
