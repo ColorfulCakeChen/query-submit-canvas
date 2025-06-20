@@ -19,8 +19,10 @@ class BatchIdCalculator_Base {
    *   An integer to be logged to console.
    */
   displayPermutationCombinationCount( count ) {
+    const idMax = count - 1;
     console.log( `${tf.getBackend()}, `
-      + `testParams, permutation combination count = ${count}.` );
+      + `testParams.id between `
+      + `[0 - ${idMax}] ...` );
   }
 
   /**

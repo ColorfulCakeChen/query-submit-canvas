@@ -70,7 +70,8 @@ let HierarchicalNameable_Base
 
     this.#parentNameable = parentNameable;
     if ( parentNameable ) {
-      parentNameable.#childrenNameableSet_add_internal( this );
+      HierarchicalNameable_Base.childrenNameableSet_add_internal.call(
+        parentNameable, this );
     }
 
     // Re-use children container (if exists), but ensure it is empty.
@@ -132,7 +133,8 @@ let HierarchicalNameable_Base
       // this object's parent (i.e. bypass this object).
       //
       // (2025/06/13 Modified)
-      this.#childrenNameableSet_bypass_internal();
+      HierarchicalNameable_Base.childrenNameableSet_bypass_internal.call(
+        this );
     }
 
     // Detach from parent nameable object since this nameable object will
@@ -223,12 +225,14 @@ let HierarchicalNameable_Base
 
     const parentOld = this.#parentNameable;
     if ( parentOld ) { // Remove from the old parent.
-      parentOld.#childrenNameableSet_remove_internal( this );
+      HierarchicalNameable_Base.childrenNameableSet_remove_internal.call(
+        parentOld, this );
     }
 
     this.#parentNameable = parentNameableNew;
     if ( parentNameableNew ) { // Add into the new parent.
-      parentNameableNew.#childrenNameableSet_add_internal( this );
+      HierarchicalNameable_Base.childrenNameableSet_add_internal.call(
+        parentNameableNew, this );
     }
 
     this.nameString_recursively_invalidate_recursively();
@@ -429,12 +433,12 @@ let HierarchicalNameable_Base
 
 
   /** (Internally called when setting parentNameable.) */
-  #childrenNameableSet_add_internal( nameable ) {
+  static childrenNameableSet_add_internal( nameable ) {
     this.#childrenNameableSet.add( nameable );
   }
 
   /** (Internally called when setting parentNameable.) */
-  #childrenNameableSet_remove_internal( nameable ) {
+  static childrenNameableSet_remove_internal( nameable ) {
     this.#childrenNameableSet.delete( nameable );
   }
 
@@ -444,7 +448,7 @@ let HierarchicalNameable_Base
    *
    * (Internally called when setting parentNameable.)
    */
-  #childrenNameableSet_bypass_internal() {
+  static childrenNameableSet_bypass_internal() {
     const funcNameInMessage = "childrenNameableSet_bypass_internal";
 
     const parentNameable = this.#parentNameable;
