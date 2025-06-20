@@ -289,19 +289,10 @@ class NumberImage_Base extends Recyclable.Root {
     bTableLog,
     parametersDesc, ...pointwiseNames ) {
 
-    let str_ChannelCount_NameWithInt;
     let imageHeaderPrefix_forTableLog;
     if ( bTableLog ) {
-
-      if ( pointwiseChannelCount <= 0 )
-        str_ChannelCount_NameWithInt = `NONE( ${pointwiseChannelCount} )`;
-      else
-        str_ChannelCount_NameWithInt
-          = `channelCount = ${pointwiseChannelCount}`;
-
       imageHeaderPrefix_forTableLog
         = pointwiseNames.join( NumberImage_Base.debugNamesSeparator );
-      imageHeaderPrefix_forTableLog += `( ${str_ChannelCount_NameWithInt} )`;
     }
 
     let imageIn = this;
@@ -309,7 +300,8 @@ class NumberImage_Base extends Recyclable.Root {
     if ( pointwiseChannelCount <= 0 ) {
       const imageOut = imageIn.clone(); // No pointwise operation.
       if ( bTableLog )
-        imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog );
+        imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog
+          + `${NumberImage_Base.debugNamesSeparator}no_conv` );
       return imageOut;
     }
 
@@ -441,7 +433,7 @@ class NumberImage_Base extends Recyclable.Root {
     if ( bTableLog )
       imageOut.TableLog_header_body(
         imageHeaderPrefix_forTableLog
-          + `${NumberImage_Base.debugNamesSeparator}afterFilter`,
+          + `${NumberImage_Base.debugNamesSeparator}conv`,
         imageOut.boundsArraySet.afterFilter );
 
     // Bias
@@ -578,22 +570,10 @@ class NumberImage_Base extends Recyclable.Root {
     bTableLog,
     parametersDesc, ...depthwiseNames ) {
 
-    let str_AvgMax_Or_ChannelMultiplier_NameWithInt;
     let imageHeaderPrefix_forTableLog;
     if ( bTableLog ) {
-
-      str_AvgMax_Or_ChannelMultiplier_NameWithInt
-        = ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getNameWithInt_byId(
-            depthwise_AvgMax_Or_ChannelMultiplier );
-
-      if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 )
-        str_AvgMax_Or_ChannelMultiplier_NameWithInt
-          = `channelMultiplier = ${str_AvgMax_Or_ChannelMultiplier_NameWithInt}`;
-
       imageHeaderPrefix_forTableLog
         = depthwiseNames.join( NumberImage_Base.debugNamesSeparator );
-      imageHeaderPrefix_forTableLog
-        += `( ${str_AvgMax_Or_ChannelMultiplier_NameWithInt} )`;
     }
 
     let imageIn = this;
@@ -602,7 +582,8 @@ class NumberImage_Base extends Recyclable.Root {
            === depthwise_AvgMax_Or_ChannelMultiplier ) {
       const imageOut = imageIn.clone(); // No depthwise operation.
       if ( bTableLog )
-        imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog );
+        imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog
+          + `${NumberImage_Base.debugNamesSeparator}no_conv` );
       return imageOut;
     }
 
@@ -932,11 +913,21 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut.assert_pixels_byBoundsArray(
       imageOut.boundsArraySet.afterFilter );
 
-    if ( bTableLog )
+    if ( bTableLog ) {
+      let str_AvgMax_Or_ChannelMultiplier_NameWithInt
+        = ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getNameWithInt_byId(
+            depthwise_AvgMax_Or_ChannelMultiplier );
+
+      if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 )
+        str_AvgMax_Or_ChannelMultiplier_NameWithInt
+          = `conv_channelMultiplier_${str_AvgMax_Or_ChannelMultiplier_NameWithInt}`;
+
       imageOut.TableLog_header_body(
         imageHeaderPrefix_forTableLog
-          + `${NumberImage_Base.debugNamesSeparator}afterFilter`,
+          + NumberImage_Base.debugNamesSeparator
+          + str_AvgMax_Or_ChannelMultiplier_NameWithInt,
         imageOut.boundsArraySet.afterFilter );
+    }
 
     // Bias
     imageOut.modify_byBias(
@@ -985,7 +976,7 @@ class NumberImage_Base extends Recyclable.Root {
 
         if ( bTableLog )
           imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog
-            + `${NumberImage_Base.debugNamesSeparator}Activation( NONE )` );
+            + `${NumberImage_Base.debugNamesSeparator}activation( NONE )` );
 
         // Note1: Since there is no undo previous scales, it needs not
         //          .scale_byChannel_withoutAffect_BoundsArraySet().
