@@ -70,6 +70,8 @@ async function *testerBackend( progressParent, backendName ) {
         for ( let testParams of testParamsGenerator ) {
           let bDisplayed = batchIdCalculator.checkAndDisplay( testParams.id );
 
+//!!! ...unfinished... (2025/06/20) Is it still necessary?
+
           // Since just entering a new batch section, take a break so that
           // memory garbage collector could be activated to work.
           if ( bDisplayed )
@@ -83,6 +85,7 @@ async function *testerBackend( progressParent, backendName ) {
           //    yielded to be tested, incremental advancing (i.e.
           //    .value_advance()) may not reach the final progress.
           progressToAdvance.value = testParams.id + 1;
+          yield progressRoot;
         }
 
       // Q: Why not catch exception inside Block_Reference.testCorrectness()?
@@ -132,12 +135,6 @@ async function *testerBackend( progressParent, backendName ) {
       throw Error( msg );
     }
   }
-
-!!! ...unfinished... (2025/06/19)
-
-
-  progressToAdvance.value_advance();
-  yield progressRoot;
 }
 
 /**
