@@ -84,7 +84,7 @@ class ParamDescConfigAll {
    *   Return the quantity of the permutation combination of all parameters.
    */
   permutationCombination_count() {
-    let totalCount = 0;
+    let totalCount = 1;
     const paramDescConfigArray = this.paramDescConfigArray;
     for ( let i = 0; i < paramDescConfigArray.length; ++i ) {
       const paramDescConfig = paramDescConfigArray[ i ];
