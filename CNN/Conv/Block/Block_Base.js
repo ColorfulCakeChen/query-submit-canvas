@@ -647,7 +647,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
 
     // 2.1.2 Create sub operation array.
     this.operationArray = Operation.TwinArray.Pool.get_or_create_by(
-      this, "Operation.TwinArray", bTableLog,
+      this, "Operation.TwinArray", this.bTableLog,
       this.input0, this.input1, this.outputTensorCount );
 
     // Note: Once an operation is created (even if it just do nothing (e.g.
@@ -665,7 +665,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
       try {
         pointwise1 = Operation.Pointwise_SameWhenPassThrough.Pool
           .get_or_create_by(
-            this, "pointwise1", bTableLog,
+            this, "pointwise1", this.bTableLog,
             this.operationArray.endingInput0,
             this.pointwise1ChannelCount,
             this.pointwise1Bias, this.pointwise1ActivationId,
@@ -719,7 +719,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
         {
           depthwise1 = Operation.Depthwise_SameWhenPassThrough.Pool
             .get_or_create_by(
-              this, "depthwise1", bTableLog,
+              this, "depthwise1", this.bTableLog,
               this.operationArray.endingInput0,
               this.depthwise_AvgMax_Or_ChannelMultiplier,
               this.depthwiseFilterHeight, this.depthwiseFilterWidth,
@@ -751,7 +751,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
           //    StridesPad.
           depthwise2 = Operation.Depthwise_SameWhenPassThrough.Pool
             .get_or_create_by(
-              this, "depthwise2", bTableLog,
+              this, "depthwise2", this.bTableLog,
               depthwise2_input0,
               this.depthwise_AvgMax_Or_ChannelMultiplier,
               this.depthwiseFilterHeight, this.depthwiseFilterWidth,
@@ -815,7 +815,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
         // Note: The two inputs of depthwise12Dummy might be the same one in
         //       fact.
         let depthwise12Dummy = Operation.Dummy.Pool.get_or_create_by(
-          this, "depthwise12Dummy", bTableLog,
+          this, "depthwise12Dummy", this.bTableLog,
           this.operationArray.endingInput0, depthwise2_input0, 2 );
         this.operationArray.operation_append( depthwise12Dummy );
       }
@@ -827,7 +827,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
     // 4. Concat1
     if ( this.bConcat1Requested ) {
       let concat1 = Operation.ConcatAlongAxisId2.Pool.get_or_create_by(
-        this, "concat1", bTableLog,
+        this, "concat1", this.bTableLog,
         this.operationArray.endingInput0, this.operationArray.endingInput1 );
       this.operationArray.operation_append( concat1 );
     }
@@ -879,7 +879,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
         //
         pointwise20 = Operation.Pointwise_SameWhenPassThrough.Pool
           .get_or_create_by(
-            this, "pointwise20", bTableLog,
+            this, "pointwise20", this.bTableLog,
             this.operationArray.endingInput0,
             this.pointwise20ChannelCount,
             this.pointwise20Bias, this.pointwise20ActivationId,
@@ -908,7 +908,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
 
           pointwise21 = Operation.Pointwise_SameWhenPassThrough.Pool
             .get_or_create_by(
-              this, "pointwise21", bTableLog,
+              this, "pointwise21", this.bTableLog,
               pointwise21_input0,
               this.pointwise21ChannelCount,
               this.pointwise21Bias, this.pointwise21ActivationId,
@@ -1015,7 +1015,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
              ?.is_height_width_channelCount_same_byTensorPlaceholder(
                  this.input0 ) ) {
         addInput0ToPointwise20 = Operation.AddTwoTensors.Pool.get_or_create_by(
-          this, "addInput0ToPointwise20", bTableLog,
+          this, "addInput0ToPointwise20", this.bTableLog,
           this.input0, this.operationArray.endingInput0 );
         this.bAddInputToOutput0 = true;
       }
@@ -1026,7 +1026,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
              ?.is_height_width_channelCount_same_byTensorPlaceholder(
                  this.input0 ) ) {
         addInput0ToPointwise21 = Operation.AddTwoTensors.Pool.get_or_create_by(
-          this, "addInput0ToPointwise21", bTableLog,
+          this, "addInput0ToPointwise21", this.bTableLog,
           this.input0, this.operationArray.endingInput1 );
         this.bAddInputToOutput1 = true;
       }
@@ -1057,7 +1057,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
 
       let concat2ShuffleSplit = Operation.ConcatShuffleSplit.Pool
         .get_or_create_by(
-          this, "concat2ShuffleSplit", bTableLog,
+          this, "concat2ShuffleSplit", this.bTableLog,
           this.operationArray.endingInput0, this.operationArray.endingInput1,
           this.channelShuffler_ConcatPointwiseConv, bShuffleSplit );
 
