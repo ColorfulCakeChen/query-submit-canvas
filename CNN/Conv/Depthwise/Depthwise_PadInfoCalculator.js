@@ -278,6 +278,7 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
     // this.AvgMax_Or_ChannelMultiplier;
     // this.filterHeight;
     // this.filterWidth;
+    //this.channelMultiplier
     // this.stridesPad_NameWithInt;
 
     if ( this.AvgMax_Or_ChannelMultiplier < 0 ) {
@@ -309,7 +310,7 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
 // log depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
 // avg_hxw_strides_pad
 // max_hxw_strides_pad
-// conv_hxw_strides_pad
+// conv_hxw_channelMultiplier_strides_pad
 
   }
 
