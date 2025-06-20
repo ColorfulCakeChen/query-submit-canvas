@@ -42,7 +42,7 @@ const gTestGeneratorFuncMap = new Map( [
   // [ FloatValue_ScaleTranslate_tester.tester, true ],
   // [ BoundsArraySet_tester.tester, true ],
 
-  // [ HierarchicalNameable_tester.tester, true ],
+  [ HierarchicalNameable_tester.tester, true ],
 
   // [ CNN_Operation_tester.tester, true ],
   [ CNN_Block_tester.tester, true ],
