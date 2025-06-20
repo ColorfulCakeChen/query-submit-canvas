@@ -194,7 +194,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
 
           // If no need for table log (i.e. no need for debug), reduce memory
           // footprint by releasing unused (intermediate) bounds array set.
-          if ( !bTableLog ) {
+          if ( !this.bTableLog ) {
             this.boundsArraySet.disposeResources_and_recycleToPool();
             this.boundsArraySet = null;
           }

@@ -1088,7 +1088,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
 
     // 10.3 If no need for table log (i.e. no need for debug), reduce memory
     //      footprint by releasing unused (intermediate) bounds array set.
-    if ( !bTableLog ) {
+    if ( !this.bTableLog ) {
       this.dispose_intermediate_ScaleBoundsArray();
     }
 
