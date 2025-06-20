@@ -470,7 +470,7 @@ class NumberImage_Base extends Recyclable.Root {
     // Activation
     NumberImage_Base.modify_byActivation_withoutAffect_BoundsArraySet(
       imageOut, pointwiseActivationId,
-      bTableLog, parametersDesc, imageHeaderPrefix_forTableLog );
+      bTableLog, parametersDesc, ...pointwiseNames );
 
     imageOut.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
@@ -1006,7 +1006,7 @@ class NumberImage_Base extends Recyclable.Root {
         // Activation
         NumberImage_Base.modify_byActivation_withoutAffect_BoundsArraySet(
           imageOut, depthwiseActivationId,
-          bTableLog, parametersDesc, imageHeaderPrefix_forTableLog );
+          bTableLog, parametersDesc, ...depthwiseNames );
       }
     }
 
