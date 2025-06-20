@@ -79,7 +79,7 @@ async function *testerBackend( progressParent, backendName ) {
           // Since just entering a new batch section, take a break so that
           // memory garbage collector could be activated to work.
           if ( bDisplayed )
-            yield;
+            yield progressRoot;
 
           testReference.testCorrectness(
             imageSourceBag, testParams, channelShufflerBag );
