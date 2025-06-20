@@ -440,7 +440,8 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog )
       imageOut.TableLog_header_body(
-        imageHeaderPrefix_forTableLog + "_afterFilter",
+        imageHeaderPrefix_forTableLog
+          + `${NumberImage_Base.debugNamesSeparator}afterFilter`,
         imageOut.boundsArraySet.afterFilter );
 
     // Bias
@@ -933,7 +934,8 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog )
       imageOut.TableLog_header_body(
-        imageHeaderPrefix_forTableLog + "_afterFilter",
+        imageHeaderPrefix_forTableLog
+          + `${NumberImage_Base.debugNamesSeparator}afterFilter`,
         imageOut.boundsArraySet.afterFilter );
 
     // Bias
@@ -982,8 +984,8 @@ class NumberImage_Base extends Recyclable.Root {
         }
 
         if ( bTableLog )
-          imageOut.TableLog_header_body(
-            imageHeaderPrefix_forTableLog + "_Activation( NONE )" );
+          imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog
+            + `${NumberImage_Base.debugNamesSeparator}Activation( NONE )` );
 
         // Note1: Since there is no undo previous scales, it needs not
         //          .scale_byChannel_withoutAffect_BoundsArraySet().
@@ -1259,9 +1261,9 @@ class NumberImage_Base extends Recyclable.Root {
     if ( !theActivationFunctionInfo ) {
 
       if ( bTableLog )
-        imageIn.TableLog_header_body(
-          imageHeaderPrefix_forTableLog
-            + `_Activation_unknownInfo ( nActivationId = ${nActivationId} )` );
+        imageIn.TableLog_header_body( imageHeaderPrefix_forTableLog
+          + NumberImage_Base.debugNamesSeparator
+          + `Activation_unknownInfo ( nActivationId = ${nActivationId} )` );
 
       return imageIn;
     }
@@ -1274,12 +1276,12 @@ class NumberImage_Base extends Recyclable.Root {
 
     // 0.2
     let pfnActivation = theActivationFunctionInfo.pfnReference;
-    if ( !pfnActivation ) {
+    if ( !pfnActivation ) { // Usually, activation function NONE( 0 ).
 
       if ( bTableLog )
-        imageIn.TableLog_header_body(
-          imageHeaderPrefix_forTableLog
-            + `_Activation_unknown_pfn ( ${strActivationNameWithInt} )` );
+        imageIn.TableLog_header_body( imageHeaderPrefix_forTableLog
+          + NumberImage_Base.debugNamesSeparator
+          + `Activation_no_pfn ( ${strActivationNameWithInt} )` );
 
       return imageIn;
     }
@@ -1293,9 +1295,9 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     if ( bTableLog )
-      imageIn.TableLog_header_body(
-        imageHeaderPrefix_forTableLog
-          + `_Activation ( ${strActivationNameWithInt} )` );
+      imageIn.TableLog_header_body( imageHeaderPrefix_forTableLog
+        + NumberImage_Base.debugNamesSeparator
+        + `Activation ( ${strActivationNameWithInt} )` );
 
     return imageIn;
   }
@@ -1972,8 +1974,10 @@ class NumberImage_Base extends Recyclable.Root {
     if ( bTableLog ) {
       const imageHeaderPrefix_forTableLog
         = `${splitNames.join( NumberImage_Base.debugNamesSeparator )}`;
-      imageOut0.TableLog_header_body( `${imageHeaderPrefix_forTableLog}_out0` );
-      imageOut1.TableLog_header_body( `${imageHeaderPrefix_forTableLog}_out1` );
+      imageOut0.TableLog_header_body( imageHeaderPrefix_forTableLog
+        + `${NumberImage_Base.debugNamesSeparator}out0` );
+      imageOut1.TableLog_header_body( imageHeaderPrefix_forTableLog
+        + `${NumberImage_Base.debugNamesSeparator}out1` );
     }
   }
 
