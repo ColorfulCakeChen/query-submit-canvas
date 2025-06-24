@@ -156,7 +156,63 @@ class TableLogger_Base {
     aBoundsArray_or_aScaleBoundsArray
   ) {
 
-    const funcNameInMessage = "log_array_as_image_along_depth";
+    tableLines.length = 0;
+
+    TableLogger_Base.tableLines_append_for_array_as_image_along_depth.call(
+      this,
+      imageHeaderPrefix,
+      dataArray,
+      height, width, depth,
+      aBoundsArray_or_aScaleBoundsArray
+    );
+
+    // Log all lines in one time to avoid logging too quickily. (If log too
+    // quickly, some log will be abbreviated.)
+    const tableText = tableLines.join( lineJoinSeparator );
+    console.log( tableText );
+  }
+
+
+
+  /**
+   * Log a number array (viewed as 2d image with multiple channels) at the
+   * end of .tableLines. (Note: the content of .bodyFields will be destroyed.)
+   *
+   * For human reading easierly, it is logged by channel (i.e. along the
+   * depth). The 0th channel is logged first. And then, the 1st channel,
+   * the 2nd channel, ...
+   *
+   *
+   * @param {string} imageHeaderPrefix
+   *   A string will be logged before the image header.
+   *
+   * @param {number[]} dataArray
+   *   A 1d (one-dimension) number array (which will be viewed as a 3d number
+   * array) to be logged to console.
+   *
+   * @param {number} height
+   *   The number array will be interpreted as an image with height.
+   *
+   * @param {number} width
+   *   The number array will be interpreted as an image with width.
+   *
+   * @param {number} depth
+   *   The number array will be interpreted as an image with depth.
+   *
+   * @param {FloatValue.BoundsArray|ActivationEscaping.ScaleBoundsArray} aBoundsArray_or_aScaleBoundsArray
+   *   The element value bounds (per channel) of the dataArray number array
+   * (viewed as 2d image with multiple channels). It can be null (or
+   * undefined).
+   */
+  static tableLines_append_for_array_as_image_along_depth(
+    imageHeaderPrefix,
+    dataArray,
+    height, width, depth,
+    aBoundsArray_or_aScaleBoundsArray
+  ) {
+
+    const funcNameInMessage
+      = "tableLines_append_for_array_as_image_along_depth";
 
     const elementCount = height * width * depth;
     if ( dataArray.length != elementCount )
@@ -184,7 +240,6 @@ class TableLogger_Base {
       boundsArray = aBoundsArray;
     }
 
-
     const {
       characterCountPerField,
       digitCountAfterDecimalPoint,
@@ -198,8 +253,6 @@ class TableLogger_Base {
 
     const bodyFields = this.bodyFields;
     const tableLines = this.tableLines;
-
-    tableLines.length = 0;
 
     const imageHeader = `${imageHeaderPrefix}: image `
       + `( height, width, depth ) = ( ${height}, ${width}, ${depth} )`;
@@ -278,13 +331,7 @@ class TableLogger_Base {
         tableLines.push( oneLine );
       }
     }
-
-    // Log all lines in one time to avoid logging too quickily. (If log too
-    // quickly, some log will be abbreviated.)
-    const tableText = tableLines.join( lineJoinSeparator );
-    console.log( tableText );
   }
-
 
 !!! ...unfinshed... (2025/06/24)
 
@@ -321,10 +368,11 @@ class TableLogger_Base {
    * @param {number} outDepth 
    *   The output channel count of the pointwise covolution.
    */
-  static tableLines_append_array_as_pointwiseFilters(
+  static tableLines_append_for_array_as_pointwiseFilters(
     dataArray, inDepth, outDepth ) {
 
-    const funcNameInMessage = "tableLines_append_array_as_pointwiseFilters";
+    const funcNameInMessage
+      = "tableLines_append_for_array_as_pointwiseFilters";
 
     const elementCount = inDepth * outDepth;
     if ( dataArray.length != elementCount )
