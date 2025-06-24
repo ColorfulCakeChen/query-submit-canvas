@@ -617,7 +617,7 @@ class NumberImage_Base extends Recyclable.Root {
     let { channelMultiplier, dilationHeight, dilationWidth,
           stridesHeight, stridesWidth, padHeightTop, padWidthLeft, 
           outputHeight, outputWidth, outputChannelCount, outputElementCount,
-          stridesPadInfo,
+          //stridesPadInfo,
     } = padInfo;
 
     let strTableLog_filterName;
