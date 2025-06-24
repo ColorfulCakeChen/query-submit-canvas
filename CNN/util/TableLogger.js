@@ -73,6 +73,12 @@ class TableLogger_Base {
     this.fieldJoinSeparator = fieldJoinSeparator;
     this.lineJoinSeparator = lineJoinSeparator;
 
+    // Used for channel number header.
+    this.channelNumberIndentCount = 2;
+    this.channelNumberIndentPrefix = " ".repeat( this.channelNumberIndentCount );
+    this.channelNumberDigitCountAfterDecimalPoint = 0; // i.e. integer
+    this.channelNumberCharacterCount = 2;
+
     this.headerFields = new Array();
     this.bodyFields = new Array();
     this.tableLines = new Array();
@@ -183,7 +189,11 @@ class TableLogger_Base {
       characterCountPerField,
       digitCountAfterDecimalPoint,
       fieldJoinSeparator,
-      lineJoinSeparator
+      lineJoinSeparator,
+
+      channelNumberIndentPrefix,
+      channelNumberDigitCountAfterDecimalPoint,
+      channelNumberCharacterCount,
     } = this;
 
     const bodyFields = this.bodyFields;
@@ -194,11 +204,6 @@ class TableLogger_Base {
     const imageHeader = `${imageHeaderPrefix}: image `
       + `( height, width, depth ) = ( ${height}, ${width}, ${depth} )`;
     tableLines.push( imageHeader );
-
-    const channelNumberIndentCount = 2;
-    const channelNumberIndentPrefix = " ".repeat( channelNumberIndentCount );
-    const channelNumberDigitCountAfterDecimalPoint = 0; // i.e. integer
-    const channelNumberCharacterCount = 2;
 
     // Log every channel (i.e. along the depth) because this format is easier
     // for human reading.
@@ -287,7 +292,8 @@ class TableLogger_Base {
    * 
    * @param {number[]} dataArray
    *   A 1d (one-dimension) number array (which will be viewed as a 4d number
-   * array) to be logged to console.
+   * array with shape [ filterHeight, filterWidth, inChannels,
+   * channelMultiplier]) to be logged to console.
    *
    * @param {number} filterHeight
    * @param {number} filterWidth
@@ -303,25 +309,74 @@ class TableLogger_Base {
 
   }
 
-!!! ...unfinshed... (2025/06/24)
-
   /**
    * 
    * @param {number[]} dataArray
    *   A 1d (one-dimension) number array (which will be viewed as a 4d number
-   * array) to be logged to console.
+   * array with shape [ 1, 1, inDepth, outDepth]) to be logged to console.
    *
-   * @param {number} filterHeight 
-   * @param {number} filterWidth 
    * @param {number} inDepth 
+   *   The input channel count of the pointwise covolution.
+   *
    * @param {number} outDepth 
+   *   The output channel count of the pointwise covolution.
    */
-  log_array_as_pointwiseFilters(
-    dataArray,
-    filterHeight, filterWidth, inDepth, outDepth
-  ) {
+  static tableLines_append_array_as_pointwiseFilters(
+    dataArray, inDepth, outDepth ) {
 
     const funcNameInMessage = "log_array_as_pointwiseFilters";
+
+    const {
+      characterCountPerField,
+      digitCountAfterDecimalPoint,
+      // fieldJoinSeparator,
+      // lineJoinSeparator,
+
+      channelNumberIndentPrefix,
+      channelNumberDigitCountAfterDecimalPoint,
+      channelNumberCharacterCount,
+    } = this;
+
+    const tableLines = this.tableLines;
+
+    // Log every input channel (of every output channel) because this format
+    // is easier for human reading.
+
+    let elementIndex;
+    let elementValue;
+    let valueString;
+
+    for ( let outChannel = 0; outChannel < outDepth; ++outChannel ) {
+      elementIndex = outChannel;
+
+      // Separate every output channel by channel header (with channel index).
+      {
+        const channelNumber = outChannel
+          .toFixed( channelNumberDigitCountAfterDecimalPoint )
+          .padStart( channelNumberCharacterCount );
+
+        const channelHeader
+          = `${channelNumberIndentPrefix}filter output channel ${channelNumber}:`;
+
+        tableLines.push( channelHeader );
+      }
+
+      for ( let inChannel = 0;
+        inChannel < inDepth;
+        ++inChannel, elementIndex += outDepth ) {
+
+          elementValue = dataArray[ elementIndex ];
+
+          valueString
+            = elementValue
+                .toFixed( digitCountAfterDecimalPoint )
+                .padStart( characterCountPerField );
+
+          tableLines.push( valueString );
+        }
+
+      }
+    }
 
   }
 
