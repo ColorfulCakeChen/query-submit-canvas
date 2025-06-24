@@ -420,7 +420,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       this.poolWindowShape, "avg", this.pad, 1, this.strides );
 
     this.TableLog_tensor3d_if_requested(
-      this.TableLog_filterName, t0, this.boundsArraySet.afterFilter );
+      this.TableLog_filterName_get(), t0, this.boundsArraySet.afterFilter );
 
     return t0;
   }
@@ -432,7 +432,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
         this.poolWindowShape, "avg", this.pad, 1, this.strides );
 
       this.TableLog_tensor3d_if_requested(
-        this.TableLog_filterName, t0, this.boundsArraySet.afterFilter );
+        this.TableLog_filterName_get(), t0, this.boundsArraySet.afterFilter );
 
       return t0;
 
@@ -448,7 +448,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       this.poolWindowShape, "max", this.pad, 1, this.strides );
 
     this.TableLog_tensor3d_if_requested(
-      this.TableLog_filterName, t0, this.boundsArraySet.afterFilter );
+      this.TableLog_filterName_get(), t0, this.boundsArraySet.afterFilter );
 
     return t0;
   }
@@ -460,7 +460,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
         this.poolWindowShape, "max", this.pad, 1, this.strides );
 
       this.TableLog_tensor3d_if_requested(
-        this.TableLog_filterName, t0, this.boundsArraySet.afterFilter );
+        this.TableLog_filterName_get(), t0, this.boundsArraySet.afterFilter );
 
       return t0;
 
@@ -481,7 +481,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
 
     if ( this.bTableLog ) {
       this.TableLog_tensor3d_if_requested(
-        this.TableLog_filterName, t0, this.boundsArraySet.afterFilter );
+        this.TableLog_filterName_get(), t0, this.boundsArraySet.afterFilter );
     }
 
     return t0;
@@ -498,7 +498,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
         this.filtersTensor4d, this.strides, this.pad );
 
       this.TableLog_tensor3d_if_requested(
-        this.TableLog_filterName, t0, this.boundsArraySet.afterFilter );
+        this.TableLog_filterName_get(), t0, this.boundsArraySet.afterFilter );
 
       return t0;
 
