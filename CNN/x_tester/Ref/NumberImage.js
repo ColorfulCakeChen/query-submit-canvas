@@ -609,7 +609,7 @@ class NumberImage_Base extends Recyclable.Root {
 
 //!!! ...unfinished... (2021/03/17) What about ( depthwiseFilterHeight <= 0 ) or ( depthwiseFilterWidth <= 0 )?
 
-    const padInfo = Depthwise.PadInfoCalculatorRoot.Pool.get_or_create_by(
+    let padInfo = Depthwise.PadInfoCalculatorRoot.Pool.get_or_create_by(
       imageIn.height, imageIn.width, imageIn.depth, 
       depthwise_AvgMax_Or_ChannelMultiplier,
       depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
