@@ -126,7 +126,8 @@ class TableLogger_Base {
    *   A string will be logged before the image header.
    *
    * @param {number[]} dataArray
-   *   A 1d (one-dimension) number array to be logged to console.
+   *   A 1d (one-dimension) number array (which will be viewed as a 3d number
+   * array) to be logged to console.
    *
    * @param {number} height
    *   The number array will be interpreted as an image with height.
@@ -277,6 +278,70 @@ class TableLogger_Base {
     // quickly, some log will be abbreviated.)
     const tableText = tableLines.join( lineJoinSeparator );
     console.log( tableText );
+  }
+
+
+!!! ...unfinshed... (2025/06/24)
+
+  /**
+   * 
+   * @param {number[]} dataArray
+   *   A 1d (one-dimension) number array (which will be viewed as a 4d number
+   * array) to be logged to console.
+   *
+   * @param {number} filterHeight
+   * @param {number} filterWidth
+   * @param {number} inChannels
+   * @param {number} channelMultiplier
+   */
+  log_array_as_depthwiseFilters(
+    dataArray,
+    filterHeight, filterWidth, inChannels, channelMultiplier
+  ) {
+
+    const funcNameInMessage = "log_array_as_depthwiseFilters";
+
+  }
+
+!!! ...unfinshed... (2025/06/24)
+
+  /**
+   * 
+   * @param {number[]} dataArray
+   *   A 1d (one-dimension) number array (which will be viewed as a 4d number
+   * array) to be logged to console.
+   *
+   * @param {number} filterHeight 
+   * @param {number} filterWidth 
+   * @param {number} inDepth 
+   * @param {number} outDepth 
+   */
+  log_array_as_pointwiseFilters(
+    dataArray,
+    filterHeight, filterWidth, inDepth, outDepth
+  ) {
+
+    const funcNameInMessage = "log_array_as_pointwiseFilters";
+
+  }
+
+!!! ...unfinshed... (2025/06/24)
+
+  /**
+   * 
+   * @param {number[]} dataArray
+   *   A 1d (one-dimension) number array (which will be viewed as a 1d number
+   * array) to be logged to console.
+   *
+   * @param {number} channelCount
+   */
+  log_array_as_biases(
+    dataArray,
+    channelCount
+  ) {
+
+    const funcNameInMessage = "log_array_as_biases";
+
   }
 
 }
