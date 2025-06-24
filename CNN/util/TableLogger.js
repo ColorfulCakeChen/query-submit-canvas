@@ -333,9 +333,10 @@ class TableLogger_Base {
     }
   }
 
-!!! ...unfinshed... (2025/06/24)
-
   /**
+   * Log a number array (viewed as a depthwise convolution filter) at the
+   * end of .tableLines. (Note: the content of .bodyFields will be destroyed.)
+   *
    * 
    * @param {number[]} dataArray
    *   A 1d (one-dimension) number array (which will be viewed as a 4d number
@@ -347,17 +348,76 @@ class TableLogger_Base {
    * @param {number} inChannels
    * @param {number} channelMultiplier
    */
-  log_array_as_depthwiseFilters(
+  static tableLines_append_for_array_as_depthwiseFilters(
     dataArray,
     filterHeight, filterWidth, inChannels, channelMultiplier
   ) {
 
-    const funcNameInMessage = "log_array_as_depthwiseFilters";
+    const funcNameInMessage
+      = "tableLines_append_for_array_as_depthwiseFilters";
+
+    const elementCount
+      = filterHeight * filterWidth * inChannels * channelMultiplier;
+
+    if ( dataArray.length != elementCount )
+      throw Error( `TableLogger_Base.${funcNameInMessage}(): `
+        + `dataArray.length ( ${dataArray.length} ) `
+        + `should be ( ${elementCount} ) for shape `
+        + `[ filterHeight, filterWidth, inChannels, channelMultiplier ] = `
+        + `[ ${filterHeight}, ${filterWidth}, ${inChannels}, ${channelMultiplier} ].`
+      );
+
+    const {
+      characterCountPerField,
+      digitCountAfterDecimalPoint,
+      // fieldJoinSeparator,
+      // lineJoinSeparator,
+
+      channelNumberIndentPrefix,
+      channelNumberDigitCountAfterDecimalPoint,
+      channelNumberCharacterCount,
+    } = this;
+
+    const bodyFields = this.bodyFields;
+    const tableLines = this.tableLines;
+
+    // Log every input channel (of every output channel) because this format
+    // is easier for human reading.
+
+    let elementIndex;
+    let elementValue;
+    let valueString;
+
+
+    const outChannels = inChannels * channelMultiplier;
+
+    let outChannel = 0;
+    for ( let outChannelSub = 0;
+      outChannelSub < channelMultiplier;
+      ++outChannelSub, ++outChannel ) {
+
+      elementIndex = outChannel;
+
+      for ( let inChannel = 0; inChannel < inChannels; ++inChannel ) {
+
+        for ( let filterY = 0; filterY < filterHeight; ++filterY ) {
+          for ( let filterX = 0; filterX < filterWidth; ++filterX ) {
+
+            elementIndex += outChannels;
+
+!!! ...unfinshed... (2025/06/24)
+
+          }
+        }
+      }
+    }
 
   }
 
   /**
-   * 
+   * Log a number array (viewed as a depthwise convolution filter) at the
+   * end of .tableLines. (Note: the content of .bodyFields will be destroyed.)
+   *
    * @param {number[]} dataArray
    *   A 1d (one-dimension) number array (which will be viewed as a 4d number
    * array with shape [ 1, 1, inDepth, outDepth]) to be logged to console.
@@ -431,10 +491,8 @@ class TableLogger_Base {
 
           tableLines.push( valueString );
         }
-
       }
     }
-
   }
 
 !!! ...unfinshed... (2025/06/24)
@@ -447,12 +505,12 @@ class TableLogger_Base {
    *
    * @param {number} channelCount
    */
-  log_array_as_biases(
+  static tableLines_append_for_array_as_biases(
     dataArray,
     channelCount
   ) {
 
-    const funcNameInMessage = "log_array_as_biases";
+    const funcNameInMessage = "tableLines_append_for_array_as_biases";
 
   }
 
