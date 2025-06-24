@@ -296,10 +296,10 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
           break;
       }
 
-    } else if ( this.AvgMax_Or_ChannelMultiplier == 0 ) {
+    } else if ( AvgMax_Or_ChannelMultiplier == 0 ) {
       op_name = `none`;
 
-    } else { // ( this.AvgMax_Or_ChannelMultiplier > 0 )
+    } else { // ( AvgMax_Or_ChannelMultiplier > 0 )
       op_name = `conv_channelMultiplier_${this.channelMultiplier}`;
     }
 
