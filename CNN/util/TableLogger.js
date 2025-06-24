@@ -324,7 +324,16 @@ class TableLogger_Base {
   static tableLines_append_array_as_pointwiseFilters(
     dataArray, inDepth, outDepth ) {
 
-    const funcNameInMessage = "log_array_as_pointwiseFilters";
+    const funcNameInMessage = "tableLines_append_array_as_pointwiseFilters";
+
+    const elementCount = inDepth * outDepth;
+    if ( dataArray.length != elementCount )
+      throw Error( `TableLogger_Base.${funcNameInMessage}(): `
+        + `dataArray.length ( ${dataArray.length} ) `
+        + `should be ( ${elementCount} ) for shape `
+        + `[ filterHeight, filterWidth, inDepth, outDepth ] = `
+        + `[ 1, 1, ${inDepth}, ${outDepth} ].`
+      );
 
     const {
       characterCountPerField,
