@@ -274,7 +274,7 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
    */
   TableLog_filterName_get() {
     if ( !this.TableLog_filterName )
-      return TableLog_filterName; // Return cached name.
+      return this.TableLog_filterName; // Return cached name.
 
     const AvgMax_Or_ChannelMultiplier = this.AvgMax_Or_ChannelMultiplier;
 
