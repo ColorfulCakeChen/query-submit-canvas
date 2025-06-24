@@ -267,53 +267,51 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
 
   /**
    * @return {string}
-   *   A string describing this depthwise operation for table log.
+   *   A string describing the name of this depthwise operation. It is mainly
+   * used for table log.
+   *   - If .TableLog_filterName exists, return it directly.
+   *   - Otherwise, create and return it.
    */
   TableLog_filterName_get() {
+    if ( !this.TableLog_filterName )
+      return TableLog_filterName; // Return cached name.
 
-!!! ...unfinished... (2025/06/20)
-// Only if ( !this.TableLog_filterName ), then create it.
-// Otherwise, just return this.TableLog_filterName
+    const AvgMax_Or_ChannelMultiplier = this.AvgMax_Or_ChannelMultiplier;
 
-    // this.AvgMax_Or_ChannelMultiplier;
-    // this.filterHeight;
-    // this.filterWidth;
-    //this.channelMultiplier
-    // this.stridesPad_NameWithInt;
+    // 1.
+    let op_name;
+    if ( AvgMax_Or_ChannelMultiplier < 0 ) {
 
-    if ( this.AvgMax_Or_ChannelMultiplier < 0 ) {
-
-      switch ( this.AvgMax_Or_ChannelMultiplier ) {
+      switch ( AvgMax_Or_ChannelMultiplier ) {
         case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG:
-          this.TableLog_filterName = ;
+          op_name = "avg";
           break;
 
         case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX:
-          this.TableLog_filterName = ;
+          op_name = "max";
           break;
 
         default:
-          this.TableLog_filterName = ;
+          op_name = `unknown(${AvgMax_Or_ChannelMultiplier})`;
           break;
       }
 
     } else if ( this.AvgMax_Or_ChannelMultiplier == 0 ) {
-      this.TableLog_filterName = ;
+      op_name = `none`;
 
     } else { // ( this.AvgMax_Or_ChannelMultiplier > 0 )
-      this.TableLog_filterName = ;
-      
+      op_name = `conv_channelMultiplier_${this.channelMultiplier}`;
     }
 
+    // 2. operator size
+    const op_size = `${this.filterHeight}x${this.filterWidth}`;
 
-!!! ...unfinished... (2025/06/20)
-// log depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-// avg_hxw_strides_pad
-// max_hxw_strides_pad
-// conv_hxw_channelMultiplier_strides_pad
+    // 3.
+    this.TableLog_filterName
+      = `${op_name}_${op_size}_${this.stridesPad_NameWithInt}`;
 
+    return this.TableLog_filterName;
   }
-
 
   /**
    * @return {boolean}
