@@ -609,7 +609,7 @@ class NumberImage_Base extends Recyclable.Root {
 
 //!!! ...unfinished... (2021/03/17) What about ( depthwiseFilterHeight <= 0 ) or ( depthwiseFilterWidth <= 0 )?
 
-    let padInfo = Depthwise.PadInfoCalculatorRoot.Pool.get_or_create_by(
+    const padInfo = Depthwise.PadInfoCalculatorRoot.Pool.get_or_create_by(
       imageIn.height, imageIn.width, imageIn.depth, 
       depthwise_AvgMax_Or_ChannelMultiplier,
       depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad );
@@ -619,6 +619,10 @@ class NumberImage_Base extends Recyclable.Root {
           outputHeight, outputWidth, outputChannelCount, outputElementCount,
           stridesPadInfo,
     } = padInfo;
+
+    let strTableLog_filterName;
+    if ( bTableLog )
+      strTableLog_filterName = padInfo.TableLog_filterName_get();
 
     padInfo.disposeResources_and_recycleToPool();
     padInfo = null;
@@ -914,25 +918,10 @@ class NumberImage_Base extends Recyclable.Root {
       imageOut.boundsArraySet.afterFilter );
 
     if ( bTableLog ) {
-      const str_AvgMax_Or_ChannelMultiplier_NameWithInt
-        = ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.getNameWithInt_byId(
-            depthwise_AvgMax_Or_ChannelMultiplier );
-
-      if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 )
-        str_AvgMax_Or_ChannelMultiplier_NameWithInt
-          = `conv_channelMultiplier_${str_AvgMax_Or_ChannelMultiplier_NameWithInt}`;
-
-!!! ...unfinished... (2025/06/20)
-// log depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
-// conv_hxw_pad
-
-      const str_StridesPad_NameWithInt
-        = ValueDesc.StridesPad.Singleton.getNameWithInt_byId( depthwiseStridesPad );
-
       imageOut.TableLog_header_body(
         imageHeaderPrefix_forTableLog
           + NumberImage_Base.debugNamesSeparator
-          + str_AvgMax_Or_ChannelMultiplier_NameWithInt,
+          + strTableLog_filterName,
         imageOut.boundsArraySet.afterFilter );
     }
 
