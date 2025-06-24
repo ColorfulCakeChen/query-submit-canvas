@@ -155,9 +155,12 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
             this.filtersTensor4d
               = tf.tensor( this.filtersArray, this.filtersShape );
 
-//!!! (2022/08/05 Temp Remarked) For debug BoundsArraySet calculation error.
-            this.filtersArray.disposeResources_and_recycleToPool();
-            this.filtersArray = null; // Release for reducing memory usage.
+            // If no need for table log (debug), reduce memory footprint by
+            // releasing already used filters array.
+            if ( !this.bTableLog ) {
+              this.filtersArray.disposeResources_and_recycleToPool();
+              this.filtersArray = null; // Release for reducing memory usage.
+            }
 
             // Note: Because .filtersShape will be kept by .filtersTensor4d
             //       internally, it can not be released here.
@@ -167,9 +170,12 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
             this.biasesTensor3d
               = tf.tensor( this.biasesArray, this.biasesShape );
 
-//!!! (2022/08/05 Temp Remarked) For debug BoundsArraySet calculation error.
-            this.biasesArray.disposeResources_and_recycleToPool();
-            this.biasesArray = null; // Release for reducing memory usage.
+            // If no need for table log (debug), reduce memory footprint by
+            // releasing already used biases array.
+            if ( !this.bTableLog ) {
+              this.biasesArray.disposeResources_and_recycleToPool();
+              this.biasesArray = null; // Release for reducing memory usage.
+            }
 
             // Note: Because .biasesShape will be kept by .biasesTensor3d
             //       internally, it can not be released here.
@@ -188,8 +194,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
           // this.output0
           this.boundsArraySet.output0 = null;
 
-          // If no need for table log (i.e. no need for debug), reduce memory
-          // footprint by releasing unused (intermediate) bounds array set.
+          // If no need for table log (debug), reduce memory footprint by
+          // releasing unused (intermediate) bounds array set.
           if ( !this.bTableLog ) {
             this.boundsArraySet.disposeResources_and_recycleToPool();
             this.boundsArraySet = null;
@@ -324,6 +330,10 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
     const t0 = tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
 
     this.TableLog_tensor3d_if_requested(
+
+!!! ...unfinished... (2025/06/24)        
+// Append filter at the end of the imageHeaderPrefix.
+
       "conv", t0, this.boundsArraySet.afterFilter );
 
     return t0;
@@ -339,6 +349,10 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
       const t0 = tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
 
       this.TableLog_tensor3d_if_requested(
+
+!!! ...unfinished... (2025/06/24)        
+// Append filter at the end of the imageHeaderPrefix.
+
         "conv", t0, this.boundsArraySet.afterFilter );
 
       return t0;
@@ -362,6 +376,10 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
       t1 = tf.add( t0, this.biasesTensor3d );
 
       this.TableLog_tensor3d_if_requested(
+
+!!! ...unfinished... (2025/06/24)        
+// Append bias tensor at the end of the imageHeaderPrefix.
+
         "bias", t1, this.boundsArraySet.afterBias );
 
     } finally {
@@ -398,6 +416,10 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
       t1 = tf.add( t0, this.biasesTensor3d );
 
       this.TableLog_tensor3d_if_requested(
+
+!!! ...unfinished... (2025/06/24)        
+// Append bias tensor at the end of the imageHeaderPrefix.
+
         "bias", t1, this.boundsArraySet.afterBias );
 
     } finally {

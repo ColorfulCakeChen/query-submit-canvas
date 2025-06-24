@@ -432,6 +432,10 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog )
       imageOut.TableLog_header_body(
+
+!!! ...unfinished... (2025/06/24)        
+// Append filter at the end of the imageHeaderPrefix.
+
         imageHeaderPrefix_forTableLog
           + `${NumberImage_Base.debugNamesSeparator}conv`,
         imageOut.boundsArraySet.afterFilter );
@@ -918,6 +922,10 @@ class NumberImage_Base extends Recyclable.Root {
       imageOut.boundsArraySet.afterFilter );
 
     if ( bTableLog ) {
+
+!!! ...unfinished... (2025/06/24)        
+// Append filter at the end of the imageHeaderPrefix.
+
       imageOut.TableLog_header_body(
         imageHeaderPrefix_forTableLog
           + NumberImage_Base.debugNamesSeparator
@@ -1067,6 +1075,9 @@ class NumberImage_Base extends Recyclable.Root {
       imageIn.boundsArraySet.afterBias.add_one_byN(
         inChannel, biasesArray[ inChannel ] );
     }
+
+!!! ...unfinished... (2025/06/24)        
+// Append bias tensor at the end of the imageHeaderPrefix.
 
     if ( bTableLog )
       imageIn.TableLog_header_body(

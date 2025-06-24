@@ -1086,8 +1086,8 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
     this.operationArray.setKeepInputTensor(
       this.bKeepInputTensor, this.bKeepInputTensor )
 
-    // 10.3 If no need for table log (i.e. no need for debug), reduce memory
-    //      footprint by releasing unused (intermediate) bounds array set.
+    // 10.3 If no need for table log (debug), reduce memory footprint by
+    //      releasing unused (intermediate) bounds array set.
     if ( !this.bTableLog ) {
       this.dispose_intermediate_ScaleBoundsArray();
     }
