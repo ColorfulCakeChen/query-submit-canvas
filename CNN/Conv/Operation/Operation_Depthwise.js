@@ -197,17 +197,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
               this.TableLog_subheader_for_biases
                 = TableLogger.Base.Singleton.subheader_create_for_biases(
                     this.biasesArray,
-
-    dataArray,
-    channelCount
-
-!!! ...unfinished... (2025/06/25)
-
-                    this.filtersArray,
-                    this.filterHeight,
-                    this.filterWidth,
-                    this.inputChannelCount,
-                    this.channelMultiplier );
+                    this.biasesShape[ 2 ] ); // Note: Assume biases is tensor3d.
             }
 
             // Note: Because .biasesShape will be kept by .biasesTensor3d

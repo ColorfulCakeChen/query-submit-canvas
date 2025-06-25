@@ -160,6 +160,15 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
             if ( !this.bTableLog ) {
               this.filtersArray.disposeResources_and_recycleToPool();
               this.filtersArray = null; // Release for reducing memory usage.
+
+            } else { // Otherwise, create table log subheader for filters.
+              this.TableLog_subheader_for_filters
+                = TableLogger.Base.Singleton.subheader_create_for_depthwiseFilters(
+                    this.filtersArray,
+                    this.filterHeight,
+                    this.filterWidth,
+                    this.inputChannelCount,
+                    this.channelMultiplier );
             }
 
             // Note: Because .filtersShape will be kept by .filtersTensor4d
@@ -175,6 +184,12 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
             if ( !this.bTableLog ) {
               this.biasesArray.disposeResources_and_recycleToPool();
               this.biasesArray = null; // Release for reducing memory usage.
+
+            } else { // Otherwise, create table log subheader for biases.
+              this.TableLog_subheader_for_biases
+                = TableLogger.Base.Singleton.subheader_create_for_biases(
+                    this.biasesArray,
+                    this.biasesShape[ 2 ] ); // Note: Assume biases is tensor3d.
             }
 
             // Note: Because .biasesShape will be kept by .biasesTensor3d
