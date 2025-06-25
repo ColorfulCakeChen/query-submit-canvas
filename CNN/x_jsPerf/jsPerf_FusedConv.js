@@ -60,12 +60,12 @@ class HeightWidthDepth {
     this.pointwiseFiltersShape = [
       this.pointwiseFilterHeight, this.pointwiseFilterWidth,
       this.inputChannelCount, this.outputChannelCount ];
-    this.pointwiseBiasesShape = [ this.outputChannelCount ];
+    this.pointwiseBiasesShape = [ 1, 1, this.outputChannelCount ];
 
     this.fusedConvFiltersShape = [
       this.depthwiseFilterHeight, this.depthwiseFilterWidth,
       this.inputChannelCount, this.outputChannelCount ];
-    this.fusedConvBiasesShape = [ this.outputChannelCount ];
+    this.fusedConvBiasesShape = [ 1, 1, this.outputChannelCount ];
 
     this.fusedConvWithBiasFiltersShape = [ // extra channel as bias.
       this.depthwiseFilterHeight, this.depthwiseFilterWidth,
