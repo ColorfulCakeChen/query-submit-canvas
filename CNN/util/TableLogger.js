@@ -350,10 +350,9 @@ class TableLogger_Base {
         for ( let x = 0; x < width; ++x, elementIndex += depth ) {
           elementValue = dataArray[ elementIndex ];
 
-          valueString
-            = elementValue
-                .toFixed( digitCountAfterDecimalPoint )
-                .padStart( characterCountPerField );
+          valueString = elementValue
+            .toFixed( digitCountAfterDecimalPoint )
+            .padStart( characterCountPerField );
 
           bodyFields.push( valueString );
         }
@@ -455,10 +454,9 @@ class TableLogger_Base {
             elementIndex += outChannels;
             elementValue = dataArray[ elementIndex ];
 
-            valueString
-              = elementValue
-                  .toFixed( digitCountAfterDecimalPoint )
-                  .padStart( characterCountPerField );
+            valueString = elementValue
+              .toFixed( digitCountAfterDecimalPoint )
+              .padStart( characterCountPerField );
 
             subheaderFields.push( valueString );
           }
@@ -530,29 +528,25 @@ class TableLogger_Base {
 
       // Separate every output channel by channel header (with channel index).
       {
-        const channelNumber = outChannel
+        const strOutChannelNumber = outChannel
           .toFixed( channelNumberDigitCountAfterDecimalPoint )
           .padStart( channelNumberCharacterCount );
 
-        const channelHeader
-          = `${channelNumberIndentPrefix}filter output channel ${channelNumber}:`;
+        const channelHeader = `${channelNumberIndentPrefix}filter `
+          + `output channel ${strOutChannelNumber}:`;
 
         subheaderLines.push( channelHeader );
       }
 
-      for ( let inChannel = 0;
-        inChannel < inDepth;
-        ++inChannel, elementIndex += outDepth ) {
-
+      for ( let inChannel = 0; inChannel < inDepth; ++inChannel ) {
+          elementIndex += outDepth;
           elementValue = dataArray[ elementIndex ];
 
-          valueString
-            = elementValue
-                .toFixed( digitCountAfterDecimalPoint )
-                .padStart( characterCountPerField );
+          valueString = elementValue
+            .toFixed( digitCountAfterDecimalPoint )
+            .padStart( characterCountPerField );
 
           subheaderLines.push( valueString );
-        }
       }
     }
 
