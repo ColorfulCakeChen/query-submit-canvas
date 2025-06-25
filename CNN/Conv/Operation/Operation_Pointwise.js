@@ -164,7 +164,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
 
             } else { // Otherwise, create table log subheader for filters.
               this.TableLog_subheader_for_filters
-                = TableLogger.Base.Singleton.subheader_create_for_depthwiseFilters(
+                = TableLogger.Base.Singleton.subheader_create_for_pointwiseFilters(
                     this.filtersArray,
                     this.filtersShape[ 0 ],
                     this.filtersShape[ 1 ],
