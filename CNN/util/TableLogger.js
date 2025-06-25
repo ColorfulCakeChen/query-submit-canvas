@@ -452,10 +452,7 @@ class TableLogger_Base {
           subheaderFields.length = 0;
 
           for ( let filterX = 0; filterX < filterWidth; ++filterX ) {
-
             elementIndex += outChannels;
-
-!!! ...unfinshed... (2025/06/24)
             elementValue = dataArray[ elementIndex ];
 
             valueString
@@ -468,7 +465,6 @@ class TableLogger_Base {
 
           const oneLine = subheaderFields.join( fieldJoinSeparator );
           subheaderLines.push( oneLine );
-
         }
       }
     }
