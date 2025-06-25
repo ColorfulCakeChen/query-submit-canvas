@@ -302,7 +302,7 @@ class NumberImage_Base extends Recyclable.Root {
       if ( bTableLog )
         imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog
           + `${NumberImage_Base.debugNamesSeparator}conv_none`,
-          undefined // No pointwise filters or TableLog subheader.
+          undefined // No pointwise filters could be used as TableLog subheader.
         );
       return imageOut;
     }
@@ -432,27 +432,18 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut.assert_pixels_byBoundsArray(
       imageOut.boundsArraySet.afterFilter );
 
-    if ( bTableLog )
+    if ( bTableLog ) {
+
+      const TableLog_subheader_for_pointwiseFilters
+        = TableLogger.Base.Singleton.subheader_create_for_pointwiseFilters(
+            pointwiseFiltersArray, imageIn.depth, pointwiseChannelCount );
+
       imageOut.TableLog_header_body(
-
-        const TableLog_subheader_for_filters
-          = TableLogger.Base.Singleton.subheader_create_for_depthwiseFilters(
-
-!!! ...unfinished... (2025/06/24)        
-              this.filtersArray,
-              this.filterHeight,
-              this.filterWidth,
-              this.inputChannelCount,
-              this.channelMultiplier );
-
-!!! ...unfinished... (2025/06/24)        
-// Append filter at the end of the imageHeaderPrefix.
-
         imageHeaderPrefix_forTableLog
           + `${NumberImage_Base.debugNamesSeparator}conv`,
-
-           ???strSubheader,
+          TableLog_subheader_for_pointwiseFilters,
         imageOut.boundsArraySet.afterFilter );
+    }
 
     // Bias
     imageOut.modify_byBias( bPointwiseBias, pointwiseBiasesArray,
@@ -601,7 +592,9 @@ class NumberImage_Base extends Recyclable.Root {
       const imageOut = imageIn.clone(); // No depthwise operation.
       if ( bTableLog )
         imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog
-          + `${NumberImage_Base.debugNamesSeparator}conv_none`, ???strSubheader );
+          + `${NumberImage_Base.debugNamesSeparator}conv_none`,
+          undefined // No depthwise filters could be used as TableLog subheader.
+        );
       return imageOut;
     }
 
@@ -937,14 +930,21 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog ) {
 
-!!! ...unfinished... (2025/06/24)        
-// Append filter at the end of the imageHeaderPrefix.
+      let TableLog_subheader_for_depthwiseFilters;
+      if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
+        TableLog_subheader_for_depthwiseFilters
+          = TableLogger.Base.Singleton.subheader_create_for_depthwiseFilters(
+              depthwiseFiltersArray,
+              depthwiseFilterHeight, depthwiseFilterWidth,
+              imageIn.depth,
+              channelMultiplier );
+      }
 
       imageOut.TableLog_header_body(
         imageHeaderPrefix_forTableLog
           + NumberImage_Base.debugNamesSeparator
           + strTableLog_filterName,
-        ???strSubheader,
+        TableLog_subheader_for_depthwiseFilters,
         imageOut.boundsArraySet.afterFilter );
     }
 
@@ -1092,14 +1092,17 @@ class NumberImage_Base extends Recyclable.Root {
         inChannel, biasesArray[ inChannel ] );
     }
 
-!!! ...unfinished... (2025/06/24)        
-// Append bias tensor at the end of the imageHeaderPrefix.
+    if ( bTableLog ) {
 
-    if ( bTableLog )
+      const TableLog_subheader_for_biases
+        = TableLogger.Base.Singleton.subheader_create_for_biases(
+            biasesArray, imageIn.depth );
+
       imageIn.TableLog_header_body(
         `${biasNames.join( NumberImage_Base.debugNamesSeparator )}`,
-        ???strSubheader,
+        TableLog_subheader_for_biases,
         imageIn.boundsArraySet.afterBias );
+    }
 
     return imageIn;
   }
