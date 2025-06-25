@@ -554,8 +554,6 @@ class TableLogger_Base {
     return subheader;
   }
 
-!!! ...unfinshed... (2025/06/24)
-
   /**
    * (Note: the content of .subheaderFields and .subheaderLines will be destroyed.)
    *
@@ -577,6 +575,56 @@ class TableLogger_Base {
 
     const funcNameInMessage = "subheader_create_for_biases";
 
+    const elementCount = channelCount;
+    if ( dataArray.length != elementCount )
+      throw Error( `TableLogger_Base.${funcNameInMessage}(): `
+        + `dataArray.length ( ${dataArray.length} ) `
+        + `should be ( ${elementCount} ) for shape `
+        + `[ channelCount ] = `
+        + `[ ${channelCount} ].`
+      );
+
+    const {
+      characterCountPerField,
+      digitCountAfterDecimalPoint,
+      // fieldJoinSeparator,
+      lineJoinSeparator,
+
+      channelNumberIndentPrefix,
+      channelNumberDigitCountAfterDecimalPoint,
+      channelNumberCharacterCount,
+    } = this;
+
+    const subheaderLines = this.subheaderLines;
+    subheaderLines.length = 0;
+
+    let elementIndex;
+    let elementValue;
+    let valueString;
+
+    for ( let outChannel = 0; outChannel < channelCount; ++outChannel ) {
+
+      const strOutChannelNumber = outChannel
+        .toFixed( channelNumberDigitCountAfterDecimalPoint )
+        .padStart( channelNumberCharacterCount );
+
+      elementIndex = outChannel;
+      elementValue = dataArray[ elementIndex ];
+
+      valueString = elementValue
+        .toFixed( digitCountAfterDecimalPoint )
+        .padStart( characterCountPerField );
+
+      // Compose channel number and bias value at the same line (for reducing
+      // log verbose).
+      const channelHeader_value = `${channelNumberIndentPrefix}bias `
+        + `channel ${strOutChannelNumber}: ${valueString}`;
+
+      subheaderLines.push( channelHeader_value );
+    }
+
+    const subheader = subheaderLines.join( lineJoinSeparator );
+    return subheader;
   }
 
 }
