@@ -2,6 +2,7 @@ export { Pointwise };
 
 import * as Pool from "../../util/Pool.js";
 import * as TwoTensors from "../../util/TwoTensors.js";
+import * as TableLogger from "../../util/TableLogger.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as ReturnOrClone from "../ReturnOrClone.js";
 import * as TensorPlaceholder from "../TensorPlaceholder.js";
