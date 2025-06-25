@@ -214,6 +214,9 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
 
   /** @override */
   disposeResources() {
+    this.TableLog_subheader_for_biases = undefined;
+    this.TableLog_subheader_for_filters = undefined;
+
     this.pfnActivation = null;
     this.pfnConv = null;
 

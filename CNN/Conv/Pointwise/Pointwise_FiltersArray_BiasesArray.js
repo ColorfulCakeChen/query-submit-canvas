@@ -497,6 +497,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           1, 1, this.inputChannelCount, this.outputChannelCount );
 
         if ( this.bBias ) {
+
+!!! ...unfinished... (2025/06/25)
+// Why does biasesShape not use shape 3d?
+
           this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 1 );
           this.biasesShape[ 0 ] = this.outputChannelCount;
         } else {

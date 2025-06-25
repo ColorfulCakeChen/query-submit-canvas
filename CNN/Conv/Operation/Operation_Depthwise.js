@@ -168,6 +168,15 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
             if ( !this.bTableLog ) {
               this.filtersArray.disposeResources_and_recycleToPool();
               this.filtersArray = null; // Release for reducing memory usage.
+
+            } else { // Otherwise, create table log subheader for filters.
+              this.TableLog_subheader_for_filters
+                = TableLogger.Base.Singleton.subheader_create_for_depthwiseFilters(
+                    this.filtersArray,
+                    this.filterHeight,
+                    this.filterWidth,
+                    this.inputChannelCount,
+                    this.channelMultiplier );
             }
 
             // Note: Because .filtersShape will be kept by .filtersTensor4d
@@ -183,6 +192,22 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
             if ( !this.bTableLog ) {
               this.biasesArray.disposeResources_and_recycleToPool();
               this.biasesArray = null; // Release for reducing memory usage.
+
+            } else { // Otherwise, create table log subheader for biases.
+              this.TableLog_subheader_for_biases
+                = TableLogger.Base.Singleton.subheader_create_for_biases(
+                    this.biasesArray,
+
+    dataArray,
+    channelCount
+
+!!! ...unfinished... (2025/06/25)
+
+                    this.filtersArray,
+                    this.filterHeight,
+                    this.filterWidth,
+                    this.inputChannelCount,
+                    this.channelMultiplier );
             }
 
             // Note: Because .biasesShape will be kept by .biasesTensor3d
@@ -207,6 +232,9 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
           if ( !this.bTableLog ) {
             this.boundsArraySet.disposeResources_and_recycleToPool();
             this.boundsArraySet = null;
+
+          } else { // Otherwise, create filter name for table log.
+            this.TableLog_filterName_get();
           }
 
         } catch ( e ) {  // If failed (e.g. memory not enough), return false.      
@@ -222,6 +250,9 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
 
   /** @override */
   disposeResources() {
+    this.TableLog_subheader_for_biases = undefined;
+    this.TableLog_subheader_for_filters = undefined;
+
     this.pfnActivation = null;
     this.pfnOperation = null;
 
