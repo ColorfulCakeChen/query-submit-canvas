@@ -1001,8 +1001,7 @@ class NumberImage_Base extends Recyclable.Root {
 
         if ( bTableLog )
           imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog
-            + `${NumberImage_Base.debugNamesSeparator}activation_none`,
-            ???strSubheader );
+            + `${NumberImage_Base.debugNamesSeparator}activation_none` );
 
         // Note1: Since there is no undo previous scales, it needs not
         //          .scale_byChannel_withoutAffect_BoundsArraySet().
@@ -1184,7 +1183,7 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog )
       imageIn.TableLog_header_body(
-        `${clampNames.join( NumberImage_Base.debugNamesSeparator )}`, ???strSubheader );
+        `${clampNames.join( NumberImage_Base.debugNamesSeparator )}` );
 
     return imageIn;
   }
@@ -1248,7 +1247,7 @@ class NumberImage_Base extends Recyclable.Root {
     // (2025/06/18)
     if ( bTableLog )
       imageIn.TableLog_header_body(
-        `${scaleNames.join( NumberImage_Base.debugNamesSeparator )}`, ???strSubheader );
+        `${scaleNames.join( NumberImage_Base.debugNamesSeparator )}` );
 
     return imageIn;
   }
@@ -1291,7 +1290,7 @@ class NumberImage_Base extends Recyclable.Root {
         imageIn.TableLog_header_body(
             `${activationNames.join( NumberImage_Base.debugNamesSeparator )}`
           + `${NumberImage_Base.debugNamesSeparator}`
-          + `unknown_Info ( nActivationId = ${nActivationId} )`, ???strSubheader );
+          + `unknown_Info ( nActivationId = ${nActivationId} )` );
 
       return imageIn;
     }
@@ -1310,7 +1309,7 @@ class NumberImage_Base extends Recyclable.Root {
         imageIn.TableLog_header_body(
             `${activationNames.join( NumberImage_Base.debugNamesSeparator )}`
           + `${NumberImage_Base.debugNamesSeparator}`
-          + `${strActivationNameWithInt} ( no_pfn )`, ???strSubheader );
+          + `${strActivationNameWithInt} ( no_pfn )` );
 
       return imageIn;
     }
@@ -1327,7 +1326,7 @@ class NumberImage_Base extends Recyclable.Root {
       imageIn.TableLog_header_body(
           `${activationNames.join( NumberImage_Base.debugNamesSeparator )}`
         + `${NumberImage_Base.debugNamesSeparator}`
-        + `${strActivationNameWithInt}`, ???strSubheader );
+        + `${strActivationNameWithInt}` );
 
     return imageIn;
   }
@@ -1455,7 +1454,7 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog )
       imageOutNew.TableLog_header_body(
-        `${addNames.join( NumberImage_Base.debugNamesSeparator )}`, ???strSubheader );
+        `${addNames.join( NumberImage_Base.debugNamesSeparator )}` );
 
     return imageOutNew;
   }
@@ -1581,7 +1580,7 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog )
       imageOutNew.TableLog_header_body(
-        `${multiplyNames.join( NumberImage_Base.debugNamesSeparator )}`, ???strSubheader );
+        `${multiplyNames.join( NumberImage_Base.debugNamesSeparator )}` );
 
     return imageOutNew;
   }
@@ -1882,7 +1881,7 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog )
       imageOutNew.TableLog_header_body(
-        `${interleaveNames.join( NumberImage_Base.debugNamesSeparator )}`, ???strSubheader );
+        `${interleaveNames.join( NumberImage_Base.debugNamesSeparator )}` );
 
     return this;
   }
@@ -2005,9 +2004,9 @@ class NumberImage_Base extends Recyclable.Root {
       const imageHeaderPrefix_forTableLog
         = `${splitNames.join( NumberImage_Base.debugNamesSeparator )}`;
       imageOut0.TableLog_header_body( imageHeaderPrefix_forTableLog
-        + `${NumberImage_Base.debugNamesSeparator}out0`, ???strSubheader );
+        + `${NumberImage_Base.debugNamesSeparator}out0` );
       imageOut1.TableLog_header_body( imageHeaderPrefix_forTableLog
-        + `${NumberImage_Base.debugNamesSeparator}out1`, ???strSubheader );
+        + `${NumberImage_Base.debugNamesSeparator}out1` );
     }
   }
 
@@ -2104,7 +2103,7 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog )
       imageOut.TableLog_header_body(
-        `${concatNames.join( NumberImage_Base.debugNamesSeparator )}`, ???strSubheader );
+        `${concatNames.join( NumberImage_Base.debugNamesSeparator )}` );
 
     return imageOut;
   }
