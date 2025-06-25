@@ -434,13 +434,16 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog ) {
 
+      const TableLog_header_prefix_for_pointwiseFilters
+        = imageHeaderPrefix_forTableLog
+            + `${NumberImage_Base.debugNamesSeparator}conv`;
+
       const TableLog_subheader_for_pointwiseFilters
         = TableLogger.Base.Singleton.subheader_create_for_pointwiseFilters(
             pointwiseFiltersArray, imageIn.depth, pointwiseChannelCount );
 
       imageOut.TableLog_header_body(
-        imageHeaderPrefix_forTableLog
-          + `${NumberImage_Base.debugNamesSeparator}conv`,
+        TableLog_header_prefix_for_pointwiseFilters,
         TableLog_subheader_for_pointwiseFilters,
         imageOut.boundsArraySet.afterFilter );
     }
@@ -930,7 +933,12 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog ) {
 
-      let TableLog_subheader_for_depthwiseFilters;
+      const TableLog_header_prefix_for_depthwiseFilters
+        = imageHeaderPrefix_forTableLog
+            + NumberImage_Base.debugNamesSeparator
+            + strTableLog_filterName;
+
+      let TableLog_subheader_for_depthwiseFilters; // Note: AVG and MAX have no filters.
       if ( depthwise_AvgMax_Or_ChannelMultiplier > 0 ) {
         TableLog_subheader_for_depthwiseFilters
           = TableLogger.Base.Singleton.subheader_create_for_depthwiseFilters(
@@ -941,9 +949,7 @@ class NumberImage_Base extends Recyclable.Root {
       }
 
       imageOut.TableLog_header_body(
-        imageHeaderPrefix_forTableLog
-          + NumberImage_Base.debugNamesSeparator
-          + strTableLog_filterName,
+        TableLog_header_prefix_for_depthwiseFilters,
         TableLog_subheader_for_depthwiseFilters,
         imageOut.boundsArraySet.afterFilter );
     }
