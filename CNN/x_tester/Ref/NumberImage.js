@@ -441,7 +441,7 @@ class NumberImage_Base extends Recyclable.Root {
       imageOut.TableLog_header_body(
         imageHeaderPrefix_forTableLog
           + `${NumberImage_Base.debugNamesSeparator}conv`,
-          TableLog_subheader_for_pointwiseFilters,
+        TableLog_subheader_for_pointwiseFilters,
         imageOut.boundsArraySet.afterFilter );
     }
 
