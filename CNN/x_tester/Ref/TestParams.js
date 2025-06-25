@@ -819,12 +819,37 @@ TestParams_Base.integer_numberArray_randomParams = {
 /**
  * Parameters suitable for generating random (embedding, depthwise, pointwise)
  * filter's weights.
+ *
+ *
+ * 1. weightsValueBegin
+ *
+ * Recommend that it begins from a negative (near zero but not zero) value.
+ *
+ * If it begins from zero, the test result will easily become all zero
+ * especially when only one weight value (i.e. the zero itself) is generated.
+ * The reason is the zero will be multiplied (i.e. as a convolution kernel)
+ * to other values.
+ *
+ * If it begins from positive value, the test result will easily become all
+ * positive value. The reason is that weightsValueStep (a positive step) always
+ * increase the generated weight values.
+ *
+ * So, let it begin from a negative value. Then, more kinds of values
+ * (including negative, zero and positive values) will be generated.
+ *
+ *
+ * 2. weightsValueStep
+ *
+ * Use small but expressable floating value (e.g. 1/2, 1/4, 1/8, ...,
+ * 1/(2**n)) so that the result of multiply-add will not be too large.
+ * 
  */
 TestParams_Base.filterWeights_numberArray_randomParams = {
 
-  // Use small but expressable floating value (e.g. 1/2, 1/4, 1/8, ...,
-  // 1/(2**n)) so that the result of multiply-add will not be too large.
-  weightsValueBegin: 0,
+  // (2025/06/25 Modified)
+  //weightsValueBegin: 0,
+  weightsValueBegin: -0.5,
+
   weightsValueStep:  1 / ( 2 ** 3 ), // i.e. ( 1 / 8 )
   //weightsValueStep:  1 / ( 2 ** 5 ), // i.e. ( 1 / 32 )
 
