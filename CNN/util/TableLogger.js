@@ -46,6 +46,18 @@ import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
  *   A helper string Array for generating the whole log table. Every element
  * represents one line of the log table. It will be used as the working buffer
  * (so that array recreation is reduced and performance might be improved).
+ *
+ * @member {string[]} subheaderFields
+ *   A helper string Array for generating one line of log table subheader.
+ * Every element represents one field of a subheader line. It will be used as
+ * the working buffer (so that array recreation is reduced and performance
+ * might be improved).
+ *
+ * @member {string[]} subheaderLines
+ *   A helper string Array for generating the subheader of log table. Every
+ * element represents one line of the subheader. It will be used as the
+ * working buffer (so that array recreation is reduced and performance might
+ * be improved).
  */
 class TableLogger_Base {
 
@@ -82,6 +94,8 @@ class TableLogger_Base {
     this.headerFields = new Array();
     this.bodyFields = new Array();
     this.tableLines = new Array();
+    this.subheaderFields = new Array();
+    this.subheaderLines = new Array();
   }
 
   /**
@@ -351,10 +365,8 @@ class TableLogger_Base {
   }
 
   /**
-   * Log a number array (viewed as a depthwise convolution filter) at the
-   * end of .tableLines. (Note: the content of .bodyFields will be destroyed.)
+   * (Note: the content of .subheaderFields and .subheaderLines will be destroyed.)
    *
-   * 
    * @param {number[]} dataArray
    *   A 1d (one-dimension) number array (which will be viewed as a 4d number
    * array with shape [ filterHeight, filterWidth, inChannels,
@@ -364,8 +376,12 @@ class TableLogger_Base {
    * @param {number} filterWidth
    * @param {number} inChannels
    * @param {number} channelMultiplier
+   *
+   * @return {string}
+   *   Create and return a string describing a number array (viewed as a
+   * depthwise convolution filter).
    */
-  static tableLines_append_for_array_as_depthwiseFilters(
+  subheader_create_for_depthwiseFilters(
     dataArray,
     filterHeight, filterWidth, inChannels, channelMultiplier
   ) {
@@ -395,8 +411,11 @@ class TableLogger_Base {
       channelNumberCharacterCount,
     } = this;
 
-    const bodyFields = this.bodyFields;
-    const tableLines = this.tableLines;
+    // const subheaderFields = this.subheaderFields;
+    const subheaderLines = this.subheaderLines;
+
+    // subheaderFields.length = 0;
+    subheaderLines.length = 0;
 
     // Log every input channel (of every output channel) because this format
     // is easier for human reading.
@@ -432,8 +451,7 @@ class TableLogger_Base {
   }
 
   /**
-   * Log a number array (viewed as a depthwise convolution filter) at the
-   * end of .tableLines. (Note: the content of .bodyFields will be destroyed.)
+   * (Note: the content of .subheaderFields and .subheaderLines will be destroyed.)
    *
    * @param {number[]} dataArray
    *   A 1d (one-dimension) number array (which will be viewed as a 4d number
@@ -444,8 +462,12 @@ class TableLogger_Base {
    *
    * @param {number} outDepth 
    *   The output channel count of the pointwise covolution.
+   *
+   * @return {string}
+   *   Create and return a string describing a number array (viewed as a
+   * pointwise convolution filter).
    */
-  static tableLines_append_for_array_as_pointwiseFilters(
+  subheader_create_for_pointwiseFilters(
     dataArray, inDepth, outDepth ) {
 
     const funcNameInMessage
@@ -515,14 +537,20 @@ class TableLogger_Base {
 !!! ...unfinshed... (2025/06/24)
 
   /**
-   * 
+   * (Note: the content of .subheaderFields and .subheaderLines will be destroyed.)
+   *
    * @param {number[]} dataArray
    *   A 1d (one-dimension) number array (which will be viewed as a 1d number
    * array) to be logged to console.
    *
    * @param {number} channelCount
+   *   How many elements the dataArray has.
+   *
+   * @return {string}
+   *   Create and return a string describing a number array (viewed as the
+   * biases for all output channels).
    */
-  static tableLines_append_for_array_as_biases(
+  subheader_create_for_biases(
     dataArray,
     channelCount
   ) {
