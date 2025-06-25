@@ -451,7 +451,6 @@ class TableLogger_Base {
           subheaderFields.length = 0;
 
           for ( let filterX = 0; filterX < filterWidth; ++filterX ) {
-            elementIndex += outChannels;
             elementValue = dataArray[ elementIndex ];
 
             valueString = elementValue
@@ -459,6 +458,7 @@ class TableLogger_Base {
               .padStart( characterCountPerField );
 
             subheaderFields.push( valueString );
+            elementIndex += outChannels;
           }
 
           const oneLine = subheaderFields.join( fieldJoinSeparator );
@@ -539,14 +539,14 @@ class TableLogger_Base {
       }
 
       for ( let inChannel = 0; inChannel < inDepth; ++inChannel ) {
-          elementIndex += outDepth;
-          elementValue = dataArray[ elementIndex ];
+        elementValue = dataArray[ elementIndex ];
 
-          valueString = elementValue
-            .toFixed( digitCountAfterDecimalPoint )
-            .padStart( characterCountPerField );
+        valueString = elementValue
+          .toFixed( digitCountAfterDecimalPoint )
+          .padStart( characterCountPerField );
 
-          subheaderLines.push( valueString );
+        subheaderLines.push( valueString );
+        elementIndex += outDepth;
       }
     }
 
