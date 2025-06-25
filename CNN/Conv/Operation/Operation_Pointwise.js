@@ -288,11 +288,6 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
     return this.tensorWeightCountTotal_internal;
   }
 
-
-!!! ...unfinished... (2025/06/25)
-// Create and cache filters and biases table log string.
-
-
   /** Determine this.bPointwise and this.pfnXxx data members.
    *
    * @param {Base} this
@@ -353,11 +348,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
     const t0 = tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
 
     this.TableLog_tensor3d_if_requested(
-
-!!! ...unfinished... (2025/06/24)        
-// if ( bTableLog == true ), Append filter at the end of the imageHeaderPrefix.
-
-      "conv", ???strSubheader,
+      "conv",
+      this.TableLog_subheader_for_filters,
       t0, this.boundsArraySet.afterFilter );
 
     return t0;
@@ -373,11 +365,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
       const t0 = tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
 
       this.TableLog_tensor3d_if_requested(
-
-!!! ...unfinished... (2025/06/24)        
-// if ( bTableLog == true ), Append filter at the end of the imageHeaderPrefix.
-
-        "conv", ???strSubheader,
+        "conv",
+        this.TableLog_subheader_for_filters,
         t0, this.boundsArraySet.afterFilter );
 
       return t0;
@@ -401,11 +390,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
       t1 = tf.add( t0, this.biasesTensor3d );
 
       this.TableLog_tensor3d_if_requested(
-
-!!! ...unfinished... (2025/06/24)        
-// if ( bTableLog == true ), Append bias tensor at the end of the imageHeaderPrefix.
-
-        "bias", ???strSubheader,
+        "bias",
+        this.TableLog_subheader_for_biases,
         t1, this.boundsArraySet.afterBias );
 
     } finally {
@@ -442,11 +428,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
       t1 = tf.add( t0, this.biasesTensor3d );
 
       this.TableLog_tensor3d_if_requested(
-
-!!! ...unfinished... (2025/06/24)
-// if ( bTableLog == true ), Append bias tensor at the end of the imageHeaderPrefix.
-
-        "bias", ???strSubheader,
+        "bias",
+        this.TableLog_subheader_for_biases,
         t1, this.boundsArraySet.afterBias );
 
     } finally {
