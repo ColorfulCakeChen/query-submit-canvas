@@ -358,7 +358,8 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     headerPrefix = this.nameJoinSeparator_join( headerPrefix, extraLeafName );
 
     TableLogger.Base.Singleton.log_tensor3d_along_depth(
-      headerPrefix, aTensor3d, aBoundsArray_or_aScaleBoundsArray );
+      headerPrefix, strSubheader,
+      aTensor3d, aBoundsArray_or_aScaleBoundsArray );
   }
 
   /**
