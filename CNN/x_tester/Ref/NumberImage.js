@@ -301,7 +301,9 @@ class NumberImage_Base extends Recyclable.Root {
       const imageOut = imageIn.clone(); // No pointwise operation.
       if ( bTableLog )
         imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog
-          + `${NumberImage_Base.debugNamesSeparator}conv_none`, ???strSubheader );
+          + `${NumberImage_Base.debugNamesSeparator}conv_none`,
+          undefined // No pointwise filters or TableLog subheader.
+        );
       return imageOut;
     }
 
@@ -433,11 +435,23 @@ class NumberImage_Base extends Recyclable.Root {
     if ( bTableLog )
       imageOut.TableLog_header_body(
 
+        const TableLog_subheader_for_filters
+          = TableLogger.Base.Singleton.subheader_create_for_depthwiseFilters(
+
+!!! ...unfinished... (2025/06/24)        
+              this.filtersArray,
+              this.filterHeight,
+              this.filterWidth,
+              this.inputChannelCount,
+              this.channelMultiplier );
+
 !!! ...unfinished... (2025/06/24)        
 // Append filter at the end of the imageHeaderPrefix.
 
         imageHeaderPrefix_forTableLog
-          + `${NumberImage_Base.debugNamesSeparator}conv`, ???strSubheader,
+          + `${NumberImage_Base.debugNamesSeparator}conv`,
+
+           ???strSubheader,
         imageOut.boundsArraySet.afterFilter );
 
     // Bias

@@ -143,11 +143,8 @@ let PassThrough_FiltersArray_BiasesArray
     // filled by zeros.
     let zerosCount = outputChannelCount - extractedCount;
 
-    this.filtersShape = Recyclable.Array.Pool.get_or_create_by( 4 );
-    this.filtersShape[ 0 ] = 1;
-    this.filtersShape[ 1 ] = 1;
-    this.filtersShape[ 2 ] = inputChannelCount;
-    this.filtersShape[ 3 ] = outputChannelCount;
+    this.filtersShape = Recyclable.Array.Pool.get_or_create_by(
+      1, 1, inputChannelCount, outputChannelCount );
 
     this.filtersArray = Recyclable.Array.Pool.get_or_create_by(
       inputChannelCount * outputChannelCount );
@@ -163,10 +160,8 @@ let PassThrough_FiltersArray_BiasesArray
     }
 
     if ( this.bBias ) {
-      this.biasesShape = Recyclable.Array.Pool.get_or_create_by( 3 );
-      this.biasesShape[ 0 ] = 1;
-      this.biasesShape[ 1 ] = 1;
-      this.biasesShape[ 2 ] = outputChannelCount;
+      this.biasesShape = Recyclable.Array.Pool.get_or_create_by(
+        1, 1, outputChannelCount );
 
       this.biasesArray = Recyclable.Array.Pool.get_or_create_by( outputChannelCount );
       this.biasesArray.fill( biasValue, 0, extractedCount ); // non-zero-hot.
@@ -427,16 +422,11 @@ class AllZeros
     let filtersShape;
     let biasesShape;
     try {
-      filtersShape = Recyclable.Array.Pool.get_or_create_by( 4 );
-      filtersShape[ 0 ] = 1;
-      filtersShape[ 1 ] = 1;
-      filtersShape[ 2 ] = inputChannelCount;
-      filtersShape[ 3 ] = outputChannelCount;
+      filtersShape = Recyclable.Array.Pool.get_or_create_by(
+        1, 1, inputChannelCount, outputChannelCount );
 
-      biasesShape = Recyclable.Array.Pool.get_or_create_by( 3 );
-      biasesShape[ 0 ] = 1;
-      biasesShape[ 1 ] = 1;
-      biasesShape[ 2 ] = outputChannelCount;
+      biasesShape = Recyclable.Array.Pool.get_or_create_by(
+        1, 1, outputChannelCount );
 
       this.filtersTensor4d = tf.zeros( filtersShape );
 
