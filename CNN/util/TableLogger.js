@@ -386,11 +386,10 @@ class TableLogger_Base {
     filterHeight, filterWidth, inChannels, channelMultiplier
   ) {
 
-    const funcNameInMessage
-      = "tableLines_append_for_array_as_depthwiseFilters";
+    const funcNameInMessage = "subheader_create_for_depthwiseFilters";
 
-    const elementCount
-      = filterHeight * filterWidth * inChannels * channelMultiplier;
+    const outChannels = inChannels * channelMultiplier;
+    const elementCount = filterHeight * filterWidth * outChannels;
 
     if ( dataArray.length != elementCount )
       throw Error( `TableLogger_Base.${funcNameInMessage}(): `
@@ -403,18 +402,17 @@ class TableLogger_Base {
     const {
       characterCountPerField,
       digitCountAfterDecimalPoint,
-      // fieldJoinSeparator,
-      // lineJoinSeparator,
+      fieldJoinSeparator,
+      lineJoinSeparator,
 
       channelNumberIndentPrefix,
       channelNumberDigitCountAfterDecimalPoint,
       channelNumberCharacterCount,
     } = this;
 
-    // const subheaderFields = this.subheaderFields;
+    const subheaderFields = this.subheaderFields;
     const subheaderLines = this.subheaderLines;
 
-    // subheaderFields.length = 0;
     subheaderLines.length = 0;
 
     // Log every input channel (of every output channel) because this format
@@ -424,30 +422,59 @@ class TableLogger_Base {
     let elementValue;
     let valueString;
 
-
-    const outChannels = inChannels * channelMultiplier;
-
     let outChannel = 0;
-    for ( let outChannelSub = 0;
-      outChannelSub < channelMultiplier;
-      ++outChannelSub, ++outChannel ) {
+    for ( let inChannel = 0; inChannel < inChannels; ++inChannel ) {
 
-      elementIndex = outChannel;
+      const strInChannelNumber = inChannel
+        .toFixed( channelNumberDigitCountAfterDecimalPoint )
+        .padStart( channelNumberCharacterCount );
 
-      for ( let inChannel = 0; inChannel < inChannels; ++inChannel ) {
+      for ( let outChannelSub = 0;
+        outChannelSub < channelMultiplier;
+        ++outChannelSub, ++outChannel ) {
+
+        elementIndex = outChannel;
+
+        // Separate every output channel by channel header (with channel index).
+        {
+          const strOutChannelNumber = outChannel
+            .toFixed( channelNumberDigitCountAfterDecimalPoint )
+            .padStart( channelNumberCharacterCount );
+
+          const channelHeader = `${channelNumberIndentPrefix}filter `
+            + `input channel ${strInChannelNumber}: `
+            + `output channel ${strOutChannelNumber}:`;
+
+          subheaderLines.push( channelHeader );
+        }
 
         for ( let filterY = 0; filterY < filterHeight; ++filterY ) {
+          subheaderFields.length = 0;
+
           for ( let filterX = 0; filterX < filterWidth; ++filterX ) {
 
             elementIndex += outChannels;
 
 !!! ...unfinshed... (2025/06/24)
+            elementValue = dataArray[ elementIndex ];
 
+            valueString
+              = elementValue
+                  .toFixed( digitCountAfterDecimalPoint )
+                  .padStart( characterCountPerField );
+
+            subheaderFields.push( valueString );
           }
+
+          const oneLine = subheaderFields.join( fieldJoinSeparator );
+          subheaderLines.push( oneLine );
+
         }
       }
     }
 
+    const subheader = subheaderLines.join( lineJoinSeparator );
+    return subheader;
   }
 
   /**
@@ -470,8 +497,7 @@ class TableLogger_Base {
   subheader_create_for_pointwiseFilters(
     dataArray, inDepth, outDepth ) {
 
-    const funcNameInMessage
-      = "tableLines_append_for_array_as_pointwiseFilters";
+    const funcNameInMessage = "subheader_create_for_pointwiseFilters";
 
     const elementCount = inDepth * outDepth;
     if ( dataArray.length != elementCount )
@@ -486,14 +512,15 @@ class TableLogger_Base {
       characterCountPerField,
       digitCountAfterDecimalPoint,
       // fieldJoinSeparator,
-      // lineJoinSeparator,
+      lineJoinSeparator,
 
       channelNumberIndentPrefix,
       channelNumberDigitCountAfterDecimalPoint,
       channelNumberCharacterCount,
     } = this;
 
-    const tableLines = this.tableLines;
+    const subheaderLines = this.subheaderLines;
+    subheaderLines.length = 0;
 
     // Log every input channel (of every output channel) because this format
     // is easier for human reading.
@@ -514,7 +541,7 @@ class TableLogger_Base {
         const channelHeader
           = `${channelNumberIndentPrefix}filter output channel ${channelNumber}:`;
 
-        tableLines.push( channelHeader );
+        subheaderLines.push( channelHeader );
       }
 
       for ( let inChannel = 0;
@@ -528,10 +555,13 @@ class TableLogger_Base {
                 .toFixed( digitCountAfterDecimalPoint )
                 .padStart( characterCountPerField );
 
-          tableLines.push( valueString );
+          subheaderLines.push( valueString );
         }
       }
     }
+
+    const subheader = subheaderLines.join( lineJoinSeparator );
+    return subheader;
   }
 
 !!! ...unfinshed... (2025/06/24)
@@ -555,7 +585,7 @@ class TableLogger_Base {
     channelCount
   ) {
 
-    const funcNameInMessage = "tableLines_append_for_array_as_biases";
+    const funcNameInMessage = "subheader_create_for_biases";
 
   }
 
