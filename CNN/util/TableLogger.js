@@ -85,8 +85,12 @@ class TableLogger_Base {
   }
 
   /**
-   * @param {string} imageHeaderPrefix
+   * @param {string} strImageHeaderPrefix
    *   A string will be logged before the image header.
+   *
+   * @param {string} strSubheader
+   *   A string will be logged between image header and data array. If null or
+   * undefined, there is no subheader.
    *
    * @param {tf.tensor3d} aTensor3d
    *   An single tf.tensor3d to be logged to console as a table.
@@ -97,7 +101,8 @@ class TableLogger_Base {
    * undefined).
    */
   log_tensor3d_along_depth(
-    imageHeaderPrefix,
+    strImageHeaderPrefix,
+    strSubheader,
     aTensor3d,
     aBoundsArray_or_aScaleBoundsArray ) {
 
@@ -113,7 +118,7 @@ class TableLogger_Base {
     const [ height, width, depth ] = shape;
     const dataArray = aTensor3d.dataSync();
     this.log_array_as_image_along_depth(
-      imageHeaderPrefix,
+      strImageHeaderPrefix, strSubheader,
       dataArray,
       height, width, depth,
       aBoundsArray_or_aScaleBoundsArray );
@@ -128,8 +133,12 @@ class TableLogger_Base {
    * the 2nd channel, ...
    *
    *
-   * @param {string} imageHeaderPrefix
+   * @param {string} strImageHeaderPrefix
    *   A string will be logged before the image header.
+   *
+   * @param {string} strSubheader
+   *   A string will be logged between image header and data array. If null or
+   * undefined, there is no subheader.
    *
    * @param {number[]} dataArray
    *   A 1d (one-dimension) number array (which will be viewed as a 3d number
@@ -150,7 +159,8 @@ class TableLogger_Base {
    * undefined).
    */
   log_array_as_image_along_depth(
-    imageHeaderPrefix,
+    strImageHeaderPrefix,
+    strSubheader,
     dataArray,
     height, width, depth,
     aBoundsArray_or_aScaleBoundsArray
@@ -160,7 +170,8 @@ class TableLogger_Base {
 
     TableLogger_Base.tableLines_append_for_array_as_image_along_depth.call(
       this,
-      imageHeaderPrefix,
+      strImageHeaderPrefix,
+      strSubheader,
       dataArray,
       height, width, depth,
       aBoundsArray_or_aScaleBoundsArray
@@ -172,8 +183,6 @@ class TableLogger_Base {
     console.log( tableText );
   }
 
-
-
   /**
    * Log a number array (viewed as 2d image with multiple channels) at the
    * end of .tableLines. (Note: the content of .bodyFields will be destroyed.)
@@ -183,8 +192,12 @@ class TableLogger_Base {
    * the 2nd channel, ...
    *
    *
-   * @param {string} imageHeaderPrefix
+   * @param {string} strImageHeaderPrefix
    *   A string will be logged before the image header.
+   *
+   * @param {string} strSubheader
+   *   A string will be logged between image header and data array. If null or
+   * undefined, there is no subheader.
    *
    * @param {number[]} dataArray
    *   A 1d (one-dimension) number array (which will be viewed as a 3d number
@@ -205,7 +218,8 @@ class TableLogger_Base {
    * undefined).
    */
   static tableLines_append_for_array_as_image_along_depth(
-    imageHeaderPrefix,
+    strImageHeaderPrefix,
+    strSubheader,
     dataArray,
     height, width, depth,
     aBoundsArray_or_aScaleBoundsArray
@@ -254,9 +268,12 @@ class TableLogger_Base {
     const bodyFields = this.bodyFields;
     const tableLines = this.tableLines;
 
-    const imageHeader = `${imageHeaderPrefix}: image `
+    const imageHeader = `${strImageHeaderPrefix}: image `
       + `( height, width, depth ) = ( ${height}, ${width}, ${depth} )`;
     tableLines.push( imageHeader );
+
+    if ( strSubheader )
+      tableLines.push( strSubheader );
 
     // Log every channel (i.e. along the depth) because this format is easier
     // for human reading.

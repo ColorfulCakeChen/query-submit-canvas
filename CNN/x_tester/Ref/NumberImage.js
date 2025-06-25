@@ -301,7 +301,7 @@ class NumberImage_Base extends Recyclable.Root {
       const imageOut = imageIn.clone(); // No pointwise operation.
       if ( bTableLog )
         imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog
-          + `${NumberImage_Base.debugNamesSeparator}conv_none` );
+          + `${NumberImage_Base.debugNamesSeparator}conv_none`, ???strSubheader );
       return imageOut;
     }
 
@@ -437,7 +437,7 @@ class NumberImage_Base extends Recyclable.Root {
 // Append filter at the end of the imageHeaderPrefix.
 
         imageHeaderPrefix_forTableLog
-          + `${NumberImage_Base.debugNamesSeparator}conv`,
+          + `${NumberImage_Base.debugNamesSeparator}conv`, ???strSubheader,
         imageOut.boundsArraySet.afterFilter );
 
     // Bias
@@ -587,7 +587,7 @@ class NumberImage_Base extends Recyclable.Root {
       const imageOut = imageIn.clone(); // No depthwise operation.
       if ( bTableLog )
         imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog
-          + `${NumberImage_Base.debugNamesSeparator}conv_none` );
+          + `${NumberImage_Base.debugNamesSeparator}conv_none`, ???strSubheader );
       return imageOut;
     }
 
@@ -930,6 +930,7 @@ class NumberImage_Base extends Recyclable.Root {
         imageHeaderPrefix_forTableLog
           + NumberImage_Base.debugNamesSeparator
           + strTableLog_filterName,
+        ???strSubheader,
         imageOut.boundsArraySet.afterFilter );
     }
 
@@ -980,7 +981,8 @@ class NumberImage_Base extends Recyclable.Root {
 
         if ( bTableLog )
           imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog
-            + `${NumberImage_Base.debugNamesSeparator}activation_none` );
+            + `${NumberImage_Base.debugNamesSeparator}activation_none`,
+            ???strSubheader );
 
         // Note1: Since there is no undo previous scales, it needs not
         //          .scale_byChannel_withoutAffect_BoundsArraySet().
@@ -1082,6 +1084,7 @@ class NumberImage_Base extends Recyclable.Root {
     if ( bTableLog )
       imageIn.TableLog_header_body(
         `${biasNames.join( NumberImage_Base.debugNamesSeparator )}`,
+        ???strSubheader,
         imageIn.boundsArraySet.afterBias );
 
     return imageIn;
@@ -1158,7 +1161,7 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog )
       imageIn.TableLog_header_body(
-        `${clampNames.join( NumberImage_Base.debugNamesSeparator )}` );
+        `${clampNames.join( NumberImage_Base.debugNamesSeparator )}`, ???strSubheader );
 
     return imageIn;
   }
@@ -1222,7 +1225,7 @@ class NumberImage_Base extends Recyclable.Root {
     // (2025/06/18)
     if ( bTableLog )
       imageIn.TableLog_header_body(
-        `${scaleNames.join( NumberImage_Base.debugNamesSeparator )}` );
+        `${scaleNames.join( NumberImage_Base.debugNamesSeparator )}`, ???strSubheader );
 
     return imageIn;
   }
@@ -1265,7 +1268,7 @@ class NumberImage_Base extends Recyclable.Root {
         imageIn.TableLog_header_body(
             `${activationNames.join( NumberImage_Base.debugNamesSeparator )}`
           + `${NumberImage_Base.debugNamesSeparator}`
-          + `unknown_Info ( nActivationId = ${nActivationId} )` );
+          + `unknown_Info ( nActivationId = ${nActivationId} )`, ???strSubheader );
 
       return imageIn;
     }
@@ -1284,7 +1287,7 @@ class NumberImage_Base extends Recyclable.Root {
         imageIn.TableLog_header_body(
             `${activationNames.join( NumberImage_Base.debugNamesSeparator )}`
           + `${NumberImage_Base.debugNamesSeparator}`
-          + `${strActivationNameWithInt} ( no_pfn )` );
+          + `${strActivationNameWithInt} ( no_pfn )`, ???strSubheader );
 
       return imageIn;
     }
@@ -1301,7 +1304,7 @@ class NumberImage_Base extends Recyclable.Root {
       imageIn.TableLog_header_body(
           `${activationNames.join( NumberImage_Base.debugNamesSeparator )}`
         + `${NumberImage_Base.debugNamesSeparator}`
-        + `${strActivationNameWithInt}` );
+        + `${strActivationNameWithInt}`, ???strSubheader );
 
     return imageIn;
   }
@@ -1429,7 +1432,7 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog )
       imageOutNew.TableLog_header_body(
-        `${addNames.join( NumberImage_Base.debugNamesSeparator )}` );
+        `${addNames.join( NumberImage_Base.debugNamesSeparator )}`, ???strSubheader );
 
     return imageOutNew;
   }
@@ -1555,7 +1558,7 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog )
       imageOutNew.TableLog_header_body(
-        `${multiplyNames.join( NumberImage_Base.debugNamesSeparator )}` );
+        `${multiplyNames.join( NumberImage_Base.debugNamesSeparator )}`, ???strSubheader );
 
     return imageOutNew;
   }
@@ -1856,7 +1859,7 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog )
       imageOutNew.TableLog_header_body(
-        `${interleaveNames.join( NumberImage_Base.debugNamesSeparator )}` );
+        `${interleaveNames.join( NumberImage_Base.debugNamesSeparator )}`, ???strSubheader );
 
     return this;
   }
@@ -1979,9 +1982,9 @@ class NumberImage_Base extends Recyclable.Root {
       const imageHeaderPrefix_forTableLog
         = `${splitNames.join( NumberImage_Base.debugNamesSeparator )}`;
       imageOut0.TableLog_header_body( imageHeaderPrefix_forTableLog
-        + `${NumberImage_Base.debugNamesSeparator}out0` );
+        + `${NumberImage_Base.debugNamesSeparator}out0`, ???strSubheader );
       imageOut1.TableLog_header_body( imageHeaderPrefix_forTableLog
-        + `${NumberImage_Base.debugNamesSeparator}out1` );
+        + `${NumberImage_Base.debugNamesSeparator}out1`, ???strSubheader );
     }
   }
 
@@ -2078,7 +2081,7 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( bTableLog )
       imageOut.TableLog_header_body(
-        `${concatNames.join( NumberImage_Base.debugNamesSeparator )}` );
+        `${concatNames.join( NumberImage_Base.debugNamesSeparator )}`, ???strSubheader );
 
     return imageOut;
   }
@@ -2228,12 +2231,16 @@ class NumberImage_Base extends Recyclable.Root {
    * @param {string} imageHeaderPrefix
    *   A string will be logged before the image header.
    *
+   * @param {string} strSubheader
+   *   A string will be logged between image header and data array. If null or
+   * undefined, there is no subheader.
+   *
    * @param {FloatValue.BoundsArray|ActivationEscaping.ScaleBoundsArray} aBoundsArray_or_aScaleBoundsArray
    *   The element value bounds (per channel) of the dataArray number array
    * (viewed as 2d image with multiple channels). If it is null (or
    * undefined), the .boundsArraySet.output0 will be used.
    */
-  TableLog_header_body( imageHeaderPrefix,
+  TableLog_header_body( imageHeaderPrefix, strSubheader,
     aBoundsArray_or_aScaleBoundsArray
    ) {
     if ( !aBoundsArray_or_aScaleBoundsArray )
@@ -2241,6 +2248,7 @@ class NumberImage_Base extends Recyclable.Root {
 
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
       imageHeaderPrefix,
+      strSubheader,
       this.dataArray,
       this.height,
       this.width,

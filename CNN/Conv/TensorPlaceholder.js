@@ -184,10 +184,14 @@ class TensorPlaceholder_Base extends Recyclable.Root {
    *
    * @param {string} headerPrefix
    *   A string will be logged before the tensor.
+   *
+   * @param {string} strSubheader
+   *   A string will be logged between image header and data array. If null or
+   * undefined, there is no subheader.
    */
-  TableLog_header_body( headerPrefix ) {
+  TableLog_header_body( headerPrefix, strSubheader ) {
     TableLogger.Base.Singleton.log_tensor3d_along_depth(
-      headerPrefix, this.realTensor, this.scaleBoundsArray );
+      headerPrefix, strSubheader, this.realTensor, this.scaleBoundsArray );
   }
 
 }

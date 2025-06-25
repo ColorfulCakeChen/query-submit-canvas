@@ -333,6 +333,12 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     return this.tensorWeightCountTotal_internal;
   }
 
+
+!!! ...unfinished... (2025/06/25)
+// Create and cache filters and biases table log string.
+
+
+
   /** Determine this.bDepthwiseXxx and this.pfnXxx data members.
    *
    * @param {Base} this
@@ -429,8 +435,13 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     const t0 = tf.pool( inputTensor,
       this.poolWindowShape, "avg", this.pad, 1, this.strides );
 
+!!! ...unfinished... (2025/06/25)
+// if ( bTableLog == true ), call .TableLog_filterName_get()
+
+
     this.TableLog_tensor3d_if_requested(
-      this.TableLog_filterName_get(), t0, this.boundsArraySet.afterFilter );
+      this.TableLog_filterName_get(), ???strSubheader,
+      t0, this.boundsArraySet.afterFilter );
 
     return t0;
   }
@@ -441,8 +452,13 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       const t0 = tf.pool( inputTensor,
         this.poolWindowShape, "avg", this.pad, 1, this.strides );
 
+!!! ...unfinished... (2025/06/25)
+// if ( bTableLog == true ), call .TableLog_filterName_get()
+
+
       this.TableLog_tensor3d_if_requested(
-        this.TableLog_filterName_get(), t0, this.boundsArraySet.afterFilter );
+        this.TableLog_filterName_get(), ???strSubheader,
+        t0, this.boundsArraySet.afterFilter );
 
       return t0;
 
@@ -457,8 +473,13 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     const t0 = tf.pool( inputTensor,
       this.poolWindowShape, "max", this.pad, 1, this.strides );
 
+!!! ...unfinished... (2025/06/25)
+// if ( bTableLog == true ), call .TableLog_filterName_get()
+
+
     this.TableLog_tensor3d_if_requested(
-      this.TableLog_filterName_get(), t0, this.boundsArraySet.afterFilter );
+      this.TableLog_filterName_get(), ???strSubheader,
+      t0, this.boundsArraySet.afterFilter );
 
     return t0;
   }
@@ -469,8 +490,12 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       const t0 = tf.pool( inputTensor,
         this.poolWindowShape, "max", this.pad, 1, this.strides );
 
+!!! ...unfinished... (2025/06/25)
+// if ( bTableLog == true ), call .TableLog_filterName_get()
+
       this.TableLog_tensor3d_if_requested(
-        this.TableLog_filterName_get(), t0, this.boundsArraySet.afterFilter );
+        this.TableLog_filterName_get(), ???strSubheader,
+        t0, this.boundsArraySet.afterFilter );
 
       return t0;
 
@@ -492,10 +517,13 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     if ( this.bTableLog ) {
 
 !!! ...unfinished... (2025/06/24)        
-// Append filter at the end of the imageHeaderPrefix.
+// if ( bTableLog == true ), call .TableLog_filterName_get()
+// if ( bTableLog == true ), Append filter at the end of the imageHeaderPrefix.
+
 
       this.TableLog_tensor3d_if_requested(
-        this.TableLog_filterName_get(), t0, this.boundsArraySet.afterFilter );
+        this.TableLog_filterName_get(), ???strSubheader,
+        t0, this.boundsArraySet.afterFilter );
     }
 
     return t0;
@@ -514,9 +542,11 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       this.TableLog_tensor3d_if_requested(
 
 !!! ...unfinished... (2025/06/24)        
-// Append filter at the end of the imageHeaderPrefix.
+// if ( bTableLog == true ), call .TableLog_filterName_get()
+// if ( bTableLog == true ), Append filter at the end of the imageHeaderPrefix.
 
-        this.TableLog_filterName_get(), t0, this.boundsArraySet.afterFilter );
+        this.TableLog_filterName_get(), ???strSubheader,
+        t0, this.boundsArraySet.afterFilter );
 
       return t0;
 
@@ -543,9 +573,10 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       this.TableLog_tensor3d_if_requested(
 
 !!! ...unfinished... (2025/06/24)        
-// Append bias tensor at the end of the imageHeaderPrefix.
+// if ( bTableLog == true ), Append bias tensor at the end of the imageHeaderPrefix.
 
-        "bias", t1, this.boundsArraySet.afterBias );
+        "bias", ???strSubheader,
+        t1, this.boundsArraySet.afterBias );
 
     } finally {
       t0.dispose();
@@ -583,9 +614,10 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       this.TableLog_tensor3d_if_requested(
 
 !!! ...unfinished... (2025/06/24)        
-// Append bias tensor at the end of the imageHeaderPrefix.
+// if ( bTableLog == true ), Append bias tensor at the end of the imageHeaderPrefix.
 
-        "bias", t1, this.boundsArraySet.afterBias );
+        "bias", ???strSubheader,
+        t1, this.boundsArraySet.afterBias );
 
     } finally {
       t0.dispose();

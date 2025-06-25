@@ -341,16 +341,21 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    *   - If provided, it will be appended to the end of
    *       .nameString_recursively_get() with joinSeparator. And then, be used
    *       as the header of table log.
+   *
+   * @param {string} strSubheader
+   *   A string will be logged between image header and data array. If null or
+   * undefined, there is no subheader.
    */
   TableLog_tensor3d_if_requested(
-    extraName, aTensor3d, aBoundsArray_or_aScaleBoundsArray ) {
+    extraLeafName, strSubheader,
+    aTensor3d, aBoundsArray_or_aScaleBoundsArray ) {
 
     if ( !this.bTableLog )
       return;
 
     // Prefix with the hierarchical name of this operation and extra name.
     let headerPrefix = this.nameString_recursively_get();
-    headerPrefix = this.nameJoinSeparator_join( headerPrefix, extraName );
+    headerPrefix = this.nameJoinSeparator_join( headerPrefix, extraLeafName );
 
     TableLogger.Base.Singleton.log_tensor3d_along_depth(
       headerPrefix, aTensor3d, aBoundsArray_or_aScaleBoundsArray );
@@ -376,39 +381,50 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     const activationFunctionName
       = ValueDesc.ActivationFunction.Singleton.getName_byId( nActivationId );
 
-    const extraName
+    const headerPrefix
       = `activation( ${activationFunctionName}( ${nActivationId} ) )`;
 
+    const strSubheader = undefined;
+
     this.TableLog_tensor3d_if_requested(
-      extraName, aTensor3d, aBoundsArray_or_aScaleBoundsArray );
+      headerPrefix, strSubheader,
+      aTensor3d, aBoundsArray_or_aScaleBoundsArray );
   }
 
   /**
    * If .bTableLog is true, log tensor3d and ScaleBoundsArray of .output0
    * as table.
+   *
+   * @param {string} strSubheader
+   *   A string will be logged between image header and data array. If null or
+   * undefined, there is no subheader.
    */
-  TableLog_output0_if_requested() {
+  TableLog_output0_if_requested( strSubheader ) {
     if ( !this.bTableLog )
       return;
 
     // Prefix with the hierarchical name of this operation.
     const headerPrefix = this.nameString_recursively_get();
 
-    this.output0.TableLog_header_body( headerPrefix );
+    this.output0.TableLog_header_body( headerPrefix, strSubheader );
   }
 
   /**
    * If .bTableLog is true, log tensor3d and ScaleBoundsArray of .output0
    * and .output1 as table.
+   *
+   * @param {string} strSubheader
+   *   A string will be logged between image header and data array. If null or
+   * undefined, there is no subheader.
    */
-  TableLog_output0_output1_if_requested() {
+  TableLog_output0_output1_if_requested( strSubheader ) {
     if ( !this.bTableLog )
       return;
 
     // Prefix with the hierarchical name of this operation.
     const headerPrefix = this.nameString_recursively_get();
 
-    this.output0.TableLog_header_body( headerPrefix );
+    this.output0.TableLog_header_body( headerPrefix, strSubheader );
     this.output1.TableLog_header_body( headerPrefix );
   }
 

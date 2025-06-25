@@ -270,6 +270,11 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
     return this.tensorWeightCountTotal_internal;
   }
 
+
+!!! ...unfinished... (2025/06/25)
+// Create and cache filters and biases table log string.
+
+
   /** Determine this.bPointwise and this.pfnXxx data members.
    *
    * @param {Base} this
@@ -332,9 +337,10 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
     this.TableLog_tensor3d_if_requested(
 
 !!! ...unfinished... (2025/06/24)        
-// Append filter at the end of the imageHeaderPrefix.
+// if ( bTableLog == true ), Append filter at the end of the imageHeaderPrefix.
 
-      "conv", t0, this.boundsArraySet.afterFilter );
+      "conv", ???strSubheader,
+      t0, this.boundsArraySet.afterFilter );
 
     return t0;
   }
@@ -351,9 +357,10 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
       this.TableLog_tensor3d_if_requested(
 
 !!! ...unfinished... (2025/06/24)        
-// Append filter at the end of the imageHeaderPrefix.
+// if ( bTableLog == true ), Append filter at the end of the imageHeaderPrefix.
 
-        "conv", t0, this.boundsArraySet.afterFilter );
+        "conv", ???strSubheader,
+        t0, this.boundsArraySet.afterFilter );
 
       return t0;
 
@@ -378,9 +385,10 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
       this.TableLog_tensor3d_if_requested(
 
 !!! ...unfinished... (2025/06/24)        
-// Append bias tensor at the end of the imageHeaderPrefix.
+// if ( bTableLog == true ), Append bias tensor at the end of the imageHeaderPrefix.
 
-        "bias", t1, this.boundsArraySet.afterBias );
+        "bias", ???strSubheader,
+        t1, this.boundsArraySet.afterBias );
 
     } finally {
       t0.dispose();
@@ -417,10 +425,11 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
 
       this.TableLog_tensor3d_if_requested(
 
-!!! ...unfinished... (2025/06/24)        
-// Append bias tensor at the end of the imageHeaderPrefix.
+!!! ...unfinished... (2025/06/24)
+// if ( bTableLog == true ), Append bias tensor at the end of the imageHeaderPrefix.
 
-        "bias", t1, this.boundsArraySet.afterBias );
+        "bias", ???strSubheader,
+        t1, this.boundsArraySet.afterBias );
 
     } finally {
       t0.dispose();
