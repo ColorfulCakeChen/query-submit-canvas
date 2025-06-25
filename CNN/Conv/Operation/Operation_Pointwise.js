@@ -165,11 +165,10 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
               this.TableLog_subheader_for_filters
                 = TableLogger.Base.Singleton.subheader_create_for_depthwiseFilters(
                     this.filtersArray,
-???
-                    this.filterHeight,
-                    this.filterWidth,
-                    this.inputChannelCount,
-                    this.channelMultiplier );
+                    this.filtersShape[ 0 ],
+                    this.filtersShape[ 1 ],
+                    this.filtersShape[ 2 ],
+                    this.filtersShape[ 3 ] );
             }
 
             // Note: Because .filtersShape will be kept by .filtersTensor4d
