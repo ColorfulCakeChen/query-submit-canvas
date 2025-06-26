@@ -113,12 +113,19 @@ class TableLogger_Base {
    *   The element value bounds (per channel) of the dataArray number array
    * (viewed as 2d image with multiple channels). It can be null (or
    * undefined).
+   *
+   * @param {boolean[]} bPassThroughArray
+   *   If true for a channel, the channel's header will be marked as
+   * pass-through (from input to output). It can be null (or
+   * undefined).
    */
   log_tensor3d_along_depth(
     strImageHeaderPrefix,
     strSubheader,
     aTensor3d,
-    aBoundsArray_or_aScaleBoundsArray ) {
+    aBoundsArray_or_aScaleBoundsArray,
+    bPassThroughArray
+  ) {
 
     const funcNameInMessage = "log_tensor3d_along_depth";
 
@@ -135,7 +142,9 @@ class TableLogger_Base {
       strImageHeaderPrefix, strSubheader,
       dataArray,
       height, width, depth,
-      aBoundsArray_or_aScaleBoundsArray );
+      aBoundsArray_or_aScaleBoundsArray,
+      bPassThroughArray
+    );
   }
 
   /**
@@ -171,13 +180,19 @@ class TableLogger_Base {
    *   The element value bounds (per channel) of the dataArray number array
    * (viewed as 2d image with multiple channels). It can be null (or
    * undefined).
+   *
+   * @param {boolean[]} bPassThroughArray
+   *   If true for a channel, the channel's header will be marked as
+   * pass-through (from input to output). It can be null (or
+   * undefined).
    */
   log_array_as_image_along_depth(
     strImageHeaderPrefix,
     strSubheader,
     dataArray,
     height, width, depth,
-    aBoundsArray_or_aScaleBoundsArray
+    aBoundsArray_or_aScaleBoundsArray,
+    bPassThroughArray
   ) {
 
     const funcNameInMessage
@@ -280,6 +295,12 @@ class TableLogger_Base {
             + `{ ${scaleDoString}, ${scaleUndoString} } = `
             + `{ do.scale, undo.scale }`
             ;
+        }
+
+        if ( bPassThroughArray ) {
+          const bPassThrough = bPassThroughArray[ c ];
+          if ( bPassThrough )
+            channelHeader = `, bPassThrough = ${bPassThrough}`;
         }
 
         tableLines.push( channelHeader );

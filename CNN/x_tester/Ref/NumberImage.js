@@ -2275,12 +2275,23 @@ class NumberImage_Base extends Recyclable.Root {
    *   The element value bounds (per channel) of the dataArray number array
    * (viewed as 2d image with multiple channels). If it is null (or
    * undefined), the .boundsArraySet.output0 will be used.
+   *
+   * @param {boolean[]} bPassThroughArray
+   *   If true for a channel, the channel's header will be marked as
+   * pass-through (from input to output). It can be null (or
+   * undefined).
    */
   TableLog_header_body( imageHeaderPrefix, strSubheader,
-    aBoundsArray_or_aScaleBoundsArray
+    aBoundsArray_or_aScaleBoundsArray,
+    bPassThroughArray
    ) {
+    const boundsArraySet = this.boundsArraySet;
+
     if ( !aBoundsArray_or_aScaleBoundsArray )
-      aBoundsArray_or_aScaleBoundsArray = this.boundsArraySet.output0;
+      aBoundsArray_or_aScaleBoundsArray = boundsArraySet.output0;
+
+    if ( !bPassThroughArray )
+      bPassThroughArray = boundsArraySet.bPassThrough; // may be undefined.
 
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
       imageHeaderPrefix,
@@ -2289,7 +2300,8 @@ class NumberImage_Base extends Recyclable.Root {
       this.height,
       this.width,
       this.depth,
-      aBoundsArray_or_aScaleBoundsArray
+      aBoundsArray_or_aScaleBoundsArray,
+      bPassThroughArray
     );
   }
 
