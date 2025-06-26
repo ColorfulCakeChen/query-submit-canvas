@@ -509,8 +509,10 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
       if ( bTableLog ) {
         const [ tensorIn0, tensorIn1 ] = inputTensor3dArray;
 
-        const imageIn0_bPassThroughArray = imageIn0_BoundsArraySet.bPassThrough;
-        const imageIn1_bPassThroughArray = imageIn1_BoundsArraySet?.bPassThrough;
+        const imageIn0_bPassThroughArray
+          = imageIn0_BoundsArraySet.bPassThroughArray;
+        const imageIn1_bPassThroughArray
+          = imageIn1_BoundsArraySet?.bPassThroughArray;
 
         {
           const tensorIn0_imageHeaderPrefix = "tensorIn0";
