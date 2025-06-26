@@ -4,6 +4,7 @@ export { Block_Reference_Base as Base };
 import * as HierarchicalNameable from "../../util/HierarchicalNameable.js";
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
+import * as TableLogger from "../../util/TableLogger.js";
 import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import * as BoundsArraySet_Asserter from "../../util/BoundsArraySet_Asserter.js";
@@ -352,11 +353,8 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
   testCorrectness( imageSourceBag, testParams, channelShufflerBag ) {
     this.testParams = testParams;
 
-//!!! (2022/06/10 Remarked) Moved to outter jsPerf_Block to also catch testParamsGenerator's exception.
-//    try {
-    {
-      this.testCorrectnessInfo.prepareBy(
-        imageSourceBag, testParams, channelShufflerBag );
+    this.testCorrectnessInfo.prepareBy(
+      imageSourceBag, testParams, channelShufflerBag );
 
 //!!! (2022/07/05 Temp Remarked) For debug whether memory leak.
 //       if (   ( testParams.nConvBlockTypeId__is__SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD() ) // (5)
@@ -368,22 +366,10 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
 //         Block_Reference_Base.testCorrectness_internal.call( this );
 //
 //       } else
-      {
-        Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
-          "Block_Reference.Base.testCorrectness_internal()",
-          Block_Reference_Base.testCorrectness_internal, this );
-      }
-
-//!!! (2022/06/10 Remarked) Moved to outter jsPerf_Block to also catch testParamsGenerator's exception.
-//     } catch ( e ) {
-//       let backendName = tf.getBackend();
-//       let msg = `Block_Reference.js: testCorrectness(): backendName=${backendName}, `
-//         + `Block, (yieldCount == ${testParams.yieldCount}), testParams.id == ${testParams.id}`;
-//
-//       console.log( msg );
-//       alert( `${msg}\n${e}` );
-//
-//       throw e;
+    {
+      Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
+        "Block_Reference.Base.testCorrectness_internal()",
+        Block_Reference_Base.testCorrectness_internal, this );
     }
   }
 
@@ -401,6 +387,26 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
     } = this.testCorrectnessInfo;
 
     {
+      // Table log the input images if requested.
+      const bTableLog = testParams.out.bTableLog;
+      if ( bTableLog ) {
+        const [ imageIn0, imageIn1 ] = imageInArraySelected;
+
+        {
+          const imageIn0_imageHeaderPrefix = "imageIn0";
+          const imageIn0_strSubheader = undefined;
+          imageIn0.TableLog_header_body(
+            imageIn0_imageHeaderPrefix, imageIn0_strSubheader );
+        }
+
+        if ( imageIn1 ) {
+          const imageIn1_imageHeaderPrefix = "imageIn1";
+          const imageIn1_strSubheader = undefined;
+          imageIn1.TableLog_header_body(
+            imageIn0_imageHeaderPrefix, imageIn0_strSubheader );
+        }
+      }
+
       // Output is an array with two elements.
       this.calcResult( imageInArraySelected, imageOutReferenceArray );
 
@@ -452,6 +458,11 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
       channelShuffler_ConcatPointwiseConv, inputTensorDestroyCount,
     } = this.testCorrectnessInfo;
 
+    const imageIn0_ScaleBoundsArray
+      = imageInArraySelected[ 0 ].boundsArraySet.output0;
+    const imageIn1_ScaleBoundsArray
+      = imageInArraySelected[ 1 ]?.boundsArraySet.output0;
+
     // Test memory leakage of block create/dispose.
     let memoryInfo_beforeCreate = tf.memory();
 
@@ -459,8 +470,8 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
       null,         // parentNameable
       "Block_Base", // blockName
       testParams,
-      imageInArraySelected[ 0 ].boundsArraySet.output0,
-      imageInArraySelected[ 1 ]?.boundsArraySet.output0,
+      imageIn0_ScaleBoundsArray,
+      imageIn1_ScaleBoundsArray,
       channelShuffler_ConcatPointwiseConv );
 
     // Note: Do not generate parameters description string in advance every
@@ -483,6 +494,28 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
       block.input0.realTensor = inputTensor3dArray[ 0 ];
       if ( block.input1 )
         block.input1.realTensor = inputTensor3dArray[ 1 ];
+
+      // Table log the input images if requested.
+      const bTableLog = block.bTableLog;
+      if ( bTableLog ) {
+        const [ tensorIn0, tensorIn1 ] = inputTensor3dArray;
+
+        {
+          const tensorIn0_imageHeaderPrefix = "tensorIn0";
+          const tensorIn0_strSubheader = undefined;
+          TableLogger.Base.Singleton.log_tensor3d_along_depth(
+            tensorIn0_imageHeaderPrefix, tensorIn0_strSubheader,
+            tensorIn0, imageIn0_ScaleBoundsArray );
+        }
+
+        if ( tensorIn1 ) {
+          const tensorIn1_imageHeaderPrefix = "tensorIn1";
+          const tensorIn1_strSubheader = undefined;
+          TableLogger.Base.Singleton.log_tensor3d_along_depth(
+            tensorIn1_imageHeaderPrefix, tensorIn1_strSubheader,
+            tensorIn1, imageIn_ScaleBoundsArray );
+        }
+      }
 
       block.apply();
 
