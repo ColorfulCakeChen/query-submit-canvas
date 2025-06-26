@@ -358,10 +358,6 @@ class Block_TestParams_Base extends TestParams.Base {
         // 1,
         2
       ],
-      // depthwise_AvgMax_Or_ChannelMultiplier: [
-      //   0,
-      //   0
-      // ],
 
       // (2021/10/06)
       // Note: WASM seems not correct when tf.pool() or
@@ -402,14 +398,10 @@ class Block_TestParams_Base extends TestParams.Base {
         Block.Params.depthwiseStridesPad.valueDesc.range.max
       ],
 
-      depthwiseActivationId:
-        // undefined,
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 0,
-          ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0,
-        //   ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 1,
-        //   ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+      depthwiseActivationId:[
+        ValueDesc.ActivationFunction.Singleton.range.min + 0,
+        ValueDesc.ActivationFunction.Singleton.range.min + 1
+      ],
 
       bSqueezeExcitationPrefix: [
         ValueDesc.Bool.Singleton.range.min,
