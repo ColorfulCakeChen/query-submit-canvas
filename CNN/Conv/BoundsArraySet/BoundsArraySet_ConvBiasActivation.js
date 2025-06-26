@@ -38,6 +38,9 @@ import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
  *   If true for a output channel, the output channel should be arranged to
  * pass-through from input to output.
  *
+ * @member {boolean[]} bPassThroughArray
+ *   Same as bPassThrough[] (but with better name). 
+ *
  * @see InputsOutputs
  */
 class ConvBiasActivation extends InputsOutputs {
@@ -486,6 +489,10 @@ class ConvBiasActivation extends InputsOutputs {
     }
 
     return this;
+  }
+
+  get bPassThroughArray() {
+    return this.output0.bPassThrough;
   }
 
   get afterActivation() {

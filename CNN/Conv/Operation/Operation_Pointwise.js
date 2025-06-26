@@ -350,7 +350,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
       "conv",
       this.TableLog_subheader_for_filters,
       t0,
-      this.boundsArraySet.afterFilter, ???bPassThroughArray );
+      this.boundsArraySet.afterFilter,
+      this.boundsArraySet.bPassThroughArray );
 
     return t0;
   }
@@ -368,7 +369,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
         "conv",
         this.TableLog_subheader_for_filters,
         t0,
-        this.boundsArraySet.afterFilter, ???bPassThroughArray );
+        this.boundsArraySet.afterFilter,
+        this.boundsArraySet.bPassThroughArray );
 
       return t0;
 
@@ -394,7 +396,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
         "bias",
         this.TableLog_subheader_for_biases,
         t1,
-        this.boundsArraySet.afterBias, ???bPassThroughArray );
+        this.boundsArraySet.afterBias,
+        this.boundsArraySet.bPassThroughArray );
 
     } finally {
       t0.dispose();
@@ -414,7 +417,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
       // (because it has been transferred to there).
       this.TableLog_tensor3d_activation_if_requested(
         this.nActivationId, t1,
-        this.output0.scaleBoundsArray, ???bPassThroughArray );
+        this.output0.scaleBoundsArray,
+        this.boundsArraySet.bPassThroughArray );
 
     } finally {
       t0.dispose();
@@ -434,7 +438,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
         "bias",
         this.TableLog_subheader_for_biases,
         t1,
-        this.boundsArraySet.afterBias, ???bPassThroughArray );
+        this.boundsArraySet.afterBias,
+        this.boundsArraySet.bPassThroughArray );
 
     } finally {
       t0.dispose();
@@ -447,7 +452,8 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
       // (because it has been transferred to there).
       this.TableLog_tensor3d_activation_if_requested(
         this.nActivationId, t0,
-        this.output0.scaleBoundsArray, ???bPassThroughArray );
+        this.output0.scaleBoundsArray,
+        this.boundsArraySet.bPassThroughArray );
 
     } finally {
       t1.dispose();
