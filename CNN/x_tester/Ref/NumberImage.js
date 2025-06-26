@@ -1241,6 +1241,10 @@ class NumberImage_Base extends Recyclable.Root {
       }
     }
 
+!!! ...unfinished... (2025/06/26)
+// Perhaps, log only if ( .output0.scaleArraySet.do.scales[] != 1 )
+// In that case, also log bPassThrough[]
+
     // Note: Although this method does not adjust BoundArraySet, the
     //       BoundArraySet usually has been adjusted before calling this
     //       method. So, still table log here.
