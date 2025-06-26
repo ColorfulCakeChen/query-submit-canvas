@@ -349,9 +349,12 @@ class Block_TestParams_Base extends TestParams.Base {
       // [ 1, 8 ],
       // [ 2, 2 ],
 
-//!!! (2022/07/07 Temp Remarked) For speed up debug.
       depthwise_AvgMax_Or_ChannelMultiplier: [
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+//!!! (2025/06/26 Temp Remarked) For speed up debug.
+        // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+        // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX,
+        // 0,
         2
       ],
       // depthwise_AvgMax_Or_ChannelMultiplier: [
