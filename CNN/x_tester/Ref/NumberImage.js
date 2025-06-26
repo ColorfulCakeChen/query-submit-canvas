@@ -1229,30 +1229,39 @@ class NumberImage_Base extends Recyclable.Root {
         + `should match input image channel count (${imageIn.depth}). `
         + `(${parametersDesc})` );
 
+    let bScaleHappened = false; // Whether some scale is not 1.
+
     let index = 0;
     for ( let y = 0; y < imageIn.height; ++y ) {
       for ( let x = 0; x < imageIn.width; ++x ) {
         for ( let channel = 0; channel < imageIn.depth; ++channel ) {
+          const scale = scaleArray.scales[ channel ];
+          if ( scale !== 1 )
+            bScaleHappened = true;
+
           imageIn.dataArray[ index ] = Math.fround(
             Math.fround( imageIn.dataArray[ index ] )
-              * Math.fround( scaleArray.scales[ channel ] ) );
+              * Math.fround( scale ) );
           ++index;
         }
       }
     }
 
 !!! ...unfinished... (2025/06/26)
-// Perhaps, log only if ( .output0.scaleArraySet.do.scales[] != 1 )
 // In that case, also log bPassThrough[]
 
-    // Note: Although this method does not adjust BoundArraySet, the
-    //       BoundArraySet usually has been adjusted before calling this
-    //       method. So, still table log here.
+    // Note1: Although this method does not adjust BoundArraySet, the
+    //        BoundArraySet usually has been adjusted before calling this
+    //        method. So, still table log here.
     //
-    // (2025/06/18)
+    // Note2: Log only if some scales are not 1 (i.e. some adjustment has been
+    //        done).
+    //
+    // (2025/06/26)
     if ( bTableLog )
-      imageIn.TableLog_header_body(
-        `${scaleNames.join( NumberImage_Base.debugNamesSeparator )}` );
+      if ( bScaleHappened )
+        imageIn.TableLog_header_body(
+          `${scaleNames.join( NumberImage_Base.debugNamesSeparator )}` );
 
     return imageIn;
   }
