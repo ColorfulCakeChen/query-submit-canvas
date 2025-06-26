@@ -296,22 +296,33 @@ class Block_TestParams_Base extends TestParams.Base {
   ParamDescConfigAll_create() {
 
     // (2022/04/30 Remarked) For speed up testing by reducing testing space.
-    //let depthwiseFilterMaxSize = 5;
-    let depthwiseFilterMaxSize = 3;
+    //const depthwiseFilterMaxSize = 5;
+    const depthwiseFilterMaxSize = 3;
 
     // Restrict some parameter's large kinds. Otherwise, too many combination
     // will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
-      // input0_height: [ 3, 5 ],
-      input0_height: [ 3, 3 ],
-      // input0_height: [ 2, 2 ],
+      input0_height: [
+        // 2,
+        3,
+        // 2
+        3
+        // 5
+      ],
 
-      // input0_width: [ 3, 5 ],
-      input0_width: [ 4, 5 ],
-      // input0_width: [ 3, 3 ],
+      input0_width: [
+        // 3,
+        4,
+        // 3
+        5
+      ],
 
-      input0_channelCount: [ 2, 4 ],
-      // input0_channelCount: [ 3, 3 ], //[ 3, 4 ],
+      input0_channelCount: [
+        2,
+        // 3,
+        // 3
+        4
+      ],
 
 //!!! (2022/07/06 Temp Added and Remarked) For speed-up debug.
       nConvBlockTypeId: [
@@ -337,17 +348,22 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
 //!!! (2022/07/11 Temp Remarked) For speed-up debug.
-      pointwise1ChannelCount:
-        [ 0, 2 ],
-      // [ 0, 0 ],
-      // [ 0, 8 ],
-      // [ 1, 1 ],
-      // [ 3, 3 ],
+      pointwise1ChannelCount: [
+        0,
+        // 1,
+        // 3,
+        // 1
+        2
+        // 3
+        // 8
+      ],
 
-      pointwise20ChannelCount:
-        [ 1, 3 ],
-      // [ 1, 8 ],
-      // [ 2, 2 ],
+      pointwise20ChannelCount: [
+        1,
+        // 2,
+        3
+        // 8
+      ],
 
       depthwise_AvgMax_Or_ChannelMultiplier: [
 //!!! (2025/06/26 Temp Remarked) For speed up debug.
@@ -365,18 +381,17 @@ class Block_TestParams_Base extends TestParams.Base {
 //!!! (2022/08/04 Temp Remarked) For debug neural net (only use 3x3).
       depthwiseFilterHeight: [
         Block.Params.depthwiseFilterHeight.valueDesc.range.min,
+        // 2,
+        // 2
         depthwiseFilterMaxSize
       ],
 
       depthwiseFilterWidth: [
         Block.Params.depthwiseFilterWidth.valueDesc.range.min,
+        // 2,
+        // 2
         depthwiseFilterMaxSize
       ],
-
-      // depthwiseFilterHeight: [ 3, 3 ],
-      // depthwiseFilterWidth: [ 3, 3 ],
-      // depthwiseFilterHeight: [ 3, 3 ],
-      // depthwiseFilterWidth: [ 2, 2 ],
 
       // (2022/05/02)
       // Note: The right-most pixel of depthwise convolution seems wrong
