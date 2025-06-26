@@ -453,7 +453,8 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     this.TableLog_tensor3d_if_requested(
       this.TableLog_filterName,
       undefined, // AVG pooling has no TableLog_subheader_for_filters.
-      t0, this.boundsArraySet.afterFilter );
+      t0,
+      this.boundsArraySet.afterFilter, ???bPassThroughArray );
 
     return t0;
   }
@@ -467,7 +468,8 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       this.TableLog_tensor3d_if_requested(
         this.TableLog_filterName,
         undefined, // AVG pooling has no TableLog_subheader_for_filters.
-        t0, this.boundsArraySet.afterFilter );
+        t0,
+        this.boundsArraySet.afterFilter, ???bPassThroughArray );
 
       return t0;
 
@@ -485,7 +487,8 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     this.TableLog_tensor3d_if_requested(
       this.TableLog_filterName,
       undefined, // MAX pooling has no TableLog_subheader_for_filters.
-      t0, this.boundsArraySet.afterFilter );
+      t0,
+      this.boundsArraySet.afterFilter, ???bPassThroughArray );
 
     return t0;
   }
@@ -499,7 +502,8 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       this.TableLog_tensor3d_if_requested(
         this.TableLog_filterName,
         undefined, // MAX pooling has no TableLog_subheader_for_filters.
-        t0, this.boundsArraySet.afterFilter );
+        t0,
+        this.boundsArraySet.afterFilter, ???bPassThroughArray );
 
       return t0;
 
@@ -521,7 +525,8 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     this.TableLog_tensor3d_if_requested(
       this.TableLog_filterName,
       this.TableLog_subheader_for_filters,
-      t0, this.boundsArraySet.afterFilter );
+      t0,
+      this.boundsArraySet.afterFilter, ???bPassThroughArray );
 
     return t0;
   }
@@ -539,7 +544,8 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       this.TableLog_tensor3d_if_requested(
         this.TableLog_filterName,
         this.TableLog_subheader_for_filters,
-        t0, this.boundsArraySet.afterFilter );
+        t0,
+        this.boundsArraySet.afterFilter, ???bPassThroughArray );
 
       return t0;
 
@@ -566,7 +572,8 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       this.TableLog_tensor3d_if_requested(
         "bias",
         this.TableLog_subheader_for_biases,
-        t1, this.boundsArraySet.afterBias );
+        t1,
+        this.boundsArraySet.afterBias, ???bPassThroughArray );
 
     } finally {
       t0.dispose();
@@ -585,7 +592,8 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       // Use .output0.scaleBoundsArray instead of .boundsArraySet.output0
       // (because it has been transferred to there).
       this.TableLog_tensor3d_activation_if_requested(
-        this.nActivationId, t1, this.output0.scaleBoundsArray );
+        this.nActivationId, t1,
+        this.output0.scaleBoundsArray, ???bPassThroughArray );
 
     } finally {
       t0.dispose();
@@ -604,7 +612,8 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       this.TableLog_tensor3d_if_requested(
         "bias",
         this.TableLog_subheader_for_biases,
-        t1, this.boundsArraySet.afterBias );
+        t1,
+        this.boundsArraySet.afterBias, ???bPassThroughArray );
 
     } finally {
       t0.dispose();
@@ -616,7 +625,8 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
       // Use .output0.scaleBoundsArray instead of .boundsArraySet.output0
       // (because it has been transferred to there).
       this.TableLog_tensor3d_activation_if_requested(
-        this.nActivationId, t0, this.output0.scaleBoundsArray );
+        this.nActivationId, t0,
+        this.output0.scaleBoundsArray, ???bPassThroughArray );
 
     } finally {
       t1.dispose();

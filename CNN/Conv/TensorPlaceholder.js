@@ -191,7 +191,10 @@ class TensorPlaceholder_Base extends Recyclable.Root {
    */
   TableLog_header_body( headerPrefix, strSubheader ) {
     TableLogger.Base.Singleton.log_tensor3d_along_depth(
-      headerPrefix, strSubheader, this.realTensor, this.scaleBoundsArray );
+      headerPrefix, strSubheader, this.realTensor,
+      this.scaleBoundsArray, 
+      undefined // no bPassThrough[] info here.
+    );
   }
 
 }

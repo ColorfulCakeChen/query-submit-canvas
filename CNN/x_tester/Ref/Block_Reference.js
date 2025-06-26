@@ -513,7 +513,10 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
           const tensorIn0_strSubheader = undefined;
           TableLogger.Base.Singleton.log_tensor3d_along_depth(
             tensorIn0_imageHeaderPrefix, tensorIn0_strSubheader,
-            tensorIn0, imageIn0_ScaleBoundsArray );
+            tensorIn0,
+            imageIn0_ScaleBoundsArray,
+            ???bPassThroughArray
+          );
         }
 
         if ( tensorIn1 ) {
@@ -521,7 +524,10 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
           const tensorIn1_strSubheader = undefined;
           TableLogger.Base.Singleton.log_tensor3d_along_depth(
             tensorIn1_imageHeaderPrefix, tensorIn1_strSubheader,
-            tensorIn1, imageIn_ScaleBoundsArray );
+            tensorIn1,
+            imageIn_ScaleBoundsArray,
+            ???bPassThroughArray
+          );
         }
       }
 

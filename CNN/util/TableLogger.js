@@ -195,8 +195,7 @@ class TableLogger_Base {
     bPassThroughArray
   ) {
 
-    const funcNameInMessage
-      = "log_array_as_image_along_depth";
+    const funcNameInMessage = "log_array_as_image_along_depth";
 
     const elementCount = height * width * depth;
     if ( dataArray.length != elementCount )

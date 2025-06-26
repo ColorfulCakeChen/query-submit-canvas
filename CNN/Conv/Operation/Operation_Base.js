@@ -348,7 +348,10 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    */
   TableLog_tensor3d_if_requested(
     extraLeafName, strSubheader,
-    aTensor3d, aBoundsArray_or_aScaleBoundsArray ) {
+    aTensor3d,
+    aBoundsArray_or_aScaleBoundsArray,
+    bPassThroughArray
+  ) {
 
     if ( !this.bTableLog )
       return;
@@ -359,7 +362,10 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
 
     TableLogger.Base.Singleton.log_tensor3d_along_depth(
       headerPrefix, strSubheader,
-      aTensor3d, aBoundsArray_or_aScaleBoundsArray );
+      aTensor3d,
+      aBoundsArray_or_aScaleBoundsArray,
+      bPassThroughArray
+    );
   }
 
   /**
@@ -374,7 +380,11 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
    * as an extra name for table log.
    */
   TableLog_tensor3d_activation_if_requested(
-    nActivationId, aTensor3d, aBoundsArray_or_aScaleBoundsArray ) {
+    nActivationId,
+    aTensor3d,
+    aBoundsArray_or_aScaleBoundsArray,
+    bPassThroughArray
+  ) {
 
     if ( !this.bTableLog )
       return;
@@ -389,7 +399,10 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
 
     this.TableLog_tensor3d_if_requested(
       headerPrefix, strSubheader,
-      aTensor3d, aBoundsArray_or_aScaleBoundsArray );
+      aTensor3d,
+      aBoundsArray_or_aScaleBoundsArray,
+      bPassThroughArray
+    );
   }
 
   /**
