@@ -999,14 +999,15 @@ class NumberImage_Base extends Recyclable.Root {
           imageOut.boundsArraySet.set_outputs_all_by_input0();
         }
 
-        if ( bTableLog )
-          imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog
-            + `${NumberImage_Base.debugNamesSeparator}activation_none` );
-
         // Note1: Since there is no undo previous scales, it needs not
         //          .scale_byChannel_withoutAffect_BoundsArraySet().
+        //
         // Note2: Since there is no activation, it needs not
         //          .modify_byActivation_withoutAffect_BoundsArraySet().
+        //
+        // Note3: Since .boundsArraySet.afterFilter has been table logged and
+        //        .output0 has been setup as .afterFilter, nothing needs to be
+        //        table logged here.
 
       } else {
         imageOut.boundsArraySet
