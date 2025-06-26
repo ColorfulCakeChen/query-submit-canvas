@@ -429,7 +429,8 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
       pointwise20ActivationId: [
-        ValueDesc.ActivationFunction.Singleton.range.min + 0,
+        // ValueDesc.ActivationFunction.Singleton.range.min + 0,
+        ValueDesc.ActivationFunction.Singleton.range.min + 1,
         ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
@@ -438,7 +439,8 @@ class Block_TestParams_Base extends TestParams.Base {
       // speeding up testing.
  
       nActivationId: [
-        ValueDesc.ActivationFunction.Singleton.range.min + 0,
+        // ValueDesc.ActivationFunction.Singleton.range.min + 0,
+        ValueDesc.ActivationFunction.Singleton.range.min + 1,
         ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
