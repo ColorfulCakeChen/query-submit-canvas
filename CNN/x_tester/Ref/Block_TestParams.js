@@ -391,18 +391,16 @@ class Block_TestParams_Base extends TestParams.Base {
       //
       depthwiseStridesPad: [
         Block.Params.depthwiseStridesPad.valueDesc.range.min,
+        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID,  // (0)
+        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME,   // (1)
+        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME,   // (2)
+        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID,  // (3)
+        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID   // (0)
+        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME    // (1)
+        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME    // (2)
+        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID   // (3)
         Block.Params.depthwiseStridesPad.valueDesc.range.max
       ],
-      // depthwiseStridesPad: [
-      //   // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID, // (0)
-      //   // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME, // (1)
-      //   ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME, // (2)
-      //   // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID,  // (3)
-      //   // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID // (0)
-      //   // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME // (1)
-      //   ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME // (2)
-      //   // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID  // (3)
-      // ],
 
       depthwiseActivationId:
         // undefined,
