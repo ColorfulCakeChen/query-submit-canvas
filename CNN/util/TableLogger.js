@@ -552,9 +552,17 @@ class TableLogger_Base {
 
     for ( let outChannel = 0; outChannel < channelCount; ++outChannel ) {
 
-      const strOutChannelNumber = outChannel
-        .toFixed( channelNumberDigitCountAfterDecimalPoint )
-        .padStart( channelNumberCharacterCount );
+      // Separate every output channel by channel header (with channel index).
+      {
+        const strOutChannelNumber = outChannel
+          .toFixed( channelNumberDigitCountAfterDecimalPoint )
+          .padStart( channelNumberCharacterCount );
+
+        const channelHeader = `${channelNumberIndentPrefix}bias `
+          + `channel ${strOutChannelNumber}:`;
+
+        subheaderLines.push( channelHeader );
+      }
 
       elementIndex = outChannel;
       elementValue = dataArray[ elementIndex ];
@@ -563,12 +571,7 @@ class TableLogger_Base {
         .toFixed( digitCountAfterDecimalPoint )
         .padStart( characterCountPerField );
 
-      // Compose channel number and bias value at the same line (for reducing
-      // log verbose).
-      const channelHeader_value = `${channelNumberIndentPrefix}bias `
-        + `channel ${strOutChannelNumber}: ${valueString}`;
-
-      subheaderLines.push( channelHeader_value );
+      subheaderLines.push( valueString );
     }
 
     const subheader = subheaderLines.join( lineJoinSeparator );
