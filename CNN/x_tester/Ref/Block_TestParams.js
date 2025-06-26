@@ -354,8 +354,8 @@ class Block_TestParams_Base extends TestParams.Base {
         // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
         // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,
         // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX,
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE,
-        // 1,
+        // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE,
+        1,
         2
       ],
 
