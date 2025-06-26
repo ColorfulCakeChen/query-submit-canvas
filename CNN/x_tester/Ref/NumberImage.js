@@ -1246,9 +1246,6 @@ class NumberImage_Base extends Recyclable.Root {
       }
     }
 
-!!! ...unfinished... (2025/06/26)
-// In that case, also log bPassThrough[]
-
     // Note1: Although this method does not adjust BoundArraySet, the
     //        BoundArraySet usually has been adjusted before calling this
     //        method. So, still table log here.
