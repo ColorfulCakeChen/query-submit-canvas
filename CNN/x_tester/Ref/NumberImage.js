@@ -1236,8 +1236,7 @@ class NumberImage_Base extends Recyclable.Root {
       for ( let x = 0; x < imageIn.width; ++x ) {
         for ( let channel = 0; channel < imageIn.depth; ++channel ) {
           const scale = scaleArray.scales[ channel ];
-          if ( scale !== 1 )
-            bScaleHappened = true;
+          bScaleHappened ||= ( scale !== 1 );
 
           imageIn.dataArray[ index ] = Math.fround(
             Math.fround( imageIn.dataArray[ index ] )
