@@ -408,7 +408,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
           const imageIn1_imageHeaderPrefix = "imageIn1";
           const imageIn1_strSubheader = undefined;
           imageIn1.TableLog_header_body(
-            imageIn0_imageHeaderPrefix, imageIn0_strSubheader );
+            imageIn1_imageHeaderPrefix, imageIn1_strSubheader );
         }
       }
 
