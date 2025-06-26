@@ -525,7 +525,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
           TableLogger.Base.Singleton.log_tensor3d_along_depth(
             tensorIn1_imageHeaderPrefix, tensorIn1_strSubheader,
             tensorIn1,
-            imageIn_ScaleBoundsArray,
+            imageIn1_ScaleBoundsArray,
             ???bPassThroughArray
           );
         }
