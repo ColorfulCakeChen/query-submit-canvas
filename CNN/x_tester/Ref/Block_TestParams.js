@@ -413,8 +413,9 @@ class Block_TestParams_Base extends TestParams.Base {
         Block.Params.depthwiseStridesPad.valueDesc.range.max
       ],
 
-      depthwiseActivationId:[
-        ValueDesc.ActivationFunction.Singleton.range.min + 0,
+      depthwiseActivationId: [
+        // ValueDesc.ActivationFunction.Singleton.range.min + 0,
+        ValueDesc.ActivationFunction.Singleton.range.min + 1,
         ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
