@@ -91,7 +91,9 @@ async function *testerBackend( progressParent, backendName ) {
           //    yielded to be tested, incremental advancing (i.e.
           //    .value_advance()) may not reach the final progress.
           progressToAdvance.value = testParams.id + 1;
-          yield progressRoot;
+
+//!!! ...unfinished... (2025/06/26 Temp Remarked) For speed-up.
+//          yield progressRoot;
         }
 
       // Q: Why not catch exception inside Block_Reference.testCorrectness()?
