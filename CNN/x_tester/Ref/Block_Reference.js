@@ -386,9 +386,14 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
       imageInArraySelected, imageOutReferenceArray, outputTensor3dArray,
     } = this.testCorrectnessInfo;
 
+    // Table log the input images if requested.
+    const bTableLog = testParams.out.bTableLog;
+    if ( bTableLog ) {
+      const groupLabel = `testParams.id == ${testParams.id}`;
+      console.groupCollapsed( groupLabel );
+    }
+
     {
-      // Table log the input images if requested.
-      const bTableLog = testParams.out.bTableLog;
       if ( bTableLog ) {
         const [ imageIn0, imageIn1 ] = imageInArraySelected;
 
@@ -441,6 +446,9 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
         imageOutReferenceArray[ i ] = null;
       }
     }
+
+    if ( bTableLog )
+      console.groupEnd();  // groupLabel "testParams.id"
   }
 
   /**
@@ -1234,6 +1242,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
     const bTableLog = testParams.out.bTableLog;
     if ( bTableLog ) {
       header_forTableLog = this.nameString_recursively_get();
+      console.group( "Block_Reference" );
     }
 
     // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use
@@ -1652,6 +1661,9 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
       imageOutArray[ 0 ].assert_pixels_byBoundsArray_output();
       imageOutArray[ 1 ]?.assert_pixels_byBoundsArray_output();
     }
+
+    if ( bTableLog )
+      console.groupEnd();  // groupLabel "Block_Reference"
 
     return imageOutArray;
   }

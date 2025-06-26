@@ -1848,7 +1848,14 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
    * .input1.realTensor) will be used directly.
    */
   static apply_block() {
+    const bTableLog = this.bTableLog;
+    if ( bTableLog ) {
+      console.group( "Block_Base" );
+
     this.operationArray.apply();
+
+    if ( bTableLog )
+      console.groupEnd();  // groupLabel "Block_Base"
   }
 
 
