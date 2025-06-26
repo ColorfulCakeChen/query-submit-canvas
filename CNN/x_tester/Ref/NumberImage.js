@@ -1305,11 +1305,12 @@ class NumberImage_Base extends Recyclable.Root {
     let pfnActivation = theActivationFunctionInfo.pfnReference;
     if ( !pfnActivation ) { // Usually, activation function NONE( 0 ).
 
-      if ( bTableLog )
-        imageIn.TableLog_header_body(
-            `${activationNames.join( NumberImage_Base.debugNamesSeparator )}`
-          + `${NumberImage_Base.debugNamesSeparator}`
-          + `${strActivationNameWithInt} ( no_pfn )` );
+      // (2025/06/26 Remarked) Since nothing changed, no need to log.
+      // if ( bTableLog )
+      //   imageIn.TableLog_header_body(
+      //       `${activationNames.join( NumberImage_Base.debugNamesSeparator )}`
+      //     + `${NumberImage_Base.debugNamesSeparator}`
+      //     + `${strActivationNameWithInt} ( no_pfn )` );
 
       return imageIn;
     }
