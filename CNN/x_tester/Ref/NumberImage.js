@@ -461,7 +461,7 @@ class NumberImage_Base extends Recyclable.Root {
       // (.boundsArray, .scaleArraySet.do, .scaleArraySet.undo))
       // by .afterBias, bPassThrough and activation function's output range.
       imageOut.boundsArraySet
-        .adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId(
+        .adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThroughArray_nActivationId(
           pointwiseActivationId );
 
       // Before activation function, scale every element according to its
@@ -1014,7 +1014,7 @@ class NumberImage_Base extends Recyclable.Root {
 
       } else {
         imageOut.boundsArraySet
-          .adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId(
+          .adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThroughArray_nActivationId(
             depthwiseActivationId );
 
         // Before activation function, scale every element according to its

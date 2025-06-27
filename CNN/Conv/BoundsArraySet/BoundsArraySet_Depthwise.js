@@ -55,7 +55,7 @@ class Depthwise extends ConvBiasActivation {
   //}
 
   /**
-   * Set this.bPassThrough[] according to inChannelPartInfoArray.
+   * Set this.bPassThroughArray[] according to inChannelPartInfoArray.
    *
    * @param {Depthwise.FiltersBiasesPartInfo[]} aFiltersBiasesPartInfoArray
    *   The input channel range array which describe lower/higher half channels
@@ -111,7 +111,8 @@ class Depthwise extends ConvBiasActivation {
               outChannelSub < this.channelMultiplier;
               ++outChannelSub, ++outChannel ) {
 
-              this.bPassThrough[ outChannel ] = inChannelPartInfo.bPassThrough;
+              this.bPassThroughArray[ outChannel ]
+                = inChannelPartInfo.bPassThrough;
 
             } // outChannelSub, outChannel
           } // inChannelSub, inChannel

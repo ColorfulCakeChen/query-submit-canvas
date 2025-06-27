@@ -55,7 +55,7 @@ class Pointwise extends ConvBiasActivation {
   //}
 
   /**
-   * Set this.bPassThrough[] according to inChannelPartInfoArray.
+   * Set this.bPassThroughArray[] according to inChannelPartInfoArray.
    *
    * @param {Pointwise.FiltersBiasesPartInfo[]} aFiltersBiasesPartInfoArray
    *   The input channel range array which describe lower/higher half channels
@@ -102,7 +102,8 @@ class Pointwise extends ConvBiasActivation {
               break InChannelPartIndexLoop;
             }
 
-            this.bPassThrough[ outChannel ] = inChannelPartInfo.bPassThrough;
+            this.bPassThroughArray[ outChannel ]
+              = inChannelPartInfo.bPassThrough;
 
           } // outChannelSub, outChannel
         } // inChannelPartIndex

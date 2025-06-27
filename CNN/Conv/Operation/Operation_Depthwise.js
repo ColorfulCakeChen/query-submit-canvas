@@ -521,7 +521,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
 
 //!!! ...unfinished... (2025/06/10)
 // Perhaps, should log filter, boundsArraySet.afterUndoPreviousActivationEscaping,
-// boundsArraySet.bPassThrough
+// boundsArraySet.bPassThroughArray
 
     const t0 = tf.depthwiseConv2d( inputTensor,
       this.filtersTensor4d, this.strides, this.pad );
@@ -541,7 +541,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
 
 //!!! ...unfinished... (2025/06/10)
 // Perhaps, should log filter, boundsArraySet.afterUndoPreviousActivationEscaping,
-// boundsArraySet.bPassThrough
+// boundsArraySet.bPassThroughArray
 
       const t0 = tf.depthwiseConv2d( inputTensor,
         this.filtersTensor4d, this.strides, this.pad );

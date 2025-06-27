@@ -341,7 +341,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
 
 //!!! ...unfinished... (2025/06/10)
 // Perhaps, should log boundsArraySet.afterUndoPreviousActivationEscaping,
-// boundsArraySet.bPassThrough
+// boundsArraySet.bPassThroughArray
 
     // 1x1, Stride = 1
     const t0 = tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
@@ -361,7 +361,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
 
 //!!! ...unfinished... (2025/06/10)
 // Perhaps, should log boundsArraySet.afterUndoPreviousActivationEscaping,
-// boundsArraySet.bPassThrough
+// boundsArraySet.bPassThroughArray
 
       const t0 = tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
 

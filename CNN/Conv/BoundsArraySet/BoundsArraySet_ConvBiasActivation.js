@@ -101,7 +101,7 @@ class ConvBiasActivation extends InputsOutputs {
     this.afterBias
       = FloatValue.BoundsArray.Pool.get_or_create_by( outputChannelCount0 );
 
-    this.bPassThrough
+    this.bPassThroughArray
       = Recyclable.Array.Pool.get_or_create_by( outputChannelCount0 );
 
     this.set_afterUndoPreviousActivationEscaping_by_input0_undoScales(
@@ -173,9 +173,9 @@ class ConvBiasActivation extends InputsOutputs {
    */
   disposeResources() {
 
-    if ( this.bPassThrough ) {
-      this.bPassThrough.disposeResources_and_recycleToPool();
-      this.bPassThrough = null;
+    if ( this.bPassThroughArray ) {
+      this.bPassThroughArray.disposeResources_and_recycleToPool();
+      this.bPassThroughArray = null;
     }
 
     if ( this.afterBias ) {
@@ -212,19 +212,19 @@ class ConvBiasActivation extends InputsOutputs {
 
   /**
    * @param {boolean} bPassThrough
-   * Set this.bPassThrough[] all to bPassThrough.
+   * Set this.bPassThroughArray[] all to bPassThrough.
    *
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
   set_bPassThroughArray_all( bPassThrough ) {
-    this.bPassThrough.fill( bPassThrough );
+    this.bPassThroughArray.fill( bPassThrough );
     return this;
   }
 
   /**
    * Set:
-   *   - this.bPassThrough[] to false (i.e. all are not pass-through).
+   *   - this.bPassThroughArray[] to false (i.e. all are not pass-through).
    *
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
@@ -237,12 +237,12 @@ class ConvBiasActivation extends InputsOutputs {
    * Set:
    *   - this.activationEscaping_ScaleArraySet to scale 1 (i.e. all are no
    *       scale).
-   *   - this.bPassThrough[] to false (i.e. all are not pass-through).
+   *   - this.bPassThroughArray[] to false (i.e. all are not pass-through).
    *
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
-  set_activationEscaping_bPassThrough_all_none() {
+  set_activationEscaping_bPassThroughArray_all_none() {
     super.set_activationEscaping_all_none();
     this.set_bPassThroughArray_all_none();
     return this;
@@ -251,9 +251,9 @@ class ConvBiasActivation extends InputsOutputs {
   /**
    * @param {FloatValue.Bounds} aBounds
    *   Set all outputs related BoundsArray (.afterFilter, .afterBias,
-   * .output0.boundsArray (i.e. .afterActivation), .bPassThrough) to the same
-   * as the specified aBounds. Set the this.output0.scaleArraySet to default
-   * (i.e. 1). The .input0 are not modified.
+   * .output0.boundsArray (i.e. .afterActivation), .bPassThroughArray) to the
+   * same as the specified aBounds. Set the this.output0.scaleArraySet to
+   * default (i.e. 1). The .input0 are not modified.
    *
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
@@ -303,8 +303,8 @@ class ConvBiasActivation extends InputsOutputs {
     // .output1.boundsArray, .output1.scaleArraySet
     super.set_outputs_all_byBoundsArraySet( aBoundsArraySet );
 
-    for ( let i = 0; i < this.bPassThrough.length; ++i ) {
-      this.bPassThrough[ i ] = aBoundsArraySet.bPassThrough[ i ];
+    for ( let i = 0; i < this.bPassThroughArray.length; ++i ) {
+      this.bPassThroughArray[ i ] = aBoundsArraySet.bPassThroughArray[ i ];
     }
 
     return this;
@@ -312,12 +312,13 @@ class ConvBiasActivation extends InputsOutputs {
 
   /**
    * Determine .output0.boundsArray (i.e. .afterActivation) and
-   * .output0.scaleArraySet by .afterBias and .bPassThrough and nActivationId.
-   * Also adjust .afterFilter and .afterBias by .output0.scaleArraySet.
+   * .output0.scaleArraySet by .afterBias and .bPassThroughArray and
+   * nActivationId. Also adjust .afterFilter and .afterBias by
+   * .output0.scaleArraySet.
    *
    * The following properties will be used:
    *   - this.afterBias
-   *   - this.bPassThrough
+   *   - this.bPassThroughArray
    *
    * The following properties will be modified:
    *   - this.afterFilter
@@ -332,7 +333,7 @@ class ConvBiasActivation extends InputsOutputs {
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
-  adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId(
+  adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThroughArray_nActivationId(
     nActivationId ) {
 
     const theActivationFunctionInfo
@@ -343,7 +344,7 @@ class ConvBiasActivation extends InputsOutputs {
     for ( let outChannel = 0; outChannel < outputChannelCount; ++outChannel ) {
 
       // For pass-through half channels.
-      let bPassThrough = this.bPassThrough[ outChannel ];
+      let bPassThrough = this.bPassThroughArray[ outChannel ];
 
       // 1. Determine (activationEscaping) .scaleArraySet (of .output0)
       {
@@ -389,7 +390,7 @@ class ConvBiasActivation extends InputsOutputs {
             doEscapingScale = this.output0.scaleArraySet.do.scales[ outChannel ];
             if ( Number.isNaN( doEscapingScale ) == true )
               throw Error( `BoundsArraySet.ConvBiasActivation`
-                + `.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId( `
+                + `.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThroughArray_nActivationId( `
                   + `${ValueDesc.ActivationFunction.Singleton.getNameWithInt_byId( nActivationId )} ): `
                 + `this.output0.scaleArraySet.do.scales[ ${outChannel} ] `
                 + `( ${doEscapingScale} ) should not be NaN. `
@@ -441,7 +442,7 @@ class ConvBiasActivation extends InputsOutputs {
   /**
    * Rearrange output related channel information (.afterFilter, .afterBias,
    * .output0.boundsArray (i.e. .afterActivation), output0.scaleArraySet (i.e.
-   * activationEscaping), .bPassThrough) by interleaving as
+   * activationEscaping), .bPassThroughArray) by interleaving as
    * ( groupCount == 2 ). The channel count must be even (i.e. divisible by 2).
    *
    * @return {ConvBiasActivation}
@@ -474,22 +475,18 @@ class ConvBiasActivation extends InputsOutputs {
     super.set_outputs_all_byInterleave_asGrouptTwo();
 
     {
-      let bPassThroughShuffled = Recyclable.Array.Pool.get_or_create_by(
-        this.bPassThrough.length );
+      let bPassThroughArray_Shuffled = Recyclable.Array.Pool.get_or_create_by(
+        this.bPassThroughArray.length );
 
       FloatValue.ArrayInterleaver.interleave_asGrouptTwo_alongLastAxis_from_to(
-        this.bPassThrough, bPassThroughShuffled,
-        this.bPassThrough.length );
+        this.bPassThroughArray, bPassThroughArray_Shuffled,
+        this.bPassThroughArray.length );
 
-      this.bPassThrough.disposeResources_and_recycleToPool();
-      this.bPassThrough = bPassThroughShuffled;
+      this.bPassThroughArray.disposeResources_and_recycleToPool();
+      this.bPassThroughArray = bPassThroughArray_Shuffled;
     }
 
     return this;
-  }
-
-  get bPassThroughArray() {
-    return this.output0.bPassThrough;
   }
 
   get afterActivation() {
@@ -501,8 +498,8 @@ class ConvBiasActivation extends InputsOutputs {
 
 //!!! ...untested... (2025/05/28)
   /**
-   * Log .bPassThrough, .afterUndoPreviousActivationEscaping, .afterFilter,
-   * .afterBias, .afterActivation of this object as a table.
+   * Log .bPassThroughArray, .afterUndoPreviousActivationEscaping,
+   * .afterFilter, .afterBias, .afterActivation of this object as a table.
    */
   TableLog_header_body() {
     super.TableLog_header_body(); // Log the .inputX and .outputX
@@ -523,8 +520,8 @@ class ConvBiasActivation extends InputsOutputs {
     {
       // 1.1 Generate the 2nd line of headers. It has all detail field names. 
       {
-        // Note: The .bPassThrough does not have 2nd line of headers. So let
-        //       it empty.
+        // Note: The .bPassThroughArray[] does not have 2nd line of headers.
+        //       So let it empty.
         bodyFields.push(
           headerPrefixEmpty.padStart( characterCountPerField ) );
 
@@ -548,7 +545,7 @@ class ConvBiasActivation extends InputsOutputs {
       // Place the header prefix (may be very long) in the 1st line of headers.
       {
 //!!! (2025/05/30 Remarked) seems not used.
-//         // "-1" for excluding .bPassThrough (which is not a BoundsArray).
+//         // "-1" for excluding .bPassThroughArray[] (which is not a BoundsArray).
 //         const boundsArrayCount = ( bodyFields.length - 1 );
 //         const headerPrefix_columnCount = Math.floor( boundsArrayCount / 2 );
 
@@ -560,8 +557,8 @@ class ConvBiasActivation extends InputsOutputs {
         const headerPrefix_wideColumn_characterCount = characterCountPerField
           + fieldJoinSeparator.length + characterCountPerField;
 
-        // The header of .bPassThrough (which is not a BoundsArray) uses
-        // normal (narrow) column width.
+        // The header of .bPassThroughArray[] (which is not a BoundsArray)
+        // uses normal (narrow) column width.
         const headerPrefix_bPassThrough = ".bPassThrough";
         headerFields.push(
           headerPrefix_bPassThrough.padStart( characterCountPerField ),
@@ -601,7 +598,8 @@ class ConvBiasActivation extends InputsOutputs {
 
     // 2. Log body.
     {
-      // Note: The .bPassThrough[] (a boolean 0 or 1) needs not decimal point.
+      // Note: The .bPassThroughArray[] (a boolean 0 or 1) needs not decimal
+      //       point.
       const digitCountAfterDecimalPoint_bPassThrough = 0;
 
       const rowIndexBound = aBoundsArray.length;
@@ -609,7 +607,7 @@ class ConvBiasActivation extends InputsOutputs {
         bodyFields.length = 0;
 
         bodyFields.push(
-          this.bPassThrough[ rowIndex ]
+          this.bPassThroughArray[ rowIndex ]
             .toFixed( digitCountAfterDecimalPoint_bPassThrough )
             .padStart( characterCountPerField )
         );

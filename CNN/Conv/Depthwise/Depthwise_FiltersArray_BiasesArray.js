@@ -603,7 +603,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
             } else {
               this.boundsArraySet
-                .adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThrough_nActivationId(
+                .adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThroughArray_nActivationId(
                   this.nActivationId );
 
               // Round 2

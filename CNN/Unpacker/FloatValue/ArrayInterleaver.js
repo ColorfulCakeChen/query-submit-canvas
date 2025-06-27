@@ -266,7 +266,7 @@ class ArrayInterleaver {
    *
    * @param {number[]} shape
    *   The virtual N-dimension array's shape (e.g. [ channelCount ] or
-   * [ width, channelCount ] or [ height, width, channelCount ].
+   * [ width, channelCount ] or [ height, width, channelCount ]).
    */
   static interleave_asGrouptTwo_alongLastAxis_from_to_pfnInterleaver(
     fromArray, toArray, pfnInterleaver, ...shape ) {
@@ -321,7 +321,7 @@ class ArrayInterleaver {
    *
    * @param {number[]} shape
    *   The virtual N-dimension array's shape (e.g. [ channelCount ] or
-   * [ width, channelCount ] or [ height, width, channelCount ].
+   * [ width, channelCount ] or [ height, width, channelCount ]).
    */
   static interleave_asGrouptTwo_alongLastAxis_from_to(
     fromArray, toArray, ...shape ) {
@@ -381,7 +381,7 @@ class ArrayInterleaver {
    *
    * @param {number[]} shape
    *   The virtual N-dimension array's shape (e.g. [ channelCount ] or
-   * [ width, channelCount ] or [ height, width, channelCount ].
+   * [ width, channelCount ] or [ height, width, channelCount ]).
    */
   static interleave_asGrouptTwo_alongLastAxis_from_to_undo(
     fromArray, toArray, ...shape ) {
