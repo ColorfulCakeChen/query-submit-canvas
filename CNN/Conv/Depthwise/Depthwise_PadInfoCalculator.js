@@ -276,6 +276,10 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
     if ( this.TableLog_filterName )
       return this.TableLog_filterName; // Return cached name.
 
+
+!!! ...unfinished... (2025/06/27)
+// Use MultiLayerMap.Base as nameBag.get_by() to reduce string generating.
+
     const AvgMax_Or_ChannelMultiplier = this.AvgMax_Or_ChannelMultiplier;
 
     // 1.

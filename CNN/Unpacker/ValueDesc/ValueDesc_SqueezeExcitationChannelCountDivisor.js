@@ -46,7 +46,7 @@ class SqueezeExcitationChannelCountDivisor extends Int {
       //   x => `SQUEEZE_INTERMEDIATE_DIVISOR_${( x + 1 )}_EXCITATION` )
     } );
 
-    // A look-up table for reducing name string composing.
+    // A look-up table for reducing name string composing (generating).
     this.nameBag = new SE_Name_Bag;
   }
 

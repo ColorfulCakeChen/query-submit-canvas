@@ -1249,6 +1249,10 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
     let header_forTableLog;
     const bTableLog = testParams.out.bTableLog;
     if ( bTableLog ) {
+
+!!! ...unfinished... (2025/06/27)
+// Perhaps, table log ConvBlockType.
+
       header_forTableLog = this.nameString_recursively_get();
       console.group( "Block_Reference" );
     }
