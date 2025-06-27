@@ -1557,13 +1557,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
           intermediatePointwise0
             = Block_Base.SequeezeExcitation_intermediatePointwise_create_init
                 .call( this,
-
-
-!!! ...unfinished... (2025/06/27)
-// Perhaps, integrate nSqueezeExcitationChannelCountDivisor into log name.
-
-
-                  `SE_${prefix_or_postfix}_intermediatePointwise0`,
+                  `SE_${prefix_or_postfix}_intermediatePointwise0_divisor_${nSqueezeExcitationChannelCountDivisor}`,
                   this.operationArray.endingInput0,
                   this.squeezeExcitationActivationId,
                   nPointwise_HigherHalfDifferent, inputWeightArray,
@@ -1577,13 +1571,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
           intermediatePointwise1
             = Block_Base.SequeezeExcitation_intermediatePointwise_create_init
                 .call( this,
-
-
-!!! ...unfinished... (2025/06/27)
-// Perhaps, integrate nSqueezeExcitationChannelCountDivisor into log name.
-
-
-                  `SE_${prefix_or_postfix}_intermediatePointwise1`,
+                  `SE_${prefix_or_postfix}_intermediatePointwise1_divisor_${nSqueezeExcitationChannelCountDivisor}`,
                   this.operationArray.endingInput1
                     ? this.operationArray.endingInput1
                     : this.operationArray.endingInput0,

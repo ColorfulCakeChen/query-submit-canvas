@@ -94,7 +94,7 @@ class SqueezeExcitationChannelCountDivisor extends Int {
 }
 
 
-// !!! (2025/06/27 Remarked) Deprecated. Compose string everytime instead.
+//!!! (2025/06/27 Remarked) Deprecated. Compose string everytime instead.
 //
 // /**
 //  * A pool for Squeeze-and-Excitation name. It could reduce re-creating them
