@@ -205,9 +205,9 @@ class NumberImage_Base extends Recyclable.Root {
       pointwiseChannelCount, null,
       bPointwiseBias, null,
       pointwiseActivationId,
-      true,
+      true, // (bPassThrough)
       aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
-      nPassThroughStyleId, // (bPassThrough)
+      nPassThroughStyleId,
       bTableLog,
       parametersDesc, ...pointwiseNames );
   }
@@ -354,7 +354,7 @@ class NumberImage_Base extends Recyclable.Root {
       imageIn.height, imageIn.width, pointwiseChannelCount, 0,
       imageIn.boundsArraySet.output0, null, BoundsArraySet.Pointwise, null );
 
-    imageOut.boundsArraySet.set_bPassThrough_all( bPassThrough );
+    imageOut.boundsArraySet.set_bPassThroughArray_all( bPassThrough );
 
     // Pointwise Convolution
     for ( let y = 0; y < imageIn.height; ++y ) {
@@ -495,8 +495,9 @@ class NumberImage_Base extends Recyclable.Root {
       depthwise_AvgMax_Or_ChannelMultiplier,
       depthwiseFilterHeight, depthwiseFilterWidth, depthwiseStridesPad,
       null, bDepthwiseBias, null, depthwiseActivationId,
-      true, aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag,
-      nPassThroughStyleId, // (bPassThrough)
+      true, // (bPassThrough)
+      aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag,
+      nPassThroughStyleId,
       bTableLog,
       parametersDesc, ...depthwiseNames );
   }
@@ -517,7 +518,9 @@ class NumberImage_Base extends Recyclable.Root {
       depthwiseFiltersArray,
       bDepthwiseBias, depthwiseBiasesArray,
       depthwiseActivationId,
-      false, null, null, // (bPassThrough)
+      false, // (bPassThrough)
+      null,  // (aDepthwise_PassThrough_FiltersArray_BiasesArray_Bag)
+      null,  // (nPassThroughStyleId)
       bTableLog,
       parametersDesc, ...depthwiseNames );
   }
@@ -715,7 +718,7 @@ class NumberImage_Base extends Recyclable.Root {
       outputHeight, outputWidth, outputChannelCount, preFilledValue,
       imageIn.boundsArraySet.output0, null, BoundsArraySet.Depthwise, null );
 
-    imageOut.boundsArraySet.set_bPassThrough_all( bPassThrough );
+    imageOut.boundsArraySet.set_bPassThroughArray_all( bPassThrough );
 
     // Depthwise Convolution
     let filterValue;
@@ -1629,7 +1632,7 @@ class NumberImage_Base extends Recyclable.Root {
       excitationFiltersArray, excitationBiasesArray,
       nActivationId,
       false, // (bPassThrough)
-      null,
+      null,  // (aPointwise_PassThrough_FiltersArray_BiasesArray_Bag)
       bTableLog,
       parametersDesc, ...squeezeExcitationNames );
   }
@@ -2288,7 +2291,7 @@ class NumberImage_Base extends Recyclable.Root {
       aBoundsArray_or_aScaleBoundsArray = boundsArraySet.output0;
 
     if ( !bPassThroughArray )
-      bPassThroughArray = boundsArraySet.bPassThrough; // may be undefined.
+      bPassThroughArray = boundsArraySet.bPassThroughArray; // may be undefined.
 
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
       imageHeaderPrefix,

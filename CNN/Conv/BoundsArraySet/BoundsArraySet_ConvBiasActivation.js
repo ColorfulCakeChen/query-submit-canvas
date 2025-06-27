@@ -34,12 +34,9 @@ import { InputsOutputs } from "./BoundsArraySet_InputsOutputs.js";
  * to this.afterBias. It is just the this.output0.boundsArray (without
  * this.output0.scaleArraySet).
  *
- * @member {boolean[]} bPassThrough
+ * @member {boolean[]} bPassThroughArray
  *   If true for a output channel, the output channel should be arranged to
  * pass-through from input to output.
- *
- * @member {boolean[]} bPassThroughArray
- *   Same as bPassThrough[] (but with better name). 
  *
  * @see InputsOutputs
  */
@@ -220,7 +217,7 @@ class ConvBiasActivation extends InputsOutputs {
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
-  set_bPassThrough_all( bPassThrough ) {
+  set_bPassThroughArray_all( bPassThrough ) {
     this.bPassThrough.fill( bPassThrough );
     return this;
   }
@@ -232,8 +229,8 @@ class ConvBiasActivation extends InputsOutputs {
    * @return {ConvBiasActivation}
    *   Return this (modified) object.
    */
-  set_bPassThrough_all_none() {
-    return this.set_bPassThrough_all( false );
+  set_bPassThroughArray_all_none() {
+    return this.set_bPassThroughArray_all( false );
   }
 
   /**
@@ -247,7 +244,7 @@ class ConvBiasActivation extends InputsOutputs {
    */
   set_activationEscaping_bPassThrough_all_none() {
     super.set_activationEscaping_all_none();
-    this.set_bPassThrough_all_none();
+    this.set_bPassThroughArray_all_none();
     return this;
   }
 
@@ -269,7 +266,7 @@ class ConvBiasActivation extends InputsOutputs {
     // .output0.scaleArraySet
     super.set_outputs_all_byBounds( aBounds );
 
-    this.set_bPassThrough_all_none();
+    this.set_bPassThroughArray_all_none();
     return this;
   }
 
@@ -612,7 +609,7 @@ class ConvBiasActivation extends InputsOutputs {
         bodyFields.length = 0;
 
         bodyFields.push(
-          bPassThrough[ rowIndex ]
+          this.bPassThrough[ rowIndex ]
             .toFixed( digitCountAfterDecimalPoint_bPassThrough )
             .padStart( characterCountPerField )
         );

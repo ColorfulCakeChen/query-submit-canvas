@@ -64,7 +64,7 @@ class Pointwise extends ConvBiasActivation {
    * @return {BoundsArraySet.Pointwise}
    *   Return the this object.
    */
-  set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray ) {
+  set_bPassThroughArray_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray ) {
 
     // [ outChannelBegin, outChannelEnd ) are output channels of the current
     // FiltersBiasesPart.

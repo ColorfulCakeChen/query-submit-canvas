@@ -64,7 +64,7 @@ class Depthwise extends ConvBiasActivation {
    * @return {BoundsArraySet.Depthwise}
    *   Return the this object.
    */
-  set_bPassThrough_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray ) {
+  set_bPassThroughArray_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray ) {
     
     // [ inChannelBegin, inChannelEnd ) are input channels of the current
     // FiltersBiasesPart.

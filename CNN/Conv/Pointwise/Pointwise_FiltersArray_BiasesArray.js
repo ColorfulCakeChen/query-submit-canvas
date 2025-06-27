@@ -565,7 +565,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray,
             aFiltersBiasesPartInfoArray );
 
-          this.boundsArraySet.set_bPassThrough_all_byChannelPartInfoArray(
+          this.boundsArraySet.set_bPassThroughArray_all_byChannelPartInfoArray(
             aFiltersBiasesPartInfoArray );
 
           // Determine .activationEscaping_ScaleArraySet,
