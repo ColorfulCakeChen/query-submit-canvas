@@ -1802,6 +1802,7 @@ class NumberImage_Base extends Recyclable.Root {
 
 !!! ...unfinished... (2025/06/27)
 // Perhaps, integrate nSqueezeExcitationChannelCountDivisor into log name.
+//Use ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag.get_by() instead.
 
           parametersDesc, ...squeezeExcitationNames, "intermediatePointwise" );
 
