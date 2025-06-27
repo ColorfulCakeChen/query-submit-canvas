@@ -349,8 +349,8 @@ class Block_TestParams_Base extends TestParams.Base {
 
 //!!! (2022/07/11 Temp Remarked) For speed-up debug.
       pointwise1ChannelCount: [
-        0,
-        // 1,
+        // 0,
+        1,
         // 3,
         // 1
         2
@@ -425,7 +425,12 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
       nSqueezeExcitationChannelCountDivisor: [
-        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+        // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+        // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE, // -2
+        // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, // -1
+        // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION, // 0
+        1,
+        // 2,
         3
       ],
 
