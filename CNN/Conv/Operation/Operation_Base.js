@@ -396,13 +396,6 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     const headerPrefix = this.nameJoinSeparator_join(
       "activation", strActivationNameWithInt );
 
-//!!! (2025/06/27 Remarked)
-//     const activationFunctionName
-//       = ValueDesc.ActivationFunction.Singleton.getName_byId( nActivationId );
-//
-//     const headerPrefix
-//       = `activation( ${activationFunctionName}( ${nActivationId} ) )`;
-
     const strSubheader = undefined;
 
     this.TableLog_tensor3d_if_requested(
