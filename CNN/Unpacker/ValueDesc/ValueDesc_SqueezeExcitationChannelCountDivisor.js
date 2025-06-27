@@ -156,7 +156,7 @@ class SE_Name_Bag extends MultiLayerMap.Base {
 
     if (   ( nSqueezeExcitationChannelCountDivisor !== undefined )
         && ( nSqueezeExcitationChannelCountDivisor !== null ) )
-      str += `divisor_${nSqueezeExcitationChannelCountDivisor}`;
+      str += `_divisor_${nSqueezeExcitationChannelCountDivisor}`;
 
     return str;
   }
