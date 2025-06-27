@@ -116,6 +116,10 @@ class SE_Name_Bag extends MultiLayerMap.Base {
     partNumber,
     nSqueezeExcitationChannelCountDivisor ) {
 
+!!! ...unfinished... (2025/06/27)
+// Perhaps, should use number (not string) as look-up keys
+// to speed up performance.
+
     return this.get_or_create_by_arguments1_etc(
       SE_Name_Bag.create_by, this,
       prefix_or_postfix, operationName, partNumber,
