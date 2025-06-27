@@ -1799,6 +1799,10 @@ class NumberImage_Base extends Recyclable.Root {
           aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
           nPassThroughStyleId,
           bTableLog,
+
+!!! ...unfinished... (2025/06/27)
+// Perhaps, integrate nSqueezeExcitationChannelCountDivisor into log name.
+
           parametersDesc, ...squeezeExcitationNames, "intermediatePointwise" );
 
         if ( squeezeOut != this ) {

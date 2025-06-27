@@ -841,6 +841,14 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
       if ( !Block_Base.operationArray_append_SqueezeExcitation.call( this,
               this.pointwise20_nHigherHalfDifferent, inputWeightArray,
               0 // No channelShuffler_outputGroupCount.
+
+
+
+!!! ...unfinished... (2025/06/27)
+// Perhaps, integrate "prefix" "postfix" in to log name "SE_xxx".
+
+
+
             )
          )
         return false;  // e.g. input array does not have enough data.
@@ -964,6 +972,14 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
               // Postfix squeeze-and-excitation's channels are shuffled if
               // pointwise2 did.
               this.pointwise20_channelShuffler_outputGroupCount
+
+
+
+!!! ...unfinished... (2025/06/27)
+// Perhaps, integrate "prefix" "postfix" in to log name "SE_xxx".
+
+
+
             )
          )
         return false;  // e.g. input array does not have enough data.
@@ -1365,7 +1381,19 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
    */
   static operationArray_append_SqueezeExcitation(
     nPointwise_HigherHalfDifferent, inputWeightArray,
-    channelShuffler_outputGroupCount ) {
+    channelShuffler_outputGroupCount,
+  
+
+!!! ...unfinished... (2025/06/27)
+// Perhaps, integrate "prefix" "postfix" in to log name "SE_xxx".
+
+
+  ) {
+
+
+!!! ...unfinished... (2025/06/27)
+// Perhaps, integrate "prefix" or "postfix" in to log name "SE_xxx".
+
 
     if ( this.nSqueezeExcitationChannelCountDivisor
            == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
@@ -1547,6 +1575,12 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
           intermediatePointwise0
             = Block_Base.SequeezeExcitation_intermediatePointwise_create_init
                 .call( this,
+
+
+!!! ...unfinished... (2025/06/27)
+// Perhaps, integrate nSqueezeExcitationChannelCountDivisor into log name.
+
+
                   "SE_intermediatePointwise0",
                   this.operationArray.endingInput0,
                   this.squeezeExcitationActivationId,
@@ -1561,6 +1595,12 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
           intermediatePointwise1
             = Block_Base.SequeezeExcitation_intermediatePointwise_create_init
                 .call( this,
+
+
+!!! ...unfinished... (2025/06/27)
+// Perhaps, integrate nSqueezeExcitationChannelCountDivisor into log name.
+
+
                   "SE_intermediatePointwise1",
                   this.operationArray.endingInput1
                     ? this.operationArray.endingInput1
