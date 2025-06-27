@@ -840,15 +840,8 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
     if ( this.bSqueezeExcitationPrefix )
       if ( !Block_Base.operationArray_append_SqueezeExcitation.call( this,
               this.pointwise20_nHigherHalfDifferent, inputWeightArray,
-              0 // No channelShuffler_outputGroupCount.
-
-
-
-!!! ...unfinished... (2025/06/27)
-// Perhaps, integrate "prefix" "postfix" in to log name "SE_xxx".
-
-
-
+              0, // No channelShuffler_outputGroupCount.
+              "prefix"
             )
          )
         return false;  // e.g. input array does not have enough data.
@@ -971,15 +964,9 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
 
               // Postfix squeeze-and-excitation's channels are shuffled if
               // pointwise2 did.
-              this.pointwise20_channelShuffler_outputGroupCount
+              this.pointwise20_channelShuffler_outputGroupCount,
 
-
-
-!!! ...unfinished... (2025/06/27)
-// Perhaps, integrate "prefix" "postfix" in to log name "SE_xxx".
-
-
-
+              "postfix"
             )
          )
         return false;  // e.g. input array does not have enough data.
@@ -1377,23 +1364,18 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
    * @param {Float32Array} inputWeightArray
    *   A Float32Array whose values will be interpreted as weights.
    *
+   * @param {number} channelShuffler_outputGroupCount
+   *
+   * @param {string} prefix_or_postfix
+   *   A string (either "prefix" or "postfix"). Used for table log name.
+   *
    * @return {boolean} Return true, if succeeded.
    */
   static operationArray_append_SqueezeExcitation(
     nPointwise_HigherHalfDifferent, inputWeightArray,
     channelShuffler_outputGroupCount,
-  
-
-!!! ...unfinished... (2025/06/27)
-// Perhaps, integrate "prefix" "postfix" in to log name "SE_xxx".
-
-
+    prefix_or_postfix
   ) {
-
-
-!!! ...unfinished... (2025/06/27)
-// Perhaps, integrate "prefix" or "postfix" in to log name "SE_xxx".
-
 
     if ( this.nSqueezeExcitationChannelCountDivisor
            == ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) // (-2)
@@ -1511,7 +1493,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
         {
           squeezeDepthwise0 = Operation.Depthwise_ConstantWhenPassThrough.Pool
             .get_or_create_by(
-              this, "SE_squeezeDepthwise0", bTableLog,
+              this, `SE_${prefix_or_postfix}_squeezeDepthwise0`, bTableLog,
               this.operationArray.endingInput0,
               squeezeAvgMax_Or_ChannelMultiplier,
               squeezeFilterHeight, squeezeFilterWidth, squeezeStridesPad,
@@ -1530,7 +1512,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
         if ( this.pointwise21ChannelCount > 0 ) {
           squeezeDepthwise1 = Operation.Depthwise_ConstantWhenPassThrough.Pool
             .get_or_create_by(
-              this, "SE_squeezeDepthwise1", bTableLog,
+              this, `SE_${prefix_or_postfix}_squeezeDepthwise1`, bTableLog,
               this.operationArray.endingInput1
                 ? this.operationArray.endingInput1
                 : this.operationArray.endingInput0,
@@ -1581,7 +1563,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
 // Perhaps, integrate nSqueezeExcitationChannelCountDivisor into log name.
 
 
-                  "SE_intermediatePointwise0",
+                  `SE_${prefix_or_postfix}_intermediatePointwise0`,
                   this.operationArray.endingInput0,
                   this.squeezeExcitationActivationId,
                   nPointwise_HigherHalfDifferent, inputWeightArray,
@@ -1601,7 +1583,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
 // Perhaps, integrate nSqueezeExcitationChannelCountDivisor into log name.
 
 
-                  "SE_intermediatePointwise1",
+                  `SE_${prefix_or_postfix}_intermediatePointwise1`,
                   this.operationArray.endingInput1
                     ? this.operationArray.endingInput1
                     : this.operationArray.endingInput0,
@@ -1656,8 +1638,8 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
 
           excitationPointwise0
             = Operation.Pointwise_ConstantWhenPassThrough.Pool
-                .get_or_create_by(
-                  this, "SE_excitationPointwise0", bTableLog,
+                .get_or_create_by( this,
+                  `SE_${prefix_or_postfix}_excitationPointwise0`, bTableLog,
                   this.operationArray.endingInput0,
                   excitationPointwise0_outputChannelCount,
                   excitationPointwise_bBias,
@@ -1687,8 +1669,8 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
 
           excitationPointwise1
             = Operation.Pointwise_ConstantWhenPassThrough.Pool
-                .get_or_create_by(
-                  this, "SE_excitationPointwise1", bTableLog,
+                .get_or_create_by( this,
+                  `SE_${prefix_or_postfix}_excitationPointwise1`, bTableLog,
                   this.operationArray.endingInput1
                     ? this.operationArray.endingInput1
                     : this.operationArray.endingInput0,
@@ -1731,13 +1713,13 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
     // 4. Mutiply
     {
       let multiply0 = Operation.MultiplyTwoTensors.Pool.get_or_create_by(
-        this, "SE_multiply0", bTableLog,
+        this, `SE_${prefix_or_postfix}_multiply0`, bTableLog,
         input0, this.operationArray.endingInput0 );
 
       let multiply1;
       if ( this.pointwise21ChannelCount > 0 ) {
         multiply1 = Operation.MultiplyTwoTensors.Pool.get_or_create_by(
-          this, "SE_multiply1", bTableLog,
+          this, `SE_${prefix_or_postfix}_multiply1`, bTableLog,
           input1, this.operationArray.endingInput1 );
       }
 
