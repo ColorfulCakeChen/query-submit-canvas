@@ -389,11 +389,19 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     if ( !this.bTableLog )
       return;
 
-    const activationFunctionName
-      = ValueDesc.ActivationFunction.Singleton.getName_byId( nActivationId );
+    const strActivationNameWithInt
+      = ValueDesc.ActivationFunction.Singleton.getNameWithInt_byId(
+          nActivationId );
 
-    const headerPrefix
-      = `activation( ${activationFunctionName}( ${nActivationId} ) )`;
+    const headerPrefix = this.nameJoinSeparator_join(
+      "activation", strActivationNameWithInt );
+
+//!!! (2025/06/27 Remarked)
+//     const activationFunctionName
+//       = ValueDesc.ActivationFunction.Singleton.getName_byId( nActivationId );
+//
+//     const headerPrefix
+//       = `activation( ${activationFunctionName}( ${nActivationId} ) )`;
 
     const strSubheader = undefined;
 
