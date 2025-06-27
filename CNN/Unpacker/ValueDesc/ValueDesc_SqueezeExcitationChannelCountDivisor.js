@@ -1,6 +1,7 @@
 export { SqueezeExcitationChannelCountDivisor };
 
 import { Int } from "./ValueDesc_Base.js";
+import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 
 /**
  * Describe squeeze-and-excitation channel count divisor's id, range, name.
@@ -44,6 +45,9 @@ class SqueezeExcitationChannelCountDivisor extends Int {
       // ... [ ... new Array( 64 ).keys() ].map(
       //   x => `SQUEEZE_INTERMEDIATE_DIVISOR_${( x + 1 )}_EXCITATION` )
     } );
+
+    // A look-up table for reducing name string composing.
+    this.nameBag = new SE_Name_Bag;
   }
 
   /**
@@ -85,6 +89,76 @@ class SqueezeExcitationChannelCountDivisor extends Int {
   }
 
 }
+
+
+/**
+ * A pool for Squeeze-and-Excitation name. It could reduce re-creating them
+ * again and again to improve performance.
+ *
+ */
+class SE_Name_Bag extends MultiLayerMap.Base {
+
+  /**
+   */
+  constructor() {
+    super();
+    this.#setAsConstructor_self();
+  }
+
+  /**  */
+  #setAsConstructor_self() {
+  }
+
+  /**  */
+  get_by(
+    prefix_or_postfix,
+    operationName,
+    partNumber,
+    nSqueezeExcitationChannelCountDivisor ) {
+
+    return this.get_or_create_by_arguments1_etc(
+      SE_Name_Bag.create_by, this,
+      prefix_or_postfix, operationName, partNumber,
+      nSqueezeExcitationChannelCountDivisor );
+  }
+
+  /**
+   * @param {string} prefix_or_postfix
+   *   A string (either "prefix" or "postfix").
+   *
+   * @param {string} operationName
+   *   A string (either "squeezeDepthwise" or "intermediatePointwise" or
+   * "excitationPointwise" or "multiply").
+   *
+   * @param {number} partNumber
+   *   An integer (either 0 or 1).
+   *
+   * @param {number} nSqueezeExcitationChannelCountDivisor
+   *   A positive integer between [ 1, 64 ]. If null or undefined, it means no
+   * intermediate pointwise convolution. Usuallly, only if
+   * operationName is "intermediatePointwise", this parameter value should be
+   * provided.
+   *
+   * @return {string}
+   *   Return a string "Divisor_Xx" according to the divisor integer value.
+   */
+  static create_by(
+    prefix_or_postfix,
+    operationName,
+    partNumber,
+    nSqueezeExcitationChannelCountDivisor ) {
+
+    let str = `SE_${prefix_or_postfix}_${operationName}${partNumber}`;
+
+    if (   ( nSqueezeExcitationChannelCountDivisor !== undefined )
+        && ( nSqueezeExcitationChannelCountDivisor !== null ) )
+      str += `divisor_${nSqueezeExcitationChannelCountDivisor}`;
+
+    return str;
+  }
+
+}
+
 
 /** The only one ValueDesc.SqueezeExcitationChannelCountDivisor instance. */
 SqueezeExcitationChannelCountDivisor.Singleton
