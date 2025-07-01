@@ -431,8 +431,8 @@ class Block_TestParams_Base extends TestParams.Base {
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE, // -2
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, // -1
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION, // 0
-        1,
-        // 2,
+        // 1,
+        2,
         3
       ],
 
@@ -461,8 +461,8 @@ class Block_TestParams_Base extends TestParams.Base {
 
       bTableLog: [
         // (2025/06/04 Temp Remarked) For debug.
-        0, 0
-        // 1, 1
+        // 0, 0
+        1, 1
       ],
     };
 
