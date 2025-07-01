@@ -490,7 +490,7 @@ class Depthwise_FilterName_Bag extends MultiLayerMap.Base {
       op_name = `none`;
 
     } else { // ( AvgMax_Or_ChannelMultiplier > 0 )
-      op_name = `conv_channelMultiplier_${this.channelMultiplier}`;
+      op_name = `conv_channelMultiplier_${AvgMax_Or_ChannelMultiplier}`;
     }
 
     // 2. operator size
