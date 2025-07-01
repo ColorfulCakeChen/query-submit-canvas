@@ -1249,12 +1249,13 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
     let header_forTableLog;
     const bTableLog = testParams.out.bTableLog;
     if ( bTableLog ) {
-
-!!! ...unfinished... (2025/06/27)
-// Perhaps, table log ConvBlockType.
-
       header_forTableLog = this.nameString_recursively_get();
-      console.group( "Block_Reference" );
+
+      const nConvBlockTypeNameWithInt
+        = ValueDesc.ConvBlockType.Singleton.getNameWithInt_byId(
+            testParams.out.nConvBlockTypeId );
+
+      console.group( `Block_Reference ( ${nConvBlockTypeNameWithInt} )` );
     }
 
     // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use
