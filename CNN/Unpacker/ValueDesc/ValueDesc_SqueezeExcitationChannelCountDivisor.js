@@ -109,17 +109,19 @@ class SE_Name_Bag extends MultiLayerMap.Base {
   #setAsConstructor_self() {
   }
 
-  /**  */
+  /**
+   * @see SE_Name_Bag.create_by()
+   */
   get_by(
     prefix_or_postfix,
     operationName,
     partNumber,
     nSqueezeExcitationChannelCountDivisor ) {
 
-!!! ...unfinished... (2025/06/27)
-// Perhaps, should use number (not string) as look-up keys
-// to speed up performance.
-
+    // Note: Although it is time consuming when using string parameters
+    //       (i.e. prefix_or_postfix and operationName) as comparison key, it
+    //       is still worth because MultiLayerMap reduces generating same
+    //       string again and again.
     return this.get_or_create_by_arguments1_etc(
       SE_Name_Bag.create_by, this,
       prefix_or_postfix, operationName, partNumber,
