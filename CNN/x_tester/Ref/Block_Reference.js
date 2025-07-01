@@ -467,10 +467,39 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
     } = this.testCorrectnessInfo;
 
     const imageIn0_BoundsArraySet = imageInArraySelected[ 0 ].boundsArraySet;
-    const imageIn1_BoundsArraySet = imageInArraySelected[ 1 ]?.output0;
+    const imageIn1_BoundsArraySet = imageInArraySelected[ 1 ]?.boundsArraySet;
 
     const imageIn0_ScaleBoundsArray = imageIn0_BoundsArraySet.output0;
     const imageIn1_ScaleBoundsArray = imageIn1_BoundsArraySet?.output0;
+
+    // Table log the input tensors if requested.
+    const bTableLog = block.bTableLog;
+    if ( bTableLog ) {
+      const [ tensorIn0, tensorIn1 ] = inputTensor3dArray;
+
+      const imageIn0_bPassThroughArray
+        = imageIn0_BoundsArraySet.bPassThroughArray;
+      const imageIn1_bPassThroughArray
+        = imageIn1_BoundsArraySet?.bPassThroughArray;
+
+      {
+        const tensorIn0_imageHeaderPrefix = "tensorIn0";
+        const tensorIn0_strSubheader = undefined;
+        TableLogger.Base.Singleton.log_tensor3d_along_depth(
+          tensorIn0_imageHeaderPrefix, tensorIn0_strSubheader,
+          tensorIn0,
+          imageIn0_ScaleBoundsArray, imageIn0_bPassThroughArray );
+      }
+
+      if ( tensorIn1 ) {
+        const tensorIn1_imageHeaderPrefix = "tensorIn1";
+        const tensorIn1_strSubheader = undefined;
+        TableLogger.Base.Singleton.log_tensor3d_along_depth(
+          tensorIn1_imageHeaderPrefix, tensorIn1_strSubheader,
+          tensorIn1,
+          imageIn1_ScaleBoundsArray, imageIn1_bPassThroughArray );
+      }
+    }
 
     // Test memory leakage of block create/dispose.
     let memoryInfo_beforeCreate = tf.memory();
@@ -503,35 +532,6 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
       block.input0.realTensor = inputTensor3dArray[ 0 ];
       if ( block.input1 )
         block.input1.realTensor = inputTensor3dArray[ 1 ];
-
-      // Table log the input images if requested.
-      const bTableLog = block.bTableLog;
-      if ( bTableLog ) {
-        const [ tensorIn0, tensorIn1 ] = inputTensor3dArray;
-
-        const imageIn0_bPassThroughArray
-          = imageIn0_BoundsArraySet.bPassThroughArray;
-        const imageIn1_bPassThroughArray
-          = imageIn1_BoundsArraySet?.bPassThroughArray;
-
-        {
-          const tensorIn0_imageHeaderPrefix = "tensorIn0";
-          const tensorIn0_strSubheader = undefined;
-          TableLogger.Base.Singleton.log_tensor3d_along_depth(
-            tensorIn0_imageHeaderPrefix, tensorIn0_strSubheader,
-            tensorIn0,
-            imageIn0_ScaleBoundsArray, imageIn0_bPassThroughArray );
-        }
-
-        if ( tensorIn1 ) {
-          const tensorIn1_imageHeaderPrefix = "tensorIn1";
-          const tensorIn1_strSubheader = undefined;
-          TableLogger.Base.Singleton.log_tensor3d_along_depth(
-            tensorIn1_imageHeaderPrefix, tensorIn1_strSubheader,
-            tensorIn1,
-            imageIn1_ScaleBoundsArray, imageIn1_bPassThroughArray );
-        }
-      }
 
       block.apply();
 

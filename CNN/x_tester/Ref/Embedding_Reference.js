@@ -104,6 +104,13 @@ class Embedding_Reference_Base
     if ( bTableLog ) {
       const groupLabel = `testParams.id == ${testParams.id}`;
       console.groupCollapsed( groupLabel );
+
+      {
+        const imageIn0_imageHeaderPrefix = "imageIn";
+        const imageIn0_strSubheader = undefined;
+        this.testCorrectness_imageIn.TableLog_header_body(
+          imageIn0_imageHeaderPrefix, imageIn0_strSubheader );
+      }
     }
 
     this.testCorrectness_imageOutReference = this.calcResult(
@@ -177,6 +184,21 @@ class Embedding_Reference_Base
       // Since no keep-input, the input tensor destroyed count will be the same
       // as input tensor count.
       inputTensorDestroyCount = 1;
+    }
+
+    // Table log the input tensors if requested.
+    const bTableLog = block.bTableLog;
+    if ( bTableLog ) {
+      const imageIn_BoundsArraySet
+        = this.testCorrectness_imageIn.boundsArraySet;
+
+      const tensorIn0_imageHeaderPrefix = "tensorIn";
+      const tensorIn0_strSubheader = undefined;
+      TableLogger.Base.Singleton.log_tensor3d_along_depth(
+        tensorIn0_imageHeaderPrefix, tensorIn0_strSubheader,
+        inputTensor3d,
+        this.testCorrectness_imageIn,
+        imageIn_ScaleBoundsArray );
     }
 
     let tensorNumDifference_apply_before_after;
