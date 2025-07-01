@@ -339,19 +339,16 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
    */
   static Conv_and_keep( inputTensor ) {
 
-//!!! ...unfinished... (2025/06/10)
-// Perhaps, should log boundsArraySet.afterUndoPreviousActivationEscaping,
-// boundsArraySet.bPassThroughArray
-
     // 1x1, Stride = 1
     const t0 = tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
 
-    this.TableLog_tensor3d_if_requested(
-      "conv",
-      this.TableLog_subheader_for_filters,
-      t0,
-      this.boundsArraySet.afterFilter,
-      this.boundsArraySet.bPassThroughArray );
+    if ( this.bTableLog )
+      this.TableLog_tensor3d_if_requested(
+        "conv",
+        this.TableLog_subheader_for_filters,
+        t0,
+        this.boundsArraySet.afterFilter,
+        this.boundsArraySet.bPassThroughArray );
 
     return t0;
   }
@@ -359,18 +356,15 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
   static Conv_and_destroy( inputTensor ) {
     try {
 
-//!!! ...unfinished... (2025/06/10)
-// Perhaps, should log boundsArraySet.afterUndoPreviousActivationEscaping,
-// boundsArraySet.bPassThroughArray
-
       const t0 = tf.conv2d( inputTensor, this.filtersTensor4d, 1, "valid" );
 
-      this.TableLog_tensor3d_if_requested(
-        "conv",
-        this.TableLog_subheader_for_filters,
-        t0,
-        this.boundsArraySet.afterFilter,
-        this.boundsArraySet.bPassThroughArray );
+      if ( this.bTableLog )
+        this.TableLog_tensor3d_if_requested(
+          "conv",
+          this.TableLog_subheader_for_filters,
+          t0,
+          this.boundsArraySet.afterFilter,
+          this.boundsArraySet.bPassThroughArray );
 
       return t0;
 
@@ -392,12 +386,13 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
     try {
       t1 = tf.add( t0, this.biasesTensor3d );
 
-      this.TableLog_tensor3d_if_requested(
-        "bias",
-        this.TableLog_subheader_for_biases,
-        t1,
-        this.boundsArraySet.afterBias,
-        this.boundsArraySet.bPassThroughArray );
+      if ( this.bTableLog )
+        this.TableLog_tensor3d_if_requested(
+          "bias",
+          this.TableLog_subheader_for_biases,
+          t1,
+          this.boundsArraySet.afterBias,
+          this.boundsArraySet.bPassThroughArray );
 
     } finally {
       t0.dispose();
@@ -413,12 +408,13 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
     try {
       t1 = this.pfnActivation( t0 );
 
-      // Use .output0.scaleBoundsArray instead of .boundsArraySet.output0
-      // (because it has been transferred to there).
-      this.TableLog_tensor3d_activation_if_requested(
-        this.nActivationId, t1,
-        this.output0.scaleBoundsArray,
-        this.boundsArraySet.bPassThroughArray );
+      if ( this.bTableLog )
+        // Use .output0.scaleBoundsArray instead of .boundsArraySet.output0
+        // (because it has been transferred to there).
+        this.TableLog_tensor3d_activation_if_requested(
+          this.nActivationId, t1,
+          this.output0.scaleBoundsArray,
+          this.boundsArraySet.bPassThroughArray );
 
     } finally {
       t0.dispose();
@@ -434,12 +430,13 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
     try {
       t1 = tf.add( t0, this.biasesTensor3d );
 
-      this.TableLog_tensor3d_if_requested(
-        "bias",
-        this.TableLog_subheader_for_biases,
-        t1,
-        this.boundsArraySet.afterBias,
-        this.boundsArraySet.bPassThroughArray );
+      if ( this.bTableLog )
+        this.TableLog_tensor3d_if_requested(
+          "bias",
+          this.TableLog_subheader_for_biases,
+          t1,
+          this.boundsArraySet.afterBias,
+          this.boundsArraySet.bPassThroughArray );
 
     } finally {
       t0.dispose();
@@ -448,12 +445,13 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
     try {
       t0 = this.pfnActivation( t1 );
 
-      // Use .output0.scaleBoundsArray instead of .boundsArraySet.output0
-      // (because it has been transferred to there).
-      this.TableLog_tensor3d_activation_if_requested(
-        this.nActivationId, t0,
-        this.output0.scaleBoundsArray,
-        this.boundsArraySet.bPassThroughArray );
+      if ( this.bTableLog )
+        // Use .output0.scaleBoundsArray instead of .boundsArraySet.output0
+        // (because it has been transferred to there).
+        this.TableLog_tensor3d_activation_if_requested(
+          this.nActivationId, t0,
+          this.output0.scaleBoundsArray,
+          this.boundsArraySet.bPassThroughArray );
 
     } finally {
       t1.dispose();
