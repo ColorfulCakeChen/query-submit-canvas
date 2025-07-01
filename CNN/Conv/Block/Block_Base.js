@@ -485,6 +485,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
 
       this.nConvBlockTypeId = params.nConvBlockTypeId;
       this.nConvBlockTypeName = params.nConvBlockTypeName;
+      this.nConvBlockTypeNameWithInt = params.nConvBlockTypeNameWithInt;
 
       this.pointwise1ChannelCount
         = params.pointwise1ChannelCount_real;
@@ -1276,6 +1277,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
     this.pointwise1Bias = undefined;
     this.pointwise1ChannelCount = undefined;
 
+    this.nConvBlockTypeNameWithInt = undefined;
     this.nConvBlockTypeName = undefined;
     this.nConvBlockTypeId = undefined;
 
@@ -1929,11 +1931,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
   static apply_block() {
     const bTableLog = this.bTableLog;
     if ( bTableLog ) {
-
-!!! ...unfinished... (2025/06/27)
-// Perhaps, table log ConvBlockType.
-
-      console.group( "Block_Base" );
+      console.group( `Block_Base ( ${this.nConvBlockTypeNameWithInt} )` );
     }
 
     this.operationArray.apply();

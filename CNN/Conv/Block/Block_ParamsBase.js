@@ -175,6 +175,11 @@ class Block_ParamsBase extends Recyclable.Root {
       .getName_byId( this.nConvBlockTypeId );
   }
 
+  get nConvBlockTypeNameWithInt() {
+    return ValueDesc.ConvBlockType.Singleton
+      .getNameWithInt_byId( this.nConvBlockTypeId );
+  }
+
   /** The inferencedParams.pointwise1ChannelCount_modified is considered. */
   get pointwise1ChannelCount_real() {
     if ( this.inferencedParams.pointwise1ChannelCount_modified != undefined )
