@@ -111,6 +111,7 @@ async function *testerBackend( progressParent, backendName ) {
       }
 
       batchIdCalculator.checkAndDisplay( testParams.id );
+      yield progressRoot;
 
       testReference.disposeResources_and_recycleToPool();
       testReference = null;
