@@ -570,6 +570,9 @@ class Embedding_Reference_Base
     }
 
     if ( bTableLog ) {
+
+      console.group( `Embedding_Reference` );
+
       let header_forTableLog = this.nameString_recursively_get();
       imageOut.TableLog_header_body( header_forTableLog );
 
@@ -578,6 +581,8 @@ class Embedding_Reference_Base
 //       const imageHeaderPrefix
 //         = `${mostDerivedClassName} ( testParams.id = ${testParams.id} )` ;
 //       imageOut.TableLog_header_body( imageHeaderPrefix );
+
+      console.groupEnd();  // groupLabel "Embedding_Reference"
     }
 
     return imageOut;
