@@ -1,6 +1,7 @@
 export { PadInfoCalculator };
 export { PadInfoCalculatorRoot };
 
+import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
@@ -276,43 +277,10 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
     if ( this.TableLog_filterName )
       return this.TableLog_filterName; // Return cached name.
 
-
-!!! ...unfinished... (2025/06/27)
-// Use MultiLayerMap.Base as nameBag.get_by() to reduce string generating.
-
-    const AvgMax_Or_ChannelMultiplier = this.AvgMax_Or_ChannelMultiplier;
-
-    // 1.
-    let op_name;
-    if ( AvgMax_Or_ChannelMultiplier < 0 ) {
-
-      switch ( AvgMax_Or_ChannelMultiplier ) {
-        case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG:
-          op_name = "avg";
-          break;
-
-        case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX:
-          op_name = "max";
-          break;
-
-        default:
-          op_name = `unknown(${AvgMax_Or_ChannelMultiplier})`;
-          break;
-      }
-
-    } else if ( AvgMax_Or_ChannelMultiplier == 0 ) {
-      op_name = `none`;
-
-    } else { // ( AvgMax_Or_ChannelMultiplier > 0 )
-      op_name = `conv_channelMultiplier_${this.channelMultiplier}`;
-    }
-
-    // 2. operator size
-    const op_size = `${this.filterHeight}x${this.filterWidth}`;
-
-    // 3.
     this.TableLog_filterName
-      = `${op_name}_${op_size}_${this.stridesPad_NameWithInt}`;
+      = Depthwise_FilterName_Bag.Singleton.get_by(
+          this.AvgMax_Or_ChannelMultiplier,
+          this.filterHeight, this.filterWidth, this.stridesPad );
 
     return this.TableLog_filterName;
   }
@@ -446,3 +414,99 @@ let PadInfoCalculator = ( ParentClass = Object ) => class PadInfoCalculator
 class PadInfoCalculatorRoot extends PadInfoCalculator() {
 }
 
+
+/**
+ * A pool for Depthwise operation debug name
+ * (e.g. conv_3x2_STRIDES_1_PAD_VALID(0))
+ *
+ * It could reduce re-creating them again and again so that memory heap
+ * fragmentation could be reduced (and then performance be improved).
+ */
+class Depthwise_FilterName_Bag extends MultiLayerMap.Base {
+
+  /**
+   */
+  constructor() {
+    super();
+    this.#setAsConstructor_self();
+  }
+
+  /**  */
+  #setAsConstructor_self() {
+  }
+
+  /**
+   * @see Depthwise_FilterName_Bag.create_by()
+   */
+  get_by(
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
+
+    return this.get_or_create_by_arguments1_etc(
+      Depthwise_FilterName_Bag.create_by, this,
+      AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad );
+  }
+
+  /**
+   * @param {number} AvgMax_Or_ChannelMultiplier
+   *   Depthwise operation (avg, max, or channel multiplier).
+   * (ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.Xxx)
+   *
+   * @param {number} filterHeight
+   *   The height of the depthwise convolution's filter.
+   *
+   * @param {number} filterWidth
+   *   The width of the depthwise convolution's filter.
+   *
+   * @param {number} stridesPad
+   *   The strides and padding of (depthwise) convolution.
+   * (ValueDesc.StridesPad.Singleton.Ids.Xxx)
+   *
+   * @return {string}
+   *   Return a string "conv_3x2_STRIDES_1_PAD_VALID(0)" according to the
+   * above parameters.
+   */
+  static create_by(
+    AvgMax_Or_ChannelMultiplier, filterHeight, filterWidth, stridesPad ) {
+
+    // 1.
+    let op_name;
+    if ( AvgMax_Or_ChannelMultiplier < 0 ) {
+
+      switch ( AvgMax_Or_ChannelMultiplier ) {
+        case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG:
+          op_name = "avg";
+          break;
+
+        case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX:
+          op_name = "max";
+          break;
+
+        default:
+          op_name = `unknown(${AvgMax_Or_ChannelMultiplier})`;
+          break;
+      }
+
+    } else if ( AvgMax_Or_ChannelMultiplier == 0 ) {
+      op_name = `none`;
+
+    } else { // ( AvgMax_Or_ChannelMultiplier > 0 )
+      op_name = `conv_channelMultiplier_${this.channelMultiplier}`;
+    }
+
+    // 2. operator size
+    const op_size = `${filterHeight}x${filterWidth}`;
+
+    // 3. stridesPad
+    const stridesPad_NameWithInt
+      = ValueDesc.StridesPad.Singleton.getNameWithInt_byId( stridesPad );
+
+    // 4. 
+    const depthwise_filterName
+      = `${op_name}_${op_size}_${stridesPad_NameWithInt}`;
+
+    return depthwise_filterName;
+  }
+
+}
+
+Depthwise_FilterName_Bag.Singleton = new Depthwise_FilterName_Bag();

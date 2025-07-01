@@ -92,9 +92,10 @@ class SqueezeExcitationChannelCountDivisor extends Int {
 
 
 /**
- * A pool for Squeeze-and-Excitation name. It could reduce re-creating them
- * again and again to improve performance.
- *
+ * A pool for Squeeze-and-Excitation name.
+ * 
+ * It could reduce re-creating them again and again so that memory heap
+ * fragmentation could be reduced (and then performance be improved).
  */
 class SE_Name_Bag extends MultiLayerMap.Base {
 
