@@ -1255,7 +1255,8 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
         = ValueDesc.ConvBlockType.Singleton.getNameWithInt_byId(
             testParams.out.nConvBlockTypeId );
 
-      console.group( `Block_Reference ( ${nConvBlockTypeNameWithInt} )` );
+      console.group(
+        `Block_Reference ( ConvBlockType = ${nConvBlockTypeNameWithInt} )` );
     }
 
     // The following two (ValueDesc.ConvBlockType.Singleton.Ids.Xxx) use
