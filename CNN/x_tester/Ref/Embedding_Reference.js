@@ -186,7 +186,6 @@ class Embedding_Reference_Base
     let memoryInfo_beforeCreate = tf.memory();
     {
       let embedding = Embedding_Reference_Base.Embedding_create(
-!!!
         EmbeddingClass, testParams );
 
       // The difference tensor count will be the generated tensor count (i.e.
