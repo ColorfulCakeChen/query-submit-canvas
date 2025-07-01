@@ -482,7 +482,8 @@ class Depthwise_FilterName_Bag extends MultiLayerMap.Base {
           break;
 
         default:
-          op_name = `unknown(${AvgMax_Or_ChannelMultiplier})`;
+          op_name
+            = `unknown( AvgMax_Or_ChannelMultiplier = ${AvgMax_Or_ChannelMultiplier})`;
           break;
       }
 
