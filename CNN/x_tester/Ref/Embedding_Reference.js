@@ -547,7 +547,7 @@ class Embedding_Reference_Base
     }
 
     if ( bTableLog ) {
-      header_forTableLog = this.nameString_recursively_get();
+      let header_forTableLog = this.nameString_recursively_get();
       imageOut.TableLog_header_body( header_forTableLog );
 
 //!!! (2025/07/01 Remarked) Prefix with the hierarchical name of this operation.
