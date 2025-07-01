@@ -7,6 +7,7 @@ import * as AsyncWorker_tester from "./AsyncWorker_tester.js";
 import * as Base64ToUint8Array_tester from "./Base64ToUint8Array_tester.js";
 import * as BoundsArraySet_tester from "./BoundsArraySet_tester.js";
 import * as CNN_Block_tester from "./CNN_Block_tester.js";
+import * as CNN_Embedding_tester from "./CNN_Embedding_tester.js";
 import * as CNN_Operation_tester from "./CNN_Operation_tester.js";
 import * as DEvolution_tester from "./DEvolution_tester.js";
 import * as FeedbackShape_tester from "./FeedbackShape_tester.js";
@@ -45,7 +46,8 @@ const gTestGeneratorFuncMap = new Map( [
   // [ HierarchicalNameable_tester.tester, true ],
 
   // [ CNN_Operation_tester.tester, true ],
-  [ CNN_Block_tester.tester, true ],
+  // [ CNN_Block_tester.tester, true ],
+  [ CNN_Embedding_tester.tester, true ],
 
   // [ FeedbackShape_tester.tester, true ],
 

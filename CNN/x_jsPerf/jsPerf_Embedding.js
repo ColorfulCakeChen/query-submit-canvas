@@ -236,86 +236,88 @@ class HeightWidthDepth {
   /** Testing whether the results of different implementation are the same. */
   * testCorrectness() {
 
-    {
-      let pool_all_issuedCount_before = Pool.All.issuedCount;
-
-      yield;
-
-      {
-        // Test memory leakage of imageSourceBag.
-        let memoryInfo_testCorrectness_before = tf.memory();
-
-        {
-          // Note: imageSourceBag should not be created outside tidy() because
-          //       tidy() will dispose tensors dynamically created in them.
-          let imageSourceBag
-            = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
-
-          let testParams = Embedding_TestParams.Base.Pool.get_or_create_by();
-          let theParamDescConfigAll = testParams.ParamDescConfigAll_create();
-          let testParamsGenerator
-            = testParams.ParamsGenerator( theParamDescConfigAll );
-          let testReference = Embedding_Reference.Base.Pool.get_or_create_by();
-
-          let batchIdCalculator = new BatchIdCalculator.Base(
-            testCaseCount, 100 * 1000 );
-
-          try {
-            for ( testParams of testParamsGenerator ) {
-              let bDisplayed
-                = batchIdCalculator.checkAndDisplay( testParams.id );
-
-              // Since just entering a new batch section, take a break so that
-              // memory garbage collector could be activated to work.
-              if ( bDisplayed )
-                yield;
-
-              testReference.testCorrectness( imageSourceBag, testParams );
-            }
-
-          } catch ( e ) {
-            let backendName = tf.getBackend();
-            let msg = `jsPerf_Embedding.js: testCorrectness(): `
-              + `backendName=${backendName}, `
-              + `Embedding, (yieldCount == ${testParams.yieldCount}), `
-              + `testParams.id == ${testParams.id}`;
-
-            console.log( msg );
-            alert( `${msg}\n${e}` );
-
-            //debugger;
-            throw e;
-          }
-
-          batchIdCalculator.checkAndDisplay( testParams.id );
-
-          testReference.disposeResources_and_recycleToPool();
-          testReference = null;
-
-          testParams.disposeResources_and_recycleToPool();
-          testParams = null;
-
-          imageSourceBag.disposeResources_and_recycleToPool();
-          imageSourceBag = null;
-        }
-
-        let memoryInfo_testCorrectness_after = tf.memory();
-
-        if ( memoryInfo_testCorrectness_after.numTensors
-               != memoryInfo_testCorrectness_before.numTensors )
-          throw Error( `testCorrectness() memory leak. `
-            + `result tensor count `
-            + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
-            + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ).`
-          );
-      }
-
-      Pool.Asserter.assert_Pool_issuedCount(
-        "jsPerf_Embedding.HeightWidthDepth.testCorrectness()",
-        pool_all_issuedCount_before );
-
-      yield;
-    }
+//!!! ...unfinished... (2025/07/01)
+// Moved to CNN_Embedding_tester
+//     {
+//       let pool_all_issuedCount_before = Pool.All.issuedCount;
+//
+//       yield;
+//
+//       {
+//         // Test memory leakage of imageSourceBag.
+//         let memoryInfo_testCorrectness_before = tf.memory();
+//
+//         {
+//           // Note: imageSourceBag should not be created outside tidy() because
+//           //       tidy() will dispose tensors dynamically created in them.
+//           let imageSourceBag
+//             = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
+//
+//           let testParams = Embedding_TestParams.Base.Pool.get_or_create_by();
+//           let theParamDescConfigAll = testParams.ParamDescConfigAll_create();
+//           let testParamsGenerator
+//             = testParams.ParamsGenerator( theParamDescConfigAll );
+//           let testReference = Embedding_Reference.Base.Pool.get_or_create_by();
+//
+//           let batchIdCalculator = new BatchIdCalculator.Base(
+//             testCaseCount, 100 * 1000 );
+//
+//           try {
+//             for ( testParams of testParamsGenerator ) {
+//               let bDisplayed
+//                 = batchIdCalculator.checkAndDisplay( testParams.id );
+//
+//               // Since just entering a new batch section, take a break so that
+//               // memory garbage collector could be activated to work.
+//               if ( bDisplayed )
+//                 yield;
+//
+//               testReference.testCorrectness( imageSourceBag, testParams );
+//             }
+//
+//           } catch ( e ) {
+//             let backendName = tf.getBackend();
+//             let msg = `jsPerf_Embedding.js: testCorrectness(): `
+//               + `backendName=${backendName}, `
+//               + `Embedding, (yieldCount == ${testParams.yieldCount}), `
+//               + `testParams.id == ${testParams.id}`;
+//
+//             console.log( msg );
+//             alert( `${msg}\n${e}` );
+//
+//             //debugger;
+//             throw e;
+//           }
+//
+//           batchIdCalculator.checkAndDisplay( testParams.id );
+//
+//           testReference.disposeResources_and_recycleToPool();
+//           testReference = null;
+//
+//           testParams.disposeResources_and_recycleToPool();
+//           testParams = null;
+//
+//           imageSourceBag.disposeResources_and_recycleToPool();
+//           imageSourceBag = null;
+//         }
+//
+//         let memoryInfo_testCorrectness_after = tf.memory();
+//
+//         if ( memoryInfo_testCorrectness_after.numTensors
+//                != memoryInfo_testCorrectness_before.numTensors )
+//           throw Error( `testCorrectness() memory leak. `
+//             + `result tensor count `
+//             + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
+//             + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ).`
+//           );
+//       }
+//
+//       Pool.Asserter.assert_Pool_issuedCount(
+//         "jsPerf_Embedding.HeightWidthDepth.testCorrectness()",
+//         pool_all_issuedCount_before );
+//
+//       yield;
+//     }
 
     try {
       // After correctness testing done, create all Embedding for performance

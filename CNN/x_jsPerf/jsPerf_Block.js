@@ -398,7 +398,7 @@ class HeightWidthDepth {
   // Testing whether the results of different implementation are the same.
   * testCorrectness() {
 
-// !!! ...unfinished... (2025/06/19)
+//!!! ...unfinished... (2025/06/19)
 // Moved to CNN_Block_tester
 //
 //     // (2025/05/25) Control whether test correctness.
