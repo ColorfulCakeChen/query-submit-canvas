@@ -201,7 +201,7 @@ class Embedding_Reference_Base
         const imageIn_BoundsArraySet
           = this.testCorrectness_imageIn.boundsArraySet;
 
-        const imageIn_ScaleBoundsArray = imageIn0_BoundsArraySet.output0;
+        const imageIn_ScaleBoundsArray = imageIn_BoundsArraySet.output0;
 
         const tensorIn0_imageHeaderPrefix = "tensorIn";
         const tensorIn0_strSubheader = undefined;
