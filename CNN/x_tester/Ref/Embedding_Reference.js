@@ -154,7 +154,7 @@ class Embedding_Reference_Base
   static embedding_create_apply_internal(
     EmbeddingClass, imageSourceBag, testParams ) {
 
-    let {
+    const {
       input_height, input_width, input_channelCount,
       channelMultiplier, vocabularyCountPerInputChannel, bEmbedVocabularyId,
       bKeepInputTensor, bTableLog,
@@ -186,21 +186,6 @@ class Embedding_Reference_Base
       inputTensorDestroyCount = 1;
     }
 
-    // Table log the input tensors if requested.
-    const bTableLog = block.bTableLog;
-    if ( bTableLog ) {
-      const imageIn_BoundsArraySet
-        = this.testCorrectness_imageIn.boundsArraySet;
-
-      const tensorIn0_imageHeaderPrefix = "tensorIn";
-      const tensorIn0_strSubheader = undefined;
-      TableLogger.Base.Singleton.log_tensor3d_along_depth(
-        tensorIn0_imageHeaderPrefix, tensorIn0_strSubheader,
-        inputTensor3d,
-        this.testCorrectness_imageIn,
-        imageIn_ScaleBoundsArray );
-    }
-
     let tensorNumDifference_apply_before_after;
     let outputTensor3d;
 
@@ -209,6 +194,21 @@ class Embedding_Reference_Base
     {
       let embedding = Embedding_Reference_Base.Embedding_create(
         EmbeddingClass, testParams );
+
+      // Table log the input tensors if requested.
+      const bTableLog = embedding.bTableLog;
+      if ( bTableLog ) {
+        const imageIn_BoundsArraySet
+          = this.testCorrectness_imageIn.boundsArraySet;
+
+        const tensorIn0_imageHeaderPrefix = "tensorIn";
+        const tensorIn0_strSubheader = undefined;
+        TableLogger.Base.Singleton.log_tensor3d_along_depth(
+          tensorIn0_imageHeaderPrefix, tensorIn0_strSubheader,
+          inputTensor3d,
+          this.testCorrectness_imageIn,
+          imageIn_ScaleBoundsArray );
+      }
 
       // The difference tensor count will be the generated tensor count (i.e.
       // outputTensorCount) minus destroyed input tensor count (i.e.

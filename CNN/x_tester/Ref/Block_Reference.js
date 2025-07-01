@@ -472,6 +472,17 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
     const imageIn0_ScaleBoundsArray = imageIn0_BoundsArraySet.output0;
     const imageIn1_ScaleBoundsArray = imageIn1_BoundsArraySet?.output0;
 
+    // Test memory leakage of block create/dispose.
+    let memoryInfo_beforeCreate = tf.memory();
+
+    let block = Block_Reference_Base.block_create(
+      null,         // parentNameable
+      "Block_Base", // blockName
+      testParams,
+      imageIn0_ScaleBoundsArray,
+      imageIn1_ScaleBoundsArray,
+      channelShuffler_ConcatPointwiseConv );
+
     // Table log the input tensors if requested.
     const bTableLog = block.bTableLog;
     if ( bTableLog ) {
@@ -500,17 +511,6 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
           imageIn1_ScaleBoundsArray, imageIn1_bPassThroughArray );
       }
     }
-
-    // Test memory leakage of block create/dispose.
-    let memoryInfo_beforeCreate = tf.memory();
-
-    let block = Block_Reference_Base.block_create(
-      null,         // parentNameable
-      "Block_Base", // blockName
-      testParams,
-      imageIn0_ScaleBoundsArray,
-      imageIn1_ScaleBoundsArray,
-      channelShuffler_ConcatPointwiseConv );
 
     // Note: Do not generate parameters description string in advance every
     //       time. Just generate them only if necessary by .toString() for
