@@ -7,7 +7,7 @@ import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import * as BoundsArraySet_Asserter from "../../util/BoundsArraySet_Asserter.js";
 import * as ObjectPropertyAsserter from "../../util/ObjectPropertyAsserter.js";
-//import * as TableLogger from "../../util/TableLogger.js";
+import * as TableLogger from "../../util/TableLogger.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 //import * as ActivationEscaping from "../../ConvActivationEscaping.js";
 import * as BoundsArraySet from "../../Conv/BoundsArraySet.js";
