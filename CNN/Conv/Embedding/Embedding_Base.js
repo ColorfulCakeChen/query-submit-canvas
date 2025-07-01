@@ -250,6 +250,12 @@ class Embedding_Base
     super.disposeResources();
   }
 
+
+!!! ...unfinished... (2025/07/01)
+// Define apply() {}
+// call .pfnApply()
+// call .TableLog_output_tensor3d_if_requested() inside.
+
   /**
    * If .bTableLog is true, log the specified output tensor3d and
    * ScaleBoundsArray as table.
