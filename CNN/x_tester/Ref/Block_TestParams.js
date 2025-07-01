@@ -381,14 +381,16 @@ class Block_TestParams_Base extends TestParams.Base {
 //!!! (2022/08/04 Temp Remarked) For debug neural net (only use 3x3).
       depthwiseFilterHeight: [
         // Block.Params.depthwiseFilterHeight.valueDesc.range.min,
-        2,
+        // 2,
+        3,
         // 2
         depthwiseFilterMaxSize
       ],
 
       depthwiseFilterWidth: [
         // Block.Params.depthwiseFilterWidth.valueDesc.range.min,
-        2,
+        // 2,
+        3,
         // 2
         depthwiseFilterMaxSize
       ],
@@ -459,8 +461,8 @@ class Block_TestParams_Base extends TestParams.Base {
 
       bTableLog: [
         // (2025/06/04 Temp Remarked) For debug.
-        0, 0
-        // 1, 1
+        // 0, 0
+        1, 1
       ],
     };
 
