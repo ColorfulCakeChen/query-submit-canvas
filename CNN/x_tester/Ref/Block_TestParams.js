@@ -380,15 +380,15 @@ class Block_TestParams_Base extends TestParams.Base {
       //       tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 //!!! (2022/08/04 Temp Remarked) For debug neural net (only use 3x3).
       depthwiseFilterHeight: [
-        Block.Params.depthwiseFilterHeight.valueDesc.range.min,
-        // 2,
+        // Block.Params.depthwiseFilterHeight.valueDesc.range.min,
+        2,
         // 2
         depthwiseFilterMaxSize
       ],
 
       depthwiseFilterWidth: [
-        Block.Params.depthwiseFilterWidth.valueDesc.range.min,
-        // 2,
+        // Block.Params.depthwiseFilterWidth.valueDesc.range.min,
+        2,
         // 2
         depthwiseFilterMaxSize
       ],
