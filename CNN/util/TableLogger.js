@@ -299,7 +299,7 @@ class TableLogger_Base {
         if ( bPassThroughArray ) {
           const bPassThrough = bPassThroughArray[ c ];
           if ( bPassThrough )
-            channelHeader = `, bPassThrough = ${bPassThrough}`;
+            channelHeader += `, bPassThrough = ${bPassThrough}`;
         }
 
         tableLines.push( channelHeader );
