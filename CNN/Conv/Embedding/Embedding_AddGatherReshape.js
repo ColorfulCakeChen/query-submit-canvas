@@ -40,13 +40,13 @@ class Embedding_AddGatherReshape extends Base {
 
   /**
    */
-  constructor() {
-    super();
+  constructor( parentNameable, name ) {
+    super( parentNameable, name );
     this.#setAsConstructor_self();
   }
 
   /** @override */
-  setAsConstructor() {
+  setAsConstructor( parentNameable, name ) {
     super.setAsConstructor();
     this.#setAsConstructor_self();
   }
@@ -312,7 +312,6 @@ class Embedding_AddGatherReshape extends Base {
       gatherTensor4d.dispose();
     }
 
-//!!! ...untested... (2025/06/03)
     // 3. Log output as table (if requested).
     this.TableLog_output_tensor3d_if_requested( outputTensor3d );
 
@@ -341,7 +340,6 @@ class Embedding_AddGatherReshape extends Base {
       gatherTensor4d.dispose();
     }
 
-//!!! ...untested... (2025/06/03)
     // 3. Log output as table (if requested).
     this.TableLog_output_tensor3d_if_requested( outputTensor3d );
 
@@ -377,7 +375,6 @@ class Embedding_AddGatherReshape extends Base {
       gatherTensor4d.dispose();
     }
 
-//!!! ...untested... (2025/06/03)
     // 3. Log output as table (if requested).
     this.TableLog_output_tensor3d_if_requested( outputTensor3d );
 
@@ -422,7 +419,6 @@ class Embedding_AddGatherReshape extends Base {
       gatherTensor4d.dispose();
     }
 
-//!!! ...untested... (2025/06/03)
     // 3. Log output as table (if requested).
     this.TableLog_output_tensor3d_if_requested( outputTensor3d );
 

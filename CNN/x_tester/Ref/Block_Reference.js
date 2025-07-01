@@ -268,7 +268,7 @@ class TestCorrectnessInfo extends Recyclable.Root {
 /**
  * Reference computation of class Block.Base.
  */
-class Block_Reference_Base extends HierarchicalNameable.SeparatorDot_Root {
+class Block_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
 
   /**
    * Used as default Block_Reference.Base provider for conforming to Recyclable

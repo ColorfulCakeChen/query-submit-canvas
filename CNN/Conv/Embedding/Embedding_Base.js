@@ -1,5 +1,6 @@
 export { Embedding_Base as Base };
 
+import * as HierarchicalNameable from "../../util/HierarchicalNameable.js";
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as TableLogger from "../../util/TableLogger.js";
@@ -61,14 +62,8 @@ import { Params } from "./Embedding_Params.js";
  *   The element value bounds (per channel) of output (can NOT null).
  *
  */
-class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
-
-
-//!!! ...unfinshed... (2025/06/06)
-// Let Operation, Block(_Reference), Stage(_Reference), NeuralNet(_Reference)
-// inherits from HierarchicalName.Base.
-
-
+class Embedding_Base
+  extends HierarchicalNameable.SeparatorDot_Base( ReturnOrClone.Root ) {
 
   /**
    * Used as default Embedding.Base provider for conforming to Recyclable
@@ -79,14 +74,14 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
 
   /**
    */
-  constructor() {
-    super();
+  constructor( parentNameable, name ) {
+    super( parentNameable, name );
     this.#setAsConstructor_self();
   }
 
   /** @override */
-  setAsConstructor() {
-    super.setAsConstructor();
+  setAsConstructor( parentNameable, name ) {
+    super.setAsConstructor( parentNameable, name );
     this.#setAsConstructor_self();
   }
 
@@ -266,18 +261,28 @@ class Embedding_Base extends Recyclable.Base( ReturnOrClone.Root ) {
     if ( !this.bTableLog )
       return;
 
-    // Prefix with sub-class name.
-    const mostDerivedClassName = this.constructor.name;
-    const imageHeaderPrefix = mostDerivedClassName;
+    console.group( `Embedding_Base` );
+
+    // Prefix with the hierarchical name of this operation and extra name.
+    let headerPrefix = this.nameString_recursively_get();
+    // headerPrefix = this.nameJoinSeparator_join( headerPrefix, extraLeafName );
+
+//!!! (2025/07/01 Remarked) Prefix with the hierarchical name of this operation.
+//     // Prefix with sub-class name.
+//     const mostDerivedClassName = this.constructor.name;
+//     const headerPrefix = mostDerivedClassName;
+
     const strSubheader = undefined;
     TableLogger.Base.Singleton.log_tensor3d_along_depth(
-      imageHeaderPrefix, strSubheader,
+      headerPrefix, strSubheader,
       aTensor3d, this.output_scaleBoundsArray );
 
 //!!! (2025/06/04 Remarked) Only log .output should be enough.
 //     const scaleBoundsArray_HeaderPrefix = ".output";
 //     this.output_scaleBoundsArray.TableLog_header_body(
 //       scaleBoundsArray_HeaderPrefix );
+
+    console.groupEnd();  // groupLabel "Embedding_Base"
   }
 
   /**

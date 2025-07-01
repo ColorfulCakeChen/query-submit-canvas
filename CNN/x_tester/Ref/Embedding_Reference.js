@@ -16,16 +16,11 @@ import * as ImageSourceBag from "./ImageSourceBag.js";
 import * as NumberImage from "./NumberImage.js"; 
 import * as Embedding_TestParams from "./Embedding_TestParams.js"; 
 
-
-//!!! ...unfinshed... (2025/06/06)
-// Let Operation, Block(_Reference), Stage(_Reference), NeuralNet(_Reference)
-// inherits from HierarchicalName.Base.
-
-
 /**
  * Reference computation of class Embedding.Base.
  */
-class Embedding_Reference_Base extends Recyclable.Root {
+class Embedding_Reference_Base
+  extends HierarchicalNameable.SeparatorSlash_Root {
 
   /**
    * Used as default Embedding_Reference.Base provider for conforming to
@@ -37,14 +32,14 @@ class Embedding_Reference_Base extends Recyclable.Root {
   /**
    *
    */
-  constructor() {
-    super();
+  constructor( parentNameable, name ) {
+    super( parentNameable, name );
     this.#setAsConstructor_self();
   }
 
   /** @override */
-  setAsConstructor() {
-    super.setAsConstructor();
+  setAsConstructor( parentNameable, name ) {
+    super.setAsConstructor( parentNameable, name );
     this.#setAsConstructor_self();
   }
 
@@ -105,6 +100,12 @@ class Embedding_Reference_Base extends Recyclable.Root {
   static testCorrectness_internal( imageSourceBag, testParams ) {
     this.testParams = testParams;
 
+    const bTableLog = testParams.out.bTableLog;
+    if ( bTableLog ) {
+      const groupLabel = `testParams.id == ${testParams.id}`;
+      console.groupCollapsed( groupLabel );
+    }
+
     this.testCorrectness_imageOutReference = this.calcResult(
       this.testCorrectness_imageIn );
 
@@ -130,6 +131,9 @@ class Embedding_Reference_Base extends Recyclable.Root {
       }
       this.testCorrectness_imageOutReference = null;
     }
+
+    if ( bTableLog )
+      console.groupEnd();  // groupLabel "testParams.id"
   }
 
   /**
@@ -182,6 +186,7 @@ class Embedding_Reference_Base extends Recyclable.Root {
     let memoryInfo_beforeCreate = tf.memory();
     {
       let embedding = Embedding_Reference_Base.Embedding_create(
+!!!
         EmbeddingClass, testParams );
 
       // The difference tensor count will be the generated tensor count (i.e.
@@ -316,7 +321,10 @@ class Embedding_Reference_Base extends Recyclable.Root {
    */
   static Embedding_create( EmbeddingClass, testParams ) {
 
-    let embedding = EmbeddingClass.Pool.get_or_create_by();
+    let embedding = EmbeddingClass.Pool.get_or_create_by(
+      null,                // parentNameable
+      EmbeddingClass.name, // Embedding Name
+    );
 
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
@@ -539,10 +547,14 @@ class Embedding_Reference_Base extends Recyclable.Root {
     }
 
     if ( bTableLog ) {
-      const mostDerivedClassName = this.constructor.name;
-      const imageHeaderPrefix
-        = `${mostDerivedClassName} ( testParams.id = ${testParams.id} )` ;
-      imageOut.TableLog_header_body( imageHeaderPrefix );
+      header_forTableLog = this.nameString_recursively_get();
+      imageOut.TableLog_header_body( header_forTableLog );
+
+//!!! (2025/07/01 Remarked) Prefix with the hierarchical name of this operation.
+//       const mostDerivedClassName = this.constructor.name;
+//       const imageHeaderPrefix
+//         = `${mostDerivedClassName} ( testParams.id = ${testParams.id} )` ;
+//       imageOut.TableLog_header_body( imageHeaderPrefix );
     }
 
     return imageOut;

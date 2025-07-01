@@ -56,7 +56,8 @@ async function *testerBackend( progressParent, backendName ) {
       let theParamDescConfigAll = testParams.ParamDescConfigAll_create();
       let testParamsGenerator
         = testParams.ParamsGenerator( theParamDescConfigAll );
-      let testReference = Embedding_Reference.Base.Pool.get_or_create_by();
+      let testReference = Embedding_Reference.Base.Pool.get_or_create_by(
+        null, "Embedding_Reference" );
 
       // Set up correct test case count (all permuattion combination count).
       testCaseCount = theParamDescConfigAll.permutationCombination_count();
