@@ -570,7 +570,6 @@ class Embedding_Reference_Base
     }
 
     if ( bTableLog ) {
-
       console.group( `Embedding_Reference` );
 
       let header_forTableLog = this.nameString_recursively_get();
