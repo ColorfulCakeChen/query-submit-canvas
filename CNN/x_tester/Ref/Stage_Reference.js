@@ -1215,17 +1215,8 @@ class Stage_Reference_Base extends Recyclable.Root {
     this.imageOutArray[ 0 ] = null;
     this.imageOutArray[ 1 ] = null;
 
-!!! ...unfinished... (2025/07/01)
-    if ( bTableLog ) {
-      let headerPrefix = this.nameString_recursively_get();
-
-      // const extraName = `channelMultiplier_${channelMultiplier}`;
-      // headerPrefix = this.nameJoinSeparator_join( headerPrefix, extraName );
-
-      imageOut.TableLog_header_body( headerPrefix );
-
+    if ( bTableLog )
       console.groupEnd();  // groupLabel "Stage_Reference"
-    }
 
     return imageOut;
   }
