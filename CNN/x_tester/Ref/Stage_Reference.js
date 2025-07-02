@@ -161,6 +161,8 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
    *
    */
   static stage_create_apply_internal( imageSourceBag, testParams ) {
+    const parentNameable = null;
+    const stageName = "Stage_Base";
 
     const {
       input_height, input_width, input_channelCount,
@@ -193,8 +195,7 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
       const imageIn_ScaleBoundsArray = imageIn_BoundsArraySet.output0;
 
       let stage = Stage_Reference_Base.Stage_create(
-        null,         // parentNameable
-        "Stage_Base", // stageName
+        parentNameable, stageName,
         testParams, imageIn_ScaleBoundsArray );
 
       // Table log the input tensor if requested.
@@ -251,6 +252,7 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
 
       // Compare result of ShuffleNetV2 and ShuffleNetV2_byMobileNetV1.
       Stage_Reference_Base.stage_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1.call( this,
+        parentNameable, stageName,
         testParams, this.testCorrectness_imageIn.boundsArraySet.output0,
         inputTensor3d_fromBag, outputTensor3d );
 
@@ -274,10 +276,11 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
    * @param {tf.tensor} outputTensor3d_original  The output tensor (from original stage) to be compared.
    */
   static stage_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1(
+    parentNameable, stageName,
     testParams, inputScaleBoundsArray0,
     inputTensor3d_fromBag, outputTensor3d_original ) {
 
-    let {
+    const {
       nConvStageTypeId,
       bKeepInputTensor,
     } = testParams.out;
@@ -321,6 +324,9 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
       }
     }
 
+!!! ...unfinished... (2025/07/02)
+//  parentNameable, stageName 
+
     let stage_toBeCompared = Stage.Base.Pool.get_or_create_by();
 
     // Initialize successfully or failed.
@@ -347,7 +353,8 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
 
     if ( 100 != progress.valuePercentage )
       throw Error(
-        `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${stage}`);
+          `Progress (${progress.valuePercentage}) should be 100 when `
+        + `initializing block object successfully. ${stage}`);
 
     progress.disposeResources_and_recycleToPool();
     progress = null;
