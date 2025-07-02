@@ -454,9 +454,9 @@ class Block_TestParams_Base extends TestParams.Base {
 
       bKeepInputTensor: [
         Block.Params.bKeepInputTensor.valueDesc.range.min,
-        // (2025/06/20 Temp Remarked) For debug.
-        // Block.Params.bKeepInputTensor.valueDesc.range.max
+        // Block.Params.bKeepInputTensor.valueDesc.range.max,
         Block.Params.bKeepInputTensor.valueDesc.range.min
+        // Block.Params.bKeepInputTensor.valueDesc.range.max
       ],
 
       bTableLog: [
