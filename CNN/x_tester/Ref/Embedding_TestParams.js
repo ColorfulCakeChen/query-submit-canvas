@@ -336,12 +336,11 @@ class Embedding_TestParams_Base extends TestParams.Base {
         Embedding.Params.bEmbedVocabularyId.valueDesc.range.max
       ],
 
-      // bKeepInputTensor: undefined,
       bKeepInputTensor: [
         Embedding.Params.bKeepInputTensor.valueDesc.range.min,
-        // (2025/06/04 Temp Remarked) For debug.
-        Embedding.Params.bKeepInputTensor.valueDesc.range.max
+        // Embedding.Params.bKeepInputTensor.valueDesc.range.max
         // Embedding.Params.bKeepInputTensor.valueDesc.range.min
+        Embedding.Params.bKeepInputTensor.valueDesc.range.max
       ],
 
       bTableLog: [

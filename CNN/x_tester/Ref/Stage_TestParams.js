@@ -348,23 +348,15 @@ class Stage_TestParams_Base extends TestParams.Base {
       ],
 
       blockCountRequested: [
-//!!! (2025/05/26 Temp Added) For debug.
-        // 2,
+        Stage.Params.blockCountRequested.valueDesc.range.min, // 2
         // 2
-
-//!!! (2025/05/26 Temp Remarked) For debug.
-        Stage.Params.blockCountRequested.valueDesc.range.min,
         Stage.Params.blockCountRequested.valueDesc.range.min + 3
       ],
 
       bPointwise1: [
-
-//!!! (2025/05/26 Temp Added) For debug.
-        // false,
-        // false
-
-//!!! (2025/05/26 Temp Remarked) For debug.
         Stage.Params.bPointwise1.valueDesc.range.min,
+        // Stage.Params.bPointwise1.valueDesc.range.max,
+        // Stage.Params.bPointwise1.valueDesc.range.min
         Stage.Params.bPointwise1.valueDesc.range.max
       ],
 
@@ -373,64 +365,49 @@ class Stage_TestParams_Base extends TestParams.Base {
       //       tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 //!!! (2022/07/22 Remarked) to avoid depthwise filter 1 x N or N x 1
       depthwiseFilterHeight: [
-
-//!!! (2025/05/26 Temp Added) For debug.
-        // 2, 2
-
-//!!! (2025/05/26 Temp Remarked) For debug.
-        Stage.Params.depthwiseFilterHeight.valueDesc.range.min,
+        Stage.Params.depthwiseFilterHeight.valueDesc.range.min, // 1
+        // 2,
+        // 3,
         depthwiseFilterMaxSize
       ],
 
       depthwiseFilterWidth: [
-
-//!!! (2025/05/26 Temp Added) For debug.
-        // 3, 3
-
-//!!! (2025/05/26 Temp Remarked) For debug.
-        Stage.Params.depthwiseFilterWidth.valueDesc.range.min,
+        Stage.Params.depthwiseFilterWidth.valueDesc.range.min, // 2
+        // 3,
         depthwiseFilterMaxSize
       ],
 
-//!!! (2022/08/04 Temp Remarked) For speed-up debug.
-      // depthwiseFilterHeight: [ 2, depthwiseFilterMaxSize ],
-      // depthwiseFilterWidth: [ 2, depthwiseFilterMaxSize ],
-      // depthwiseFilterHeight: [ 3, depthwiseFilterMaxSize ],
-      // depthwiseFilterWidth: [ 2, depthwiseFilterMaxSize ],
-
       nSqueezeExcitationChannelCountDivisor: [
-
-//!!! (2025/05/26 Temp Added) For debug.
-        // 0,
-        // 0
-
-//!!! (2025/05/26 Temp Remarked) For debug.
-        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min, // -2
+        // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE, // -2
+        // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, // -1
+        // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION, // 0
+        // 1,
+        // 2,
         3
       ],
 
       // Must have ActivationFunction (i.e. can not be NONE). Otherwise, it easily
       // results in infinity value because of multiple block.
       //
-      nActivationId:
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
-        // [ ValueDesc.ActivationFunction.Singleton.range.min + 0, ValueDesc.ActivationFunction.Singleton.range.min + 0 ],
-        [ ValueDesc.ActivationFunction.Singleton.range.min + 1,
-          ValueDesc.ActivationFunction.Singleton.range.min + 1 ],
+      nActivationId: [ 
+        // ValueDesc.ActivationFunction.Singleton.range.min + 0,
+        ValueDesc.ActivationFunction.Singleton.range.min + 1,
+        // ValueDesc.ActivationFunction.Singleton.range.min + 0
+        ValueDesc.ActivationFunction.Singleton.range.min + 1
+      ],
 
       bKeepInputTensor: [
-//!!! (2025/05/26 Temp Added) For debug.
-        // false,
-        // false
-//!!! (2025/05/26 Temp Remarked) For debug.
         Stage.Params.bKeepInputTensor.valueDesc.range.min,
+        // Stage.Params.bKeepInputTensor.valueDesc.range.max
+        // Stage.Params.bKeepInputTensor.valueDesc.range.min
         Stage.Params.bKeepInputTensor.valueDesc.range.max
       ],
 
       bTableLog: [
         // (2025/06/04 Temp Remarked) For debug.
-        0, 0
-        // 1, 1
+        // 0, 0
+        1, 1
       ],
     };
 
