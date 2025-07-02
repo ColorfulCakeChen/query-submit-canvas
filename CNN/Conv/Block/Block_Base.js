@@ -1880,8 +1880,9 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
   static apply_block() {
     const bTableLog = this.bTableLog;
     if ( bTableLog ) {
+      const blockName = this.nameString_get();
       console.group(
-        `Block_Base ( ConvBlockType = ${this.nConvBlockTypeNameWithInt} )` );
+        `${blockName} ( ConvBlockType = ${this.nConvBlockTypeNameWithInt} )` );
     }
 
     this.operationArray.apply();

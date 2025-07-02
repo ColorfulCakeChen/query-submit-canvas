@@ -754,8 +754,10 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
    *   Yield ( value = outputTensor ) when ( done = true ).
    */
   * applier( progressToAdvance, inputTensor ) {
-    if ( this.bTableLog )
-      console.group( `Stage_Base` );
+    if ( this.bTableLog ) {
+      const stageName = this.nameString_get();
+      console.group( `${stageName}` );
+    }
 
     let progressRoot = progressToAdvance.root_get();
 
@@ -793,8 +795,10 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
    *   Return a new tensor. All other intermediate tensors were disposed.
    */
   apply( inputTensor ) {
-    if ( this.bTableLog )
-      console.group( `Stage_Base` );
+    if ( this.bTableLog ) {
+      const stageName = this.nameString_get();
+      console.group( `${stageName}` );
+    }
 
     // Note: The block0 should only input one tensor.
     this.block0.input0.realTensor = inputTensor;

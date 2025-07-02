@@ -505,8 +505,10 @@ class Embedding_Reference_Base
       output_height, output_width, output_channelCount
     } = testParamsOut.inferencedParams;
 
-    if ( bTableLog )
-      console.group( `Embedding_Reference` );
+    if ( bTableLog ) {
+      const embeddingName = this.nameString_get();
+      console.group( `${embeddingName}` );
+    }
 
     let imageOut;
     {

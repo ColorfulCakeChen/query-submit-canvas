@@ -282,8 +282,10 @@ class Embedding_Base
    * one tensor3d as the inputTensor3d.
    */
   apply( inputTensor3d ) {
-    if ( this.bTableLog )
-      console.group( `Embedding_Base` );
+    if ( this.bTableLog ) {
+      const embeddingName = this.nameString_get();
+      console.group( `${embeddingName}` );
+    }
 
     const outputTensor3d = this.pfnApply( inputTensor3d );
 

@@ -1156,8 +1156,10 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
     const testParams = this.testParams;
 
     const bTableLog = testParams.out.bTableLog;
-    if ( bTableLog )
-      console.group( `Stage_Reference` );
+    if ( bTableLog ) {
+      const stageName = this.nameString_get();
+      console.group( `${stageName}` );
+    }
 
     // Test every block's parameters.
     Stage_Reference_Base.AssertParameters_Stage_blocks(
