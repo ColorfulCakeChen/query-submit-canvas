@@ -49,8 +49,7 @@ async function *testerBackend( progressParent, backendName ) {
     {
       // Note: imageSourceBag should not be created outside tidy() because
       //       tidy() will dispose tensors dynamically created in them.
-      let imageSourceBag
-        = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
+      let imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by();
 
       let testParams = Stage_TestParams.Base.Pool.get_or_create_by();
       let theParamDescConfigAll = testParams.ParamDescConfigAll_create();
