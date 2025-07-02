@@ -55,6 +55,7 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
     this.output0_channelCount = undefined;
     this.output1_channelCount = undefined;
 
+    this.bTableLog = undefined;
     this.bKeepInputTensor = undefined;
     this.nActivationId = undefined;
     this.bSqueezeExcitationPrefix = undefined;
@@ -141,6 +142,7 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
 
     // block0 may or may not keep input tensor according to caller's necessary.
     this.bKeepInputTensor = stageParams.bKeepInputTensor;
+    this.bTableLog = stageParams.bTableLog;
   }
 
   /**
@@ -287,7 +289,8 @@ class Stage_BlockParamsCreator_Base extends Recyclable.Root {
       this.nSqueezeExcitationChannelCountDivisor,
       this.bSqueezeExcitationPrefix,
       this.nActivationId,
-      this.bKeepInputTensor
+      this.bKeepInputTensor,
+      this.bTableLog
     );
     return params;
   }
