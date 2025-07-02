@@ -16,20 +16,14 @@ import * as Stage_TestParams from "./Stage_TestParams.js";
 import * as Block from "../../Conv/Block.js";
 import * as Stage from "../../Conv/Stage.js";
 
-
-//!!! ...unfinshed... (2025/06/06)
-// Let Operation, Block(_Reference), Stage(_Reference), NeuralNet(_Reference)
-// inherits from HierarchicalName.Base.
-
-
-
 /**
  * Reference computation of class Stage.Base.
  */
-class Stage_Reference_Base extends Recyclable.Root {
+class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
 
   /**
-   * Used as default Stage_Reference.Base provider for conforming to Recyclable interface.
+   * Used as default Stage_Reference.Base provider for conforming to
+   * Recyclable interface.
    */
   static Pool = new Pool.Root( "Stage_Reference.Base.Pool",
     Stage_Reference_Base );
