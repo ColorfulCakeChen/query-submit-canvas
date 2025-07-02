@@ -357,8 +357,8 @@ class Stage_TestParams_Base extends TestParams.Base {
       ],
 
       bPointwise1: [
-        Stage.Params.bPointwise1.valueDesc.range.min,
-        // Stage.Params.bPointwise1.valueDesc.range.max,
+        // Stage.Params.bPointwise1.valueDesc.range.min,
+        Stage.Params.bPointwise1.valueDesc.range.max,
         // Stage.Params.bPointwise1.valueDesc.range.min
         Stage.Params.bPointwise1.valueDesc.range.max
       ],
