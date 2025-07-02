@@ -31,14 +31,14 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
   /**
    *
    */
-  constructor() {
-    super();
+  constructor( parentNameable, name ) {
+    super( parentNameable, name );
     this.#setAsConstructor_self();
   }
 
   /** @override */
-  setAsConstructor() {
-    super.setAsConstructor();
+  setAsConstructor( parentNameable, name ) {
+    super.setAsConstructor( parentNameable, name );
     this.#setAsConstructor_self();
   }
 
