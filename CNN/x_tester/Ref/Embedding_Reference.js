@@ -579,12 +579,6 @@ class Embedding_Reference_Base
 
       imageOut.TableLog_header_body( headerPrefix );
 
-//!!! (2025/07/01 Remarked) Prefix with the hierarchical name of this operation.
-//       const mostDerivedClassName = this.constructor.name;
-//       const imageHeaderPrefix
-//         = `${mostDerivedClassName} ( testParams.id = ${testParams.id} )` ;
-//       imageOut.TableLog_header_body( imageHeaderPrefix );
-
       console.groupEnd();  // groupLabel "Embedding_Reference"
     }
 
