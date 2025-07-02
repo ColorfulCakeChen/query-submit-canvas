@@ -381,12 +381,12 @@ class Stage_TestParams_Base extends TestParams.Base {
       ],
 
       nSqueezeExcitationChannelCountDivisor: [
-        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min, // -2
+        // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min, // -2
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE, // -2
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, // -1
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION, // 0
         // 1,
-        // 2,
+        2,
         3
       ],
 
