@@ -328,7 +328,8 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
       testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
       testParams.in.nSqueezeExcitationChannelCountDivisor,
       testParams.in.nActivationId,
-      testParams.in.bKeepInputTensor
+      testParams.in.bKeepInputTensor,
+      testParams.in.bTableLog
     );
 
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
