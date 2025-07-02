@@ -80,7 +80,8 @@ class Stage_TestParams_Base extends TestParams.Base {
       aParamsBase.depthwiseFilterWidth,
       aParamsBase.nSqueezeExcitationChannelCountDivisor,
       aParamsBase.nActivationId,
-      aParamsBase.bKeepInputTensor
+      aParamsBase.bKeepInputTensor,
+      aParamsBase.bTableLog
     );
   }
 
@@ -101,7 +102,8 @@ class Stage_TestParams_Base extends TestParams.Base {
     depthwiseFilterHeight, depthwiseFilterWidth,
     nSqueezeExcitationChannelCountDivisor,
     nActivationId,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     if ( this.out ) {
       this.out.disposeResources_and_recycleToPool();
@@ -116,7 +118,8 @@ class Stage_TestParams_Base extends TestParams.Base {
       depthwiseFilterHeight, depthwiseFilterWidth,
       nSqueezeExcitationChannelCountDivisor,
       nActivationId,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
 
     // So that all parameters are by specified (none is by evolution).
@@ -187,7 +190,8 @@ class Stage_TestParams_Base extends TestParams.Base {
           blockParams.nSqueezeExcitationChannelCountDivisor,
           blockParams.bSqueezeExcitationPrefix,
           blockParams.nActivationId,
-          blockParams.bKeepInputTensor
+          blockParams.bKeepInputTensor,
+          blockParams.bTableLog
         );
 
         this.blockArray[ i ] = blockTestParams;
@@ -422,6 +426,12 @@ class Stage_TestParams_Base extends TestParams.Base {
         Stage.Params.bKeepInputTensor.valueDesc.range.min,
         Stage.Params.bKeepInputTensor.valueDesc.range.max
       ],
+
+      bTableLog: [
+        // (2025/06/04 Temp Remarked) For debug.
+        0, 0
+        // 1, 1
+      ],
     };
 
     // All the parameters to be tried.
@@ -453,6 +463,8 @@ class Stage_TestParams_Base extends TestParams.Base {
         valueOutMinMax.nActivationId ),
       new TestParams.ParamDescConfig( Stage.Params.bKeepInputTensor,
         valueOutMinMax.bKeepInputTensor ),
+      new TestParams.ParamDescConfig( Stage.Params.bTableLog,
+        valueOutMinMax.bTableLog ),
     ];
 
     const theParamDescConfigAll
@@ -482,4 +494,5 @@ Stage_TestParams_Base.paramsNameOrderArray_Basic = [
   Stage.Params.nSqueezeExcitationChannelCountDivisor.paramName,  
   Stage.Params.nActivationId.paramName,
   Stage.Params.bKeepInputTensor.paramName,
+  Stage.Params.bTableLog.paramName,
 ];
