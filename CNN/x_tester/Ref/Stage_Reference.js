@@ -97,10 +97,13 @@ class Stage_Reference_Base extends Recyclable.Root {
       input_height, input_width, input_channelCount,
     } = testParams.out;
 
-    this.testCorrectness_imageIn = imageSourceBag.getImage_by( input_height, input_width, input_channelCount );
+    this.testCorrectness_imageIn = imageSourceBag.getImage_by(
+      input_height, input_width, input_channelCount );
 
-    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Stage_Reference.Base.testCorrectness_internal()",
-      Stage_Reference_Base.testCorrectness_internal, this, imageSourceBag, testParams );
+    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
+      "Stage_Reference.Base.testCorrectness_internal()",
+      Stage_Reference_Base.testCorrectness_internal,
+      this, imageSourceBag, testParams );
 
     this.testCorrectness_imageIn = null;
   }
@@ -112,16 +115,33 @@ class Stage_Reference_Base extends Recyclable.Root {
    *   The provider of image and tensor of variable specification for testing.
    *
    * @param {Stage_TestParams.Base} testParams
-   *   The test parameters. It is the value of Stage_TestParams.Base.ParamsGenerator()'s result.
+   *   The test parameters. It is the value of
+   * Stage_TestParams.Base.ParamsGenerator()'s result.
    *
    */
   static testCorrectness_internal( imageSourceBag, testParams ) {
     this.testParams = testParams;
 
-    this.testCorrectness_imageOutReference = this.calcResult( this.testCorrectness_imageIn );
+    const bTableLog = testParams.out.bTableLog;
+    if ( bTableLog ) {
+      const groupLabel = `testParams.id == ${testParams.id}`;
+      console.groupCollapsed( groupLabel );
 
-    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before( "Stage_Reference.Base.stage_create_apply_internal()",
-      Stage_Reference_Base.stage_create_apply_internal, this, imageSourceBag, testParams );
+      {
+        const imageIn_imageHeaderPrefix = "imageIn";
+        const imageIn_strSubheader = undefined;
+        this.testCorrectness_imageIn.TableLog_header_body(
+          imageIn_imageHeaderPrefix, imageIn_strSubheader );
+      }
+    }
+
+    this.testCorrectness_imageOutReference
+      = this.calcResult( this.testCorrectness_imageIn );
+
+    Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
+      "Stage_Reference.Base.stage_create_apply_internal()",
+      Stage_Reference_Base.stage_create_apply_internal,
+      this, imageSourceBag, testParams );
 
     { // Release output reference images.
       if ( this.testCorrectness_imageOutReference != this.testCorrectness_imageIn ) {
@@ -140,13 +160,14 @@ class Stage_Reference_Base extends Recyclable.Root {
    */
   static stage_create_apply_internal( imageSourceBag, testParams ) {
 
-    let {
+    const {
       input_height, input_width, input_channelCount,
       nConvStageTypeId,
-      bKeepInputTensor,
+      bKeepInputTensor, bTableLog,
     } = testParams.out;
 
-    let inputTensor3d_fromBag = imageSourceBag.getTensor3d_by( input_height, input_width, input_channelCount );
+    let inputTensor3d_fromBag = imageSourceBag.getTensor3d_by(
+      input_height, input_width, input_channelCount );
 
     let inputTensor3d;
     let inputTensorDestroyCount; // How many input tensors will be destroyed by Stage.apply().
@@ -164,18 +185,40 @@ class Stage_Reference_Base extends Recyclable.Root {
 
     let memoryInfo_beforeCreate = tf.memory(); // Test memory leakage of block create/dispose.
     {
-      let stage = Stage_Reference_Base.Stage_create( testParams, this.testCorrectness_imageIn.boundsArraySet.output0 );
+      const imageIn_BoundsArraySet
+        = this.testCorrectness_imageIn.boundsArraySet;
 
-      // The difference tensor count will be the generated tensor count (i.e. outputTensorCount) minus destroyed input
+      const imageIn_ScaleBoundsArray = imageIn_BoundsArraySet.output0;
+
+      let stage = Stage_Reference_Base.Stage_create(
+        null,         // parentNameable
+        "Stage_Base", // stageName
+        testParams, imageIn_ScaleBoundsArray );
+
+      // Table log the input tensor if requested.
+      const bTableLog = embedding.bTableLog;
+      if ( bTableLog ) {
+        const tensorIn_imageHeaderPrefix = "tensorIn";
+        const tensorIn_strSubheader = undefined;
+        TableLogger.Base.Singleton.log_tensor3d_along_depth(
+          tensorIn_imageHeaderPrefix, tensorIn_strSubheader,
+          inputTensor3d,
+          imageIn_ScaleBoundsArray );
+      }
+
+      // The difference tensor count will be the generated tensor count
+      // (i.e. outputTensorCount) minus destroyed input
       // tensor count (i.e. inputTensorDestroyCount).
       let stage_outputTensorCount = 1;
-      tensorNumDifference_apply_before_after = stage_outputTensorCount - inputTensorDestroyCount;
+      tensorNumDifference_apply_before_after
+        = stage_outputTensorCount - inputTensorDestroyCount;
 
       let memoryInfo_apply_before = tf.memory(); // Test memory leakage of Stage.apply.
       outputTensor3d = stage.apply( inputTensor3d );
       let memoryInfo_apply_after = tf.memory();
 
-      if ( memoryInfo_apply_after.numTensors != ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) )
+      if ( memoryInfo_apply_after.numTensors
+             != ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) )
         throw Error( `Stage.apply() memory leak. `
           + `result tensor count ( ${memoryInfo_apply_after.numTensors} ) `
           + `should be ( ${ ( memoryInfo_apply_before.numTensors + tensorNumDifference_apply_before_after ) } ) `
@@ -400,31 +443,38 @@ class Stage_Reference_Base extends Recyclable.Root {
    *
    * @return {Stage.Base} The created Stage object.
    */
-  static Stage_create( testParams, inputScaleBoundsArray0 ) {
+  static Stage_create(
+    parentNameable, stageName,
+    testParams, inputScaleBoundsArray0 ) {
 
-    let stage = Stage.Base.Pool.get_or_create_by();
+    let stage = Stage.Base.Pool.get_or_create_by( parentNameable, stageName );
 
     let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
     // Initialize successfully or failed.
     let extractedParams = Stage.Params.Pool.get_or_create_by(
-      testParams.in.input_height, testParams.in.input_width, testParams.in.input_channelCount,
+      testParams.in.input_height,
+      testParams.in.input_width,
+      testParams.in.input_channelCount,
       testParams.in.nConvStageTypeId,
       testParams.in.blockCountRequested,
       testParams.in.bPointwise1,
       testParams.in.depthwiseFilterHeight, testParams.in.depthwiseFilterWidth,
       testParams.in.nSqueezeExcitationChannelCountDivisor,
       testParams.in.nActivationId,
-      testParams.in.bKeepInputTensor
+      testParams.in.bKeepInputTensor,
+      testParams.in.bTableLog
     );
 
     let bInitOk = stage.init( progress,
-      testParams.in_weights.weightArray, testParams.in_weights.weightElementOffsetBegin,
+      testParams.in_weights.weightArray,
+      testParams.in_weights.weightElementOffsetBegin,
       extractedParams,
       inputScaleBoundsArray0 );
 
     if ( stage.bInitOk != bInitOk )
-      throw Error( `Stage validation state (${stage.bInitOk}) mismatches initer's result (${bInitOk}). ${stage}` );
+      throw Error( `Stage validation state (${stage.bInitOk}) `
+        + `mismatches initer's result (${bInitOk}). ${stage}` );
 
     if ( !bInitOk ) { //!!! For Debug.
       console.log( "testParams =", testParams );
@@ -436,22 +486,28 @@ class Stage_Reference_Base extends Recyclable.Root {
 
     if ( 100 != progress.valuePercentage )
       throw Error(
-        `Progress (${progress.valuePercentage}) should be 100 when initializing block object successfully. ${stage}`);
+          `Progress (${progress.valuePercentage}) should be 100 when `
+        + `initializing block object successfully. ${stage}`);
 
     progress.disposeResources_and_recycleToPool();
     progress = null;
 
-    if ( stage.weightElementOffsetEnd != testParams.in_weights.weightArray.length ) { //!!! For Debug. (parsing ending position)
+    //!!! For Debug. (parsing ending position)
+    if ( stage.weightElementOffsetEnd
+           != testParams.in_weights.weightArray.length ) {
       debugger;
     }
 
-    let stage_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by( "Stage", stage, stage );
+    let stage_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by(
+      "Stage", stage, stage );
 
     Stage_Reference_Base.AssertTwoEqualValues( "parsing beginning position",
-      stage.weightElementOffsetBegin, testParams.in_weights.weightElementOffsetBegin, stage );
+      stage.weightElementOffsetBegin,
+      testParams.in_weights.weightElementOffsetBegin, stage );
 
     Stage_Reference_Base.AssertTwoEqualValues( "parsing ending position",
-      stage.weightElementOffsetEnd, testParams.in_weights.weightArray.length, stage );
+      stage.weightElementOffsetEnd,
+      testParams.in_weights.weightArray.length, stage );
 
     // parameters.
     stage_asserter.propertyValue( "input_height", testParams.out.input_height );
@@ -477,6 +533,7 @@ class Stage_Reference_Base extends Recyclable.Root {
 
     // Other parameters.
     stage_asserter.propertyValue( "bKeepInputTensor", testParams.out.bKeepInputTensor );
+    stage_asserter.propertyValue( "bTableLog", testParams.out.bTableLog );
 
     Stage_Reference_Base.AssertParameters_Stage_blocks( stage, stage ); // Test every block's parameters.
 
@@ -1074,9 +1131,11 @@ class Stage_Reference_Base extends Recyclable.Root {
 
       // bKeepInputTensor
       if ( 0 == blockIndex ) {
-        block_or_blockParamsBase_asserter.propertyValue( "bKeepInputTensor", stage_or_stageParamsBase.bKeepInputTensor );
+        block_or_blockParamsBase_asserter.propertyValue( "bKeepInputTensor",
+          stage_or_stageParamsBase.bKeepInputTensor );
       } else {
-        block_or_blockParamsBase_asserter.propertyValue( "bKeepInputTensor", false );
+        block_or_blockParamsBase_asserter.propertyValue( "bKeepInputTensor",
+          false );
       }
 
       block_or_blockParamsBase_asserter.disposeResources_and_recycleToPool();
@@ -1084,7 +1143,9 @@ class Stage_Reference_Base extends Recyclable.Root {
     }
   }
 
-  /** According to imageIn and this.testParams.in.paramsNumberArrayObject, calculate imageOut.
+  /**
+   * According to imageIn and this.testParams.in.paramsNumberArrayObject,
+   * calculate imageOut.
    *
    * @param {NumberImage.Base} imageIn
    *   The image to be tested.
@@ -1092,9 +1153,14 @@ class Stage_Reference_Base extends Recyclable.Root {
    * @return {NumberImage.Base} Return output image.
    */
   calcResult( imageIn ) {
-    let testParams = this.testParams;
+    const testParams = this.testParams;
 
-    Stage_Reference_Base.AssertParameters_Stage_blocks( testParams, testParams.out ); // Test every block's parameters.
+    const bTableLog = testParams.out.bTableLog;
+    if ( bTableLog ) {
+      console.group( `Stage_Reference` );
+
+    // Test every block's parameters.
+    Stage_Reference_Base.AssertParameters_Stage_blocks( testParams, testParams.out );
 
     // Calculate every blocks in sequence.
 
@@ -1148,6 +1214,18 @@ class Stage_Reference_Base extends Recyclable.Root {
     this.imageInArray[ 1 ] = null;
     this.imageOutArray[ 0 ] = null;
     this.imageOutArray[ 1 ] = null;
+
+!!! ...unfinished... (2025/07/01)
+    if ( bTableLog ) {
+      let headerPrefix = this.nameString_recursively_get();
+
+      // const extraName = `channelMultiplier_${channelMultiplier}`;
+      // headerPrefix = this.nameJoinSeparator_join( headerPrefix, extraName );
+
+      imageOut.TableLog_header_body( headerPrefix );
+
+      console.groupEnd();  // groupLabel "Stage_Reference"
+    }
 
     return imageOut;
   }

@@ -106,10 +106,10 @@ class Embedding_Reference_Base
       console.groupCollapsed( groupLabel );
 
       {
-        const imageIn0_imageHeaderPrefix = "imageIn";
-        const imageIn0_strSubheader = undefined;
+        const imageIn_imageHeaderPrefix = "imageIn";
+        const imageIn_strSubheader = undefined;
         this.testCorrectness_imageIn.TableLog_header_body(
-          imageIn0_imageHeaderPrefix, imageIn0_strSubheader );
+          imageIn_imageHeaderPrefix, imageIn_strSubheader );
       }
     }
 
@@ -195,7 +195,7 @@ class Embedding_Reference_Base
       let embedding = Embedding_Reference_Base.Embedding_create(
         EmbeddingClass, testParams );
 
-      // Table log the input tensors if requested.
+      // Table log the input tensor if requested.
       const bTableLog = embedding.bTableLog;
       if ( bTableLog ) {
         const imageIn_BoundsArraySet
@@ -203,12 +203,11 @@ class Embedding_Reference_Base
 
         const imageIn_ScaleBoundsArray = imageIn_BoundsArraySet.output0;
 
-        const tensorIn0_imageHeaderPrefix = "tensorIn";
-        const tensorIn0_strSubheader = undefined;
+        const tensorIn_imageHeaderPrefix = "tensorIn";
+        const tensorIn_strSubheader = undefined;
         TableLogger.Base.Singleton.log_tensor3d_along_depth(
-          tensorIn0_imageHeaderPrefix, tensorIn0_strSubheader,
+          tensorIn_imageHeaderPrefix, tensorIn_strSubheader,
           inputTensor3d,
-          this.testCorrectness_imageIn,
           imageIn_ScaleBoundsArray );
       }
 
@@ -502,8 +501,12 @@ class Embedding_Reference_Base
       bTableLog,
     } = testParamsOut;
 
-    const { output_height, output_width, output_channelCount
+    const {
+      output_height, output_width, output_channelCount
     } = testParamsOut.inferencedParams;
+
+    if ( bTableLog ) {
+      console.group( `Embedding_Reference` );
 
     let imageOut;
     {
@@ -570,8 +573,6 @@ class Embedding_Reference_Base
     }
 
     if ( bTableLog ) {
-      console.group( `Embedding_Reference` );
-
       let headerPrefix = this.nameString_recursively_get();
 
       const extraName = `channelMultiplier_${channelMultiplier}`;
