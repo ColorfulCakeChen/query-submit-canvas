@@ -1,5 +1,6 @@
 export { Stage_Base as Base };
 
+import * as HierarchicalNameable from "../../util/HierarchicalNameable.js";
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "../../util/ValueMax.js";
@@ -321,14 +322,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
  * extracted from inputWeightArray.
  *
  */
-class Stage_Base extends Recyclable.Root {
-
-
-//!!! ...unfinshed... (2025/06/06)
-// Let Operation, Block(_Reference), Stage(_Reference), NeuralNet(_Reference)
-// inherits from HierarchicalName.Base.
-
-
+class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
 
   /**
    * Used as default Stage.Base provider for conforming to Recyclable
@@ -339,14 +333,14 @@ class Stage_Base extends Recyclable.Root {
 
   /**
    */
-  constructor() {
-    super();
+  constructor( parentNameable, name ) {
+    super( parentNameable, name );
     this.#setAsConstructor_self();
   }
 
   /** @override */
-  setAsConstructor() {
-    super.setAsConstructor();
+  setAsConstructor( parentNameable, name ) {
+    super.setAsConstructor( parentNameable, name );
     this.#setAsConstructor_self();
   }
 
@@ -472,6 +466,7 @@ class Stage_Base extends Recyclable.Root {
       this.nActivationId = params.nActivationId;
       this.nActivationName = params.nActivationName;
       this.bKeepInputTensor = params.bKeepInputTensor;
+      this.bTableLog = params.bTableLog;
 
       // The parameters which are determined (inferenced) from the above
       // parameters.
@@ -672,11 +667,28 @@ class Stage_Base extends Recyclable.Root {
 
     this.channelShuffler_dispose();
 
-    this.tensorWeightCountTotal = 0;
-    this.tensorWeightCountExtracted = 0;
+    this.tensorWeightCountTotal = undefined;
+    this.tensorWeightCountExtracted = undefined;
 
-    this.weightElementOffsetBegin = this.weightElementOffsetEnd = -1;
-    this.bInitOk = false;
+    this.bTableLog = undefined;
+    this.bKeepInputTensor = undefined;
+    this.nActivationName = undefined;
+    this.nActivationId = undefined;
+    this.nSqueezeExcitationChannelCountDivisorName = undefined;
+    this.nSqueezeExcitationChannelCountDivisor = undefined;
+    this.depthwiseFilterWidth = undefined;
+    this.depthwiseFilterHeight = undefined;
+    this.bPointwise1 = undefined;
+    this.blockCountRequested = undefined;
+    this.nConvStageTypeName = undefined;
+    this.nConvStageTypeId = undefined;
+    this.input_channelCount = undefined;
+    this.input_width = undefined;
+    this.input_height = undefined;
+
+    this.weightElementOffsetEnd = undefined;
+    this.weightElementOffsetBegin = undefined;
+    this.bInitOk = undefined;
 
     super.disposeResources();
   }
@@ -840,6 +852,7 @@ class Stage_Base extends Recyclable.Root {
 
       + `nActivationName=${this.nActivationName}(${this.nActivationId}), `
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
+      + `bTableLog=${this.bTableLog}, `
 
       + `blockCount=${this.blockCount}, `
       + `output_height=${this.output_height}, `

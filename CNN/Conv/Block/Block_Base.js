@@ -1286,8 +1286,9 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
     this.input0_height = undefined;
 
     // 7.
-    this.weightElementOffsetBegin = this.weightElementOffsetEnd = -1;
-    this.bInitOk = false;
+    this.weightElementOffsetEnd = undefined;
+    this.weightElementOffsetBegin = undefined;
+    this.bInitOk = undefined;
 
     super.disposeResources();
   }
