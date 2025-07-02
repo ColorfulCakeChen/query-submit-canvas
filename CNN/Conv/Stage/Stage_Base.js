@@ -754,6 +754,9 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
    *   Yield ( value = outputTensor ) when ( done = true ).
    */
   * applier( progressToAdvance, inputTensor ) {
+    if ( this.bTableLog )
+      console.group( `Stage_Base` );
+
     let progressRoot = progressToAdvance.root_get();
 
     // Note: The block0 should only input one tensor.
@@ -769,6 +772,13 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
 
     // Note: The blockLast should only output one tensor.
     let outputTensor = this.blockLast.output0.realTensor;
+
+    // Log output as table (if requested).
+    if ( this.bTableLog ) {
+      this.TableLog_output0_if_requested();
+      console.groupEnd();  // groupLabel "Stage_Base"
+    }
+
     return outputTensor;
   }
 
@@ -783,6 +793,9 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
    *   Return a new tensor. All other intermediate tensors were disposed.
    */
   apply( inputTensor ) {
+    if ( this.bTableLog )
+      console.group( `Stage_Base` );
+
     // Note: The block0 should only input one tensor.
     this.block0.input0.realTensor = inputTensor;
 
@@ -793,6 +806,13 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
 
     // Note: The blockLast should only output one tensor.
     let outputTensor = this.blockLast.output0.realTensor;
+
+    // Log output as table (if requested).
+    if ( this.bTableLog ) {
+      this.TableLog_output0_if_requested();
+      console.groupEnd();  // groupLabel "Stage_Base"
+    }
+
     return outputTensor;
   }
 
@@ -822,6 +842,28 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
 
   get output_channelCount() {
     return this.blockLast.output_channelCount;
+  }
+
+  /**
+   * If .bTableLog is true, log tensor3d and ScaleBoundsArray of .output0
+   * as table.
+   *
+   * @param {string} strSubheader
+   *   A string will be logged between image header and data array. If null or
+   * undefined, there is no subheader.
+   */
+  TableLog_output0_if_requested( strSubheader ) {
+    if ( !this.bTableLog )
+      return;
+
+    // Prefix with the hierarchical name of this operation.
+    const headerPrefix = this.nameString_recursively_get();
+
+//!!! ...unfinished... (2025/07/02)
+//     const extraName = `channelMultiplier_${this.channelMultiplier}`;
+//     headerPrefix = this.nameJoinSeparator_join( headerPrefix, extraName );
+
+    this.output0.TableLog_header_body( headerPrefix, strSubheader );
   }
 
   /**
