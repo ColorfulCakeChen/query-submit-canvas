@@ -267,16 +267,7 @@ class Embedding_Base
 
   /**
    *   Process the input and produce output by looking up the weights of this
-   * embedding layer.The function inputs
-   * a tensor3d data (e.g. height-width-color for color image, or 1-width-1 for
-   * text) with this.input_channelCount (e.g. 4 for r-g-b-a, or 1 for text)
-   * channels. The inputTensor3d.dtype must be int32 (i.e. can not be float32)
-   * so that they can be used as tf.gather()'s indices. If
-   * ( this.bKeepInputTensor == false ), the inputTensor3d will be disposed. If
-   * ( this.bKeepInputTensor == true ), the inputTensor3d will be kept. It is
-   * one of keep_input_return_copy(), return_input_directly(),
-   * apply_gather_reshape_and_keep(), apply_gather_reshape_and_destroy(),
-   * apply_add_gather_reshape_and_keep(), apply_add_gather_reshape_and_destroy().
+   * embedding layer.
    *
    * @param {tensor3d} inputTensor3d
    *   The input tensor3d data (e.g. height-width-color for color image, or
@@ -318,7 +309,9 @@ class Embedding_Base
 
     // Prefix with the hierarchical name of this operation and extra name.
     let headerPrefix = this.nameString_recursively_get();
-    // headerPrefix = this.nameJoinSeparator_join( headerPrefix, extraLeafName );
+
+    const extraName = `channelMultiplier_${this.channelMultiplier}`;
+    headerPrefix = this.nameJoinSeparator_join( headerPrefix, extraName );
 
 //!!! (2025/07/01 Remarked) Prefix with the hierarchical name of this operation.
 //     // Prefix with sub-class name.

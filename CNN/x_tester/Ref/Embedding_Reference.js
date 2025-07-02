@@ -572,8 +572,12 @@ class Embedding_Reference_Base
     if ( bTableLog ) {
       console.group( `Embedding_Reference` );
 
-      let header_forTableLog = this.nameString_recursively_get();
-      imageOut.TableLog_header_body( header_forTableLog );
+      let headerPrefix = this.nameString_recursively_get();
+
+      const extraName = `channelMultiplier_${this.channelMultiplier}`;
+      headerPrefix = this.nameJoinSeparator_join( headerPrefix, extraName );
+
+      imageOut.TableLog_header_body( headerPrefix );
 
 //!!! (2025/07/01 Remarked) Prefix with the hierarchical name of this operation.
 //       const mostDerivedClassName = this.constructor.name;
