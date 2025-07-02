@@ -221,6 +221,15 @@ class TableLogger_Base {
                   instanceof FloatValue.BoundsArray ) {
       aBoundsArray = aBoundsArray_or_aScaleBoundsArray;
       boundsArray = aBoundsArray;
+
+    } else {
+      throw Error( `TableLogger_Base.${funcNameInMessage}(): `
+        + `aBoundsArray_or_aScaleBoundsArray `
+        + `( ${aBoundsArray_or_aScaleBoundsArray} ) `
+        + `should be instance of either`
+        + `ActivationEscaping.ScaleBoundsArray `
+        + `or FloatValue.BoundsArray.`
+      );
     }
 
     const {
