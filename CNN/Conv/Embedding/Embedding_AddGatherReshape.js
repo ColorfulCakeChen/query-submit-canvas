@@ -14,19 +14,6 @@ import { Base } from "./Embedding_Base.js";
  * @member {boolean} bKeepInputTensor
  *   If true, .apply() will not dispose inputTensor (i.e. keep). For another
  * example, the input image needs be shared across many neural networks.
- * 
- * @member {function} apply
- *   Process the input and produce output by looking up the weights of this
- * embedding layer. This is a data member to a function. The function inputs
- * a tensor3d data (e.g. height-width-color for color image, or 1-width-1 for
- * text) with this.input_channelCount (e.g. 4 for r-g-b-a, or 1 for text)
- * channels. The inputTensor3d.dtype must be int32 (i.e. can not be float32)
- * so that they can be used as tf.gather()'s indices. If
- * ( this.bKeepInputTensor == false ), the inputTensor3d will be disposed. If
- * ( this.bKeepInputTensor == true ), the inputTensor3d will be kept. It is
- * one of keep_input_return_copy(), return_input_directly(),
- * apply_gather_reshape_and_keep(), apply_gather_reshape_and_destroy(),
- * apply_add_gather_reshape_and_keep(), apply_add_gather_reshape_and_destroy().
  *
  */
 class Embedding_AddGatherReshape extends Base {
@@ -243,7 +230,8 @@ class Embedding_AddGatherReshape extends Base {
     }
   }
 
-  /** Determine this.apply data members.
+  /**
+   * Determine this.pfnApply data members.
    *
    * @param {Embedding_AddGatherReshape} this
    *   The Embedding_AddGatherReshape object to be determined and modified.
@@ -263,30 +251,30 @@ class Embedding_AddGatherReshape extends Base {
       if ( this.bKeepInputTensor )
         // 1.1 For ( channelMultiplier <= 1 ) and ( bKeepInputTensor == true ),
         //     return a copy of input (as output) immediately.
-        this.apply = Embedding_AddGatherReshape.keep_input_return_copy;
+        this.pfnApply = Embedding_AddGatherReshape.keep_input_return_copy;
       else
         // 1.2 For ( channelMultiplier <= 1 ) and ( bKeepInputTensor == false ),
         //     return input (as output) immediately.
-        this.apply = Embedding_AddGatherReshape.return_input_directly;
+        this.pfnApply = Embedding_AddGatherReshape.return_input_directly;
 
     } else { // 2. channelMultiplier is positive.
 
       // 2.1 No need shift (i.e. add) input channel value.
       if ( this.input_channelCount == 1 ) {
         if ( this.bKeepInputTensor )
-          this.apply
+          this.pfnApply
             = Embedding_AddGatherReshape.apply_gather_reshape_and_keep;
         else
-          this.apply
+          this.pfnApply
             = Embedding_AddGatherReshape.apply_gather_reshape_and_destroy;
 
       // 2.2 ( input_channelCount > 1 ), Need shift input vhannel value.
       } else {
         if ( this.bKeepInputTensor )
-          this.apply
+          this.pfnApply
             = Embedding_AddGatherReshape.apply_add_gather_reshape_and_keep;
         else
-          this.apply
+          this.pfnApply
             = Embedding_AddGatherReshape.apply_add_gather_reshape_and_destroy;
       }
     }
@@ -312,9 +300,6 @@ class Embedding_AddGatherReshape extends Base {
       gatherTensor4d.dispose();
     }
 
-    // 3. Log output as table (if requested).
-    this.TableLog_output_tensor3d_if_requested( outputTensor3d );
-
     return outputTensor3d;
   }
 
@@ -339,9 +324,6 @@ class Embedding_AddGatherReshape extends Base {
     } finally {
       gatherTensor4d.dispose();
     }
-
-    // 3. Log output as table (if requested).
-    this.TableLog_output_tensor3d_if_requested( outputTensor3d );
 
     return outputTensor3d;
   }
@@ -374,9 +356,6 @@ class Embedding_AddGatherReshape extends Base {
     } finally {
       gatherTensor4d.dispose();
     }
-
-    // 3. Log output as table (if requested).
-    this.TableLog_output_tensor3d_if_requested( outputTensor3d );
 
     return outputTensor3d;
   }
@@ -418,9 +397,6 @@ class Embedding_AddGatherReshape extends Base {
     } finally {
       gatherTensor4d.dispose();
     }
-
-    // 3. Log output as table (if requested).
-    this.TableLog_output_tensor3d_if_requested( outputTensor3d );
 
     return outputTensor3d;
   }

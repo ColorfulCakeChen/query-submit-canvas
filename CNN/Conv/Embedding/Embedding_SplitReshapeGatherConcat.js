@@ -15,16 +15,6 @@ import { Base } from "./Embedding_Base.js";
  *   If true, .apply() will not dispose inputTensor (i.e. keep). For another
  * example, the input image needs be shared across many neural networks.
  * 
- * @member {function} apply
- *   Process the input and produce output by looking up the weights of this
- * embedding layer. The function inputs a tensor3d data (e.g.
- * height-width-color for color image, or 1-width-1 for text) with
- * this.input_channelCount (e.g. 4 for r-g-b-a, or 1 for text) channels. The
- * inputTensor3d.dtype must be int32 (i.e. can not be float32) so that they can
- * be used as tf.gather()'s indices. If ( this.bKeepInputTensor == false ), the
- * inputTensor3d will be disposed. If ( this.bKeepInputTensor == true ), the
- * inputTensor3d will be kept.
- *
  */
 class Embedding_SplitReshapeGatherConcat extends Base {
 
@@ -214,6 +204,9 @@ class Embedding_SplitReshapeGatherConcat extends Base {
         //       here.
       }
 
+      // 5.
+      Embedding_SplitReshapeGatherConcat.setup_apply_embedding.call( this );
+
       progressToAdvance.value_advance();
       yield progressRoot;  // Embedding initialization done. Report progress.
 
@@ -230,12 +223,23 @@ class Embedding_SplitReshapeGatherConcat extends Base {
   }
 
   /**
+   * Determine this.pfnApply data members.
+   *
+   * @param {Embedding_SplitReshapeGatherConcat} this
+   *   The Embedding_SplitReshapeGatherConcat object to be determined and modified.
+   */
+  static setup_apply_embedding() {
+    this.pfnApply
+      = Embedding_SplitReshapeGatherConcat.apply_split_reshape_gather_concat;
+  }
+
+  /**
    * (Used when vocabulary tables are tensor3d.)
    *
    * This is slower than AddGatherReshape. It may due to the splitting and
    * concatenating operation.
    */
-  apply( inputTensor3d ) {
+  static apply_split_reshape_gather_concat( inputTensor3d ) {
 
 //!!! ...unfinished... could use gahter, gather, concat instead of split, gather, concat?
 //!!! ...unfinished... could use unstack, gather, stack instead of split, gather, concat?
@@ -349,9 +353,6 @@ class Embedding_SplitReshapeGatherConcat extends Base {
         embeddedTensor3dArray[ i ] = null;
       }
     }
-
-    // Log output as table (if requested).
-    this.TableLog_output_tensor3d_if_requested( outputTensor3d );
 
     return outputTensor3d;
   }

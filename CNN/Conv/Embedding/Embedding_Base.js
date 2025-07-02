@@ -61,6 +61,19 @@ import { Params } from "./Embedding_Params.js";
  * @member {ActivationEscaping.ScaleBoundsArray} output_scaleBoundsArray
  *   The element value bounds (per channel) of output (can NOT null).
  *
+ * @member {function} pfnApply
+ *   Process the input and produce output by looking up the weights of this
+ * embedding layer. This is a data member to a function. The function inputs
+ * a tensor3d data (e.g. height-width-color for color image, or 1-width-1 for
+ * text) with this.input_channelCount (e.g. 4 for r-g-b-a, or 1 for text)
+ * channels. The inputTensor3d.dtype must be int32 (i.e. can not be float32)
+ * so that they can be used as tf.gather()'s indices. If
+ * ( this.bKeepInputTensor == false ), the inputTensor3d will be disposed. If
+ * ( this.bKeepInputTensor == true ), the inputTensor3d will be kept. It is
+ * one of keep_input_return_copy(), return_input_directly(),
+ * apply_gather_reshape_and_keep(), apply_gather_reshape_and_destroy(),
+ * apply_add_gather_reshape_and_keep(), apply_add_gather_reshape_and_destroy().
+ *
  */
 class Embedding_Base
   extends HierarchicalNameable.SeparatorDot_Base( ReturnOrClone.Root ) {
@@ -220,6 +233,8 @@ class Embedding_Base
   /** @override */
   disposeResources() {
 
+    this.pfnApply = null;
+
     if ( this.output_scaleBoundsArray ) {
       this.output_scaleBoundsArray.disposeResources_and_recycleToPool();
       this.output_scaleBoundsArray = null;
@@ -250,11 +265,45 @@ class Embedding_Base
     super.disposeResources();
   }
 
+  /**
+   *   Process the input and produce output by looking up the weights of this
+   * embedding layer.The function inputs
+   * a tensor3d data (e.g. height-width-color for color image, or 1-width-1 for
+   * text) with this.input_channelCount (e.g. 4 for r-g-b-a, or 1 for text)
+   * channels. The inputTensor3d.dtype must be int32 (i.e. can not be float32)
+   * so that they can be used as tf.gather()'s indices. If
+   * ( this.bKeepInputTensor == false ), the inputTensor3d will be disposed. If
+   * ( this.bKeepInputTensor == true ), the inputTensor3d will be kept. It is
+   * one of keep_input_return_copy(), return_input_directly(),
+   * apply_gather_reshape_and_keep(), apply_gather_reshape_and_destroy(),
+   * apply_add_gather_reshape_and_keep(), apply_add_gather_reshape_and_destroy().
+   *
+   * @param {tensor3d} inputTensor3d
+   *   The input tensor3d data (e.g. height-width-color for color image, or
+   * 1-width-1 for text) with this.input_channelCount (e.g. 4 for r-g-b-a, or
+   * 1 for text) channels. The inputTensor3d.dtype must be int32 (i.e. can not
+   * be float32) so that they can be used as tf.gather()'s indices. If
+   * ( this.bKeepInputTensor == false ), the inputTensor3d will be disposed. If
+   * ( this.bKeepInputTensor == true ), the inputTensor3d will be kept.
+   *
+   * @return {tensor3d}
+   *   Return a tensor3d which is the mapping result. It may be the same
+   * one tensor3d as the inputTensor3d.
+   */
+  apply( inputTensor3d ) {
+    if ( this.bTableLog )
+      console.group( `Embedding_Base` );
 
-!!! ...unfinished... (2025/07/01)
-// Define apply() {}
-// call .pfnApply()
-// call .TableLog_output_tensor3d_if_requested() inside.
+    const outputTensor3d = this.pfnApply( inputTensor3d );
+
+    // Log output as table (if requested).
+    if ( this.bTableLog ) {
+      this.TableLog_output_tensor3d_if_requested( outputTensor3d );
+      console.groupEnd();  // groupLabel "Embedding_Base"
+    }
+
+    return outputTensor3d;
+  }
 
   /**
    * If .bTableLog is true, log the specified output tensor3d and
@@ -266,8 +315,6 @@ class Embedding_Base
   TableLog_output_tensor3d_if_requested( aTensor3d ) {
     if ( !this.bTableLog )
       return;
-
-    console.group( `Embedding_Base` );
 
     // Prefix with the hierarchical name of this operation and extra name.
     let headerPrefix = this.nameString_recursively_get();
@@ -287,8 +334,6 @@ class Embedding_Base
 //     const scaleBoundsArray_HeaderPrefix = ".output";
 //     this.output_scaleBoundsArray.TableLog_header_body(
 //       scaleBoundsArray_HeaderPrefix );
-
-    console.groupEnd();  // groupLabel "Embedding_Base"
   }
 
   /**
