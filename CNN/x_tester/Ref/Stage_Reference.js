@@ -324,10 +324,9 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
       }
     }
 
-!!! ...unfinished... (2025/07/02)
-//  parentNameable, stageName 
-
-    let stage_toBeCompared = Stage.Base.Pool.get_or_create_by();
+    let stage_toBeCompared = Stage.Base.Pool.get_or_create_by(
+      parentNameable, stageName
+    );
 
     // Initialize successfully or failed.
     let extractedParams = Stage.Params.Pool.get_or_create_by(
