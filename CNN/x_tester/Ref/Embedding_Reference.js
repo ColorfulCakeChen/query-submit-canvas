@@ -492,17 +492,17 @@ class Embedding_Reference_Base
    *   Return output image.
    */
   calcResult( imageIn ) {
-    let testParams = this.testParams;
-    let testParamsOut = this.testParams.out;
+    const testParams = this.testParams;
+    const testParamsOut = this.testParams.out;
 
-    let {
+    const {
       input_height, input_width, input_channelCount,
       channelMultiplier,
       bEmbedVocabularyId,
       bTableLog,
     } = testParamsOut;
 
-    let { output_height, output_width, output_channelCount
+    const { output_height, output_width, output_channelCount
     } = testParamsOut.inferencedParams;
 
     let imageOut;
@@ -574,7 +574,7 @@ class Embedding_Reference_Base
 
       let headerPrefix = this.nameString_recursively_get();
 
-      const extraName = `channelMultiplier_${this.channelMultiplier}`;
+      const extraName = `channelMultiplier_${channelMultiplier}`;
       headerPrefix = this.nameJoinSeparator_join( headerPrefix, extraName );
 
       imageOut.TableLog_header_body( headerPrefix );
