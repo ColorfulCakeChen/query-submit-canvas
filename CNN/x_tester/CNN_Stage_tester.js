@@ -63,7 +63,7 @@ async function *testerBackend( progressParent, backendName ) {
       progressToAdvance.max = testCaseCount;
 
       let batchIdCalculator = new BatchIdCalculator.Base(
-        testCaseCount, 10 * 1000 );
+        testCaseCount, 1 * 1000 );
       batchIdCalculator.displayTotalCount();
 
       try {
