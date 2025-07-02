@@ -34,7 +34,7 @@ class Embedding_AddGatherReshape extends Base {
 
   /** @override */
   setAsConstructor( parentNameable, name ) {
-    super.setAsConstructor();
+    super.setAsConstructor( parentNameable, name );
     this.#setAsConstructor_self();
   }
 
