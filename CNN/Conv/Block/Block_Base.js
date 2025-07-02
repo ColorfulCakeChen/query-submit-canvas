@@ -1499,14 +1499,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
         {
           squeezeDepthwise0 = Operation.Depthwise_ConstantWhenPassThrough.Pool
             .get_or_create_by( this,
-
-              SE_nameBag.get_by(
-                prefix_or_postfix, "squeezeDepthwise", 0 ),
-
-// (2025/07/01 Remarked)
-// Use ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag.get_by() instead.
-//              `SE_${prefix_or_postfix}_squeezeDepthwise0`,
-
+              SE_nameBag.get_by( prefix_or_postfix, "squeezeDepthwise", 0 ),
               bTableLog,
               this.operationArray.endingInput0,
               squeezeAvgMax_Or_ChannelMultiplier,
@@ -1526,14 +1519,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
         if ( this.pointwise21ChannelCount > 0 ) {
           squeezeDepthwise1 = Operation.Depthwise_ConstantWhenPassThrough.Pool
             .get_or_create_by( this,
-
-              SE_nameBag.get_by(
-                prefix_or_postfix, "squeezeDepthwise", 1 ),
-
-// (2025/07/01 Remarked)
-// Use ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag.get_by() instead.
-//              `SE_${prefix_or_postfix}_squeezeDepthwise1`,
-
+              SE_nameBag.get_by( prefix_or_postfix, "squeezeDepthwise", 1 ),
               bTableLog,
               this.operationArray.endingInput1
                 ? this.operationArray.endingInput1
@@ -1579,15 +1565,9 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
           intermediatePointwise0
             = Block_Base.SequeezeExcitation_intermediatePointwise_create_init
                 .call( this,
-
                   SE_nameBag.get_by(
                     prefix_or_postfix, "intermediatePointwise", 0,
                     this.nSqueezeExcitationChannelCountDivisor ),
-
-// (2025/07/01 Remarked)
-// Use ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag.get_by() instead.
-//                  `SE_${prefix_or_postfix}_intermediatePointwise0_divisor_${nSqueezeExcitationChannelCountDivisor}`,
-
                   this.operationArray.endingInput0,
                   this.squeezeExcitationActivationId,
                   nPointwise_HigherHalfDifferent, inputWeightArray,
@@ -1601,15 +1581,9 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
           intermediatePointwise1
             = Block_Base.SequeezeExcitation_intermediatePointwise_create_init
                 .call( this,
-
                   SE_nameBag.get_by(
                     prefix_or_postfix, "intermediatePointwise", 1,
                     this.nSqueezeExcitationChannelCountDivisor ),
-
-// (2025/07/01 Remarked)
-// Use ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag.get_by() instead.
-//                  `SE_${prefix_or_postfix}_intermediatePointwise1_divisor_${nSqueezeExcitationChannelCountDivisor}`,
-
                   this.operationArray.endingInput1
                     ? this.operationArray.endingInput1
                     : this.operationArray.endingInput0,
@@ -1665,14 +1639,8 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
           excitationPointwise0
             = Operation.Pointwise_ConstantWhenPassThrough.Pool
                 .get_or_create_by( this,
-
                   SE_nameBag.get_by(
                     prefix_or_postfix, "excitationPointwise", 0 ),
-
-// (2025/07/01 Remarked)
-// Use ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag.get_by() instead.
-//                  `SE_${prefix_or_postfix}_excitationPointwise0`,
-
                   bTableLog,
                   this.operationArray.endingInput0,
                   excitationPointwise0_outputChannelCount,
@@ -1704,14 +1672,8 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
           excitationPointwise1
             = Operation.Pointwise_ConstantWhenPassThrough.Pool
                 .get_or_create_by( this,
-
                   SE_nameBag.get_by(
                     prefix_or_postfix, "excitationPointwise", 1 ),
-
-// (2025/07/01 Remarked)
-// Use ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag.get_by() instead.
-//                  `SE_${prefix_or_postfix}_excitationPointwise1`,
-
                   bTableLog,
                   this.operationArray.endingInput1
                     ? this.operationArray.endingInput1
@@ -1756,14 +1718,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
     {
       let multiply0 = Operation.MultiplyTwoTensors.Pool.get_or_create_by(
         this,
-
-        SE_nameBag.get_by(
-          prefix_or_postfix, "multiply", 0 ),
-
-// (2025/07/01 Remarked)
-// Use ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag.get_by() instead.
-//        `SE_${prefix_or_postfix}_multiply0`,
-
+        SE_nameBag.get_by( prefix_or_postfix, "multiply", 0 ),
         bTableLog,
         input0, this.operationArray.endingInput0 );
 
@@ -1771,14 +1726,7 @@ class Block_Base extends HierarchicalNameable.SeparatorDot_Root {
       if ( this.pointwise21ChannelCount > 0 ) {
         multiply1 = Operation.MultiplyTwoTensors.Pool.get_or_create_by(
           this,
-
-          SE_nameBag.get_by(
-            prefix_or_postfix, "multiply", 1 ),
-
-// (2025/07/01 Remarked)
-// Use ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag.get_by() instead.
-//          `SE_${prefix_or_postfix}_multiply1`,
-
+          SE_nameBag.get_by( prefix_or_postfix, "multiply", 1 ),
           bTableLog,
           input1, this.operationArray.endingInput1 );
       }
