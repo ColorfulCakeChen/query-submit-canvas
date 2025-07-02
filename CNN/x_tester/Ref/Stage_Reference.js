@@ -1174,7 +1174,7 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
       this.imageInArray[ 0 ] = this.imageOutArray[ 0 ];
       this.imageInArray[ 1 ] = this.imageOutArray[ 1 ];
 
-      const blockRefName = `BlockReference_${i}`;
+      const blockRefName = `BlockReference_${blockIndex}`;
       blockRef.name_set( blockRefName ); // Rename blockRef.
 
       blockRef.testParams = testParams.blockArray[ blockIndex ];
