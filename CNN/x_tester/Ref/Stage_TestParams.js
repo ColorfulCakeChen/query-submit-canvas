@@ -308,43 +308,46 @@ class Stage_TestParams_Base extends TestParams.Base {
     // will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
 
-//!!! (2025/05/26 Temp Added) For debug.
-      // input_height: [ 3, 3 ],
-      // input_width:  [ 4, 4 ],
-      // input_channelCount: [ 4, 4 ],
+      input_height: [
+        3,
+        3
+      ],
 
-//!!! (2025/05/26 Temp Remarked) For debug.
-      input_height: [ 3, 3 ],
-      input_width:  [ 4, 5 ], // Test different input image width (even and odd).
-      input_channelCount: [ 3, 4 ],
+      // Test different input image width (even and odd).
+      input_width:  [
+        4,
+        // 5,
+        // 4
+        5
+      ],
 
-//!!! (2022/07/22 Temp Remarked) For speed-up debug.
-      // input_height: [ 3, 3 ],
-      // input_width:  [ 5, 5 ],
-      // input_channelCount: [ 3, 3 ],
+      input_channelCount: [
+        3,
+        // 4,
+        // 3
+        4
+      ],
 
       nConvStageTypeId: [
-//!!! (2025/05/26 Temp Remarked) For debug.
-       Stage.Params.nConvStageTypeId.valueDesc.range.min,
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1, // (0)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID, // (1)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN, // (2)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2, // (3)
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2, // (4)
-//!!! (2025/05/26 Temp) For debug.
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1, // (5)
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21, // (7)
-//!!! (2025/05/26 Temp) For debug.
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 // (5)
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID // (6)
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21 // (7)
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2 // (4)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2 // (3)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN // (2)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID // (1)
-      //   ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1 // (0)
-//!!! (2025/05/26 Temp Remarked) For debug.
-       Stage.Params.nConvStageTypeId.valueDesc.range.max
+        Stage.Params.nConvStageTypeId.valueDesc.range.min,
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,           // (0)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID, // (1)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,      // (2)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,           // (3)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,          // (4)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,           // (5)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID, // (6)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,             // (7)
+
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1           // (0)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID // (1)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN      // (2)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2           // (3)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2          // (4)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1           // (5)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID // (6)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21             // (7)
+        Stage.Params.nConvStageTypeId.valueDesc.range.max
       ],
 
       blockCountRequested: [
@@ -360,16 +363,16 @@ class Stage_TestParams_Base extends TestParams.Base {
         Stage.Params.bPointwise1.valueDesc.range.max
       ],
 
-      // (2022/05/05)
-      // Note: WASM seems not correct when tf.pool() or
-      //       tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
-//!!! (2022/07/22 Remarked) to avoid depthwise filter 1 x N or N x 1
       depthwiseFilterHeight: [
         Stage.Params.depthwiseFilterHeight.valueDesc.range.min, // 1
         // 2,
         // 3,
         depthwiseFilterMaxSize
       ],
+
+      // (2022/05/05)
+      // Note: WASM seems not correct when tf.pool() or
+      //       tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 
       depthwiseFilterWidth: [
         Stage.Params.depthwiseFilterWidth.valueDesc.range.min, // 2
