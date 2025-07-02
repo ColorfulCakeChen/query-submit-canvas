@@ -15,7 +15,7 @@ class Embedding_ParamsBase extends Recyclable.Root {
    */
   static Pool = new Pool.Root( "Embedding.ParamsBase.Pool",
     Embedding_ParamsBase );
-
+ 
   /**
    */
   constructor(

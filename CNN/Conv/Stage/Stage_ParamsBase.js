@@ -32,7 +32,8 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
     depthwiseFilterHeight, depthwiseFilterWidth,
     nSqueezeExcitationChannelCountDivisor,
     nActivationId,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     super();
     this.#setAsConstructor_self(
@@ -43,7 +44,8 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
       depthwiseFilterHeight, depthwiseFilterWidth,
       nSqueezeExcitationChannelCountDivisor,
       nActivationId,
-      bKeepInputTensor
+      bKeepInputTensor,
+    bTableLog
     );
   }
 
@@ -56,7 +58,8 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
     depthwiseFilterHeight, depthwiseFilterWidth,
     nSqueezeExcitationChannelCountDivisor,
     nActivationId,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     super.setAsConstructor();
     this.#setAsConstructor_self(
@@ -67,7 +70,8 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
       depthwiseFilterHeight, depthwiseFilterWidth,
       nSqueezeExcitationChannelCountDivisor,
       nActivationId,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
   }
 
@@ -80,7 +84,8 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
     depthwiseFilterHeight, depthwiseFilterWidth,
     nSqueezeExcitationChannelCountDivisor,
     nActivationId,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     this.input_height = input_height;
     this.input_width = input_width;
@@ -94,6 +99,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
       = nSqueezeExcitationChannelCountDivisor;
     this.nActivationId = nActivationId;
     this.bKeepInputTensor = bKeepInputTensor;
+    this.bTableLog = bTableLog;
   }
 
   /** @override */
@@ -111,6 +117,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
     this.nSqueezeExcitationChannelCountDivisor = undefined;
     this.nActivationId = undefined;
     this.bKeepInputTensor = undefined;
+    this.bTableLog = undefined;
 
     super.disposeResources();
   }
@@ -180,6 +187,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
 
       + `nActivationName=${this.nActivationName}(${this.nActivationId}), `
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
+      + `bTableLog=${this.bTableLog}, `
 
       + `inferencedParams={ ${this.inferencedParams} }`
     ;
