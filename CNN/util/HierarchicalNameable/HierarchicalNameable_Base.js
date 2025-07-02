@@ -91,9 +91,6 @@ let HierarchicalNameable_Base
    */
   disposeResources() {
 
-//!!! (2025/06/11 Remarked) seems not necessary.
-//    this.name_related_cache_clear();
-
     { // Clear name related caches.
       this.#nameJoinSeparatorString_cache = undefined;
       this.#nameString_cache = undefined;
@@ -149,18 +146,6 @@ let HierarchicalNameable_Base
 
     super.disposeResources();
   }
-
-//!!! (2025/06/11 Remarked) seems not necessary.
-//   /**
-//    * Clear all .#xxxString_Xxx_cache to null so that they will be
-//    * re-created. Usually, call this method if this or some parents' names
-//    * are changed.
-//    */
-//   name_related_cache_clear() {
-//     this.#nameJoinSeparatorString_cache = undefined;
-//     this.#nameString_cache = undefined;
-//     this.#nameString_recursively_cache = undefined;
-//   }
 
 
   /**

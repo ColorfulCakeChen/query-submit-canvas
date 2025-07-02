@@ -1160,7 +1160,8 @@ class Stage_Reference_Base extends Recyclable.Root {
       console.group( `Stage_Reference` );
 
     // Test every block's parameters.
-    Stage_Reference_Base.AssertParameters_Stage_blocks( testParams, testParams.out );
+    Stage_Reference_Base.AssertParameters_Stage_blocks(
+      testParams, testParams.out );
 
     // Calculate every blocks in sequence.
 
@@ -1169,12 +1170,14 @@ class Stage_Reference_Base extends Recyclable.Root {
     this.imageOutArray[ 0 ] = imageIn;
     this.imageOutArray[ 1 ] = null;
 
-    for ( let blockIndex = 0; blockIndex < testParams.blockArray.length; ++blockIndex ) {
+    for ( let blockIndex = 0;
+      blockIndex < testParams.blockArray.length; ++blockIndex ) {
+
       this.imageInArray[ 0 ] = this.imageOutArray[ 0 ];
       this.imageInArray[ 1 ] = this.imageOutArray[ 1 ];
 
-!!! ...unfinished... (2025/06/11)
-// should rename blockRef (nameString)
+      const blockRefName = `BlockReference_${i}`;
+      blockRef.name_set( blockRefName ); // Rename blockRef.
 
       blockRef.testParams = testParams.blockArray[ blockIndex ];
       blockRef.calcResult( this.imageInArray, this.imageOutArray );
