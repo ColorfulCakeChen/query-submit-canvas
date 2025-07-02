@@ -2,7 +2,7 @@ export { Stage_Reference_Base as Base };
 
 import * as HierarchicalNameable from "../../util/HierarchicalNameable.js";
 import * as Pool from "../../util/Pool.js";
-//import * as Recyclable from "../../util/Recyclable.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as NameNumberArrayObject from "../../util/NameNumberArrayObject.js";
 import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
@@ -54,8 +54,12 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
     this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.02, 0.005 );
 
     // For reducing memory allocation.
-    this.imageInArray = Recyclable.Array.Pool.get_or_create_by( 2 );  // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.
-    this.imageOutArray = Recyclable.Array.Pool.get_or_create_by( 2 );  // imageOutArray[ 0 ] is output0, imageOutArray[ 1 ] is output1.
+
+    // imageInArray[ 0 ] is input0, imageInArray[ 1 ] is input1.    
+    this.imageInArray = Recyclable.Array.Pool.get_or_create_by( 2 );
+
+    // imageOutArray[ 0 ] is output0, imageOutArray[ 1 ] is output1.
+    this.imageOutArray = Recyclable.Array.Pool.get_or_create_by( 2 );
   }
 
   /** @override */
@@ -87,7 +91,7 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
    */
   testCorrectness( imageSourceBag, testParams ) {
 
-    let {
+    const {
       input_height, input_width, input_channelCount,
     } = testParams.out;
 
