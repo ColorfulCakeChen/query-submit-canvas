@@ -1156,7 +1156,7 @@ class Stage_Reference_Base extends Recyclable.Root {
     const testParams = this.testParams;
 
     const bTableLog = testParams.out.bTableLog;
-    if ( bTableLog ) {
+    if ( bTableLog )
       console.group( `Stage_Reference` );
 
     // Test every block's parameters.
