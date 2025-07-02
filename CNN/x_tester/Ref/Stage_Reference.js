@@ -1167,6 +1167,10 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
     const bTableLog = testParams.out.bTableLog;
     if ( bTableLog ) {
       const stageName = this.nameString_get();
+
+!!! ...unfinished... (2025/07/02)
+// Add ConvStageType
+
       console.group( `${stageName}` );
     }
 

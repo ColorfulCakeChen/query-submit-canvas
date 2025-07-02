@@ -756,6 +756,10 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
   * applier( progressToAdvance, inputTensor ) {
     if ( this.bTableLog ) {
       const stageName = this.nameString_get();
+
+!!! ...unfinished... (2025/07/02)
+// Add ConvStageType
+
       console.group( `${stageName}` );
     }
 
@@ -797,6 +801,10 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
   apply( inputTensor ) {
     if ( this.bTableLog ) {
       const stageName = this.nameString_get();
+
+!!! ...unfinished... (2025/07/02)
+// Add ConvStageType
+
       console.group( `${stageName}` );
     }
 
