@@ -87,6 +87,10 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
    *   If true, apply() will not dispose inputTensor (i.e. will be kept). If
    * null, it will be extracted from inputWeightArray (i.e. by evolution).
    *
+   * @param {boolean} bTableLog
+   *   If true, the process and result will be logged to console as table (for
+   * debug).
+   *
    */
   constructor(
     input_height, input_width, input_channelCount,
@@ -96,7 +100,8 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
     depthwiseFilterHeight, depthwiseFilterWidth,
     nSqueezeExcitationChannelCountDivisor,
     nActivationId,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
 
     // Q: Why the depthwiseChannelMultiplierBlock0 is not listed as a
@@ -126,7 +131,8 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
       depthwiseFilterHeight, depthwiseFilterWidth,
       nSqueezeExcitationChannelCountDivisor,
       nActivationId,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
     this.#setAsConstructor_self();
   }
@@ -140,7 +146,8 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
     depthwiseFilterHeight, depthwiseFilterWidth,
     nSqueezeExcitationChannelCountDivisor,
     nActivationId,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     super.setAsConstructor(
       Stage_Params.SequenceArray,
@@ -151,7 +158,8 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
       depthwiseFilterHeight, depthwiseFilterWidth,
       nSqueezeExcitationChannelCountDivisor,
       nActivationId,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
     this.#setAsConstructor_self();
   }
@@ -219,6 +227,8 @@ class Stage_Params extends Weights.Params( ParamsBase ) {
         = this.getParamValue_byParamDesc( Stage_Params.nActivationId );
       this.bKeepInputTensor
         = this.getParamValue_byParamDesc( Stage_Params.bKeepInputTensor );
+      this.bTableLog
+        = this.getParamValue_byParamDesc( Stage_Params.bTableLog );
     }
 
     this.inferencedParams_create();
@@ -259,6 +269,8 @@ Stage_Params.nActivationId
 Stage_Params.bKeepInputTensor
   = new ParamDesc.Bool(               "bKeepInputTensor" );
 
+Stage_Params.bTableLog
+  = new ParamDesc.Bool(               "bTableLog" );
 
 
 /**
@@ -277,4 +289,5 @@ Stage_Params.SequenceArray = new ParamDesc.SequenceArray( [
   Stage_Params.nSqueezeExcitationChannelCountDivisor,
   Stage_Params.nActivationId,
   Stage_Params.bKeepInputTensor,
+  Stage_Params.bTableLog,
 ] );
