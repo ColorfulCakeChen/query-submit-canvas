@@ -164,33 +164,11 @@ class HeightWidthDepth {
    */
   stage_PerformanceTest_addCase( testCaseName, stageTestParams ) {
     try {
-
-//!!! (2025/05/26 Remarked) Moved to PerformanceTestCase.prepare()
-//       // Pre-create performance test case's input image.
-//       let inputImage = this.testPerformance_imageSourceBag.getImage_by(
-//         stageTestParams.out.input_height,
-//         stageTestParams.out.input_width,
-//         stageTestParams.out.input_channelCount );
-//
-//       // Pre-create performance test case's input tensor.
-//       let inputTensor3d = this.testPerformance_imageSourceBag.getTensor3d_by(
-//         stageTestParams.out.input_height,
-//         stageTestParams.out.input_width,
-//         stageTestParams.out.input_channelCount );
-//
-//       let stage = Stage_Reference.Base.Stage_create(
-//         stageTestParams, inputImage.boundsArraySet.output0 );
-
       let aPerformanceTestCase = PerformanceTestCase.Pool.get_or_create_by(
         stageTestParams.id, testCaseName,
         stageTestParams, this.testPerformance_imageSourceBag );
 
       this.testCaseMap.set( testCaseName, aPerformanceTestCase );
-
-//!!! (2025/05/26 Remarked) Moved to PerformanceTestCase.prepare()
-//       console.log( `Stage.${testCaseName}: tensorWeightCount = { `
-//         + `Extracted: ${stage.tensorWeightCountExtracted}, `
-//         + `Total: ${stage.tensorWeightCountTotal} }` );
 
     } catch ( e ) {
       debugger;
@@ -223,12 +201,15 @@ class HeightWidthDepth {
     // depthwiseFilterHeight, depthwiseFilterWidth,
     // nSqueezeExcitationChannelCountDivisor,
     // nActivationId,
-    // bKeepInputTensor
+    // bKeepInputTensor,
+    // bTableLog
     //
     // The stage performance testing should:
     //   - ( bKeepInputTensor == true ). Otherwise, the this.dataTensor3d will
     //       be destroyed.
     //
+    const bKeepInputTensor = true;
+    const bTableLog = false;
 
     // Test Case 0: (MobileNetV1, ( bPointwise1 == true ))
     this.stage_PerformanceTest_addCase(
@@ -239,7 +220,7 @@ class HeightWidthDepth {
         blockCountRequested, true,
         3, 3, nSqueezeExcitationChannelCountDivisor,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 1: (MobileNetV1_padValid, ( bPointwise1 == true ))
@@ -251,7 +232,7 @@ class HeightWidthDepth {
         blockCountRequested, true,
         3, 3, nSqueezeExcitationChannelCountDivisor,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 2: (MobileNetV2_Thin, ( bPointwise1 == true ))
@@ -263,7 +244,7 @@ class HeightWidthDepth {
         blockCountRequested, true,
         3, 3, nSqueezeExcitationChannelCountDivisor,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 3: (MobileNetV2, ( bPointwise1 == true ))
@@ -275,7 +256,7 @@ class HeightWidthDepth {
         blockCountRequested, true,
         3, 3, nSqueezeExcitationChannelCountDivisor,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 4: (ShuffleNetV2, ( bPointwise1 == true ))
@@ -287,7 +268,7 @@ class HeightWidthDepth {
         blockCountRequested, true,
         3, 3, nSqueezeExcitationChannelCountDivisor,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 5: (ShuffleNetV2_byPointwise21, ( bPointwise1 == true ))
@@ -299,7 +280,7 @@ class HeightWidthDepth {
         blockCountRequested, true,
         3, 3, nSqueezeExcitationChannelCountDivisor,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 6: (ShuffleNetV2_byMobileNetV1, ( bPointwise1 == true ))
@@ -311,7 +292,7 @@ class HeightWidthDepth {
         blockCountRequested, true,
         3, 3, nSqueezeExcitationChannelCountDivisor,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 7: (ShuffleNetV2_byMobileNetV1_padValid, ( bPointwise1 == true ))
@@ -323,7 +304,7 @@ class HeightWidthDepth {
         blockCountRequested, true,
         3, 3, nSqueezeExcitationChannelCountDivisor,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
-        true
+        bKeepInputTensor, bTableLog
       ) );
   }
 
@@ -376,89 +357,91 @@ class HeightWidthDepth {
   /** Testing whether the results of different implementation are the same. */
   * testCorrectness() {
 
-    {
-      let pool_all_issuedCount_before = Pool.All.issuedCount;
-
-      //Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
-      //  "jsPerf_Stage.HeightWidthDepth.testCorrectness()", () => {
-      //}, this );
-
-      yield;
-
-      {
-        // Test memory leakage of imageSourceBag.
-        let memoryInfo_testCorrectness_before = tf.memory();
-
-        {
-          // Note: imageSourceBag should not be created outside tidy() because
-          //       tidy() will dispose tensors dynamically created in them.
-          let imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by();
-
-          let testParams = Stage_TestParams.Base.Pool.get_or_create_by();
-          let theParamDescConfigAll = testParams.ParamDescConfigAll_create();
-          let testParamsGenerator
-            = testParams.ParamsGenerator( theParamDescConfigAll );
-          let testReference = Stage_Reference.Base.Pool.get_or_create_by();
-
-          let batchIdCalculator = new BatchIdCalculator.Base(
-            testCaseCount, 100 * 1000 );
-
-          try {
-            for ( testParams of testParamsGenerator ) {
-              let bDisplayed
-                = batchIdCalculator.checkAndDisplay( testParams.id );
-
-              // Since just entering a new batch section, take a break so that
-              // memory garbage collector could be activated to work.
-              if ( bDisplayed )
-                yield;
-
-              testReference.testCorrectness( imageSourceBag, testParams );
-            }
-
-          } catch ( e ) {
-            let backendName = tf.getBackend();
-            let msg = `jsPerf_Stage.js: testCorrectness(): `
-              + `backendName=${backendName}, `
-              + `Stage, (yieldCount == ${testParams.yieldCount}), `
-              + `testParams.id == ${testParams.id}`;
-
-            console.log( msg );
-            alert( `${msg}\n${e}` );
-
-            //debugger;
-            throw e;
-          }
-
-          batchIdCalculator.checkAndDisplay( testParams.id );
-
-          testReference.disposeResources_and_recycleToPool();
-          testReference = null;
-
-          testParams.disposeResources_and_recycleToPool();
-          testParams = null;
-
-          imageSourceBag.disposeResources_and_recycleToPool();
-          imageSourceBag = null;
-        }
-
-        let memoryInfo_testCorrectness_after = tf.memory();
-
-        if ( memoryInfo_testCorrectness_after.numTensors
-               != memoryInfo_testCorrectness_before.numTensors )
-          throw Error( `testCorrectness() memory leak. `
-            + `result tensor count `
-            + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
-            + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ).`
-          );
-      }
-
-      Pool.Asserter.assert_Pool_issuedCount(
-        "jsPerf_Stage.HeightWidthDepth.testCorrectness()",
-        pool_all_issuedCount_before );
-
-      yield;
-    }
+//!!! ...unfinished... (2025/07/02)
+// Moved to CNN_Stage_tester
+//     {
+//       let pool_all_issuedCount_before = Pool.All.issuedCount;
+//
+//       //Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
+//       //  "jsPerf_Stage.HeightWidthDepth.testCorrectness()", () => {
+//       //}, this );
+//
+//       yield;
+//
+//       {
+//         // Test memory leakage of imageSourceBag.
+//         let memoryInfo_testCorrectness_before = tf.memory();
+//
+//         {
+//           // Note: imageSourceBag should not be created outside tidy() because
+//           //       tidy() will dispose tensors dynamically created in them.
+//           let imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by();
+//
+//           let testParams = Stage_TestParams.Base.Pool.get_or_create_by();
+//           let theParamDescConfigAll = testParams.ParamDescConfigAll_create();
+//           let testParamsGenerator
+//             = testParams.ParamsGenerator( theParamDescConfigAll );
+//           let testReference = Stage_Reference.Base.Pool.get_or_create_by();
+//
+//           let batchIdCalculator = new BatchIdCalculator.Base(
+//             testCaseCount, 100 * 1000 );
+//
+//           try {
+//             for ( testParams of testParamsGenerator ) {
+//               let bDisplayed
+//                 = batchIdCalculator.checkAndDisplay( testParams.id );
+//
+//               // Since just entering a new batch section, take a break so that
+//               // memory garbage collector could be activated to work.
+//               if ( bDisplayed )
+//                 yield;
+//
+//               testReference.testCorrectness( imageSourceBag, testParams );
+//             }
+//
+//           } catch ( e ) {
+//             let backendName = tf.getBackend();
+//             let msg = `jsPerf_Stage.js: testCorrectness(): `
+//               + `backendName=${backendName}, `
+//               + `Stage, (yieldCount == ${testParams.yieldCount}), `
+//               + `testParams.id == ${testParams.id}`;
+//
+//             console.log( msg );
+//             alert( `${msg}\n${e}` );
+//
+//             //debugger;
+//             throw e;
+//           }
+//
+//           batchIdCalculator.checkAndDisplay( testParams.id );
+//
+//           testReference.disposeResources_and_recycleToPool();
+//           testReference = null;
+//
+//           testParams.disposeResources_and_recycleToPool();
+//           testParams = null;
+//
+//           imageSourceBag.disposeResources_and_recycleToPool();
+//           imageSourceBag = null;
+//         }
+//
+//         let memoryInfo_testCorrectness_after = tf.memory();
+//
+//         if ( memoryInfo_testCorrectness_after.numTensors
+//                != memoryInfo_testCorrectness_before.numTensors )
+//           throw Error( `testCorrectness() memory leak. `
+//             + `result tensor count `
+//             + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
+//             + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ).`
+//           );
+//       }
+//
+//       Pool.Asserter.assert_Pool_issuedCount(
+//         "jsPerf_Stage.HeightWidthDepth.testCorrectness()",
+//         pool_all_issuedCount_before );
+//
+//       yield;
+//     }
 
     try {
       // After correctness testing done, create all Stage for performance

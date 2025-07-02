@@ -11,9 +11,9 @@ import * as Recyclable from "../util/Recyclable.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
 //import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
-import * as Embedding from "../Conv/Embedding.js";
-import * as Embedding_Reference from "./Ref/Embedding_Reference.js";
-import * as Embedding_TestParams from "./Ref/Embedding_TestParams.js"; 
+import * as Stage from "../Conv/Stage.js";
+import * as Stage_Reference from "./Ref/Stage_Reference.js";
+import * as Stage_TestParams from "./Ref/Stage_TestParams.js"; 
 import * as BatchIdCalculator from "./Ref/BatchIdCalculator.js";
 import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
 //import * as NumberImage from "./Ref/NumberImage.js"; 
@@ -52,19 +52,19 @@ async function *testerBackend( progressParent, backendName ) {
       let imageSourceBag
         = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
-      let testParams = Embedding_TestParams.Base.Pool.get_or_create_by();
+      let testParams = Stage_TestParams.Base.Pool.get_or_create_by();
       let theParamDescConfigAll = testParams.ParamDescConfigAll_create();
       let testParamsGenerator
         = testParams.ParamsGenerator( theParamDescConfigAll );
-      let testReference = Embedding_Reference.Base.Pool.get_or_create_by(
-        null, "Embedding_Reference" );
+      let testReference = Stage_Reference.Base.Pool.get_or_create_by(
+        null, "Stage_Reference" );
 
       // Set up correct test case count (all permuattion combination count).
       testCaseCount = theParamDescConfigAll.permutationCombination_count();
       progressToAdvance.max = testCaseCount;
 
       let batchIdCalculator = new BatchIdCalculator.Base(
-        testCaseCount, 0.1 * 1000 );
+        testCaseCount, 10 * 1000 );
       batchIdCalculator.displayTotalCount();
 
       try {
@@ -92,7 +92,7 @@ async function *testerBackend( progressParent, backendName ) {
       // A: To catch testParamsGenerator's exception.
       } catch ( e ) {
         let backendName = tf.getBackend();
-        let msg = `CNN_Embedding_tester.${funcNameInMessage}(): `
+        let msg = `CNN_Stage_tester.${funcNameInMessage}(): `
           + `backendName=${backendName}, `
           + `Embedding, ( yieldCount == ${testParams.yieldCount} ), `
           + `testParams.id == ${testParams.id}`;
@@ -123,7 +123,7 @@ async function *testerBackend( progressParent, backendName ) {
             != memoryInfo_testCorrectness_before.numTensors ) {
 
       const backendName = tf.getBackend();
-      const msg = `CNN_Embedding_tester.${funcNameInMessage}(): `
+      const msg = `CNN_Stage_tester.${funcNameInMessage}(): `
         + `backendName=${backendName}, `
         + ` memory leak. `
         + `result tensor count `
@@ -144,7 +144,7 @@ async function *testerBackend( progressParent, backendName ) {
  *
  */
 async function* tester( progressParent ) {
-  console.log( "CNN_Embedding testing..." );
+  console.log( "CNN_Stage testing..." );
 
   // 0. Prepare progressParent for every TestCase.
 
@@ -168,5 +168,5 @@ async function* tester( progressParent ) {
   // // 3.
   // yield *testerBackend( progressWASM, "wasm" );
 
-  console.log( "CNN_Embedding testing... Done." );
+  console.log( "CNN_Stage testing... Done." );
 }
