@@ -364,9 +364,9 @@ class Stage_TestParams_Base extends TestParams.Base {
       ],
 
       depthwiseFilterHeight: [
-        Stage.Params.depthwiseFilterHeight.valueDesc.range.min, // 1
+        // Stage.Params.depthwiseFilterHeight.valueDesc.range.min, // 1
         // 2,
-        // 3,
+        3,
         depthwiseFilterMaxSize
       ],
 
@@ -375,8 +375,8 @@ class Stage_TestParams_Base extends TestParams.Base {
       //       tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 
       depthwiseFilterWidth: [
-        Stage.Params.depthwiseFilterWidth.valueDesc.range.min, // 2
-        // 3,
+        // Stage.Params.depthwiseFilterWidth.valueDesc.range.min, // 2
+        3,
         depthwiseFilterMaxSize
       ],
 
