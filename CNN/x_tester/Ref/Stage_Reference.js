@@ -194,7 +194,7 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
         testParams, imageIn_ScaleBoundsArray );
 
       // Table log the input tensor if requested.
-      const bTableLog = embedding.bTableLog;
+      const bTableLog = stage.bTableLog;
       if ( bTableLog ) {
         const tensorIn_imageHeaderPrefix = "tensorIn";
         const tensorIn_strSubheader = undefined;
