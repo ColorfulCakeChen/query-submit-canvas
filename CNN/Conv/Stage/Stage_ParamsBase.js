@@ -106,18 +106,18 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
   disposeResources() {
     this.inferencedParams_dispose();
 
-    this.input_height = undefined;
-    this.input_width = undefined;
-    this.input_channelCount = undefined;
-    this.nConvStageTypeId = undefined;
-    this.blockCountRequested = undefined;
-    this.bPointwise1 = undefined;
-    this.depthwiseFilterHeight = undefined;
-    this.depthwiseFilterWidth = undefined;
-    this.nSqueezeExcitationChannelCountDivisor = undefined;
-    this.nActivationId = undefined;
-    this.bKeepInputTensor = undefined;
     this.bTableLog = undefined;
+    this.bKeepInputTensor = undefined;
+    this.nActivationId = undefined;
+    this.nSqueezeExcitationChannelCountDivisor = undefined;
+    this.depthwiseFilterWidth = undefined;
+    this.depthwiseFilterHeight = undefined;
+    this.bPointwise1 = undefined;
+    this.blockCountRequested = undefined;
+    this.nConvStageTypeId = undefined;
+    this.input_channelCount = undefined;
+    this.input_width = undefined;
+    this.input_height = undefined;
 
     super.disposeResources();
   }
