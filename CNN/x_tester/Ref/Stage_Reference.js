@@ -150,6 +150,9 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
       }
       this.testCorrectness_imageOutReference = null;
     }
+
+    if ( bTableLog )
+      console.groupEnd();  // groupLabel "testParams.id"
   }
 
   /**
