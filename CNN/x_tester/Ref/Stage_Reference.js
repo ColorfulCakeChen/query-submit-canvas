@@ -126,12 +126,14 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
       const groupLabel = `testParams.id == ${testParams.id}`;
       console.groupCollapsed( groupLabel );
 
+      console.group( "imageIn" );
       {
         const imageIn_imageHeaderPrefix = "imageIn";
         const imageIn_strSubheader = undefined;
         this.testCorrectness_imageIn.TableLog_header_body(
           imageIn_imageHeaderPrefix, imageIn_strSubheader );
       }
+      console.groupEnd(); // imageIn
     }
 
     this.testCorrectness_imageOutReference
@@ -201,12 +203,16 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
       // Table log the input tensor if requested.
       const bTableLog = stage.bTableLog;
       if ( bTableLog ) {
-        const tensorIn_imageHeaderPrefix = "tensorIn";
-        const tensorIn_strSubheader = undefined;
-        TableLogger.Base.Singleton.log_tensor3d_along_depth(
-          tensorIn_imageHeaderPrefix, tensorIn_strSubheader,
-          inputTensor3d,
-          imageIn_ScaleBoundsArray );
+        console.group( "tensorIn" );
+        {
+          const tensorIn_imageHeaderPrefix = "tensorIn";
+          const tensorIn_strSubheader = undefined;
+          TableLogger.Base.Singleton.log_tensor3d_along_depth(
+            tensorIn_imageHeaderPrefix, tensorIn_strSubheader,
+            inputTensor3d,
+            imageIn_ScaleBoundsArray );
+        }
+        console.groupEnd(); // tensorIn
       }
 
       // The difference tensor count will be the generated tensor count

@@ -397,6 +397,8 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
       if ( bTableLog ) {
         const [ imageIn0, imageIn1 ] = imageInArraySelected;
 
+        console.group( "imageIn" );
+
         {
           const imageIn0_imageHeaderPrefix = "imageIn0";
           const imageIn0_strSubheader = undefined;
@@ -410,6 +412,8 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
           imageIn1.TableLog_header_body(
             imageIn1_imageHeaderPrefix, imageIn1_strSubheader );
         }
+
+        console.groupEnd(); // imageIn
       }
 
       // Output is an array with two elements.
@@ -493,6 +497,8 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
       const imageIn1_bPassThroughArray
         = imageIn1_BoundsArraySet?.bPassThroughArray;
 
+      console.group( "tensorIn" );
+
       {
         const tensorIn0_imageHeaderPrefix = "tensorIn0";
         const tensorIn0_strSubheader = undefined;
@@ -510,6 +516,8 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
           tensorIn1,
           imageIn1_ScaleBoundsArray, imageIn1_bPassThroughArray );
       }
+
+      console.groupEnd(); // tensorIn
     }
 
     // Note: Do not generate parameters description string in advance every
