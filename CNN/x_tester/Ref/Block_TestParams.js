@@ -735,7 +735,7 @@ class Block_TestParams_Base extends TestParams.Base {
           .clone_bySqueezeExcitation_NonPassThrough(
 
 !!! ...unfinished... (2025/07/03)
-    prefix_or_postfix, channelGroupIndex, nSqueezeExcitationChannelCountDivisor,
+//      channelGroupIndex, prefix_or_postfix, operationName, nSqueezeExcitationChannelCountDivisor,
 
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise20PrefixSEIntermediateFilters,
@@ -768,7 +768,7 @@ class Block_TestParams_Base extends TestParams.Base {
           .clone_bySqueezeExcitation_NonPassThrough(
 
 !!! ...unfinished... (2025/07/03)
-    prefix_or_postfix, channelGroupIndex, nSqueezeExcitationChannelCountDivisor,
+//      channelGroupIndex, prefix_or_postfix, operationName, nSqueezeExcitationChannelCountDivisor,
 
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise20PostfixSEIntermediateFilters,
@@ -827,7 +827,7 @@ class Block_TestParams_Base extends TestParams.Base {
           .clone_bySqueezeExcitation_NonPassThrough(
 
 !!! ...unfinished... (2025/07/03)
-    prefix_or_postfix, channelGroupIndex, nSqueezeExcitationChannelCountDivisor,
+//      channelGroupIndex, prefix_or_postfix, operationName, nSqueezeExcitationChannelCountDivisor,
 
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise202PrefixSEIntermediateFilters,
@@ -859,7 +859,7 @@ class Block_TestParams_Base extends TestParams.Base {
           .clone_bySqueezeExcitation_NonPassThrough(
 
 !!! ...unfinished... (2025/07/03)
-    prefix_or_postfix, channelGroupIndex, nSqueezeExcitationChannelCountDivisor,
+//      channelGroupIndex, prefix_or_postfix, operationName, nSqueezeExcitationChannelCountDivisor,
 
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise202PostfixSEIntermediateFilters,
@@ -953,7 +953,7 @@ class Block_TestParams_Base extends TestParams.Base {
           .clone_bySqueezeExcitation_NonPassThrough(
 
 !!! ...unfinished... (2025/07/03)
-    prefix_or_postfix, channelGroupIndex, nSqueezeExcitationChannelCountDivisor,
+//      channelGroupIndex, prefix_or_postfix, operationName, nSqueezeExcitationChannelCountDivisor,
 
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise21PrefixSEIntermediateFilters,
@@ -985,7 +985,7 @@ class Block_TestParams_Base extends TestParams.Base {
           .clone_bySqueezeExcitation_NonPassThrough(
 
 !!! ...unfinished... (2025/07/03)
-    prefix_or_postfix, channelGroupIndex, nSqueezeExcitationChannelCountDivisor,
+//      channelGroupIndex, prefix_or_postfix, operationName, nSqueezeExcitationChannelCountDivisor,
 
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise21PostfixSEIntermediateFilters,

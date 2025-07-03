@@ -114,9 +114,7 @@ class SE_Name_Bag extends MultiLayerMap.Base {
    * @see SE_Name_Bag.create_by()
    */
   get_by(
-    prefix_or_postfix,
-    operationName,
-    channelGroupIndex,
+    channelGroupIndex, prefix_or_postfix, operationName,
     nSqueezeExcitationChannelCountDivisor ) {
 
     // Note: Although it is time consuming when using string parameters
@@ -125,11 +123,14 @@ class SE_Name_Bag extends MultiLayerMap.Base {
     //       string again and again.
     return this.get_or_create_by_arguments1_etc(
       SE_Name_Bag.create_by, this,
-      prefix_or_postfix, operationName, channelGroupIndex,
+      channelGroupIndex, prefix_or_postfix, operationName,
       nSqueezeExcitationChannelCountDivisor );
   }
 
   /**
+   * @param {number} channelGroupIndex
+   *   An integer (either 0 or 1).
+   *
    * @param {string} prefix_or_postfix
    *   A string (either "prefix" or "postfix").
    *
@@ -138,9 +139,6 @@ class SE_Name_Bag extends MultiLayerMap.Base {
    * "excitationPointwise" or "multiply"). If null or undefined, it means
    * unknown operation.
    *
-   * @param {number} channelGroupIndex
-   *   An integer (either 0 or 1).
-   *
    * @param {number} nSqueezeExcitationChannelCountDivisor
    *   A positive integer between [ 1, 64 ]. If null or undefined, it means no
    * intermediate pointwise convolution. Usuallly, only if
@@ -148,24 +146,18 @@ class SE_Name_Bag extends MultiLayerMap.Base {
    * provided.
    *
    * @return {string}
-   *   Return a string similar to "SE_postfix_intermediatePointwise_divisor_Xx"
+   *   Return a string similar to "SE0_postfix_intermediatePointwis_divisor_Xx"
    * according to the divisor integer value.
    */
   static create_by(
-    prefix_or_postfix,
-    operationName,
-    channelGroupIndex,
+    channelGroupIndex, prefix_or_postfix, operationName,
     nSqueezeExcitationChannelCountDivisor ) {
 
-    let str = `SE_${prefix_or_postfix}`;
+    let str = `SE${channelGroupIndex}_${prefix_or_postfix}`;
 
     if (   ( operationName !== undefined )
         && ( operationName !== null ) )
       str += `_${operationName}`;
-
-    if (   ( channelGroupIndex !== undefined )
-        && ( channelGroupIndex !== null ) )
-      str += channelGroupIndex;
 
     if (   ( nSqueezeExcitationChannelCountDivisor !== undefined )
         && ( nSqueezeExcitationChannelCountDivisor !== null ) )
