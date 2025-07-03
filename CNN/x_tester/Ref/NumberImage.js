@@ -867,9 +867,10 @@ class NumberImage_Base extends Recyclable.Root {
                         filterValue = Math.fround(
                           depthwiseFiltersArray[ filterIndex ] );
 
-                        // Note: According to experiment, the accumulation error
-                        // (vs. tensorflow.js) is smaller if only fround() the input
-                        // (including previous non-completed convolution).
+                        // Note: According to experiment, the accumulation
+                        // error (vs. tensorflow.js) is smaller if only
+                        // fround() the input (including previous non-completed
+                        // convolution).
                         imageOut.dataArray[ outIndex ] = Math.fround(
                           imageOut.dataArray[ outIndex ]
                             + (
@@ -879,8 +880,8 @@ class NumberImage_Base extends Recyclable.Root {
                               )
                         );
 
-                        // Too much fround() results in larger accumulation error
-                        // (vs. tensorflow.js).
+                        // Too much fround() results in larger accumulation
+                        // error (vs. tensorflow.js).
                         // (2025/07/03 Remarked) 
                         //
                         // imageOut.dataArray[ outIndex ] = Math.fround(
