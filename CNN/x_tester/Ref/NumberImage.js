@@ -1622,14 +1622,14 @@ class NumberImage_Base extends Recyclable.Root {
 
   /** Call this.clone_bySqueezeExcitation() with ( bPassThrough == true ). */
   clone_bySqueezeExcitation_PassThrough(
-    nSqueezeExcitationChannelCountDivisor,
+    prefix_or_postfix, channelGroupIndex, nSqueezeExcitationChannelCountDivisor,
     nActivationId,
     aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
     bTableLog,
     parametersDesc, ...squeezeExcitationNames ) {
 
     return this.clone_bySqueezeExcitation(
-      nSqueezeExcitationChannelCountDivisor,
+      prefix_or_postfix, channelGroupIndex, nSqueezeExcitationChannelCountDivisor,
       null, null, null, null,
       nActivationId,
       true, // (bPassThrough)
@@ -1640,7 +1640,7 @@ class NumberImage_Base extends Recyclable.Root {
 
   /** Call this.clone_bySqueezeExcitation() with ( bPassThrough == false ). */
   clone_bySqueezeExcitation_NonPassThrough(
-    nSqueezeExcitationChannelCountDivisor,
+    prefix_or_postfix, channelGroupIndex, nSqueezeExcitationChannelCountDivisor,
     intermediateFiltersArray, intermediateBiasesArray,
     excitationFiltersArray, excitationBiasesArray,
     nActivationId,
@@ -1648,7 +1648,7 @@ class NumberImage_Base extends Recyclable.Root {
     parametersDesc, ...squeezeExcitationNames ) {
 
     return this.clone_bySqueezeExcitation(
-      nSqueezeExcitationChannelCountDivisor,
+      prefix_or_postfix, channelGroupIndex, nSqueezeExcitationChannelCountDivisor,
       intermediateFiltersArray, intermediateBiasesArray,
       excitationFiltersArray, excitationBiasesArray,
       nActivationId,
@@ -1661,6 +1661,12 @@ class NumberImage_Base extends Recyclable.Root {
   /**
    * @param {NumberImage.Base} this
    *   The source image to be processed.
+   *
+   * @param {string} prefix_or_postfix
+   *   A string (either "prefix" or "postfix").
+   *
+   * @param {number} channelGroupIndex
+   *   An integer (either 0 or 1).
    *
    * @param {number} nSqueezeExcitationChannelCountDivisor
    *   An integer represents the channel count divisor for
@@ -1710,7 +1716,7 @@ class NumberImage_Base extends Recyclable.Root {
    * squeeze-and-excitation.
    */
   clone_bySqueezeExcitation(
-    nSqueezeExcitationChannelCountDivisor,
+    prefix_or_postfix, channelGroupIndex, nSqueezeExcitationChannelCountDivisor,
     intermediateFiltersArray, intermediateBiasesArray,
     excitationFiltersArray, excitationBiasesArray,
     nActivationId,
@@ -1718,6 +1724,10 @@ class NumberImage_Base extends Recyclable.Root {
     aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
     bTableLog,
     parametersDesc, ...squeezeExcitationNames ) {
+
+!!! ...unfinished... (2025/07/03)
+    const SE_nameBag
+      = ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag;
 
     if (   ( nSqueezeExcitationChannelCountDivisor == undefined )
         || ( nSqueezeExcitationChannelCountDivisor <
@@ -1821,7 +1831,11 @@ class NumberImage_Base extends Recyclable.Root {
           nPassThroughStyleId,
           bTableLog,
           parametersDesc,
-          ...squeezeExcitationNames, "intermediatePointwise",
+          ...squeezeExcitationNames,
+
+!!! ...unfinished... (2025/07/03) combined into one string
+
+          "intermediatePointwise",
           "divisor", nSqueezeExcitationChannelCountDivisor );
 
         if ( squeezeOut != this ) {

@@ -723,12 +723,20 @@ class Block_TestParams_Base extends TestParams.Base {
     io_imageNeedDisposeUniqueStack,
     bTableLog, parametersDesc, ...pointwiseNames ) {
 
+!!! ...unfinished... (2025/07/03)
+    const SE_nameBag
+      = ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag;
+
     let squeezeExcitationPrefixOut = inputImage;
     if ( this.out.bSqueezeExcitationPrefix ) {
       if ( this.out.nSqueezeExcitationChannelCountDivisor
              != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
         squeezeExcitationPrefixOut = inputImage
           .clone_bySqueezeExcitation_NonPassThrough(
+
+!!! ...unfinished... (2025/07/03)
+    prefix_or_postfix, channelGroupIndex, nSqueezeExcitationChannelCountDivisor,
+
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise20PrefixSEIntermediateFilters,
             this.in.paramsNumberArrayObject.pointwise20PrefixSEIntermediateBiases,
@@ -758,6 +766,10 @@ class Block_TestParams_Base extends TestParams.Base {
              != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
         squeezeExcitationPostfixOut = pointwiseOut
           .clone_bySqueezeExcitation_NonPassThrough(
+
+!!! ...unfinished... (2025/07/03)
+    prefix_or_postfix, channelGroupIndex, nSqueezeExcitationChannelCountDivisor,
+
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise20PostfixSEIntermediateFilters,
             this.in.paramsNumberArrayObject.pointwise20PostfixSEIntermediateBiases,
@@ -803,12 +815,20 @@ class Block_TestParams_Base extends TestParams.Base {
     io_imageNeedDisposeUniqueStack,
     bTableLog, parametersDesc, ...pointwiseNames ) {
 
+!!! ...unfinished... (2025/07/03)
+    const SE_nameBag
+      = ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag;
+
     let squeezeExcitationPrefixOut = inputImage;
     if ( this.out.bSqueezeExcitationPrefix ) {
       if ( this.out.nSqueezeExcitationChannelCountDivisor
              != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
         squeezeExcitationPrefixOut = inputImage
           .clone_bySqueezeExcitation_NonPassThrough(
+
+!!! ...unfinished... (2025/07/03)
+    prefix_or_postfix, channelGroupIndex, nSqueezeExcitationChannelCountDivisor,
+
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise202PrefixSEIntermediateFilters,
             this.in.paramsNumberArrayObject.pointwise202PrefixSEIntermediateBiases,
@@ -837,6 +857,10 @@ class Block_TestParams_Base extends TestParams.Base {
              != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
         squeezeExcitationPostfixOut = pointwiseOut
           .clone_bySqueezeExcitation_NonPassThrough(
+
+!!! ...unfinished... (2025/07/03)
+    prefix_or_postfix, channelGroupIndex, nSqueezeExcitationChannelCountDivisor,
+
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise202PostfixSEIntermediateFilters,
             this.in.paramsNumberArrayObject.pointwise202PostfixSEIntermediateBiases,
@@ -916,13 +940,21 @@ class Block_TestParams_Base extends TestParams.Base {
   use_pointwise21( inputImage, pointwise21ChannelCount,
     io_imageNeedDisposeUniqueStack,
     bTableLog, parametersDesc, ...pointwiseNames ) {
-    
+
+!!! ...unfinished... (2025/07/03)
+    const SE_nameBag
+      = ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag;
+
     let squeezeExcitationPrefixOut = inputImage;
     if ( this.out.bSqueezeExcitationPrefix ) {
       if ( this.out.nSqueezeExcitationChannelCountDivisor
              != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
         squeezeExcitationPrefixOut = inputImage
           .clone_bySqueezeExcitation_NonPassThrough(
+
+!!! ...unfinished... (2025/07/03)
+    prefix_or_postfix, channelGroupIndex, nSqueezeExcitationChannelCountDivisor,
+
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise21PrefixSEIntermediateFilters,
             this.in.paramsNumberArrayObject.pointwise21PrefixSEIntermediateBiases,
@@ -951,6 +983,10 @@ class Block_TestParams_Base extends TestParams.Base {
              != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
         squeezeExcitationPostfixOut = pointwiseOut
           .clone_bySqueezeExcitation_NonPassThrough(
+
+!!! ...unfinished... (2025/07/03)
+    prefix_or_postfix, channelGroupIndex, nSqueezeExcitationChannelCountDivisor,
+
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise21PostfixSEIntermediateFilters,
             this.in.paramsNumberArrayObject.pointwise21PostfixSEIntermediateBiases,

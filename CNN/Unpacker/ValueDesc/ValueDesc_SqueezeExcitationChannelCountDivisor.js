@@ -116,7 +116,7 @@ class SE_Name_Bag extends MultiLayerMap.Base {
   get_by(
     prefix_or_postfix,
     operationName,
-    partNumber,
+    channelGroupIndex,
     nSqueezeExcitationChannelCountDivisor ) {
 
     // Note: Although it is time consuming when using string parameters
@@ -125,7 +125,7 @@ class SE_Name_Bag extends MultiLayerMap.Base {
     //       string again and again.
     return this.get_or_create_by_arguments1_etc(
       SE_Name_Bag.create_by, this,
-      prefix_or_postfix, operationName, partNumber,
+      prefix_or_postfix, operationName, channelGroupIndex,
       nSqueezeExcitationChannelCountDivisor );
   }
 
@@ -135,9 +135,10 @@ class SE_Name_Bag extends MultiLayerMap.Base {
    *
    * @param {string} operationName
    *   A string (either "squeezeDepthwise" or "intermediatePointwise" or
-   * "excitationPointwise" or "multiply").
+   * "excitationPointwise" or "multiply"). If null or undefined, it means
+   * unknown operation.
    *
-   * @param {number} partNumber
+   * @param {number} channelGroupIndex
    *   An integer (either 0 or 1).
    *
    * @param {number} nSqueezeExcitationChannelCountDivisor
@@ -147,15 +148,24 @@ class SE_Name_Bag extends MultiLayerMap.Base {
    * provided.
    *
    * @return {string}
-   *   Return a string "Divisor_Xx" according to the divisor integer value.
+   *   Return a string similar to "SE_postfix_intermediatePointwise_divisor_Xx"
+   * according to the divisor integer value.
    */
   static create_by(
     prefix_or_postfix,
     operationName,
-    partNumber,
+    channelGroupIndex,
     nSqueezeExcitationChannelCountDivisor ) {
 
-    let str = `SE_${prefix_or_postfix}_${operationName}${partNumber}`;
+    let str = `SE_${prefix_or_postfix}`;
+
+    if (   ( operationName !== undefined )
+        && ( operationName !== null ) )
+      str += `_${operationName}`;
+
+    if (   ( channelGroupIndex !== undefined )
+        && ( channelGroupIndex !== null ) )
+      str += channelGroupIndex;
 
     if (   ( nSqueezeExcitationChannelCountDivisor !== undefined )
         && ( nSqueezeExcitationChannelCountDivisor !== null ) )
