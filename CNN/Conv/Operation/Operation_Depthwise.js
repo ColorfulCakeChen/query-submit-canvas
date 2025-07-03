@@ -561,11 +561,24 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
 
   /** Depthwise Operation, Bias and Activation. */
   static Operation_and_destroy_or_keep() {
+    if ( this.bTableLog ) {
+      const nameString = this.nameString_get();
+      console.group( nameString );
+    }
+
     // may destroy or keep.
     this.output0.realTensor = this.pfnOperation( this.input0.realTensor );
+
+    if ( this.bTableLog )
+      console.groupEnd();
   }
 
   static OperationBias_and_destroy_or_keep() {
+    if ( this.bTableLog ) {
+      const nameString = this.nameString_get();
+      console.group( nameString );
+    }
+
     // may destroy or keep.
     let t0 = this.pfnOperation( this.input0.realTensor );
 
@@ -586,9 +599,17 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     }
 
     this.output0.realTensor = t1;
+
+    if ( this.bTableLog )
+      console.groupEnd();
   }
 
   static OperationActivation_and_destroy_or_keep() {
+    if ( this.bTableLog ) {
+      const nameString = this.nameString_get();
+      console.group( nameString );
+    }
+
     let t0 = this.pfnOperation( this.input0.realTensor ); // may destroy or keep.
 
     let t1;
@@ -608,9 +629,17 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     }
 
     this.output0.realTensor = t1;
+
+    if ( this.bTableLog )
+      console.groupEnd();
   }
 
   static OperationBiasActivation_and_destroy_or_keep() {
+    if ( this.bTableLog ) {
+      const nameString = this.nameString_get();
+      console.group( nameString );
+    }
+
     let t0 = this.pfnOperation( this.input0.realTensor ); // may destroy or keep.
 
     let t1;
@@ -645,6 +674,9 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
     }
 
     this.output0.realTensor = t0;
+
+    if ( this.bTableLog )
+      console.groupEnd();
   }
 
 }
