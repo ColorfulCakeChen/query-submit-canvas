@@ -51,8 +51,8 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
 //!!! (2022/08/05 Temp Remarked) For debug floating-point accumulated error
 //    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.005 );
 //!!! (2025/05/26 Temp Remarked) For debug floating-point accumulated error
-//    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
-    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.02, 0.005 );
+    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
+    // this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.02, 0.005 );
 
     // For reducing memory allocation.
 
