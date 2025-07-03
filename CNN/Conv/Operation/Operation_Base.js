@@ -418,10 +418,14 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     if ( !this.bTableLog )
       return;
 
+    const nameString = this.nameString_get();
+    console.group( nameString );
+
     // Prefix with the hierarchical name of this operation.
     const headerPrefix = this.nameString_recursively_get();
-
     this.output0.TableLog_header_body( headerPrefix, strSubheader );
+
+    console.groupEnd();
   }
 
   /**
@@ -436,11 +440,15 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     if ( !this.bTableLog )
       return;
 
+    const nameString = this.nameString_get();
+    console.group( nameString );
+
     // Prefix with the hierarchical name of this operation.
     const headerPrefix = this.nameString_recursively_get();
-
     this.output0.TableLog_header_body( headerPrefix, strSubheader );
     this.output1.TableLog_header_body( headerPrefix );
+
+    console.groupEnd();
   }
 
 

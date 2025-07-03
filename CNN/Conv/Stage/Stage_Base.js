@@ -823,7 +823,8 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
 
     // Log output as table (if requested).
     if ( this.bTableLog ) {
-      this.TableLog_output0_if_requested();
+//!!! (2025/07/03 Remarked) seems not necessary because the last block has log it.
+//      this.TableLog_output0_if_requested();
       console.groupEnd();  // groupLabel "Stage_Base"
     }
 
