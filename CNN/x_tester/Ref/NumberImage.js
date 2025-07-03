@@ -850,16 +850,27 @@ class NumberImage_Base extends Recyclable.Root {
                         filterValue = Math.fround(
                           depthwiseFiltersArray[ filterIndex ] );
 
-                        imageOut.dataArray[ outIndex ] = Math.fround(
+//!!! ...unfinished... (2025/07/03) Try only fround the input.
+                        imageOut.dataArray[ outIndex ] = (
                           imageOut.dataArray[ outIndex ]
-                            + Math.fround(
-                                Math.fround(
+                            + (
                                   Math.fround( imageIn.dataArray[ inIndex ] )
                                     * undoPreviousEscapingScale
-                                )
                                 * filterValue
                               )
                         );
+
+//!!! ...unfinished... (2025/07/03 Temp Remarked) Old Codes.
+//                         imageOut.dataArray[ outIndex ] = Math.fround(
+//                           imageOut.dataArray[ outIndex ]
+//                             + Math.fround(
+//                                 Math.fround(
+//                                   Math.fround( imageIn.dataArray[ inIndex ] )
+//                                     * undoPreviousEscapingScale
+//                                 )
+//                                 * filterValue
+//                               )
+//                         );
 
                         // Note: .afterUndoPreviousActivationEscaping has
                         //        already been multiplied by
