@@ -293,17 +293,20 @@ class NumberImage_Base extends Recyclable.Root {
     if ( bTableLog ) {
       imageHeaderPrefix_forTableLog
         = pointwiseNames.join( NumberImage_Base.debugNamesSeparator );
+      console.group( `${pointwiseNames[ pointwiseNames.length - 1 ]}` );
     }
 
     let imageIn = this;
 
     if ( pointwiseChannelCount <= 0 ) {
       const imageOut = imageIn.clone(); // No pointwise operation.
-      if ( bTableLog )
+      if ( bTableLog ) {
         imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog
           + `${NumberImage_Base.debugNamesSeparator}conv_none`,
           undefined // No pointwise filters could be used as TableLog subheader.
         );
+        console.groupEnd();
+      }
       return imageOut;
     }
 
@@ -478,6 +481,9 @@ class NumberImage_Base extends Recyclable.Root {
 
     imageOut.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
+    if ( bTableLog )
+      console.groupEnd();
+
     return imageOut;
   }
 
@@ -589,6 +595,7 @@ class NumberImage_Base extends Recyclable.Root {
     if ( bTableLog ) {
       imageHeaderPrefix_forTableLog
         = depthwiseNames.join( NumberImage_Base.debugNamesSeparator );
+      console.group( `${depthwiseNames[ depthwiseNames.length - 1 ]}` );
     }
 
     let imageIn = this;
@@ -596,11 +603,13 @@ class NumberImage_Base extends Recyclable.Root {
     if ( ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE
            === depthwise_AvgMax_Or_ChannelMultiplier ) {
       const imageOut = imageIn.clone(); // No depthwise operation.
-      if ( bTableLog )
+      if ( bTableLog ) {
         imageOut.TableLog_header_body( imageHeaderPrefix_forTableLog
           + `${NumberImage_Base.debugNamesSeparator}conv_none`,
           undefined // No depthwise filters could be used as TableLog subheader.
         );
+        console.groupEnd();
+      }
       return imageOut;
     }
 
@@ -1032,6 +1041,9 @@ class NumberImage_Base extends Recyclable.Root {
 
     imageOut.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
+    if ( bTableLog )
+      console.groupEnd();
+
     return imageOut;
   }
 
@@ -1185,9 +1197,12 @@ class NumberImage_Base extends Recyclable.Root {
 
     this.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
-    if ( bTableLog )
+    if ( bTableLog ) {
+      console.group( `${clampNames[ clampNames.length - 1 ]}` );
       imageIn.TableLog_header_body(
         `${clampNames.join( NumberImage_Base.debugNamesSeparator )}` );
+      console.groupEnd();
+    }
 
     return imageIn;
   }
@@ -1466,9 +1481,12 @@ class NumberImage_Base extends Recyclable.Root {
       imageOutNew.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
     }
 
-    if ( bTableLog )
+    if ( bTableLog ) {
+      console.group( `${addNames[ addNames.length - 1 ]}` );
       imageOutNew.TableLog_header_body(
         `${addNames.join( NumberImage_Base.debugNamesSeparator )}` );
+      console.groupEnd();
+    }
 
     return imageOutNew;
   }
@@ -1592,9 +1610,12 @@ class NumberImage_Base extends Recyclable.Root {
       imageOutNew.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
     }
 
-    if ( bTableLog )
+    if ( bTableLog ) {
+      console.group( `${multiplyNames[ multiplyNames.length - 1 ]}` );
       imageOutNew.TableLog_header_body(
         `${multiplyNames.join( NumberImage_Base.debugNamesSeparator )}` );
+      console.groupEnd();
+    }
 
     return imageOutNew;
   }
@@ -2162,6 +2183,9 @@ class NumberImage_Base extends Recyclable.Root {
     imageInArray, imageOutArray, bShuffle, bSplit,
     bTableLog, parametersDesc, ...concatShuffleSplitNames ) {
 
+    if ( bTableLog )
+      console.group( `${concatShuffleSplitNames[ concatShuffleSplitNames.length - 1 ]}` );
+
     if ( imageInArray.length != 2 )
       throw Error(
           `${concatShuffleSplitNames.join( NumberImage_Base.debugNamesSeparator )}: `
@@ -2224,6 +2248,9 @@ class NumberImage_Base extends Recyclable.Root {
       imageOutArray[ 0 ] = shuffleResult;
       imageOutArray[ 1 ] = null;
     }
+
+    if ( bTableLog )
+      console.groupEnd();
   }
 
   /**
