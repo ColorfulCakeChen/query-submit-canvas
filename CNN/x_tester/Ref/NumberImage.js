@@ -864,7 +864,7 @@ class NumberImage_Base extends Recyclable.Root {
                           depthwiseFiltersArray[ filterIndex ] );
 
 //!!! ...unfinished... (2025/07/03) Try only fround the input.
-                        imageOut.dataArray[ outIndex ] = (
+                        imageOut.dataArray[ outIndex ] = Math.fround(
                           imageOut.dataArray[ outIndex ]
                             + (
                                   Math.fround( imageIn.dataArray[ inIndex ] )
