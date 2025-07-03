@@ -723,8 +723,9 @@ class Block_TestParams_Base extends TestParams.Base {
     io_imageNeedDisposeUniqueStack,
     bTableLog, parametersDesc, ...pointwiseNames ) {
 
-    const SE_nameBag
-      = ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag;
+//!!! (2025/07/03 Remarked) seems not necessary.
+//     const SE_nameBag
+//       = ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag;
 
     const channelGroupIndex = 0;
 
@@ -744,7 +745,9 @@ class Block_TestParams_Base extends TestParams.Base {
             this.out.inferencedParams.squeezeExcitationActivationId,
             bTableLog,
             parametersDesc, ...pointwiseNames,
-            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix ) );
+//!!! (2025/07/03 Remarked) seems not necessary.
+//            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix )
+          );
         io_imageNeedDisposeUniqueStack.push( inputImage );
       } // Otherwise, do not clone to improve performance.
     }
@@ -776,7 +779,9 @@ class Block_TestParams_Base extends TestParams.Base {
             this.out.inferencedParams.squeezeExcitationActivationId,
             bTableLog,
             parametersDesc, ...pointwiseNames,
-            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix ) );
+//!!! (2025/07/03 Remarked) seems not necessary.
+//            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix )
+          );
         io_imageNeedDisposeUniqueStack.push( pointwiseOut );
       } // Otherwise, do not clone to improve performance.
     }
@@ -814,8 +819,9 @@ class Block_TestParams_Base extends TestParams.Base {
     io_imageNeedDisposeUniqueStack,
     bTableLog, parametersDesc, ...pointwiseNames ) {
 
-    const SE_nameBag
-      = ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag;
+//!!! (2025/07/03 Remarked) seems not necessary.
+//     const SE_nameBag
+//       = ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag;
 
     const channelGroupIndex = "02";
 
@@ -835,7 +841,9 @@ class Block_TestParams_Base extends TestParams.Base {
             this.out.inferencedParams.squeezeExcitationActivationId,
             bTableLog,
             parametersDesc, ...pointwiseNames,
-            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix ) );
+//!!! (2025/07/03 Remarked) seems not necessary.
+//            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix )
+          );
         io_imageNeedDisposeUniqueStack.push( inputImage );
       } // Otherwise, do not clone to improve performance.
     }
@@ -866,7 +874,9 @@ class Block_TestParams_Base extends TestParams.Base {
             this.out.inferencedParams.squeezeExcitationActivationId,
             bTableLog,
             parametersDesc, ...pointwiseNames,
-            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix ) );
+//!!! (2025/07/03 Remarked) seems not necessary.
+//            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix )
+          );
         io_imageNeedDisposeUniqueStack.push( pointwiseOut );
       } // Otherwise, do not clone to improve performance.
     }
@@ -939,8 +949,9 @@ class Block_TestParams_Base extends TestParams.Base {
     io_imageNeedDisposeUniqueStack,
     bTableLog, parametersDesc, ...pointwiseNames ) {
 
-    const SE_nameBag
-      = ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag;
+//!!! (2025/07/03 Remarked) seems not necessary.
+//     const SE_nameBag
+//       = ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag;
 
     const channelGroupIndex = 1;
 
@@ -960,7 +971,9 @@ class Block_TestParams_Base extends TestParams.Base {
             this.out.inferencedParams.squeezeExcitationActivationId, // (Note: Not pointwise21ActivationId)
             bTableLog,
             parametersDesc, ...pointwiseNames,
-            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix ) );
+//!!! (2025/07/03 Remarked) seems not necessary.
+//            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix )
+          );
         io_imageNeedDisposeUniqueStack.push( inputImage );
       } // Otherwise, do not clone to improve performance.
     }
@@ -991,7 +1004,9 @@ class Block_TestParams_Base extends TestParams.Base {
             this.out.inferencedParams.squeezeExcitationActivationId, // (Note: Not pointwise21ActivationId)
             bTableLog,
             parametersDesc, ...pointwiseNames,
-            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix ) );
+//!!! (2025/07/03 Remarked) seems not necessary.
+//            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix )
+          );
         io_imageNeedDisposeUniqueStack.push( pointwiseOut );
       } // Otherwise, do not clone to improve performance.
     }
