@@ -1730,7 +1730,6 @@ class NumberImage_Base extends Recyclable.Root {
     bTableLog,
     parametersDesc, ...squeezeExcitationNames ) {
 
-!!! ...unfinished... (2025/07/03)
     const SE_nameBag
       = ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag;
 
@@ -1803,7 +1802,10 @@ class NumberImage_Base extends Recyclable.Root {
         squeezeFiltersArray,
         squeezeBias, squeezeBiasesArray, squeezeActivationId,
         bTableLog,
-        parametersDesc, ...squeezeExcitationNames, "squeezeDepthwise" );
+        parametersDesc, ...squeezeExcitationNames,
+        SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix,
+          "squeezeDepthwise" )
+      );
     }
 
     // 2. intermediatePointwise
@@ -1837,11 +1839,9 @@ class NumberImage_Base extends Recyclable.Root {
           bTableLog,
           parametersDesc,
           ...squeezeExcitationNames,
-
-!!! ...unfinished... (2025/07/03) combined into one string
-
-          "intermediatePointwise",
-          "divisor", nSqueezeExcitationChannelCountDivisor );
+          SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix,
+            "intermediatePointwise", nSqueezeExcitationChannelCountDivisor )
+        );
 
         if ( squeezeOut != this ) {
           squeezeOut.disposeResources_and_recycleToPool();
@@ -1869,7 +1869,10 @@ class NumberImage_Base extends Recyclable.Root {
         aPointwise_PassThrough_FiltersArray_BiasesArray_Bag,
         nPassThroughStyleId,
         bTableLog,
-        parametersDesc, ...squeezeExcitationNames, "excitationPointwise" );
+        parametersDesc, ...squeezeExcitationNames,
+        SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix,
+          "excitationPointwise" )
+      );
 
       if ( intermediateOut != this ) {
         intermediateOut.disposeResources_and_recycleToPool();
@@ -1883,7 +1886,10 @@ class NumberImage_Base extends Recyclable.Root {
       multiplyOut = this.clone_byMultiply(
         excitationOut,
         bTableLog,
-        parametersDesc, ...squeezeExcitationNames, "multiply" );
+        parametersDesc, ...squeezeExcitationNames,
+        SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix,
+          "multiply" )
+      );
 
       if ( excitationOut != this ) {
         excitationOut.disposeResources_and_recycleToPool();
