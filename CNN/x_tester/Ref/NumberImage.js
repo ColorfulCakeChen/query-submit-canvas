@@ -382,8 +382,9 @@ class NumberImage_Base extends Recyclable.Root {
             let outIndex = outIndexBaseC + outChannel;
             let filterIndex = filterIndexBase + outChannel;
 
-
-//!!! ...unfinished... (2025/07/03) Try only fround the input.
+            // Note: According to experiment, the accumulation error
+            // (vs. tensorflow.js) is smaller if only fround() the input
+            // (including previous non-completed convolution).
             imageOut.dataArray[ outIndex ] = Math.fround(
               imageOut.dataArray[ outIndex ] + (
                 (
@@ -393,15 +394,18 @@ class NumberImage_Base extends Recyclable.Root {
               )
             );
 
-//!!! ...unfinished... (2025/07/03 Temp Remarked) Original Codes.
-//             imageOut.dataArray[ outIndex ] = Math.fround(
-//               imageOut.dataArray[ outIndex ] + Math.fround(
-//                 Math.fround(
-//                   Math.fround( imageIn.dataArray[ inIndex ] )
-//                     * undoPreviousEscapingScale
-//                 ) * Math.fround( pointwiseFiltersArray[ filterIndex ] )
-//               )
-//             );
+            // Too much fround() results in larger accumulation error
+            // (vs. tensorflow.js).
+            // (2025/07/03 Remarked) 
+            //
+            // imageOut.dataArray[ outIndex ] = Math.fround(
+            //   imageOut.dataArray[ outIndex ] + Math.fround(
+            //     Math.fround(
+            //       Math.fround( imageIn.dataArray[ inIndex ] )
+            //         * undoPreviousEscapingScale
+            //     ) * Math.fround( pointwiseFiltersArray[ filterIndex ] )
+            //   )
+            // );
 
           }
         }
@@ -863,7 +867,9 @@ class NumberImage_Base extends Recyclable.Root {
                         filterValue = Math.fround(
                           depthwiseFiltersArray[ filterIndex ] );
 
-//!!! ...unfinished... (2025/07/03) Try only fround the input.
+                        // Note: According to experiment, the accumulation error
+                        // (vs. tensorflow.js) is smaller if only fround() the input
+                        // (including previous non-completed convolution).
                         imageOut.dataArray[ outIndex ] = Math.fround(
                           imageOut.dataArray[ outIndex ]
                             + (
@@ -873,17 +879,20 @@ class NumberImage_Base extends Recyclable.Root {
                               )
                         );
 
-//!!! ...unfinished... (2025/07/03 Temp Remarked) Original Codes.
-//                         imageOut.dataArray[ outIndex ] = Math.fround(
-//                           imageOut.dataArray[ outIndex ]
-//                             + Math.fround(
-//                                 Math.fround(
-//                                   Math.fround( imageIn.dataArray[ inIndex ] )
-//                                     * undoPreviousEscapingScale
-//                                 )
-//                                 * filterValue
-//                               )
-//                         );
+                        // Too much fround() results in larger accumulation error
+                        // (vs. tensorflow.js).
+                        // (2025/07/03 Remarked) 
+                        //
+                        // imageOut.dataArray[ outIndex ] = Math.fround(
+                        //   imageOut.dataArray[ outIndex ]
+                        //     + Math.fround(
+                        //         Math.fround(
+                        //           Math.fround( imageIn.dataArray[ inIndex ] )
+                        //             * undoPreviousEscapingScale
+                        //         )
+                        //         * filterValue
+                        //       )
+                        // );
 
                         // Note: .afterUndoPreviousActivationEscaping has
                         //        already been multiplied by
