@@ -723,20 +723,15 @@ class Block_TestParams_Base extends TestParams.Base {
     io_imageNeedDisposeUniqueStack,
     bTableLog, parametersDesc, ...pointwiseNames ) {
 
-//!!! (2025/07/03 Remarked) seems not necessary.
-//     const SE_nameBag
-//       = ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag;
-
     const channelGroupIndex = 0;
 
     let squeezeExcitationPrefixOut = inputImage;
     if ( this.out.bSqueezeExcitationPrefix ) {
-      const prefix_or_postfix = "prefix";
       if ( this.out.nSqueezeExcitationChannelCountDivisor
              != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
         squeezeExcitationPrefixOut = inputImage
           .clone_bySqueezeExcitation_NonPassThrough(
-            channelGroupIndex, prefix_or_postfix,
+            channelGroupIndex, "prefix",
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise20PrefixSEIntermediateFilters,
             this.in.paramsNumberArrayObject.pointwise20PrefixSEIntermediateBiases,
@@ -744,10 +739,7 @@ class Block_TestParams_Base extends TestParams.Base {
             this.in.paramsNumberArrayObject.pointwise20PrefixSEExcitationBiases,
             this.out.inferencedParams.squeezeExcitationActivationId,
             bTableLog,
-            parametersDesc, ...pointwiseNames,
-//!!! (2025/07/03 Remarked) seems not necessary.
-//            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix )
-          );
+            parametersDesc, ...pointwiseNames );
         io_imageNeedDisposeUniqueStack.push( inputImage );
       } // Otherwise, do not clone to improve performance.
     }
@@ -765,12 +757,11 @@ class Block_TestParams_Base extends TestParams.Base {
 
     let squeezeExcitationPostfixOut = pointwiseOut;
     if ( !this.out.bSqueezeExcitationPrefix ) { // i.e. postfix
-      const prefix_or_postfix = "postfix";
       if ( this.out.nSqueezeExcitationChannelCountDivisor
              != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
         squeezeExcitationPostfixOut = pointwiseOut
           .clone_bySqueezeExcitation_NonPassThrough(
-            channelGroupIndex, prefix_or_postfix,
+            channelGroupIndex, "postfix",
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise20PostfixSEIntermediateFilters,
             this.in.paramsNumberArrayObject.pointwise20PostfixSEIntermediateBiases,
@@ -778,10 +769,7 @@ class Block_TestParams_Base extends TestParams.Base {
             this.in.paramsNumberArrayObject.pointwise20PostfixSEExcitationBiases,
             this.out.inferencedParams.squeezeExcitationActivationId,
             bTableLog,
-            parametersDesc, ...pointwiseNames,
-//!!! (2025/07/03 Remarked) seems not necessary.
-//            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix )
-          );
+            parametersDesc, ...pointwiseNames );
         io_imageNeedDisposeUniqueStack.push( pointwiseOut );
       } // Otherwise, do not clone to improve performance.
     }
@@ -819,20 +807,15 @@ class Block_TestParams_Base extends TestParams.Base {
     io_imageNeedDisposeUniqueStack,
     bTableLog, parametersDesc, ...pointwiseNames ) {
 
-//!!! (2025/07/03 Remarked) seems not necessary.
-//     const SE_nameBag
-//       = ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag;
-
     const channelGroupIndex = "02";
 
     let squeezeExcitationPrefixOut = inputImage;
     if ( this.out.bSqueezeExcitationPrefix ) {
-      const prefix_or_postfix = "prefix";
       if ( this.out.nSqueezeExcitationChannelCountDivisor
              != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
         squeezeExcitationPrefixOut = inputImage
           .clone_bySqueezeExcitation_NonPassThrough(
-            channelGroupIndex, prefix_or_postfix,
+            channelGroupIndex, "prefix",
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise202PrefixSEIntermediateFilters,
             this.in.paramsNumberArrayObject.pointwise202PrefixSEIntermediateBiases,
@@ -840,10 +823,7 @@ class Block_TestParams_Base extends TestParams.Base {
             this.in.paramsNumberArrayObject.pointwise202PrefixSEExcitationBiases,
             this.out.inferencedParams.squeezeExcitationActivationId,
             bTableLog,
-            parametersDesc, ...pointwiseNames,
-//!!! (2025/07/03 Remarked) seems not necessary.
-//            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix )
-          );
+            parametersDesc, ...pointwiseNames );
         io_imageNeedDisposeUniqueStack.push( inputImage );
       } // Otherwise, do not clone to improve performance.
     }
@@ -860,12 +840,11 @@ class Block_TestParams_Base extends TestParams.Base {
 
     let squeezeExcitationPostfixOut = pointwiseOut;
     if ( !this.out.bSqueezeExcitationPrefix ) { // i.e. postfix
-      const prefix_or_postfix = "postfix";
       if ( this.out.nSqueezeExcitationChannelCountDivisor
              != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
         squeezeExcitationPostfixOut = pointwiseOut
           .clone_bySqueezeExcitation_NonPassThrough(
-            channelGroupIndex, prefix_or_postfix,
+            channelGroupIndex, "postfix",
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise202PostfixSEIntermediateFilters,
             this.in.paramsNumberArrayObject.pointwise202PostfixSEIntermediateBiases,
@@ -873,10 +852,7 @@ class Block_TestParams_Base extends TestParams.Base {
             this.in.paramsNumberArrayObject.pointwise202PostfixSEExcitationBiases,
             this.out.inferencedParams.squeezeExcitationActivationId,
             bTableLog,
-            parametersDesc, ...pointwiseNames,
-//!!! (2025/07/03 Remarked) seems not necessary.
-//            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix )
-          );
+            parametersDesc, ...pointwiseNames );
         io_imageNeedDisposeUniqueStack.push( pointwiseOut );
       } // Otherwise, do not clone to improve performance.
     }
@@ -949,20 +925,15 @@ class Block_TestParams_Base extends TestParams.Base {
     io_imageNeedDisposeUniqueStack,
     bTableLog, parametersDesc, ...pointwiseNames ) {
 
-//!!! (2025/07/03 Remarked) seems not necessary.
-//     const SE_nameBag
-//       = ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.nameBag;
-
     const channelGroupIndex = 1;
 
     let squeezeExcitationPrefixOut = inputImage;
     if ( this.out.bSqueezeExcitationPrefix ) {
-      const prefix_or_postfix = "prefix";
       if ( this.out.nSqueezeExcitationChannelCountDivisor
              != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
         squeezeExcitationPrefixOut = inputImage
           .clone_bySqueezeExcitation_NonPassThrough(
-            channelGroupIndex, prefix_or_postfix,
+            channelGroupIndex, "prefix",
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise21PrefixSEIntermediateFilters,
             this.in.paramsNumberArrayObject.pointwise21PrefixSEIntermediateBiases,
@@ -970,10 +941,7 @@ class Block_TestParams_Base extends TestParams.Base {
             this.in.paramsNumberArrayObject.pointwise21PrefixSEExcitationBiases,
             this.out.inferencedParams.squeezeExcitationActivationId, // (Note: Not pointwise21ActivationId)
             bTableLog,
-            parametersDesc, ...pointwiseNames,
-//!!! (2025/07/03 Remarked) seems not necessary.
-//            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix )
-          );
+            parametersDesc, ...pointwiseNames );
         io_imageNeedDisposeUniqueStack.push( inputImage );
       } // Otherwise, do not clone to improve performance.
     }
@@ -990,12 +958,11 @@ class Block_TestParams_Base extends TestParams.Base {
 
     let squeezeExcitationPostfixOut = pointwiseOut;
     if ( !this.out.bSqueezeExcitationPrefix ) { // i.e. postfix
-      const prefix_or_postfix = "postfix";
       if ( this.out.nSqueezeExcitationChannelCountDivisor
              != ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE ) { // (-2)
         squeezeExcitationPostfixOut = pointwiseOut
           .clone_bySqueezeExcitation_NonPassThrough(
-            channelGroupIndex, prefix_or_postfix,
+            channelGroupIndex, "postfix",
             this.out.nSqueezeExcitationChannelCountDivisor,
             this.in.paramsNumberArrayObject.pointwise21PostfixSEIntermediateFilters,
             this.in.paramsNumberArrayObject.pointwise21PostfixSEIntermediateBiases,
@@ -1003,10 +970,7 @@ class Block_TestParams_Base extends TestParams.Base {
             this.in.paramsNumberArrayObject.pointwise21PostfixSEExcitationBiases,
             this.out.inferencedParams.squeezeExcitationActivationId, // (Note: Not pointwise21ActivationId)
             bTableLog,
-            parametersDesc, ...pointwiseNames,
-//!!! (2025/07/03 Remarked) seems not necessary.
-//            SE_nameBag.get_by( channelGroupIndex, prefix_or_postfix )
-          );
+            parametersDesc, ...pointwiseNames );
         io_imageNeedDisposeUniqueStack.push( pointwiseOut );
       } // Otherwise, do not clone to improve performance.
     }
