@@ -1309,7 +1309,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
       NumberImage.Base.calcSplitAlongAxisId2(
         imageInArray[ 0 ], this.imageInArray_Fake,
         bTableLog, testParams.out,
-        header_forTableLog,  "Split_imageIn_to_imageInArray_0_1" );
+        header_forTableLog, "Split_imageIn_to_imageInArray_0_1" );
 
       imageIn0 = this.imageInArray_Fake[ 0 ];
       imageIn1 = this.imageInArray_Fake[ 1 ];

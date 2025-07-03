@@ -1975,6 +1975,9 @@ class NumberImage_Base extends Recyclable.Root {
     imageIn, imageOutArray,
     bTableLog, parametersDesc, ...splitNames ) {
 
+    if ( bTableLog )
+      console.group( `${splitNames[ splitNames.length - 1 ]}` );
+
     imageOutArray.length = 2;
     imageOutArray[ 0 ] = null;
     imageOutArray[ 1 ] = null;
@@ -2069,6 +2072,8 @@ class NumberImage_Base extends Recyclable.Root {
         + `${NumberImage_Base.debugNamesSeparator}out0` );
       imageOut1.TableLog_header_body( imageHeaderPrefix_forTableLog
         + `${NumberImage_Base.debugNamesSeparator}out1` );
+
+      console.groupEnd();
     }
   }
 
@@ -2264,7 +2269,6 @@ class NumberImage_Base extends Recyclable.Root {
         shuffleResult, imageOutArray,
         bTableLog, parametersDesc,
         ...concatShuffleSplitNames,
-        // "concatShuffleSplitName",
         "split" );
       shuffleResult.disposeResources_and_recycleToPool();
       shuffleResult = null;
