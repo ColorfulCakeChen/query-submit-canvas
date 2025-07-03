@@ -874,8 +874,10 @@ class NumberImage_Base extends Recyclable.Root {
                         imageOut.dataArray[ outIndex ] = Math.fround(
                           imageOut.dataArray[ outIndex ]
                             + (
+                                (
                                   Math.fround( imageIn.dataArray[ inIndex ] )
                                     * undoPreviousEscapingScale
+                                )
                                 * filterValue
                               )
                         );
