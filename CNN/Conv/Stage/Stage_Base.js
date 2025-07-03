@@ -755,12 +755,13 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
    */
   * applier( progressToAdvance, inputTensor ) {
     if ( this.bTableLog ) {
+      const nConvStageTypeNameWithInt
+        = ValueDesc.ConvStageType.Singleton.getNameWithInt_byId(
+            this.nConvStageTypeId );
+
       const stageName = this.nameString_get();
-
-!!! ...unfinished... (2025/07/02)
-// Add ConvStageType
-
-      console.group( `${stageName}` );
+      console.group(
+        `${stageName} ( ConvStageType = ${nConvStageTypeNameWithInt} )` );
     }
 
     let progressRoot = progressToAdvance.root_get();
@@ -800,12 +801,13 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
    */
   apply( inputTensor ) {
     if ( this.bTableLog ) {
+      const nConvStageTypeNameWithInt
+        = ValueDesc.ConvStageType.Singleton.getNameWithInt_byId(
+            this.nConvStageTypeId );
+
       const stageName = this.nameString_get();
-
-!!! ...unfinished... (2025/07/02)
-// Add ConvStageType
-
-      console.group( `${stageName}` );
+      console.group(
+        `${stageName} ( ConvStageType = ${nConvStageTypeNameWithInt} )` );
     }
 
     // Note: The block0 should only input one tensor.
