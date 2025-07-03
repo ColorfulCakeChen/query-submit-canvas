@@ -382,14 +382,27 @@ class NumberImage_Base extends Recyclable.Root {
             let outIndex = outIndexBaseC + outChannel;
             let filterIndex = filterIndexBase + outChannel;
 
-            imageOut.dataArray[ outIndex ] = Math.fround(
-              imageOut.dataArray[ outIndex ] + Math.fround(
-                Math.fround(
+
+//!!! ...unfinished... (2025/07/03) Try only fround the input.
+            imageOut.dataArray[ outIndex ] = (
+              imageOut.dataArray[ outIndex ] + (
+                (
                   Math.fround( imageIn.dataArray[ inIndex ] )
                     * undoPreviousEscapingScale
                 ) * Math.fround( pointwiseFiltersArray[ filterIndex ] )
               )
             );
+
+//!!! ...unfinished... (2025/07/03 Temp Remarked) Original Codes.
+//             imageOut.dataArray[ outIndex ] = Math.fround(
+//               imageOut.dataArray[ outIndex ] + Math.fround(
+//                 Math.fround(
+//                   Math.fround( imageIn.dataArray[ inIndex ] )
+//                     * undoPreviousEscapingScale
+//                 ) * Math.fround( pointwiseFiltersArray[ filterIndex ] )
+//               )
+//             );
+
           }
         }
       }
@@ -860,7 +873,7 @@ class NumberImage_Base extends Recyclable.Root {
                               )
                         );
 
-//!!! ...unfinished... (2025/07/03 Temp Remarked) Old Codes.
+//!!! ...unfinished... (2025/07/03 Temp Remarked) Original Codes.
 //                         imageOut.dataArray[ outIndex ] = Math.fround(
 //                           imageOut.dataArray[ outIndex ]
 //                             + Math.fround(
