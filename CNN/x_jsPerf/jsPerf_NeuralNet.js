@@ -112,7 +112,10 @@ class PerformanceTestCase extends Recyclable.Root {
             this.neuralNetParamsBase );
 
       let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
-      let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by();
+      let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by(
+        null,                                 // parentNameable
+        `NeuralNet_Reference_${testCaseName}` // neuralNetName
+      );
 
       let bInitOk = neuralNet.init( progress,
         PerformanceTestCase.randomTestWeightArray, 0, neuralNetParams );
@@ -265,7 +268,8 @@ class HeightWidthDepth {
 
     // The neuralNet performance testing should not keep-input-tensor because
     // the input image is created from canvas in real time.
-    let bKeepInputTensor = false;
+    const bKeepInputTensor = false;
+    const bTableLog = false;
 
     // explicit_input_height, explicit_input_width, explicit_input_channelCount,
     // has_implicit_input,
@@ -286,7 +290,7 @@ class HeightWidthDepth {
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,
         blockCountTotalRequested,
         output_channelCount, output_asInputValueRange,
-        bKeepInputTensor
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 1: (MobileNetV1_padValid)
@@ -299,7 +303,7 @@ class HeightWidthDepth {
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID,
         blockCountTotalRequested,
         output_channelCount, output_asInputValueRange,
-        bKeepInputTensor
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 2: (MobileNetV2_Thin)
@@ -312,7 +316,7 @@ class HeightWidthDepth {
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,
         blockCountTotalRequested,
         output_channelCount, output_asInputValueRange,
-        bKeepInputTensor
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 3: (MobileNetV2)
@@ -325,7 +329,7 @@ class HeightWidthDepth {
         ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,
         blockCountTotalRequested,
         output_channelCount, output_asInputValueRange,
-        bKeepInputTensor
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 4: (ShuffleNetV2))
@@ -338,7 +342,7 @@ class HeightWidthDepth {
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,
         blockCountTotalRequested,
         output_channelCount, output_asInputValueRange,
-        bKeepInputTensor
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 5: (ShuffleNetV2_byPointwise21)
@@ -351,7 +355,7 @@ class HeightWidthDepth {
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,
         blockCountTotalRequested,
         output_channelCount, output_asInputValueRange,
-        bKeepInputTensor
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 6: (ShuffleNetV2_byMobileNetV1)
@@ -364,7 +368,7 @@ class HeightWidthDepth {
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,
         blockCountTotalRequested,
         output_channelCount, output_asInputValueRange,
-        bKeepInputTensor
+        bKeepInputTensor, bTableLog
       ) );
 
     // Test Case 7: (ShuffleNetV2_byMobileNetV1_padValid)
@@ -377,7 +381,7 @@ class HeightWidthDepth {
         ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID,
         blockCountTotalRequested,
         output_channelCount, output_asInputValueRange,
-        bKeepInputTensor
+        bKeepInputTensor, bTableLog
       ) );
   }
 
@@ -441,6 +445,8 @@ class HeightWidthDepth {
   /** Testing whether the results of different implementation are the same. */
   * testCorrectness() {
 
+!!! ...unfinished... (2025/07/04)
+// Moved to CNN_Stage_tester
     //!!! (2022/08/16 Temp Skipped) For speed up into performance testing.
     //if ( 0 )
     {

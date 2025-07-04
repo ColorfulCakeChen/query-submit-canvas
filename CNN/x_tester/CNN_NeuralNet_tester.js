@@ -11,9 +11,9 @@ import * as Recyclable from "../util/Recyclable.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
 //import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
-import * as Stage from "../Conv/Stage.js";
-import * as Stage_Reference from "./Ref/Stage_Reference.js";
-import * as Stage_TestParams from "./Ref/Stage_TestParams.js";
+import * as NeuralNet from "../Conv/NeuralNet.js";
+import * as NeuralNet_Reference from "./Ref/NeuralNet_Reference.js";
+import * as NeuralNet_TestParams from "./Ref/NeuralNet_TestParams.js"; 
 import * as BatchIdCalculator from "./Ref/BatchIdCalculator.js";
 import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
 //import * as NumberImage from "./Ref/NumberImage.js"; 
@@ -49,14 +49,15 @@ async function *testerBackend( progressParent, backendName ) {
     {
       // Note: imageSourceBag should not be created outside tidy() because
       //       tidy() will dispose tensors dynamically created in them.
-      let imageSourceBag = ImageSourceBag.Base.Pool.get_or_create_by();
+      let imageSourceBag
+        = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
 
-      let testParams = Stage_TestParams.Base.Pool.get_or_create_by();
+      let testParams = NeuralNet_TestParams.Base.Pool.get_or_create_by();
       let theParamDescConfigAll = testParams.ParamDescConfigAll_create();
       let testParamsGenerator
         = testParams.ParamsGenerator( theParamDescConfigAll );
-      let testReference = Stage_Reference.Base.Pool.get_or_create_by(
-        null, "Stage_Reference" );
+      let testReference = NeuralNet_Reference.Base.Pool.get_or_create_by(
+        null, "NeuralNet_Reference" );
 
       // Set up correct test case count (all permuattion combination count).
       testCaseCount = theParamDescConfigAll.permutationCombination_count();
@@ -91,7 +92,7 @@ async function *testerBackend( progressParent, backendName ) {
       // A: To catch testParamsGenerator's exception.
       } catch ( e ) {
         let backendName = tf.getBackend();
-        let msg = `CNN_Stage_tester.${funcNameInMessage}(): `
+        let msg = `CNN_NeuralNet_tester.${funcNameInMessage}(): `
           + `backendName=${backendName}, `
           + `Embedding, ( yieldCount == ${testParams.yieldCount} ), `
           + `testParams.id == ${testParams.id}`;
@@ -122,7 +123,7 @@ async function *testerBackend( progressParent, backendName ) {
             != memoryInfo_testCorrectness_before.numTensors ) {
 
       const backendName = tf.getBackend();
-      const msg = `CNN_Stage_tester.${funcNameInMessage}(): `
+      const msg = `CNN_NeuralNet_tester.${funcNameInMessage}(): `
         + `backendName=${backendName}, `
         + ` memory leak. `
         + `result tensor count `
@@ -143,7 +144,7 @@ async function *testerBackend( progressParent, backendName ) {
  *
  */
 async function* tester( progressParent ) {
-  console.log( "CNN_Stage testing..." );
+  console.log( "CNN_NeuralNet testing..." );
 
   // 0. Prepare progressParent for every TestCase.
 
@@ -167,5 +168,5 @@ async function* tester( progressParent ) {
   // // 3.
   // yield *testerBackend( progressWASM, "wasm" );
 
-  console.log( "CNN_Stage testing... Done." );
+  console.log( "CNN_NeuralNet testing... Done." );
 }
