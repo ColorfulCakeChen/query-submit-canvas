@@ -565,6 +565,8 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
         // Block.Params needs channel shuffler info (but does not own it).
         blockParams.channelShuffler = this.channelShuffler;
 
+!!! ...unfinished... (2025/07/04)
+// should use Multi
         const blockName = `Block_${i}`;
         block = this.blockArray[ i ] = Block.Base.Pool.get_or_create_by(
           this, blockName );
