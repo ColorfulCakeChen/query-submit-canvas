@@ -942,8 +942,8 @@ class NeuralNet_Reference_Base
 
       imageToBeProccessed = imageOut;
 
-!!! ...unfinished... (2025/06/11)
-// should rename stageRef (nameString)
+      const stageRefName = `StageReference_${stageIndex}`;
+      stageRef.name_set( stageRefName ); // Rename stageRef.
 
       stageRef.testParams = testParams.stageArray[ stageIndex ];
       imageOut = stageRef.calcResult( imageToBeProccessed );
@@ -969,7 +969,10 @@ class NeuralNet_Reference_Base
 
       this.imageInArray[ 0 ] = imageToBeProccessed;
       this.imageInArray[ 1 ] = null;
-  
+
+      const blockRefName = `BlockReference_final`;
+      blockRef.name_set( blockRefName ); // Rename blockRef.
+
       blockRef.calcResult( this.imageInArray, this.imageOutArray );
 
       { // Release intermediate input images.
@@ -1004,15 +1007,10 @@ class NeuralNet_Reference_Base
       const upperBound = ( testParams.out.vocabularyCountPerInputChannel - 1 );
       imageOut.modify_byClamp_toInt(
         lowerBound, upperBound,
-
-!!! ...unfinished... (2025/06/18)
-// should use bTableLog
-
-        ???bTableLog,
+        bTableLog,
         testParams.out, "output_clamp_int" );
     }
 
-!!!
     if ( bTableLog )
       console.groupEnd();  // groupLabel "NeuralNet_Reference"
 
