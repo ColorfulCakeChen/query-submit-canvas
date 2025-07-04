@@ -734,6 +734,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                   // may have non-zero value.
                   if ( inChannelToPartBegin == outChannelSub ) {
                     this.filtersArray[ filterIndex ] = filterValuePassThrough;
+
+!!! ...unfinished... (2025/07/04)
+// Perhaps, fround() inside .multiply_all_byNs()
+//
+// Or, call tBounds.fround() after .multiply_all_byNs() done.
+
+
                     tBounds
                       .set_byBoundsArray(
                         this.boundsArraySet.afterUndoPreviousActivationEscaping,
@@ -754,6 +761,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
                   this.filtersArray[ filterIndex ]
                     = sourceWeight * undoPreviousEscapingScale;
+
+!!! ...unfinished... (2025/07/04)
+// Perhaps, fround() inside .multiply_all_byNs()
+//
+// Or, call tBounds.fround() after .multiply_all_byNs() done.
 
                   tBounds
                     .set_byBoundsArray(
@@ -826,6 +838,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
             // Note: Use adding instead of assignment.
             this.biasesArray[ biasIndex ] += biasValue;
+
+!!! ...unfinished... (2025/07/04)
+// Perhaps, fround() inside .multiply_all_byNs()
+//
+// Or, call tBounds.fround() after .multiply_all_byNs() done.
 
             // Determine .afterBias
             // Shift the value bounds by the bias.

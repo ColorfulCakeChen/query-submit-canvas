@@ -807,6 +807,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                           this.filtersArray[ filterIndex ]
                             = filterValuePassThrough;
 
+!!! ...unfinished... (2025/07/04)
+// Perhaps, fround() inside .multiply_all_byNs()
+//
+// Or, call tBounds.fround() after .multiply_all_byNs() done.
+
                           tBounds
                             .set_byBoundsArray(
                               this.boundsArraySet.afterUndoPreviousActivationEscaping,
@@ -826,6 +831,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
                         this.filtersArray[ filterIndex ]
                           = sourceWeight * undoPreviousEscapingScale;
+
+!!! ...unfinished... (2025/07/04)
+// Perhaps, fround() inside .multiply_all_byNs()
+//
+// Or, call tBounds.fround() after .multiply_all_byNs() done.
 
                         tBounds
                           .set_byBoundsArray(
@@ -855,6 +865,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                         // value bounds.)
                         tBounds.set_byBoundsArray(
                           this.boundsArraySet.input0.boundsArray, inChannel );
+
+!!! ...unfinished... (2025/07/04)
+// Perhaps, fround() inside .multiply_all_byNs()
+//
+// Or, call tBounds.fround() after .multiply_all_byNs() done.
 
                         // Accumulate value bounds for the filter position
                         // (across the whole virtual input image).
@@ -954,6 +969,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
               // Note: Use adding instead of assignment.
               this.biasesArray[ biasIndex ] += biasValue;
+
+!!! ...unfinished... (2025/07/04)
+// Perhaps, fround() inside .multiply_all_byNs()
+//
+// Or, call tBounds.fround() after .multiply_all_byNs() done.
 
               // Determine .afterBias
               // Shift the value bounds by the bias.
