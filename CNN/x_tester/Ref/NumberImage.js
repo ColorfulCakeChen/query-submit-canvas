@@ -384,7 +384,7 @@ class NumberImage_Base extends Recyclable.Root {
             let filterIndex = filterIndexBase + outChannel;
 
             // Note: According to experiment, the accumulation error
-            // is similar to tensorflow.js if only fround() the input
+            // will be similar to tensorflow.js if only fround() the input
             // (including previous non-completed convolution).
             imageOut.dataArray[ outIndex ] = Math.fround(
               imageOut.dataArray[ outIndex ] + (
@@ -846,7 +846,7 @@ class NumberImage_Base extends Recyclable.Root {
                       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG: // Avg pooling
 
                         // Note: According to experiment, the accumulation
-                        // error is similar to tensorflow.js if only
+                        // error will be similar to tensorflow.js if only
                         // fround() the input.
                         imageOut.dataArray[ outIndex ] = (
                           ( imageOut.dataArray[ outIndex ] )
@@ -881,7 +881,7 @@ class NumberImage_Base extends Recyclable.Root {
                           depthwiseFiltersArray[ filterIndex ] );
 
                         // Note: According to experiment, the accumulation
-                        // error is similar to tensorflow.js if only
+                        // error will be similar to tensorflow.js if only
                         // fround() the input (including previous non-completed
                         // convolution).
                         imageOut.dataArray[ outIndex ] = Math.fround(
@@ -933,12 +933,11 @@ class NumberImage_Base extends Recyclable.Root {
                    === depthwise_AvgMax_Or_ChannelMultiplier ) {
 
               // So that every sum is averaged.
-
+              //
               // Note: According to experiment, the accumulation error is
               // similar to tensorflow.js if only fround() the input.
               imageOut.dataArray[ outIndex ] = Math.fround(
-                ( imageOut.dataArray[ outIndex ] )
-                  / ( avgDivisor ) );
+                imageOut.dataArray[ outIndex ] / avgDivisor );
 
               // Too many fround() result in larger accumulation
               // error than tensorflow.js.
