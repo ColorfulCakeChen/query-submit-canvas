@@ -75,6 +75,10 @@ import { InferencedParams } from "./NeuralNet_InferencedParams.js";
  * @member {boolean} bKeepInputTensor
  *   If true, apply() will not dispose inputTensor (i.e. will be kept).
  *
+ * @member {boolean} bTableLog
+ *   If true, the process and result will be logged to console as table (for
+ * debug).
+ *
  * @member {InferencedParams} inferencedParams
  *   The inferenced parameters of this neural network parameters.
  *

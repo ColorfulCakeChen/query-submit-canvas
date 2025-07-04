@@ -37,7 +37,8 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
     nConvStageTypeId,
     blockCountTotalRequested,
     output_channelCount, output_asInputValueRange,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     super(
       NeuralNet_Params.SequenceArray,
@@ -47,7 +48,8 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
       nConvStageTypeId,
       blockCountTotalRequested,
       output_channelCount, output_asInputValueRange,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
     this.#setAsConstructor_self();
   }
@@ -60,7 +62,8 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
     nConvStageTypeId,
     blockCountTotalRequested,
     output_channelCount, output_asInputValueRange,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     super.setAsConstructor(
       NeuralNet_Params.SequenceArray,
@@ -70,7 +73,8 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
       nConvStageTypeId,
       blockCountTotalRequested,
       output_channelCount, output_asInputValueRange,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
     this.#setAsConstructor_self();
   }
@@ -149,6 +153,8 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
         = this.getParamValue_byParamDesc( NeuralNet_Params.output_asInputValueRange );
       this.bKeepInputTensor
         = this.getParamValue_byParamDesc( NeuralNet_Params.bKeepInputTensor );
+      this.bTableLog
+        = this.getParamValue_byParamDesc( NeuralNet_Params.bTableLog );
     }
 
     this.inferencedParams_create();
@@ -173,7 +179,8 @@ class NeuralNet_Params extends Weights.Params( ParamsBase ) {
       neuralNetParamsBase.blockCountTotalRequested,
       neuralNetParamsBase.output_channelCount,
       neuralNetParamsBase.output_asInputValueRange,
-      neuralNetParamsBase.bKeepInputTensor
+      neuralNetParamsBase.bKeepInputTensor,
+      neuralNetParamsBase.bTableLog
     );
     return neuralNetParams;
   }
@@ -212,6 +219,9 @@ NeuralNet_Params.output_asInputValueRange
 NeuralNet_Params.bKeepInputTensor
   = new ParamDesc.Bool( "bKeepInputTensor" );
 
+NeuralNet_Params.bTableLog
+  = new ParamDesc.Bool( "bTableLog" );
+
 
 /**
  * Define the order of these parameters. (Fills ParamDesc.Xxx.seqId according
@@ -229,4 +239,5 @@ NeuralNet_Params.SequenceArray = new ParamDesc.SequenceArray( [
   NeuralNet_Params.output_channelCount,
   NeuralNet_Params.output_asInputValueRange,
   NeuralNet_Params.bKeepInputTensor,
+  NeuralNet_Params.bTableLog,
 ] );
