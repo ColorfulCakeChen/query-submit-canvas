@@ -361,13 +361,27 @@ class ConvBiasActivation extends InputsOutputs {
 
           if ( bPassThrough ) { // For channels will be activation-escaping.
 
-!!! ...unfinished... (2025/07/04)
+//!!! (2025/07/04 Remarked) Old Codes.
 // For bounds [ 0, 0 ], whether can just (like non-pass-through) let:
 //   this.output0.scaleArraySet.do.set_one_byN( outChannel, 1 );
 //   doEscapingScale = 1;
 // So that the .lowers[] and .uppers[] needs not be modified?
 // (bounds modification will result in bounds mismatched
 // between SHUFFLE_NET_V2_BY_MOBILE_NET_V1 and SHUFFLE_NET_V2. )
+//
+//             // If value bounds is [ 0, 0 ], adjust it to a range which includes
+//             // zero.
+//             //
+//             // This could happen when filters are all zero for outChannel. This
+//             // adjustment is necessary because the following
+//             // .set_one_by_fromLowerUpper_toLowerUpper() can not work for
+//             // bounds [ 0, 0 ].
+//             //
+//             if (   ( this.afterBias.lowers[ outChannel ] == 0 )
+//                 && ( this.afterBias.uppers[ outChannel ] == 0 ) ) {
+//               this.afterBias.lowers[ outChannel ] = -1;
+//               this.afterBias.uppers[ outChannel ] = +1;
+//             }
 
             // If value bounds is [ 0, 0 ], adjust it to a range which includes
             // zero.
@@ -377,34 +391,51 @@ class ConvBiasActivation extends InputsOutputs {
             // .set_one_by_fromLowerUpper_toLowerUpper() can not work for
             // bounds [ 0, 0 ].
             //
-            if (   ( this.afterBias.lowers[ outChannel ] == 0 )
-                && ( this.afterBias.uppers[ outChannel ] == 0 ) ) {
-              this.afterBias.lowers[ outChannel ] = -1;
-              this.afterBias.uppers[ outChannel ] = +1;
-            }
+            if (   ( this.afterBias.lowers[ outChannel ] !== 0 )
+                || ( this.afterBias.uppers[ outChannel ] !== 0 ) ) {
 
-            // Calculate the scale for escaping bias result from activation
-            // function's non-linear domain into linear domain.
-            //
-            // Note: This does not work for avg/max pooling.
-            this.output0.scaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper(
-              outChannel,
-              this.afterBias.lowers[ outChannel ],
-              this.afterBias.uppers[ outChannel ],
-              theActivationFunctionInfo.inputDomainLinear.lower,
-              theActivationFunctionInfo.inputDomainLinear.upper
-            );
-
-            doEscapingScale = this.output0.scaleArraySet.do.scales[ outChannel ];
-            if ( Number.isNaN( doEscapingScale ) == true )
-              throw Error( `BoundsArraySet.ConvBiasActivation`
-                + `.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThroughArray_nActivationId( `
-                  + `${ValueDesc.ActivationFunction.Singleton.getNameWithInt_byId( nActivationId )} ): `
-                + `this.output0.scaleArraySet.do.scales[ ${outChannel} ] `
-                + `( ${doEscapingScale} ) should not be NaN. `
-                + `Please use activation function (e.g. clipByValue(), tanh())`
-                + `which has both negative and positive parts near origin point.`
+              // Calculate the scale for escaping bias result from activation
+              // function's non-linear domain into linear domain.
+              //
+              // Note: This does not work for avg/max pooling.
+              this.output0.scaleArraySet.do.set_one_by_fromLowerUpper_toLowerUpper(
+                outChannel,
+                this.afterBias.lowers[ outChannel ],
+                this.afterBias.uppers[ outChannel ],
+                theActivationFunctionInfo.inputDomainLinear.lower,
+                theActivationFunctionInfo.inputDomainLinear.upper
               );
+
+              doEscapingScale = this.output0.scaleArraySet.do.scales[ outChannel ];
+              if ( Number.isNaN( doEscapingScale ) == true )
+                throw Error( `BoundsArraySet.ConvBiasActivation`
+                  + `.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThroughArray_nActivationId( `
+                    + `${ValueDesc.ActivationFunction.Singleton.getNameWithInt_byId( nActivationId )} ): `
+                  + `this.output0.scaleArraySet.do.scales[ ${outChannel} ] `
+                  + `( ${doEscapingScale} ) should not be NaN. `
+                  + `Please use activation function (e.g. clipByValue(), tanh())`
+                  + `which has both negative and positive parts near origin point.`
+                );
+
+            // For bounds [ 0, 0 ], scale is not necessary (just like
+            // non-pass-through) because all values of the channel are zero
+            // which always can escape (i.e. pass-through) from any activation
+            // function (whose output range includes both negative value and
+            // positive value near the origin point).
+            //
+            // Note1: This could happen when filters are all zero for
+            //        outChannel. In this case, the
+            //        .set_one_by_fromLowerUpper_toLowerUpper() can not work.
+            //
+            // Note2: Do NOT try to adjust bounds to a range which includes
+            //        zero (e.g. from [ 0, 0 ] to [ -1, +1 ]). The reason is
+            //        bounds modification will result in bounds mismatched
+            //        between SHUFFLE_NET_V2_BY_MOBILE_NET_V1 and
+            //        SHUFFLE_NET_V2.
+            } else {
+              this.output0.scaleArraySet.do.set_one_byN( outChannel, 1 );
+              doEscapingScale = 1; // (i.e. no scale)
+            }
 
           } else { // For channels will not be activation-escaping.
             // No need to escape. (i.e. scale = 1 for no scale)
