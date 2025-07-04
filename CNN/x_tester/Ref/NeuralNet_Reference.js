@@ -184,6 +184,8 @@ class NeuralNet_Reference_Base
    *
    */
   static neuralNet_create_apply_internal( imageSourceBag, testParams ) {
+    const parentNameable = null;
+    const neuralNetName = "neuralNet_Base";
 
     const {
       inferencedParams: { input_height, input_width, input_channelCount },
@@ -218,7 +220,9 @@ class NeuralNet_Reference_Base
     // Test memory leakage of stage create/dispose.
     let memoryInfo_beforeCreate = tf.memory();
     {
-      let neuralNet = NeuralNet_Reference_Base.NeuralNet_create( testParams );
+      let neuralNet = NeuralNet_Reference_Base.NeuralNet_create(
+        parentNameable, neuralNetName,
+        testParams );
 
       // Table log the input tensor if requested.
       const bTableLog = stage.bTableLog;
@@ -308,6 +312,7 @@ class NeuralNet_Reference_Base
       NeuralNet_Reference_Base
         .neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1
         .call( this,
+          parentNameable, neuralNetName,
           testParams,
           inputTensor3d_fromBag, outputTensor3d );
 
@@ -340,7 +345,7 @@ class NeuralNet_Reference_Base
    *   The output tensor (from original neuralNet) to be compared.
    */
   static neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1(
-    parentNameable, stageName,
+    parentNameable, neuralNetName,
     testParams,
     inputTensor3d_fromBag, outputTensor3d_original ) {
 
@@ -403,7 +408,7 @@ class NeuralNet_Reference_Base
     }
 
     let neuralNet_toBeCompared = NeuralNet.Base.Pool.get_or_create_by(
-      parentNameable, stageName
+      parentNameable, neuralNetName
     );
 
     // Initialize successfully or failed.
@@ -578,11 +583,11 @@ class NeuralNet_Reference_Base
    *   The created NeuralNet object.
    */
   static NeuralNet_create(
-    parentNameable, stageName,
+    parentNameable, neuralNetName,
     testParams ) {
 
     let neuralNet = NeuralNet.Base.Pool.get_or_create_by(
-      parentNameable, stageName );
+      parentNameable, neuralNetName );
 
     let progressInit = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
