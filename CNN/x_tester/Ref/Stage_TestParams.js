@@ -409,8 +409,8 @@ class Stage_TestParams_Base extends TestParams.Base {
 
       bTableLog: [
         // (2025/06/04 Temp Remarked) For debug.
-        // 0, 0
-        1, 1
+        0, 0
+        // 1, 1
       ],
     };
 
