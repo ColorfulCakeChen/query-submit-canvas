@@ -291,7 +291,7 @@ class NeuralNet_Base extends HierarchicalNameable.SeparatorDot_Root {
           this.bTableLog
         );
 
-        const embeddingName = `Embedding`;
+        const embeddingName = "Embedding";
         this.embedding = Embedding.AddGatherReshape.Pool.get_or_create_by(
           this, embeddingName );
 
@@ -351,6 +351,10 @@ class NeuralNet_Base extends HierarchicalNameable.SeparatorDot_Root {
         // Create current stage parameters.
         stageParams
           = stageParamsCreator.create_StageParams( StageParamsClass );
+
+
+!!! ...unfinished... (2025/07/04)
+// should use MultiLayerMap as name bag.
 
         const stageName = `Stage_${i}`;
         stage = this.stageArray[ i ] = Stage.Base.Pool.get_or_create_by(
@@ -423,8 +427,9 @@ class NeuralNet_Base extends HierarchicalNameable.SeparatorDot_Root {
         next_input_ScaleBoundsArray_or_TensorPlaceholder
           .channelCount_higherHalf = undefined;
 
+        const blockName = "Block_Final";
         let blockFinal = this.blockFinal = Block.Base.Pool.get_or_create_by(
-          this, "Block_Final" );
+          this, blockName );
 
         let blockIniter = blockFinal.initer( progressForBlockFinal,
           inputWeightArray, this.weightElementOffsetEnd, blockFinalParams,
