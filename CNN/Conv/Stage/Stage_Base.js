@@ -923,16 +923,6 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
  */
 class Block_Name_Bag extends MultiLayerMap.Base {
 
-  /**  */
-  constructor() {
-    super();
-    this.#setAsConstructor_self();
-  }
-
-  /**  */
-  #setAsConstructor_self() {
-  }
-
   /**
    * @see Block_Name_Bag.create_by()
    */

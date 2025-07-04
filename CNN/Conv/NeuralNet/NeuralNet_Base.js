@@ -939,16 +939,6 @@ class NeuralNet_Base extends HierarchicalNameable.SeparatorDot_Root {
  */
 class Stage_Name_Bag extends MultiLayerMap.Base {
 
-  /**  */
-  constructor() {
-    super();
-    this.#setAsConstructor_self();
-  }
-
-  /**  */
-  #setAsConstructor_self() {
-  }
-
   /**
    * @see Stage_Name_Bag.create_by()
    */

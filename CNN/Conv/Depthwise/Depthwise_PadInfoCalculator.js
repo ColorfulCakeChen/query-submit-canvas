@@ -424,8 +424,7 @@ class PadInfoCalculatorRoot extends PadInfoCalculator() {
  */
 class Depthwise_FilterName_Bag extends MultiLayerMap.Base {
 
-  /**
-   */
+  /**  */
   constructor() {
     super();
     this.#setAsConstructor_self();

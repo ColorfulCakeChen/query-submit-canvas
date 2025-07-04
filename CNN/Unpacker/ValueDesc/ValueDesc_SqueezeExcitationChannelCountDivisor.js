@@ -99,8 +99,7 @@ class SqueezeExcitationChannelCountDivisor extends Int {
  */
 class SE_Name_Bag extends MultiLayerMap.Base {
 
-  /**
-   */
+  /**  */
   constructor() {
     super();
     this.#setAsConstructor_self();
