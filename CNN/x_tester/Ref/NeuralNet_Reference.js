@@ -4,6 +4,7 @@ import * as HierarchicalNameable from "../../util/HierarchicalNameable.js";
 import * as Pool from "../../util/Pool.js";
 //import * as Recyclable from "../../util/Recyclable.js";
 import * as NameNumberArrayObject from "../../util/NameNumberArrayObject.js";
+import * as TableLogger from "../../util/TableLogger.js";
 import * as TensorTools from "../../util/TensorTools.js";
 import * as ValueMax from "../../util/ValueMax.js";
 import * as BoundsArraySet_Asserter from "../../util/BoundsArraySet_Asserter.js";
@@ -136,6 +137,21 @@ class NeuralNet_Reference_Base
   static testCorrectness_internal( imageSourceBag, testParams ) {
     this.testParams = testParams;
 
+    const bTableLog = testParams.out.bTableLog;
+    if ( bTableLog ) {
+      const groupLabel = `testParams.id == ${testParams.id}`;
+      console.groupCollapsed( groupLabel );
+
+      console.groupCollapsed( "imageIn" );
+      {
+        const imageIn_imageHeaderPrefix = "imageIn";
+        const imageIn_strSubheader = undefined;
+        this.testCorrectness_imageIn.TableLog_header_body(
+          imageIn_imageHeaderPrefix, imageIn_strSubheader );
+      }
+      console.groupEnd(); // imageIn
+    }
+
     this.testCorrectness_imageOutReference
       = this.calcResult( this.testCorrectness_imageIn );
 
@@ -154,6 +170,9 @@ class NeuralNet_Reference_Base
       }
       this.testCorrectness_imageOutReference = null;
     }
+
+    if ( bTableLog )
+      console.groupEnd();  // groupLabel "testParams.id"
   }
 
   /**
@@ -197,6 +216,25 @@ class NeuralNet_Reference_Base
     let memoryInfo_beforeCreate = tf.memory();
     {
       let neuralNet = NeuralNet_Reference_Base.NeuralNet_create( testParams );
+
+      // Table log the input tensor if requested.
+      const bTableLog = stage.bTableLog;
+      if ( bTableLog ) {
+        const imageIn_BoundsArraySet
+          = this.testCorrectness_imageIn.boundsArraySet;
+        const imageIn_ScaleBoundsArray = imageIn_BoundsArraySet.output0;
+
+        console.groupCollapsed( "tensorIn" );
+        {
+          const tensorIn_imageHeaderPrefix = "tensorIn";
+          const tensorIn_strSubheader = undefined;
+          TableLogger.Base.Singleton.log_tensor3d_along_depth(
+            tensorIn_imageHeaderPrefix, tensorIn_strSubheader,
+            inputTensor3d,
+            imageIn_ScaleBoundsArray );
+        }
+        console.groupEnd(); // tensorIn
+      }
 
       // The difference tensor count will be the generated tensor count (i.e.
       // outputTensorCount) minus destroyed input tensor count (i.e.
@@ -876,7 +914,18 @@ class NeuralNet_Reference_Base
    * @return {NumberImage.Base} Return output image.
    */
   calcResult( imageIn ) {
-    let testParams = this.testParams;
+    const testParams = this.testParams;
+
+    const bTableLog = testParams.out.bTableLog;
+    if ( bTableLog ) {
+      const nConvStageTypeNameWithInt
+        = ValueDesc.ConvStageType.Singleton.getNameWithInt_byId(
+            testParams.out.nConvStageTypeId );
+
+      const neuralNetName = this.nameString_get();
+      console.groupCollapsed(
+        `${neuralNetName} ( ConvStageType = ${nConvStageTypeNameWithInt} )` );
+    }
 
     let imageOut;
     let imageToBeProccessed = imageIn;
@@ -962,6 +1011,10 @@ class NeuralNet_Reference_Base
         ???bTableLog,
         testParams.out, "output_clamp_int" );
     }
+
+!!!
+    if ( bTableLog )
+      console.groupEnd();  // groupLabel "NeuralNet_Reference"
 
     return imageOut;
   }
