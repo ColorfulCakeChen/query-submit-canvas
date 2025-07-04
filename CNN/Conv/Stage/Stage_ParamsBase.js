@@ -45,7 +45,7 @@ import { InferencedParams } from "./Stage_InferencedParams.js";
       nSqueezeExcitationChannelCountDivisor,
       nActivationId,
       bKeepInputTensor,
-    bTableLog
+      bTableLog
     );
   }
 

@@ -97,7 +97,8 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     nConvStageTypeId,
     blockCountTotalRequested,
     output_channelCount, output_asInputValueRange,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     super();
     this.#setAsConstructor_self(
@@ -107,7 +108,8 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
       nConvStageTypeId,
       blockCountTotalRequested,
       output_channelCount, output_asInputValueRange,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
   }
 
@@ -119,7 +121,8 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     nConvStageTypeId,
     blockCountTotalRequested,
     output_channelCount, output_asInputValueRange,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     super.setAsConstructor();
     this.#setAsConstructor_self(
@@ -129,7 +132,8 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
       nConvStageTypeId,
       blockCountTotalRequested,
       output_channelCount, output_asInputValueRange,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
   }
 
@@ -141,7 +145,8 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     nConvStageTypeId,
     blockCountTotalRequested,
     output_channelCount, output_asInputValueRange,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
     this.explicit_input_height = explicit_input_height;
     this.explicit_input_width = explicit_input_width;
@@ -154,12 +159,14 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
     this.output_channelCount = output_channelCount;
     this.output_asInputValueRange = output_asInputValueRange;
     this.bKeepInputTensor = bKeepInputTensor;
+    this.bTableLog = bTableLog;
   }
 
   /** @override */
   disposeResources() {
     this.inferencedParams_dispose();
 
+    this.bTableLog = undefined;
     this.bKeepInputTensor = undefined;
     this.output_asInputValueRange = undefined;
     this.output_channelCount = undefined;
@@ -190,7 +197,8 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
       this.nConvStageTypeId,
       this.blockCountTotalRequested,
       this.output_channelCount, this.output_asInputValueRange,
-      this.bKeepInputTensor
+      this.bKeepInputTensor,
+      this.bTableLog
     );
     return another;
   }
@@ -323,6 +331,8 @@ class NeuralNet_ParamsBase extends Recyclable.Root {
       + `output_asInputValueRange=${this.output_asInputValueRange}, `
 
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
+      + `bTableLog=${this.bTableLog}, `
+
       + `inferencedParams={ ${this.inferencedParams} }`
       ;
     return str;
