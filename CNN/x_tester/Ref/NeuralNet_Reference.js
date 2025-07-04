@@ -2,7 +2,7 @@ export { NeuralNet_Reference_Base as Base };
 
 import * as HierarchicalNameable from "../../util/HierarchicalNameable.js";
 import * as Pool from "../../util/Pool.js";
-//import * as Recyclable from "../../util/Recyclable.js";
+import * as Recyclable from "../../util/Recyclable.js";
 import * as NameNumberArrayObject from "../../util/NameNumberArrayObject.js";
 import * as TableLogger from "../../util/TableLogger.js";
 import * as TensorTools from "../../util/TensorTools.js";
