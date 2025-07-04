@@ -384,7 +384,7 @@ class NumberImage_Base extends Recyclable.Root {
             let filterIndex = filterIndexBase + outChannel;
 
             // Note: According to experiment, the accumulation error
-            // (vs. tensorflow.js) is smaller if only fround() the input
+            // is similar to tensorflow.js if only fround() the input
             // (including previous non-completed convolution).
             imageOut.dataArray[ outIndex ] = Math.fround(
               imageOut.dataArray[ outIndex ] + (
@@ -395,8 +395,8 @@ class NumberImage_Base extends Recyclable.Root {
               )
             );
 
-            // Too much fround() results in larger accumulation error
-            // (vs. tensorflow.js).
+            // Too many fround() result in larger accumulation
+            // error than tensorflow.js.
             // (2025/07/03 Remarked) 
             //
             // imageOut.dataArray[ outIndex ] = Math.fround(
@@ -844,9 +844,20 @@ class NumberImage_Base extends Recyclable.Root {
 
                     switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
                       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG: // Avg pooling
+
+                        // Note: According to experiment, the accumulation
+                        // error is similar to tensorflow.js if only
+                        // fround() the input.
                         imageOut.dataArray[ outIndex ] = Math.fround(
-                          Math.fround( imageOut.dataArray[ outIndex ] )
-                            + Math.fround( imageIn.dataArray[ inIndex ] ) );
+                          ( imageOut.dataArray[ outIndex ] )
+                            + ( imageIn.dataArray[ inIndex ] ) );
+
+                        // Too many fround() result in larger accumulation
+                        // error than tensorflow.js.
+                        // (2025/07/04 Remarked) 
+                        // imageOut.dataArray[ outIndex ] = Math.fround(
+                        //   Math.fround( imageOut.dataArray[ outIndex ] )
+                        //     + Math.fround( imageIn.dataArray[ inIndex ] ) );
 
                         // (Because avg pooling can not undo previous
                         // activation escaping scale, use .input0 instead of
@@ -870,7 +881,7 @@ class NumberImage_Base extends Recyclable.Root {
                           depthwiseFiltersArray[ filterIndex ] );
 
                         // Note: According to experiment, the accumulation
-                        // error (vs. tensorflow.js) is smaller if only
+                        // error is similar to tensorflow.js if only
                         // fround() the input (including previous non-completed
                         // convolution).
                         imageOut.dataArray[ outIndex ] = Math.fround(
@@ -884,8 +895,8 @@ class NumberImage_Base extends Recyclable.Root {
                               )
                         );
 
-                        // Too much fround() results in larger accumulation
-                        // error (vs. tensorflow.js).
+                        // Too many fround() result in larger accumulation
+                        // error than tensorflow.js.
                         // (2025/07/03 Remarked) 
                         //
                         // imageOut.dataArray[ outIndex ] = Math.fround(
@@ -922,9 +933,19 @@ class NumberImage_Base extends Recyclable.Root {
                    === depthwise_AvgMax_Or_ChannelMultiplier ) {
 
               // So that every sum is averaged.
+
+              // Note: According to experiment, the accumulation error is
+              // similar to tensorflow.js if only fround() the input.
               imageOut.dataArray[ outIndex ] = Math.fround(
                 Math.fround( imageOut.dataArray[ outIndex ] )
                   / Math.fround( avgDivisor ) );
+
+              // Too many fround() result in larger accumulation
+              // error than tensorflow.js.
+              // (2025/07/04 Remarked) 
+              // imageOut.dataArray[ outIndex ] = Math.fround(
+              //   Math.fround( imageOut.dataArray[ outIndex ] )
+              //     / Math.fround( avgDivisor ) );
 
               afterFilter_BoundsArray_perPixel.divide_one_byN(
                 outIndex, avgDivisor ); // value bounds is also averaged.
