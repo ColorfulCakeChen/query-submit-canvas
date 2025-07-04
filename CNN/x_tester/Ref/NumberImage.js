@@ -937,7 +937,7 @@ class NumberImage_Base extends Recyclable.Root {
               // Note: According to experiment, the accumulation error is
               // similar to tensorflow.js if only fround() the input.
               imageOut.dataArray[ outIndex ] = Math.fround(
-                Math.fround( imageOut.dataArray[ outIndex ] )
+                ( imageOut.dataArray[ outIndex ] )
                   / Math.fround( avgDivisor ) );
 
               // Too many fround() result in larger accumulation
