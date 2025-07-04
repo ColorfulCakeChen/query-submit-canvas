@@ -852,27 +852,28 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
     return this.blockLast.output_channelCount;
   }
 
-  /**
-   * If .bTableLog is true, log tensor3d and ScaleBoundsArray of .output0
-   * as table.
-   *
-   * @param {string} strSubheader
-   *   A string will be logged between image header and data array. If null or
-   * undefined, there is no subheader.
-   */
-  TableLog_output0_if_requested( strSubheader ) {
-    if ( !this.bTableLog )
-      return;
-
-    // Prefix with the hierarchical name of this operation.
-    const headerPrefix = this.nameString_recursively_get();
-
-//!!! ...unfinished... (2025/07/02)
-//     const extraName = `channelMultiplier_${this.channelMultiplier}`;
-//     headerPrefix = this.nameJoinSeparator_join( headerPrefix, extraName );
-
-    this.output0.TableLog_header_body( headerPrefix, strSubheader );
-  }
+// !!! (2025/07/04 Remarked) not used.
+//   /**
+//    * If .bTableLog is true, log tensor3d and ScaleBoundsArray of .output0
+//    * as table.
+//    *
+//    * @param {string} strSubheader
+//    *   A string will be logged between image header and data array. If null or
+//    * undefined, there is no subheader.
+//    */
+//   TableLog_output0_if_requested( strSubheader ) {
+//     if ( !this.bTableLog )
+//       return;
+//
+//     // Prefix with the hierarchical name of this operation.
+//     const headerPrefix = this.nameString_recursively_get();
+//
+// //!!! ...unfinished... (2025/07/02)
+// //     const extraName = `channelMultiplier_${this.channelMultiplier}`;
+// //     headerPrefix = this.nameJoinSeparator_join( headerPrefix, extraName );
+//
+//     this.output0.TableLog_header_body( headerPrefix, strSubheader );
+//   }
 
   /**
    * @return {string}
