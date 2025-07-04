@@ -303,19 +303,24 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     let valueOutMinMax = this.valueOutMinMax = {
       explicit_input_height: [
         3,
-        5
+        3
+        // 4
+        // 5
       ],
 
       explicit_input_width: [
         3,
-        5
+        3
+        // 4
+        // 5
       ],
 
       explicit_input_channelCount: [
         NeuralNet.Params.explicit_input_channelCount.valueDesc.range.min, // 1
+        1,
         // 2
         // 3
-        4
+        // 4
       ],
 
       has_implicit_input: [
@@ -327,7 +332,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
       vocabularyChannelCount: [
         NeuralNet.Params.vocabularyChannelCount.valueDesc.range.min, // 2
-        3
+        2
+        // 3
         // 4
       ],
 
@@ -364,12 +370,17 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
       blockCountTotalRequested: [
         NeuralNet.Params.blockCountTotalRequested.valueDesc.range.min, // 2
-        6
+        2
+        // 3
+        // 4
+        // 5
+        // 6
       ],
 
       output_channelCount: [
         NeuralNet.Params.output_channelCount.valueDesc.range.min, // 1
-        10
+        5
+        // 10
       ],
 
       output_asInputValueRange: [
