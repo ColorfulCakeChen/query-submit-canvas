@@ -86,7 +86,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       aParamsBase.blockCountTotalRequested,
       aParamsBase.output_channelCount,
       aParamsBase.output_asInputValueRange,
-      aParamsBase.bKeepInputTensor
+      aParamsBase.bKeepInputTensor,
+      aParamsBase.bTableLog
     );
   }
 
@@ -106,7 +107,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     nConvStageTypeId,
     blockCountTotalRequested,
     output_channelCount, output_asInputValueRange,
-    bKeepInputTensor
+    bKeepInputTensor,
+    bTableLog
   ) {
 
     if ( this.out ) {
@@ -121,7 +123,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       nConvStageTypeId,
       blockCountTotalRequested,
       output_channelCount, output_asInputValueRange,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
 
     // So that all parameters are by specified (none is by evolution).
@@ -173,7 +176,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
         neuralNetParams.vocabularyChannelCount,
         neuralNetParams.vocabularyCountPerInputChannel,
         neuralNetParams.inferencedParams.bEmbedVocabularyId,
-        neuralNetParams.bKeepInputTensor
+        neuralNetParams.bKeepInputTensor,
+        neuralNetParams.bTableLog
       );
 
       this.in.paramsNumberArrayObject.push(
@@ -203,7 +207,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
         stageParams.depthwiseFilterWidth,
         stageParams.nSqueezeExcitationChannelCountDivisor,
         stageParams.nActivationId,
-        stageParams.bKeepInputTensor
+        stageParams.bKeepInputTensor,
+        stageParams.bTableLog
       );
 
       this.stageArray[ i ] = stageTestParams;
@@ -353,10 +358,18 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
         NeuralNet.Params.output_asInputValueRange.valueDesc.range.max
       ],
 
-      // bKeepInputTensor: undefined,
+
       bKeepInputTensor: [
-        NeuralNet.Params.bKeepInputTensor.valueDesc.range.min,
-        NeuralNet.Params.bKeepInputTensor.valueDesc.range.max
+        Stage.Params.bKeepInputTensor.valueDesc.range.min,
+        // Stage.Params.bKeepInputTensor.valueDesc.range.max,
+        // Stage.Params.bKeepInputTensor.valueDesc.range.min
+        Stage.Params.bKeepInputTensor.valueDesc.range.max
+      ],
+
+      bTableLog: [
+        // (2025/06/04 Temp Remarked) For debug.
+        0, 0
+        // 1, 1
       ],
     };
 
@@ -392,6 +405,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
       new TestParams.ParamDescConfig( NeuralNet.Params.bKeepInputTensor,
         valueOutMinMax.bKeepInputTensor ),
+      new TestParams.ParamDescConfig( NeuralNet.Params.bTableLog,
+        valueOutMinMax.bTableLog ),
     ];
 
     const theParamDescConfigAll
@@ -421,4 +436,5 @@ NeuralNet_TestParams_Base.paramsNameOrderArray_Basic = [
   NeuralNet.Params.output_channelCount.paramName,
   NeuralNet.Params.output_asInputValueRange.paramName,
   NeuralNet.Params.bKeepInputTensor.paramName,
+  NeuralNet.Params.bTableLog.paramName,
 ];
