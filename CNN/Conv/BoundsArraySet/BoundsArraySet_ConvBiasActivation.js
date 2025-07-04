@@ -361,6 +361,13 @@ class ConvBiasActivation extends InputsOutputs {
 
           if ( bPassThrough ) { // For channels will be activation-escaping.
 
+!!! ...unfinished... (2025/07/04)
+// For bounds [ 0, 0 ], whether can just (like non-pass-through) let:
+//   this.output0.scaleArraySet.do.set_one_byN( outChannel, 1 );
+//   doEscapingScale = 1;
+// So that the .lowers[] and .uppers[] needs not be modified?
+//  
+
             // If value bounds is [ 0, 0 ], adjust it to a range which includes
             // zero.
             //
