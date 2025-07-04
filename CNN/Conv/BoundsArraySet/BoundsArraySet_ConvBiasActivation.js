@@ -366,7 +366,8 @@ class ConvBiasActivation extends InputsOutputs {
 //   this.output0.scaleArraySet.do.set_one_byN( outChannel, 1 );
 //   doEscapingScale = 1;
 // So that the .lowers[] and .uppers[] needs not be modified?
-//  
+// (bounds modification will result in bounds mismatched
+// between SHUFFLE_NET_V2_BY_MOBILE_NET_V1 and SHUFFLE_NET_V2. )
 
             // If value bounds is [ 0, 0 ], adjust it to a range which includes
             // zero.
