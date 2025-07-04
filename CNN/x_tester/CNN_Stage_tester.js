@@ -93,7 +93,7 @@ async function *testerBackend( progressParent, backendName ) {
         let backendName = tf.getBackend();
         let msg = `CNN_Stage_tester.${funcNameInMessage}(): `
           + `backendName=${backendName}, `
-          + `Embedding, ( yieldCount == ${testParams.yieldCount} ), `
+          + `Stage, ( yieldCount == ${testParams.yieldCount} ), `
           + `testParams.id == ${testParams.id}`;
 
         console.log( msg );

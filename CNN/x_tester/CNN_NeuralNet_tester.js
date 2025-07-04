@@ -94,7 +94,7 @@ async function *testerBackend( progressParent, backendName ) {
         let backendName = tf.getBackend();
         let msg = `CNN_NeuralNet_tester.${funcNameInMessage}(): `
           + `backendName=${backendName}, `
-          + `Embedding, ( yieldCount == ${testParams.yieldCount} ), `
+          + `NeuralNet, ( yieldCount == ${testParams.yieldCount} ), `
           + `testParams.id == ${testParams.id}`;
 
         console.log( msg );
