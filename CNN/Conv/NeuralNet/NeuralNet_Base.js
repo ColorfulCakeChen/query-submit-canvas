@@ -954,7 +954,7 @@ class Stage_Name_Bag extends MultiLayerMap.Base {
    */
   get_by( stageIndex ) {
     return this.get_or_create_by_arguments1_etc(
-      Block_Name_Bag.create_by, this,
+      Stage_Name_Bag.create_by, this,
       stageIndex );
   }
 
