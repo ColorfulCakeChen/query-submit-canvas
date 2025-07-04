@@ -290,8 +290,11 @@ class NeuralNet_Base extends HierarchicalNameable.SeparatorDot_Root {
           this.bKeepInputTensor,
           this.bTableLog
         );
-    
-        this.embedding = Embedding.AddGatherReshape.Pool.get_or_create_by();
+
+        const embeddingName = `Embedding`;
+        this.embedding = Embedding.AddGatherReshape.Pool.get_or_create_by(
+          this, embeddingName );
+
         let embeddingIniter = this.embedding.initer( progressForEmbedding,
           inputWeightArray, this.weightElementOffsetEnd, embeddingParams
         );
@@ -349,7 +352,10 @@ class NeuralNet_Base extends HierarchicalNameable.SeparatorDot_Root {
         stageParams
           = stageParamsCreator.create_StageParams( StageParamsClass );
 
-        stage = this.stageArray[ i ] = Stage.Base.Pool.get_or_create_by();
+        const stageName = `Stage_${i}`;
+        stage = this.stageArray[ i ] = Stage.Base.Pool.get_or_create_by(
+          this, stageName );
+
         stageIniter = stage.initer( progressForStages.children[ i ],
           inputWeightArray, this.weightElementOffsetEnd, stageParams,
           next_input_ScaleBoundsArray_or_TensorPlaceholder
@@ -418,7 +424,7 @@ class NeuralNet_Base extends HierarchicalNameable.SeparatorDot_Root {
           .channelCount_higherHalf = undefined;
 
         let blockFinal = this.blockFinal = Block.Base.Pool.get_or_create_by(
-          this, "block_final" );
+          this, "Block_Final" );
 
         let blockIniter = blockFinal.initer( progressForBlockFinal,
           inputWeightArray, this.weightElementOffsetEnd, blockFinalParams,
