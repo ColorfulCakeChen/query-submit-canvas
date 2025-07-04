@@ -1,5 +1,6 @@
 export { NeuralNet_Base as Base };
 
+import * as HierarchicalNameable from "../../util/HierarchicalNameable.js";
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "../../util/ValueMax.js";
@@ -116,14 +117,7 @@ import { ScaleFiller as NeuralNet_ScaleFiller } from "./NeuralNet_ScaleFiller.js
  *   The progressToAdvance when .applier().
  *
  */
-class NeuralNet_Base extends Recyclable.Root {
-
-
-//!!! ...unfinshed... (2025/06/06)
-// Let Operation, Block(_Reference), Stage(_Reference), NeuralNet(_Reference)
-// inherits from HierarchicalName.Base.
-
-
+class NeuralNet_Base extends HierarchicalNameable.SeparatorDot_Root {
 
   /**
    * Used as default NeuralNet.Base provider for conforming to Recyclable
@@ -133,14 +127,14 @@ class NeuralNet_Base extends Recyclable.Root {
     NeuralNet_Base );
 
   /** */
-  constructor() {
-    super();
+  constructor( parentNameable, name ) {
+    super( parentNameable, name );
     this.#setAsConstructor_self();
   }
 
   /** @override */
-  setAsConstructor() {
-    super.setAsConstructor();
+  setAsConstructor( parentNameable, name ) {
+    super.setAsConstructor( parentNameable, name );
     this.#setAsConstructor_self();
   }
 
@@ -295,7 +289,6 @@ class NeuralNet_Base extends Recyclable.Root {
           this.bEmbedVocabularyId,
           this.bKeepInputTensor,
           this.bTableLog
-
         );
     
         this.embedding = Embedding.AddGatherReshape.Pool.get_or_create_by();
