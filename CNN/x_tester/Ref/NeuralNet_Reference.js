@@ -20,17 +20,11 @@ import * as NeuralNet_TestParams from "./NeuralNet_TestParams.js";
 // import * as Stage from "../../Conv/Stage.js";
 import * as NeuralNet from "../../Conv/NeuralNet.js";
 
-
-//!!! ...unfinshed... (2025/06/06)
-// Let Operation, Block(_Reference), Stage(_Reference), NeuralNet(_Reference)
-// inherits from HierarchicalName.Base.
-
-
-
 /**
  * Reference computation of class NeuralNet.Base.
  */
-class NeuralNet_Reference_Base extends Recyclable.Root {
+class NeuralNet_Reference_Base
+  extends HierarchicalNameable.SeparatorSlash_Root {
 
   /**
    * Used as default NeuralNet_Reference.Base provider for conforming to
@@ -169,9 +163,9 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
    */
   static neuralNet_create_apply_internal( imageSourceBag, testParams ) {
 
-    let {
+    const {
       inferencedParams: { input_height, input_width, input_channelCount },
-      bKeepInputTensor,
+      bKeepInputTensor, bTableLog,
     } = testParams.out;
 
     let inputTensor3d_fromBag = imageSourceBag.getTensor3d_by(
@@ -380,7 +374,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       testParams.in.blockCountTotalRequested,
       testParams.in.output_channelCount,
       testParams.in.output_asInputValueRange,
-      testParams.in.bKeepInputTensor
+      testParams.in.bKeepInputTensor,
+      testParams.in.bTableLog
     );
 
     let progressInit = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
@@ -556,7 +551,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       testParams.in.blockCountTotalRequested,
       testParams.in.output_channelCount,
       testParams.in.output_asInputValueRange,
-      testParams.in.bKeepInputTensor
+      testParams.in.bKeepInputTensor,
+      testParams.in.bTableLog
     );
 
     let bInitOk = neuralNet.init( progressInit,
@@ -701,6 +697,9 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
     neuralNet_asserter.propertyValue( "bKeepInputTensor",
       testParams.out.bKeepInputTensor );
 
+    neuralNet_asserter.propertyValue( "bTableLog",
+      testParams.out.bTableLog );
+
     NeuralNet_Reference_Base.AssertParameters_NeuralNet_embedding(
       neuralNet, neuralNet ); // Test embedding 's parameters.
     NeuralNet_Reference_Base.AssertParameters_NeuralNet_stages(
@@ -780,6 +779,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       neuralNet.vocabularyCountPerInputChannel );
     embedding_asserter.propertyValue( "bKeepInputTensor",
       neuralNet.bKeepInputTensor );
+    embedding_asserter.propertyValue( "bTableLog",
+      neuralNet.bTableLog );
 
     embedding_asserter.disposeResources_and_recycleToPool();
     embedding_asserter = null;
@@ -857,6 +858,8 @@ class NeuralNet_Reference_Base extends Recyclable.Root {
       // In NeuralNet, only the embedding layer use specified bKeepInputTensor
       // flag. All stages use ( bKeepInputTensor == false ).
       stage_asserter.propertyValue( "bKeepInputTensor", false );
+
+      stage_asserter.propertyValue( "bTableLog", neuralNet.bTableLog );
 
       stage_asserter.disposeResources_and_recycleToPool();
       stage_asserter = null;

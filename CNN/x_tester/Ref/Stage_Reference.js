@@ -20,7 +20,8 @@ import * as Stage from "../../Conv/Stage.js";
 /**
  * Reference computation of class Stage.Base.
  */
-class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
+class Stage_Reference_Base
+  extends HierarchicalNameable.SeparatorSlash_Root {
 
   /**
    * Used as default Stage_Reference.Base provider for conforming to
