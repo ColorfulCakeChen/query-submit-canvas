@@ -293,7 +293,7 @@ class NumberImage_Base extends Recyclable.Root {
     if ( bTableLog ) {
       imageHeaderPrefix_forTableLog
         = pointwiseNames.join( NumberImage_Base.debugNamesSeparator );
-      console.group( `${pointwiseNames[ pointwiseNames.length - 1 ]}` );
+      console.groupCollapsed( `${pointwiseNames[ pointwiseNames.length - 1 ]}` );
     }
 
     let imageIn = this;
@@ -612,7 +612,7 @@ class NumberImage_Base extends Recyclable.Root {
     if ( bTableLog ) {
       imageHeaderPrefix_forTableLog
         = depthwiseNames.join( NumberImage_Base.debugNamesSeparator );
-      console.group( `${depthwiseNames[ depthwiseNames.length - 1 ]}` );
+      console.groupCollapsed( `${depthwiseNames[ depthwiseNames.length - 1 ]}` );
     }
 
     let imageIn = this;
@@ -1234,7 +1234,7 @@ class NumberImage_Base extends Recyclable.Root {
     this.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
     if ( bTableLog ) {
-      console.group( `${clampNames[ clampNames.length - 1 ]}` );
+      console.groupCollapsed( `${clampNames[ clampNames.length - 1 ]}` );
       imageIn.TableLog_header_body(
         `${clampNames.join( NumberImage_Base.debugNamesSeparator )}` );
       console.groupEnd();
@@ -1518,7 +1518,7 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     if ( bTableLog ) {
-      console.group( `${addNames[ addNames.length - 1 ]}` );
+      console.groupCollapsed( `${addNames[ addNames.length - 1 ]}` );
       imageOutNew.TableLog_header_body(
         `${addNames.join( NumberImage_Base.debugNamesSeparator )}` );
       console.groupEnd();
@@ -1647,7 +1647,7 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     if ( bTableLog ) {
-      console.group( `${multiplyNames[ multiplyNames.length - 1 ]}` );
+      console.groupCollapsed( `${multiplyNames[ multiplyNames.length - 1 ]}` );
       imageOutNew.TableLog_header_body(
         `${multiplyNames.join( NumberImage_Base.debugNamesSeparator )}` );
       console.groupEnd();
@@ -2012,7 +2012,7 @@ class NumberImage_Base extends Recyclable.Root {
     bTableLog, parametersDesc, ...splitNames ) {
 
     if ( bTableLog )
-      console.group( `${splitNames[ splitNames.length - 1 ]}` );
+      console.groupCollapsed( `${splitNames[ splitNames.length - 1 ]}` );
 
     imageOutArray.length = 2;
     imageOutArray[ 0 ] = null;
@@ -2250,7 +2250,8 @@ class NumberImage_Base extends Recyclable.Root {
     bTableLog, parametersDesc, ...concatShuffleSplitNames ) {
 
     if ( bTableLog )
-      console.group( `${concatShuffleSplitNames[ concatShuffleSplitNames.length - 1 ]}` );
+      console.groupCollapsed(
+        `${concatShuffleSplitNames[ concatShuffleSplitNames.length - 1 ]}` );
 
     if ( imageInArray.length != 2 )
       throw Error(

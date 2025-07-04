@@ -760,7 +760,7 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
             this.nConvStageTypeId );
 
       const stageName = this.nameString_get();
-      console.group(
+      console.groupCollapsed(
         `${stageName} ( ConvStageType = ${nConvStageTypeNameWithInt} )` );
     }
 
@@ -806,7 +806,7 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
             this.nConvStageTypeId );
 
       const stageName = this.nameString_get();
-      console.group(
+      console.groupCollapsed(
         `${stageName} ( ConvStageType = ${nConvStageTypeNameWithInt} )` );
     }
 

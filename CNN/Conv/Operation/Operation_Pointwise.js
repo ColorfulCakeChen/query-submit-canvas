@@ -378,7 +378,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
   static Conv_and_destroy_or_keep() {
     if ( this.bTableLog ) {
       const nameString = this.nameString_get();
-      console.group( nameString );
+      console.groupCollapsed( nameString );
     }
 
     this.output0.realTensor = this.pfnConv( this.input0.realTensor );
@@ -390,7 +390,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
   static ConvBias_and_destroy_or_keep() {
     if ( this.bTableLog ) {
       const nameString = this.nameString_get();
-      console.group( nameString );
+      console.groupCollapsed( nameString );
     }
 
     let t0 = this.pfnConv( this.input0.realTensor );
@@ -420,7 +420,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
   static ConvActivation_and_destroy_or_keep() {
     if ( this.bTableLog ) {
       const nameString = this.nameString_get();
-      console.group( nameString );
+      console.groupCollapsed( nameString );
     }
 
     let t0 = this.pfnConv( this.input0.realTensor );
@@ -450,7 +450,7 @@ class Pointwise extends Base( FiltersArray_BiasesArray(
   static ConvBiasActivation_and_destroy_or_keep() {
     if ( this.bTableLog ) {
       const nameString = this.nameString_get();
-      console.group( nameString );
+      console.groupCollapsed( nameString );
     }
 
     let t0 = this.pfnConv( this.input0.realTensor );

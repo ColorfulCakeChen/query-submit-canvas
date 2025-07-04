@@ -397,7 +397,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
       if ( bTableLog ) {
         const [ imageIn0, imageIn1 ] = imageInArraySelected;
 
-        console.group( "imageIn" );
+        console.groupCollapsed( "imageIn" );
 
         {
           const imageIn0_imageHeaderPrefix = "imageIn0";
@@ -497,7 +497,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
       const imageIn1_bPassThroughArray
         = imageIn1_BoundsArraySet?.bPassThroughArray;
 
-      console.group( "tensorIn" );
+      console.groupCollapsed( "tensorIn" );
 
       {
         const tensorIn0_imageHeaderPrefix = "tensorIn0";
@@ -1264,7 +1264,7 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
             testParams.out.nConvBlockTypeId );
 
       const blockName = this.nameString_get();
-      console.group(
+      console.groupCollapsed(
         `${blockName} ( ConvBlockType = ${nConvBlockTypeNameWithInt} )` );
     }
 

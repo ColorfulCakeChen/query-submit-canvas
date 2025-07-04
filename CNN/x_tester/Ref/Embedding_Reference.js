@@ -507,7 +507,7 @@ class Embedding_Reference_Base
 
     if ( bTableLog ) {
       const embeddingName = this.nameString_get();
-      console.group( `${embeddingName}` );
+      console.groupCollapsed( `${embeddingName}` );
     }
 
     let imageOut;

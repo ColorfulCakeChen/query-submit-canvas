@@ -419,7 +419,7 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
       return;
 
     const nameString = this.nameString_get();
-    console.group( nameString );
+    console.groupCollapsed( nameString );
 
     // Prefix with the hierarchical name of this operation.
     const headerPrefix = this.nameString_recursively_get();
@@ -441,7 +441,7 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
       return;
 
     const nameString = this.nameString_get();
-    console.group( nameString );
+    console.groupCollapsed( nameString );
 
     // Prefix with the hierarchical name of this operation.
     const headerPrefix = this.nameString_recursively_get();

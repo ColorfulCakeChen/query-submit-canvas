@@ -563,7 +563,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
   static Operation_and_destroy_or_keep() {
     if ( this.bTableLog ) {
       const nameString = this.nameString_get();
-      console.group( nameString );
+      console.groupCollapsed( nameString );
     }
 
     // may destroy or keep.
@@ -576,7 +576,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
   static OperationBias_and_destroy_or_keep() {
     if ( this.bTableLog ) {
       const nameString = this.nameString_get();
-      console.group( nameString );
+      console.groupCollapsed( nameString );
     }
 
     // may destroy or keep.
@@ -607,7 +607,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
   static OperationActivation_and_destroy_or_keep() {
     if ( this.bTableLog ) {
       const nameString = this.nameString_get();
-      console.group( nameString );
+      console.groupCollapsed( nameString );
     }
 
     let t0 = this.pfnOperation( this.input0.realTensor ); // may destroy or keep.
@@ -637,7 +637,7 @@ class Depthwise extends Base( FiltersArray_BiasesArray(
   static OperationBiasActivation_and_destroy_or_keep() {
     if ( this.bTableLog ) {
       const nameString = this.nameString_get();
-      console.group( nameString );
+      console.groupCollapsed( nameString );
     }
 
     let t0 = this.pfnOperation( this.input0.realTensor ); // may destroy or keep.

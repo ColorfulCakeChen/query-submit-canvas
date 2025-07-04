@@ -126,7 +126,7 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
       const groupLabel = `testParams.id == ${testParams.id}`;
       console.groupCollapsed( groupLabel );
 
-      console.group( "imageIn" );
+      console.groupCollapsed( "imageIn" );
       {
         const imageIn_imageHeaderPrefix = "imageIn";
         const imageIn_strSubheader = undefined;
@@ -203,7 +203,7 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
       // Table log the input tensor if requested.
       const bTableLog = stage.bTableLog;
       if ( bTableLog ) {
-        console.group( "tensorIn" );
+        console.groupCollapsed( "tensorIn" );
         {
           const tensorIn_imageHeaderPrefix = "tensorIn";
           const tensorIn_strSubheader = undefined;
@@ -1177,7 +1177,7 @@ class Stage_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
             testParams.out.nConvStageTypeId );
 
       const stageName = this.nameString_get();
-      console.group(
+      console.groupCollapsed(
         `${stageName} ( ConvStageType = ${nConvStageTypeNameWithInt} )` );
     }
 
