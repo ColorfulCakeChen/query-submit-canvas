@@ -340,6 +340,7 @@ class NeuralNet_Reference_Base
    *   The output tensor (from original neuralNet) to be compared.
    */
   static neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1(
+    parentNameable, stageName,
     testParams,
     inputTensor3d_fromBag, outputTensor3d_original ) {
 
@@ -401,7 +402,9 @@ class NeuralNet_Reference_Base
       }
     }
 
-    let neuralNet_toBeCompared = NeuralNet.Base.Pool.get_or_create_by();
+    let neuralNet_toBeCompared = NeuralNet.Base.Pool.get_or_create_by(
+      parentNameable, stageName
+    );
 
     // Initialize successfully or failed.
     let extractedParams = NeuralNet.Params.Pool.get_or_create_by(
@@ -574,9 +577,12 @@ class NeuralNet_Reference_Base
    * @return {NeuralNet.Base}
    *   The created NeuralNet object.
    */
-  static NeuralNet_create( testParams ) {
+  static NeuralNet_create(
+    parentNameable, stageName,
+    testParams ) {
 
-    let neuralNet = NeuralNet.Base.Pool.get_or_create_by();
+    let neuralNet = NeuralNet.Base.Pool.get_or_create_by(
+      parentNameable, stageName );
 
     let progressInit = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
 
@@ -812,7 +818,7 @@ class NeuralNet_Reference_Base
     let embedding = neuralNet.embedding;
 
     let embedding_asserter = ObjectPropertyAsserter.Base.Pool.get_or_create_by(
-      "`NeuralNet.embedding", embedding, parametersDescription );
+      "NeuralNet.embedding", embedding, parametersDescription );
 
     embedding_asserter.propertyValue( "channelMultiplier",
       neuralNet.vocabularyChannelCount );
