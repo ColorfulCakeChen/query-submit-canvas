@@ -50,11 +50,14 @@ class NeuralNet_Reference_Base
 
   /**  */
   #setAsConstructor_self() {
-    this.Embedding_Reference
-      = Embedding_Reference.Base.Pool.get_or_create_by();
-    this.Stage_Reference = Stage_Reference.Base.Pool.get_or_create_by();
+    this.Embedding_Reference = Embedding_Reference.Base.Pool.get_or_create_by(
+      this, "Embedding_Reference" );
+
+    this.Stage_Reference = Stage_Reference.Base.Pool.get_or_create_by(
+      this, "Stage_Reference" );
+
     this.Block_Reference = Block_Reference.Base.Pool.get_or_create_by(
-      this, "Block_Reference_Final" );
+      this, "Block_Reference" );
 
 //!!! (2023/04/15)
 // For clamped and integerized output, acceptable delta should be smaller.
@@ -942,7 +945,7 @@ class NeuralNet_Reference_Base
 
       imageToBeProccessed = imageOut;
 
-      const stageRefName = `StageReference_${stageIndex}`;
+      const stageRefName = `Stage_Reference_${stageIndex}`;
       stageRef.name_set( stageRefName ); // Rename stageRef.
 
       stageRef.testParams = testParams.stageArray[ stageIndex ];
@@ -970,7 +973,7 @@ class NeuralNet_Reference_Base
       this.imageInArray[ 0 ] = imageToBeProccessed;
       this.imageInArray[ 1 ] = null;
 
-      const blockRefName = `BlockReference_final`;
+      const blockRefName = `Block_Reference_Final`;
       blockRef.name_set( blockRefName ); // Rename blockRef.
 
       blockRef.calcResult( this.imageInArray, this.imageOutArray );

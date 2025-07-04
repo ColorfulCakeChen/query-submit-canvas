@@ -1199,7 +1199,7 @@ class Stage_Reference_Base
       this.imageInArray[ 0 ] = this.imageOutArray[ 0 ];
       this.imageInArray[ 1 ] = this.imageOutArray[ 1 ];
 
-      const blockRefName = `BlockReference_${blockIndex}`;
+      const blockRefName = `Block_Reference_${blockIndex}`;
       blockRef.name_set( blockRefName ); // Rename blockRef.
 
       blockRef.testParams = testParams.blockArray[ blockIndex ];
