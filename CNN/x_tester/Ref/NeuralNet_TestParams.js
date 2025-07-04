@@ -303,24 +303,24 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     let valueOutMinMax = this.valueOutMinMax = {
       explicit_input_height: [
         3,
-        3
+        // 3
         // 4
-        // 5
+        5
       ],
 
       explicit_input_width: [
         3,
-        3
+        // 3
         // 4
-        // 5
+        5
       ],
 
       explicit_input_channelCount: [
         NeuralNet.Params.explicit_input_channelCount.valueDesc.range.min, // 1
-        1,
+        // 2,
         // 2
         // 3
-        // 4
+        4
       ],
 
       has_implicit_input: [
@@ -332,9 +332,9 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
 
       vocabularyChannelCount: [
         NeuralNet.Params.vocabularyChannelCount.valueDesc.range.min, // 2
-        2
+        // 2
         // 3
-        // 4
+        4
       ],
 
       vocabularyCountPerInputChannel: [
@@ -347,12 +347,12 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       // (2023/03/09) Note: Mobile Moto e40 seems pad=same also workable now.
 
       nConvStageTypeId: [
-        // Stage.Params.nConvStageTypeId.valueDesc.range.min,
+        Stage.Params.nConvStageTypeId.valueDesc.range.min,
         // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,           // (0)
         // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID, // (1)
         // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,      // (2)
         // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,           // (3)
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,          // (4)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,          // (4)
         // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,           // (5)
         // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID, // (6)
         // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,             // (7)
@@ -361,26 +361,26 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
         // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID // (1)
         // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN      // (2)
         // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2           // (3)
-        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2          // (4)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2          // (4)
         // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1           // (5)
         // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID // (6)
         // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21             // (7)
-        // Stage.Params.nConvStageTypeId.valueDesc.range.max
+        Stage.Params.nConvStageTypeId.valueDesc.range.max
       ],
 
       blockCountTotalRequested: [
         NeuralNet.Params.blockCountTotalRequested.valueDesc.range.min, // 2
-        2
+        // 2
         // 3
         // 4
         // 5
-        // 6
+        6
       ],
 
       output_channelCount: [
         NeuralNet.Params.output_channelCount.valueDesc.range.min, // 1
-        5
-        // 10
+        // 5
+        10
       ],
 
       output_asInputValueRange: [
@@ -393,14 +393,14 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       bKeepInputTensor: [
         NeuralNet.Params.bKeepInputTensor.valueDesc.range.min,
         // NeuralNet.Params.bKeepInputTensor.valueDesc.range.max,
-        NeuralNet.Params.bKeepInputTensor.valueDesc.range.min
-        // NeuralNet.Params.bKeepInputTensor.valueDesc.range.max
+        // NeuralNet.Params.bKeepInputTensor.valueDesc.range.min
+        NeuralNet.Params.bKeepInputTensor.valueDesc.range.max
       ],
 
       bTableLog: [
         // (2025/07/04 Temp Remarked) For debug.
-        // 0, 0
-        1, 1
+        0, 0
+        // 1, 1
       ],
     };
 
