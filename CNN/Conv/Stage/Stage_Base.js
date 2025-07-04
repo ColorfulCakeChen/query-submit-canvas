@@ -940,7 +940,7 @@ class Block_Name_Bag extends MultiLayerMap.Base {
    *   Return a string "Block_N" according to the above parameters.
    */
   static create_by( blockIndex ) {
-    const blockName = `Block_${i}`;
+    const blockName = `Block_${blockIndex}`;
     return blockName;
   }
 

@@ -956,7 +956,7 @@ class Stage_Name_Bag extends MultiLayerMap.Base {
    *   Return a string "Stage_N" according to the above parameters.
    */
   static create_by( stageIndex ) {
-    const stageName = `Stage_${i}`;
+    const stageName = `Stage_${stageIndex}`;
     return stageName;
   }
 
