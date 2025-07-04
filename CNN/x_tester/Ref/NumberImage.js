@@ -454,10 +454,12 @@ class NumberImage_Base extends Recyclable.Root {
       imageOut.boundsArraySet.afterFilter );
 
     if ( bTableLog ) {
+      const convName = "conv";
+      console.groupCollapsed( convName );
 
       const TableLog_header_prefix_for_pointwiseFilters
         = imageHeaderPrefix_forTableLog
-            + `${NumberImage_Base.debugNamesSeparator}conv`;
+            + `${NumberImage_Base.debugNamesSeparator}${convName}`;
 
       const TableLog_subheader_for_pointwiseFilters
         = TableLogger.Base.Singleton.subheader_create_for_pointwiseFilters(
@@ -467,6 +469,8 @@ class NumberImage_Base extends Recyclable.Root {
         TableLog_header_prefix_for_pointwiseFilters,
         TableLog_subheader_for_pointwiseFilters,
         imageOut.boundsArraySet.afterFilter );
+
+      console.groupEnd();
     }
 
     // Bias
@@ -1002,6 +1006,7 @@ class NumberImage_Base extends Recyclable.Root {
       imageOut.boundsArraySet.afterFilter );
 
     if ( bTableLog ) {
+      console.groupCollapsed( strTableLog_filterName );
 
       const TableLog_header_prefix_for_depthwiseFilters
         = imageHeaderPrefix_forTableLog
@@ -1022,6 +1027,8 @@ class NumberImage_Base extends Recyclable.Root {
         TableLog_header_prefix_for_depthwiseFilters,
         TableLog_subheader_for_depthwiseFilters,
         imageOut.boundsArraySet.afterFilter );
+
+      console.groupEnd();
     }
 
     // Bias
@@ -1172,6 +1179,7 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     if ( bTableLog ) {
+      console.groupCollapsed( `${biasNames[ biasNames.length - 1 ]}` );
 
       const TableLog_subheader_for_biases
         = TableLogger.Base.Singleton.subheader_create_for_biases(
@@ -1181,6 +1189,8 @@ class NumberImage_Base extends Recyclable.Root {
         `${biasNames.join( NumberImage_Base.debugNamesSeparator )}`,
         TableLog_subheader_for_biases,
         imageIn.boundsArraySet.afterBias );
+
+      console.groupEnd();
     }
 
     return imageIn;
@@ -1332,10 +1342,14 @@ class NumberImage_Base extends Recyclable.Root {
     //        done).
     //
     // (2025/06/26)
-    if ( bTableLog )
-      if ( bScaleHappened )
+    if ( bTableLog ) {
+      if ( bScaleHappened ) {
+        console.groupCollapsed( `${scaleNames[ scaleNames.length - 1 ]}` );
         imageIn.TableLog_header_body(
           `${scaleNames.join( NumberImage_Base.debugNamesSeparator )}` );
+        console.groupEnd();
+      }
+    }
 
     return imageIn;
   }
@@ -1374,11 +1388,17 @@ class NumberImage_Base extends Recyclable.Root {
     // 0.1
     if ( !theActivationFunctionInfo ) {
 
-      if ( bTableLog )
+      if ( bTableLog ) {
+        console.groupCollapsed(
+          `${activationNames[ activationNames.length - 1 ]}` );
+
         imageIn.TableLog_header_body(
             `${activationNames.join( NumberImage_Base.debugNamesSeparator )}`
           + `${NumberImage_Base.debugNamesSeparator}`
           + `unknown_Info ( nActivationId = ${nActivationId} )` );
+
+        console.groupEnd();
+      }
 
       return imageIn;
     }
@@ -1411,11 +1431,17 @@ class NumberImage_Base extends Recyclable.Root {
       imageIn.dataArray[ i ] = pfnActivation( imageIn.dataArray[ i ] );
     }
 
-    if ( bTableLog )
+    if ( bTableLog ) {
+      console.groupCollapsed(
+        `${activationNames[ activationNames.length - 1 ]}` );
+
       imageIn.TableLog_header_body(
           `${activationNames.join( NumberImage_Base.debugNamesSeparator )}`
         + `${NumberImage_Base.debugNamesSeparator}`
         + `${strActivationNameWithInt}` );
+
+      console.groupEnd();
+    }
 
     return imageIn;
   }
