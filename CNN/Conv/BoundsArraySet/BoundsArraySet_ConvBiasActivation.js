@@ -126,6 +126,11 @@ class ConvBiasActivation extends InputsOutputs {
   set_afterUndoPreviousActivationEscaping_by_input0_undoScales(
     channelShuffler_inputGroupCount ) {
 
+
+!!! ...unfinished... (2025/07/04)
+// Perhaps, fround() inside .multiply_all_byNs()
+
+
     this.afterUndoPreviousActivationEscaping
       .set_all_byBoundsArray( this.input0.boundsArray )
       .multiply_all_byNs( this.input0.scaleArraySet.undo.scales );
