@@ -356,6 +356,8 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
     if ( !this.bTableLog )
       return;
 
+    console.groupCollapsed( extraLeafName );
+
     // Prefix with the hierarchical name of this operation and extra name.
     let headerPrefix = this.nameString_recursively_get();
     headerPrefix = this.nameJoinSeparator_join( headerPrefix, extraLeafName );
@@ -366,6 +368,8 @@ let Operation_Base = ( ParentClass = Object ) => class Operation_Base
       aBoundsArray_or_aScaleBoundsArray,
       bPassThroughArray
     );
+
+    console.groupEnd();
   }
 
   /**
