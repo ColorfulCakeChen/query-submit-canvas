@@ -593,6 +593,16 @@ class TestParams_Base extends Recyclable.Root {
 
     const alwaysFixedRandomMinMax = TestParams_Base.alwaysFixedRandomMinMax;
 
+    // Think:
+    //
+    // Perhaps, let sequence begin from the previous sequence's last value so
+    // that every convolution kernel filter will be slightly different.
+    //
+    // However, this method may invalidate the SequenceRandom_NumberArray_Bag
+    // effectiveness because every sequence will be different.
+    //
+    // (2025/07/04)
+
     io_object[ propertyName ]
       = this.SequenceRandom_NumberArray_Bag
           .get_by_elementCount_randomOffsetMin_randomOffsetMax(
