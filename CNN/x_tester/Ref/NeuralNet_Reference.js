@@ -360,7 +360,7 @@ class NeuralNet_Reference_Base
                != ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1 ) )
       return; // Only compare ShuffleNetV2 and ShuffleNetV2_byMobileNetV1.
 
-    // Determine which ConvStageType will be generate.
+    // Determine which ConvStageType will be generated.
     let nConvStageTypeId_original = nConvStageTypeId;
     let nConvStageTypeId_toBeCompared;
     switch ( nConvStageTypeId ) {
