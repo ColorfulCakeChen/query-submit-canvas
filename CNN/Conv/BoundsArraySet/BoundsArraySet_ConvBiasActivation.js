@@ -129,7 +129,8 @@ class ConvBiasActivation extends InputsOutputs {
 
 !!! ...unfinished... (2025/07/04)
 // Perhaps, fround() inside .multiply_all_byNs()
-
+//
+// Or, call tBounds.fround() after .multiply_all_byNs() done.
 
     this.afterUndoPreviousActivationEscaping
       .set_all_byBoundsArray( this.input0.boundsArray )

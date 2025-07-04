@@ -436,6 +436,8 @@ class NumberImage_Base extends Recyclable.Root {
 !!! ...unfinished... (2025/07/04)
 // Perhaps, fround( pointwiseFiltersArray[ filterIndex ] ) and .fround()
 // inside .multiply_byN() and .add_one_byBounds()
+//
+// Or, call tBounds.fround() after .add_one_byBounds() done.
 
           // Note: .afterUndoPreviousActivationEscaping has already been
           //       multiplied by undoPreviousEscapingScale.
@@ -921,6 +923,8 @@ class NumberImage_Base extends Recyclable.Root {
 !!! ...unfinished... (2025/07/04)
 // Perhaps, fround( depthwiseFiltersArray[ filterIndex ] ) and .fround()
 // inside .multiply_byN() and .add_one_byBounds()
+//
+// Or, call tBounds.fround() after .add_one_byBounds() done.
 
                         // Note: .afterUndoPreviousActivationEscaping has
                         //        already been multiplied by
@@ -960,6 +964,8 @@ class NumberImage_Base extends Recyclable.Root {
 
 !!! ...unfinished... (2025/07/04)
 // Perhaps, .fround()inside .divide_one_byN()
+//
+// Or, call tBounds.fround() after .divide_one_byN() done.
 
               afterFilter_BoundsArray_perPixel.divide_one_byN(
                 outIndex, avgDivisor ); // value bounds is also averaged.
@@ -1189,6 +1195,8 @@ class NumberImage_Base extends Recyclable.Root {
 !!! ...unfinished... (2025/07/04)
 // Perhaps, fround( biasesArray[ inChannel ] ) and .fround()
 // inside .add_one_byN()
+//
+// Or, call tBounds.fround() after .add_one_byN() done.
 
       imageIn.boundsArraySet.afterBias.add_one_byN(
         inChannel, biasesArray[ inChannel ] );
