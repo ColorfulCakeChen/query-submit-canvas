@@ -308,6 +308,11 @@ class NeuralNet_Reference_Base
       this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d,
         this.testCorrectness_imageOutReference, neuralNet );
 
+!!! ...unfinished... (2025/07/04)
+// should also check pixel value whether inside bounds.
+// similar to NumberImage.Base.assert_pixels_byBoundsArray()
+
+
       // Compare result of ShuffleNetV2 and ShuffleNetV2_byMobileNetV1.
       NeuralNet_Reference_Base
         .neuralNet_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1
@@ -480,6 +485,11 @@ class NeuralNet_Reference_Base
       //// Test correctness of NeuralNet.apply.
       //this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d,
       //  this.testCorrectness_imageOutReference, neuralNet );
+
+!!! ...unfinished... (2025/07/04)
+// should also check pixel value whether inside bounds.
+// similar to NumberImage.Base.assert_pixels_byBoundsArray()
+
 
       // Compare to outputTensor3d_original.
       let output_original = outputTensor3d_original.dataSync();

@@ -257,6 +257,12 @@ class Stage_Reference_Base
       // Test correctness of Stage.apply.
       this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, this.testCorrectness_imageOutReference, stage );
 
+
+!!! ...unfinished... (2025/07/04)
+// should also check pixel value whether inside bounds.
+// similar to NumberImage.Base.assert_pixels_byBoundsArray()
+
+
       // Compare result of ShuffleNetV2 and ShuffleNetV2_byMobileNetV1.
       Stage_Reference_Base.stage_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1.call( this,
         parentNameable, stageName,
@@ -382,6 +388,11 @@ class Stage_Reference_Base
       //!!! (2022/07/23 Remarked) Compare to outputTensor3d_original directly.
       //// Test correctness of Stage.apply.
       //this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, this.testCorrectness_imageOutReference, stage );
+
+!!! ...unfinished... (2025/07/04)
+// should also check pixel value whether inside bounds.
+// similar to NumberImage.Base.assert_pixels_byBoundsArray()
+
 
       // Compare to outputTensor3d_original.
       let output_original = outputTensor3d_original.dataSync();
