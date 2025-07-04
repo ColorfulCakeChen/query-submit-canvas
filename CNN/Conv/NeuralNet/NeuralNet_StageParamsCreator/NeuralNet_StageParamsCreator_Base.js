@@ -28,13 +28,13 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
    */
   constructor( neuralNetParams ) {
     super();
-    this.#setAsConstructor_self.call( neuralNetParams );
+    this.#setAsConstructor_self( neuralNetParams );
   }
 
   /** @override */
   setAsConstructor( neuralNetParams ) {
     super.setAsConstructor();
-    this.#setAsConstructor_self.call( neuralNetParams );
+    this.#setAsConstructor_self( neuralNetParams );
   }
 
   /**  */
