@@ -8,6 +8,7 @@ import * as Base64ToUint8Array_tester from "./Base64ToUint8Array_tester.js";
 import * as BoundsArraySet_tester from "./BoundsArraySet_tester.js";
 import * as CNN_Block_tester from "./CNN_Block_tester.js";
 import * as CNN_Embedding_tester from "./CNN_Embedding_tester.js";
+import * as CNN_NeuralNet_tester from "./CNN_NeuralNet_tester.js";
 import * as CNN_Operation_tester from "./CNN_Operation_tester.js";
 import * as CNN_Stage_tester from "./CNN_Stage_tester.js";
 import * as DEvolution_tester from "./DEvolution_tester.js";
@@ -48,8 +49,9 @@ const gTestGeneratorFuncMap = new Map( [
 
   // [ CNN_Block_tester.tester, true ],
   // [ CNN_Embedding_tester.tester, true ],
+  [ CNN_NeuralNet_tester.tester, true ],
   // [ CNN_Operation_tester.tester, true ],
-  [ CNN_Stage_tester.tester, true ],
+  // [ CNN_Stage_tester.tester, true ],
 
   // [ FeedbackShape_tester.tester, true ],
 

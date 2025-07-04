@@ -445,94 +445,94 @@ class HeightWidthDepth {
   /** Testing whether the results of different implementation are the same. */
   * testCorrectness() {
 
-!!! ...unfinished... (2025/07/04)
-// Moved to CNN_Stage_tester
-    //!!! (2022/08/16 Temp Skipped) For speed up into performance testing.
-    //if ( 0 )
-    {
-      let pool_all_issuedCount_before = Pool.All.issuedCount;
-
-      //Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
-      //   "jsPerf_NeuralNet.HeightWidthDepth.testCorrectness()", () => {
-      //}, this );
-
-      yield;
-
-      {
-        // Test memory leakage of imageSourceBag.
-        let memoryInfo_testCorrectness_before = tf.memory();
-
-        {
-          // Note: imageSourceBag should not be created outside tidy() because
-          //       tidy() will dispose tensors dynamically created in them.
-          let imageSourceBag
-            = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
-
-          let testParams = NeuralNet_TestParams.Base.Pool.get_or_create_by();
-          let theParamDescConfigAll = testParams.ParamDescConfigAll_create();
-          let testParamsGenerator
-            = testParams.ParamsGenerator( theParamDescConfigAll );
-          let testReference = NeuralNet_Reference.Base.Pool.get_or_create_by();
-
-          let batchIdCalculator = new BatchIdCalculator.Base(
-            testCaseCount, 100 * 1000 );
-
-          try {
-            for ( testParams of testParamsGenerator ) {
-              let bDisplayed
-                = batchIdCalculator.checkAndDisplay( testParams.id );
-
-              // Since just entering a new batch section, take a break so that
-              // memory garbage collector could be activated to work.
-              if ( bDisplayed )
-                yield;
-
-              testReference.testCorrectness( imageSourceBag, testParams );
-            }
-
-          } catch ( e ) {
-            let backendName = tf.getBackend();
-            let msg = `jsPerf_NeuralNet.js: testCorrectness(): `
-              + `backendName=${backendName}, `
-              + `NeuralNet, (yieldCount == ${testParams.yieldCount}), `
-              + `testParams.id == ${testParams.id}`;
-
-            console.log( msg );
-            alert( `${msg}\n${e}` );
-
-            //debugger;
-            throw e;
-          }
-
-          batchIdCalculator.checkAndDisplay( testParams.id );
-
-          testReference.disposeResources_and_recycleToPool();
-          testReference = null;
-
-          testParams.disposeResources_and_recycleToPool();
-          testParams = null;
-
-          imageSourceBag.disposeResources_and_recycleToPool();
-          imageSourceBag = null;
-        }
-
-        let memoryInfo_testCorrectness_after = tf.memory();
-
-        if ( memoryInfo_testCorrectness_after.numTensors
-               != memoryInfo_testCorrectness_before.numTensors )
-          throw Error( `testCorrectness() memory leak. `
-            + `result tensor count `
-            + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
-            + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ).`
-          );
-      }
-
-      Pool.Asserter.assert_Pool_issuedCount(
-        "jsPerf_NeuralNet.HeightWidthDepth.testCorrectness()",
-        pool_all_issuedCount_before );
-
-      yield;
-    }
+//!!! ...unfinished... (2025/07/04)
+//  Moved to CNN_NeuralNet_tester
+//     //!!! (2022/08/16 Temp Skipped) For speed up into performance testing.
+//     //if ( 0 )
+//     {
+//       let pool_all_issuedCount_before = Pool.All.issuedCount;
+//
+//       //Pool.Asserter.assert_Pool_issuedCount_same_after_as_before(
+//       //   "jsPerf_NeuralNet.HeightWidthDepth.testCorrectness()", () => {
+//       //}, this );
+//
+//       yield;
+//
+//       {
+//         // Test memory leakage of imageSourceBag.
+//         let memoryInfo_testCorrectness_before = tf.memory();
+//
+//         {
+//           // Note: imageSourceBag should not be created outside tidy() because
+//           //       tidy() will dispose tensors dynamically created in them.
+//           let imageSourceBag
+//             = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
+//
+//           let testParams = NeuralNet_TestParams.Base.Pool.get_or_create_by();
+//           let theParamDescConfigAll = testParams.ParamDescConfigAll_create();
+//           let testParamsGenerator
+//             = testParams.ParamsGenerator( theParamDescConfigAll );
+//           let testReference = NeuralNet_Reference.Base.Pool.get_or_create_by();
+//
+//           let batchIdCalculator = new BatchIdCalculator.Base(
+//             testCaseCount, 100 * 1000 );
+//
+//           try {
+//             for ( testParams of testParamsGenerator ) {
+//               let bDisplayed
+//                 = batchIdCalculator.checkAndDisplay( testParams.id );
+//
+//               // Since just entering a new batch section, take a break so that
+//               // memory garbage collector could be activated to work.
+//               if ( bDisplayed )
+//                 yield;
+//
+//               testReference.testCorrectness( imageSourceBag, testParams );
+//             }
+//
+//           } catch ( e ) {
+//             let backendName = tf.getBackend();
+//             let msg = `jsPerf_NeuralNet.js: testCorrectness(): `
+//               + `backendName=${backendName}, `
+//               + `NeuralNet, (yieldCount == ${testParams.yieldCount}), `
+//               + `testParams.id == ${testParams.id}`;
+//
+//             console.log( msg );
+//             alert( `${msg}\n${e}` );
+//
+//             //debugger;
+//             throw e;
+//           }
+//
+//           batchIdCalculator.checkAndDisplay( testParams.id );
+//
+//           testReference.disposeResources_and_recycleToPool();
+//           testReference = null;
+//
+//           testParams.disposeResources_and_recycleToPool();
+//           testParams = null;
+//
+//           imageSourceBag.disposeResources_and_recycleToPool();
+//           imageSourceBag = null;
+//         }
+//
+//         let memoryInfo_testCorrectness_after = tf.memory();
+//
+//         if ( memoryInfo_testCorrectness_after.numTensors
+//                != memoryInfo_testCorrectness_before.numTensors )
+//           throw Error( `testCorrectness() memory leak. `
+//             + `result tensor count `
+//             + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
+//             + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ).`
+//           );
+//       }
+//
+//       Pool.Asserter.assert_Pool_issuedCount(
+//         "jsPerf_NeuralNet.HeightWidthDepth.testCorrectness()",
+//         pool_all_issuedCount_before );
+//
+//       yield;
+//     }
 
     try {
       // After correctness testing done, create all NeuralNet for performance
