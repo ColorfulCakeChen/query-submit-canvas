@@ -46,6 +46,7 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
   disposeResources() {
     this.blockFinalParams_dispose();
 
+    this.bTableLog = undefined;
     this.bKeepInputTensor = undefined;
     this.nActivationId = undefined;
     this.nSqueezeExcitationChannelCountDivisor = undefined;
@@ -158,7 +159,7 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
    * be used instead.
    */
   configTo_beforeStage0( input_height, input_width, input_channelCount ) {
-    let neuralNetParams = this.neuralNetParams;
+    const neuralNetParams = this.neuralNetParams;
 
     {
       if ( input_height == undefined )
@@ -197,6 +198,8 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     // all stages should not keep input tensor (no matter what
     // neuralNetParams.bKeepInputTensor is).
     this.bKeepInputTensor = false;
+
+    this.bTableLog = neuralNetParams.bTableLog;
   }
 
   /**
@@ -253,7 +256,7 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     BlockParamsClass,
     input_height, input_width, input_channelCount ) {
 
-    let neuralNetParams = this.neuralNetParams;
+    const neuralNetParams = this.neuralNetParams;
 
     const input0_height = input_height;
     const input0_width = input_width;
@@ -299,6 +302,8 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
     // front of it to be responsible for keep-input-tensor (if needs).
     const bKeepInputTensor = false;
 
+    const bTableLog = neuralNetParams.bTableLog;
+
 
     this.blockFinalParams_dispose();
     this.blockFinalParams = BlockParamsClass.Pool.get_or_create_by(
@@ -311,7 +316,8 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
       pointwise20ChannelCount, pointwise20ActivationId,
       nSqueezeExcitationChannelCountDivisor, bSqueezeExcitationPrefix,
       nActivationId,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
   }
 
@@ -351,7 +357,8 @@ class NeuralNet_StageParamsCreator_Base extends Recyclable.Root {
       this.depthwiseFilterHeight, this.depthwiseFilterWidth,
       this.nSqueezeExcitationChannelCountDivisor,
       this.nActivationId,
-      this.bKeepInputTensor
+      this.bKeepInputTensor,
+      this.bTableLog
     );
     return params;
   }
