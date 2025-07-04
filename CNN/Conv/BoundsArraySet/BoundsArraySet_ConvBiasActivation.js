@@ -417,11 +417,11 @@ class ConvBiasActivation extends InputsOutputs {
                   + `which has both negative and positive parts near origin point.`
                 );
 
-            // For bounds [ 0, 0 ], escaping scale is not necessary (just like
-            // non-pass-through) because all values of the channel are zero
-            // which always can escape (i.e. pass-through) from any activation
-            // function (whose output range includes both negative value and
-            // positive value near the origin point).
+            // For channel bounds [ 0, 0 ], escaping scale is not necessary
+            // (just like non-pass-through) because all values of the channel
+            // are zero which always can escape (i.e. pass-through) from any
+            // activation function (whose output range includes both negative
+            // value and positive value near the origin point).
             //
             // Note1: This could happen when filters are all zero for
             //        outChannel. In this case, the
