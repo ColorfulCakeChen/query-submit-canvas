@@ -293,7 +293,8 @@ class NumberImage_Base extends Recyclable.Root {
     if ( bTableLog ) {
       imageHeaderPrefix_forTableLog
         = pointwiseNames.join( NumberImage_Base.debugNamesSeparator );
-      console.groupCollapsed( `${pointwiseNames[ pointwiseNames.length - 1 ]}` );
+      console.groupCollapsed(
+        `${pointwiseNames[ pointwiseNames.length - 1 ]}` );
     }
 
     let imageIn = this;
@@ -612,7 +613,8 @@ class NumberImage_Base extends Recyclable.Root {
     if ( bTableLog ) {
       imageHeaderPrefix_forTableLog
         = depthwiseNames.join( NumberImage_Base.debugNamesSeparator );
-      console.groupCollapsed( `${depthwiseNames[ depthwiseNames.length - 1 ]}` );
+      console.groupCollapsed(
+        `${depthwiseNames[ depthwiseNames.length - 1 ]}` );
     }
 
     let imageIn = this;
@@ -1194,6 +1196,9 @@ class NumberImage_Base extends Recyclable.Root {
     lowerBound, upperBound,
     bTableLog, parametersDesc, ...clampNames ) {
 
+    if ( bTableLog )
+      console.groupCollapsed( `${clampNames[ clampNames.length - 1 ]}` );
+
     let imageIn = this;
 
     imageIn.boundsArraySet.output0.boundsArray.set_all_byLowerUpper(
@@ -1234,7 +1239,6 @@ class NumberImage_Base extends Recyclable.Root {
     this.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
     if ( bTableLog ) {
-      console.groupCollapsed( `${clampNames[ clampNames.length - 1 ]}` );
       imageIn.TableLog_header_body(
         `${clampNames.join( NumberImage_Base.debugNamesSeparator )}` );
       console.groupEnd();
@@ -1429,6 +1433,9 @@ class NumberImage_Base extends Recyclable.Root {
     // A: The this might be the original input array which should not be
     //    modified at all. (because they might be used in another test.)
 
+    if ( bTableLog )
+      console.groupCollapsed( `${addNames[ addNames.length - 1 ]}` );
+
     // Same size.
     if (   ( another.height == this.height )
         && ( another.width == this.width )
@@ -1518,7 +1525,6 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     if ( bTableLog ) {
-      console.groupCollapsed( `${addNames[ addNames.length - 1 ]}` );
       imageOutNew.TableLog_header_body(
         `${addNames.join( NumberImage_Base.debugNamesSeparator )}` );
       console.groupEnd();
@@ -1559,6 +1565,9 @@ class NumberImage_Base extends Recyclable.Root {
     // Q: Why not just modify this directly?
     // A: The this might be the original input array which should not be
     //    modified at all. (because they might be used in another test.)
+
+    if ( bTableLog )
+      console.groupCollapsed( `${multiplyNames[ multiplyNames.length - 1 ]}` );
 
     // Same size.
     if (   ( another.height == this.height )
@@ -1647,7 +1656,6 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     if ( bTableLog ) {
-      console.groupCollapsed( `${multiplyNames[ multiplyNames.length - 1 ]}` );
       imageOutNew.TableLog_header_body(
         `${multiplyNames.join( NumberImage_Base.debugNamesSeparator )}` );
       console.groupEnd();
@@ -2139,6 +2147,10 @@ class NumberImage_Base extends Recyclable.Root {
     imageIn1, imageIn2,
     bTableLog, parametersDesc, ...concatNames ) {
 
+    if ( bTableLog )
+      console.groupCollapsed(
+        `${concatNames[ concatNames.length - 1 ]}` );
+
     if ( null == imageIn1 ) {
       if ( null == imageIn2 )
         return null; // Both input is null. Return null.
@@ -2204,9 +2216,11 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut.boundsArraySet.set_outputs_all_by_concat_input0_input1();
     imageOut.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
 
-    if ( bTableLog )
+    if ( bTableLog ) {
       imageOut.TableLog_header_body(
         `${concatNames.join( NumberImage_Base.debugNamesSeparator )}` );
+      console.groupEnd();
+    }
 
     return imageOut;
   }
