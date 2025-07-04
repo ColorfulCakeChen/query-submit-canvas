@@ -238,6 +238,7 @@ class NeuralNet_Base extends Recyclable.Root {
       this.blockCountTotalRequested = params.blockCountTotalRequested;
       this.output_asInputValueRange = params.output_asInputValueRange;
       this.bKeepInputTensor = params.bKeepInputTensor;
+      this.bTableLog = params.bTableLog;
 
       // The parameters which are determined (inferenced) from the above
       // parameters.
@@ -292,7 +293,9 @@ class NeuralNet_Base extends Recyclable.Root {
           this.input_height, this.input_width, this.input_channelCount,
           this.vocabularyChannelCount, this.vocabularyCountPerInputChannel,
           this.bEmbedVocabularyId,
-          this.bKeepInputTensor
+          this.bKeepInputTensor,
+          this.bTableLog
+
         );
     
         this.embedding = Embedding.AddGatherReshape.Pool.get_or_create_by();
@@ -549,6 +552,7 @@ class NeuralNet_Base extends Recyclable.Root {
     this.implicit_input_width = undefined;
     this.implicit_input_height = undefined;
 
+    this.bTableLog = undefined;
     this.bKeepInputTensor = undefined;
     this.blockCountTotalRequested = undefined;
     this.nConvStageTypeName = undefined;
@@ -850,6 +854,7 @@ class NeuralNet_Base extends Recyclable.Root {
       + `nConvStageTypeName=${this.nConvStageTypeName}(${this.nConvStageTypeId}), `
       + `blockCountTotalRequested=${this.blockCountTotalRequested}, `
       + `bKeepInputTensor=${this.bKeepInputTensor}, `
+      + `bTableLog=${this.bTableLog}, `
 
       + `implicit_input_height=${this.implicit_input_height}, `
       + `implicit_input_width=${this.implicit_input_width}, `
