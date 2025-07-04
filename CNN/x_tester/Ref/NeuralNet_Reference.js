@@ -225,7 +225,7 @@ class NeuralNet_Reference_Base
         testParams );
 
       // Table log the input tensor if requested.
-      const bTableLog = stage.bTableLog;
+      const bTableLog = neuralNet.bTableLog;
       if ( bTableLog ) {
         const imageIn_BoundsArraySet
           = this.testCorrectness_imageIn.boundsArraySet;
