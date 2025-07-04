@@ -352,11 +352,7 @@ class NeuralNet_Base extends HierarchicalNameable.SeparatorDot_Root {
         stageParams
           = stageParamsCreator.create_StageParams( StageParamsClass );
 
-
-!!! ...unfinished... (2025/07/04)
-// should use MultiLayerMap as name bag.
-
-        const stageName = `Stage_${i}`;
+        const stageName = Stage_Name_Bag.Singleton.get_by( i );
         stage = this.stageArray[ i ] = Stage.Base.Pool.get_or_create_by(
           this, stageName );
 
@@ -932,3 +928,47 @@ class NeuralNet_Base extends HierarchicalNameable.SeparatorDot_Root {
   }
 
 }
+
+
+/**
+ * A pool for Stage debug name (e.g. Stage_0)
+ *
+ * It could reduce re-creating them again and again so that memory heap
+ * fragmentation could be reduced (and then performance be improved).
+ */
+class Stage_Name_Bag extends MultiLayerMap.Base {
+
+  /**  */
+  constructor() {
+    super();
+    this.#setAsConstructor_self();
+  }
+
+  /**  */
+  #setAsConstructor_self() {
+  }
+
+  /**
+   * @see Stage_Name_Bag.create_by()
+   */
+  get_by( stageIndex ) {
+    return this.get_or_create_by_arguments1_etc(
+      Block_Name_Bag.create_by, this,
+      stageIndex );
+  }
+
+  /**
+   * @param {number} stageIndex
+   *   An integer of stage position index.
+   *
+   * @return {string}
+   *   Return a string "Stage_N" according to the above parameters.
+   */
+  static create_by( stageIndex ) {
+    const stageName = `Stage_${i}`;
+    return stageName;
+  }
+
+}
+
+Stage_Name_Bag.Singleton = new Stage_Name_Bag();

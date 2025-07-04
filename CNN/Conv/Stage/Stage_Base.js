@@ -1,6 +1,7 @@
 export { Stage_Base as Base };
 
 import * as HierarchicalNameable from "../../util/HierarchicalNameable.js";
+import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "../../util/ValueMax.js";
@@ -565,10 +566,7 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
         // Block.Params needs channel shuffler info (but does not own it).
         blockParams.channelShuffler = this.channelShuffler;
 
-!!! ...unfinished... (2025/07/04)
-// should use MultiLayerMap as name bag.
-
-        const blockName = `Block_${i}`;
+        const blockName = Block_Name_Bag.Singleton.get_by( i );
         block = this.blockArray[ i ] = Block.Base.Pool.get_or_create_by(
           this, blockName );
 
@@ -915,3 +913,47 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
   }
 
 }
+
+
+/**
+ * A pool for Block debug name (e.g. Block_0)
+ *
+ * It could reduce re-creating them again and again so that memory heap
+ * fragmentation could be reduced (and then performance be improved).
+ */
+class Block_Name_Bag extends MultiLayerMap.Base {
+
+  /**  */
+  constructor() {
+    super();
+    this.#setAsConstructor_self();
+  }
+
+  /**  */
+  #setAsConstructor_self() {
+  }
+
+  /**
+   * @see Block_Name_Bag.create_by()
+   */
+  get_by( blockIndex ) {
+    return this.get_or_create_by_arguments1_etc(
+      Block_Name_Bag.create_by, this,
+      blockIndex );
+  }
+
+  /**
+   * @param {number} blockIndex
+   *   An integer of block position index.
+   *
+   * @return {string}
+   *   Return a string "Block_N" according to the above parameters.
+   */
+  static create_by( blockIndex ) {
+    const blockName = `Block_${i}`;
+    return blockName;
+  }
+
+}
+
+Block_Name_Bag.Singleton = new Block_Name_Bag();
