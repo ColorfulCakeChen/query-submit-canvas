@@ -1,6 +1,7 @@
 export { NeuralNet_Base as Base };
 
 import * as HierarchicalNameable from "../../util/HierarchicalNameable.js";
+import * as MultiLayerMap from "../../util/MultiLayerMap.js";
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as ValueMax from "../../util/ValueMax.js";
