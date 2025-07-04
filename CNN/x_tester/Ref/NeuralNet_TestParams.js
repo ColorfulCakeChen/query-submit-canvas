@@ -301,69 +301,89 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
     // Restrict some parameter's large kinds. Otherwise, too many combination
     // will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
-      explicit_input_height: [ 3, 5 ],
-      explicit_input_width: [ 3, 5 ],
+      explicit_input_height: [
+        3,
+        5
+      ],
+
+      explicit_input_width: [
+        3,
+        5
+      ],
 
       explicit_input_channelCount: [
-        1, //NeuralNet.Params.explicit_input_channelCount.valueDesc.range.min,
+        NeuralNet.Params.explicit_input_channelCount.valueDesc.range.min, // 1
+        // 2
+        // 3
         4
       ],
 
-      // has_implicit_input: undefined,
       has_implicit_input: [
         NeuralNet.Params.has_implicit_input.valueDesc.range.min,
+        // NeuralNet.Params.has_implicit_input.valueDesc.range.max,
+        // NeuralNet.Params.has_implicit_input.valueDesc.range.min
         NeuralNet.Params.has_implicit_input.valueDesc.range.max
       ],
 
       vocabularyChannelCount: [
-        1, //NeuralNet.Params.vocabularyChannelCount.valueDesc.range.min,
-        3 //4
+        NeuralNet.Params.vocabularyChannelCount.valueDesc.range.min, // 2
+        3
+        // 4
       ],
 
       vocabularyCountPerInputChannel: [
-        256, //NeuralNet.Params.vocabularyCountPerInputChannel.valueDesc.range.min,
+        // NeuralNet.Params.vocabularyCountPerInputChannel.valueDesc.range.min, // 1
+        256,
         256
       ],
 
       // (2022/08/16) Note: Mobile Moto e40 seems necessary pad=valid to work.
-      // (2023/03/09) Note: Mobile Moto e40 seems pad=same also workable.
+      // (2023/03/09) Note: Mobile Moto e40 seems pad=same also workable now.
 
-      //!!! (2022/08/16 Temp Remarked) For mobile phone Moto e40 could pass testing.
       nConvStageTypeId: [
-        NeuralNet.Params.nConvStageTypeId.valueDesc.range.min,
-        NeuralNet.Params.nConvStageTypeId.valueDesc.range.max
+        // Stage.Params.nConvStageTypeId.valueDesc.range.min,
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,           // (0)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID, // (1)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,      // (2)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,           // (3)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2,          // (4)
+        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1,           // (5)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID, // (6)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,             // (7)
+
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1           // (0)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID // (1)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN      // (2)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2           // (3)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2          // (4)
+        ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1           // (5)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID // (6)
+        // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21             // (7)
+        // Stage.Params.nConvStageTypeId.valueDesc.range.max
       ],
-      // nConvStageTypeId: [
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID, // (6)
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID // (6)
-      // ],
-      // nConvStageTypeId: [
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1, // (5)
-      //   ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID // (6)
-      // ],
 
       blockCountTotalRequested: [
-        NeuralNet.Params.blockCountTotalRequested.valueDesc.range.min,
-        6 //NeuralNet.Params.blockCountTotalRequested.valueDesc.range.max
+        NeuralNet.Params.blockCountTotalRequested.valueDesc.range.min, // 2
+        6
       ],
 
       output_channelCount: [
-        1, //NeuralNet.Params.output_channelCount.valueDesc.range.min,
+        NeuralNet.Params.output_channelCount.valueDesc.range.min, // 1
         10
       ],
 
-      // output_asInputValueRange: undefined,
       output_asInputValueRange: [
         NeuralNet.Params.output_asInputValueRange.valueDesc.range.min,
+        // NeuralNet.Params.output_asInputValueRange.valueDesc.range.max,
+        // NeuralNet.Params.output_asInputValueRange.valueDesc.range.min
         NeuralNet.Params.output_asInputValueRange.valueDesc.range.max
       ],
-
 
       bKeepInputTensor: [
         Stage.Params.bKeepInputTensor.valueDesc.range.min,
         // Stage.Params.bKeepInputTensor.valueDesc.range.max,
-        // Stage.Params.bKeepInputTensor.valueDesc.range.min
-        Stage.Params.bKeepInputTensor.valueDesc.range.max
+        Stage.Params.bKeepInputTensor.valueDesc.range.min
+        // Stage.Params.bKeepInputTensor.valueDesc.range.max
       ],
 
       bTableLog: [
