@@ -780,11 +780,8 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
     // Note: The blockLast should only output one tensor.
     let outputTensor = this.blockLast.output0.realTensor;
 
-    // Log output as table (if requested).
-    if ( this.bTableLog ) {
-      this.TableLog_output0_if_requested();
+    if ( this.bTableLog )
       console.groupEnd();  // groupLabel "Stage_Base"
-    }
 
     return outputTensor;
   }
@@ -821,12 +818,8 @@ class Stage_Base extends HierarchicalNameable.SeparatorDot_Root {
     // Note: The blockLast should only output one tensor.
     let outputTensor = this.blockLast.output0.realTensor;
 
-    // Log output as table (if requested).
-    if ( this.bTableLog ) {
-//!!! (2025/07/03 Remarked) seems not necessary because the last block has log it.
-//      this.TableLog_output0_if_requested();
+    if ( this.bTableLog )
       console.groupEnd();  // groupLabel "Stage_Base"
-    }
 
     return outputTensor;
   }

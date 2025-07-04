@@ -439,12 +439,11 @@ class NeuralNet_Base extends HierarchicalNameable.SeparatorDot_Root {
           = blockFinal.output0_scaleBoundsArray;
       }
 
-//!!! ...unfinished... (2025/06/05)
-// Should only when ( !bTableLog ), dispose intermediate ScaleBoundsArray.
-
-      // Release all intermediate stages' bounds array set for reducing memory
-      // footprint.
-      this.dispose_intermediate_ScaleBoundsArray();
+      // If no need for table log (debug), reduce memory footprint by
+      // releasing unused (intermediate) bounds array set.
+      if ( !this.bTableLog ) {
+        this.dispose_intermediate_ScaleBoundsArray();
+      }
 
       {
         // Estimate the maximum value of progress for .applier().
@@ -627,6 +626,15 @@ class NeuralNet_Base extends HierarchicalNameable.SeparatorDot_Root {
    *   Yield ( value = outputTensor ) when ( done = true ).
    */
   * applier( inputTensor ) {
+    if ( this.bTableLog ) {
+      const nConvStageTypeNameWithInt
+        = ValueDesc.ConvStageType.Singleton.getNameWithInt_byId(
+            this.nConvStageTypeId );
+
+      const neuralNetName = this.nameString_get();
+      console.groupCollapsed(
+        `${neuralNetName} ( ConvStageType = ${nConvStageTypeNameWithInt} )` );
+    }
 
     // 0.
 
@@ -683,6 +691,9 @@ class NeuralNet_Base extends HierarchicalNameable.SeparatorDot_Root {
       progressToAdvance.value_advance();
       yield progressRoot;  // BlockFinal done. Report progress.
     }
+
+    if ( this.bTableLog )
+      console.groupEnd();  // groupLabel "NeuralNet_Base"
 
     return outputTensor;
   }
