@@ -827,6 +827,31 @@ TestParams_Base.integer_numberArray_randomParams = {
 };
 
 /**
+ * 
+ */
+class SMALL {
+  constructor() {
+    this.STEP_BASE = 1 / ( 2 ** 3 ); // i.e. ( 1 / 8 ) = 0.125
+    this.POSITIVE_VALUE = 0.5;
+
+    // Note: Value 0.05 can not be precisely represented by float32. That is,
+    //       ( Math.fround( 0.05 ) !== 0.05 ).
+    this.FROUND_DELTA = 0.05;
+
+    this.ZEROABLE_FACTOR
+      = this.SMALL_POSITIVE / this.SMALL_STEP_BASE; // 4 = 0.5 / 0.125
+
+    this.STEP = this.STEP_BASE + this.FROUND_DELTA; // 0.175 = 0.125 + 0.05
+
+    // - 0.7 = - ( 0.175 * 4 )
+    this.NEGATIVE_VALUE = - ( this.STEP * this.ZEROABLE_FACTOR );
+  }
+}
+
+TestParams_Base.SMALL_PARAMS = new SMALL();
+
+
+/**
  * Parameters suitable for generating random (embedding, depthwise, pointwise)
  * filter's weights.
  *
@@ -862,6 +887,7 @@ TestParams_Base.integer_numberArray_randomParams = {
  * So, including it in number sequence (e.g. ( weightsValueBegin == -0.55 ) )
  * could test whether Math.fround() is used properly.
  *
+ *
  * 4. zero
  * 
  * It is necessary to let zero is possible in number sequence so that a
@@ -873,11 +899,13 @@ TestParams_Base.integer_numberArray_randomParams = {
  */
 TestParams_Base.filterWeights_numberArray_randomParams = {
 
+  weightsValueBegin: TestParams_Base.SMALL_PARAMS.NEGATIVE_VALUE,
   // weightsValueBegin: -0.55,  // Test: fround().
-  weightsValueBegin: -0.50,     // Test: All zero convolution kernel filter.
+  // weightsValueBegin: -0.50,  // Test: All zero convolution kernel filter.
 
-  weightsValueStep:  1 / ( 2 ** 3 ), // i.e. ( 1 / 8 )
-  //weightsValueStep:  1 / ( 2 ** 5 ), // i.e. ( 1 / 32 )
+  weightsValueStep: TestParams_Base.SMALL_PARAMS.STEP,
+  // weightsValueStep:  1 / ( 2 ** 3 ), // i.e. ( 1 / 8 )
+  // weightsValueStep:  1 / ( 2 ** 5 ), // i.e. ( 1 / 32 )
 
   // Use larger negative variation to generate negative result.
   weightsRandomOffset: {
