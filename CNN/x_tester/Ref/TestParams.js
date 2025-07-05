@@ -862,11 +862,19 @@ TestParams_Base.integer_numberArray_randomParams = {
  * So, including it in number sequence (e.g. ( weightsValueBegin == -0.55 ) )
  * could test whether Math.fround() is used properly.
  *
+ * 4. zero
+ * 
+ * It is necessary to let zero is possible in number sequence so that a
+ * convolution kernel filter with all zero could be generated and tested.
+ *
+ * However, this is conflict with fround() testing (i.e.
+ * ( weightsValueBegin == -0.50 ) or ( weightsValueBegin == -0.55 ) )
+ *
  */
 TestParams_Base.filterWeights_numberArray_randomParams = {
 
-  // Note: Include 0.05 in number sequence to test fround().
-  weightsValueBegin: -0.55,
+  // weightsValueBegin: -0.55,  // Test: fround().
+  weightsValueBegin: -0.50,     // Test: All zero convolution kernel filter.
 
   weightsValueStep:  1 / ( 2 ** 3 ), // i.e. ( 1 / 8 )
   //weightsValueStep:  1 / ( 2 ** 5 ), // i.e. ( 1 / 32 )
