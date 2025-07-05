@@ -830,6 +830,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                         this.filtersArray[ filterIndex ]
                           = sourceWeight * undoPreviousEscapingScale;
 
+                        // Note: For depthwise convolution, do NOT fround()
+                        //       when multiplying. Do fround() when adding.
+                        //       Please see NumberImage_Base.clone_byDepthwise().
+                        //
+                        // (2025/07/05)
                         tBounds
                           .set_byBoundsArray(
                             this.boundsArraySet.afterUndoPreviousActivationEscaping,
@@ -843,7 +848,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                       // Accumulate value bounds for the filter position
                       // (across the whole virtual input image).
                       //
-                      // Note: For deothwise convolution, do fround() when
+                      // Note: For depthwise convolution, do fround() when
                       //       adding. This is different from avg pooling.
                       //       Please see NumberImage_Base.clone_byDepthwise().
                       //
@@ -967,6 +972,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
               } else { // Non-pass-through half channels.
                 biasValue = sourceWeightArray[ sourceIndex ];
+
+!!! ...unfinished... (2025/07/05)
+// call .fround() for biasValue.
+
                 ++sourceIndex;
               }
 
@@ -978,6 +987,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
               // Determine .afterBias
               // Shift the value bounds by the bias.
+              //
+              // Note: For bias, do fround() when adding.
+              //       Please see NumberImage_Base.modify_byBias().
+              //
+              // (2025/07/05)
               this.boundsArraySet.afterBias.add_one_byN(
                 outChannel, biasValue );
 

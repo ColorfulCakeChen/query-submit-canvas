@@ -759,14 +759,17 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                   let sourceWeight = sourceWeightArray[ sourceIndex ];
                   ++sourceIndex;
 
+!!! ...unfinished... (2025/07/05)
+// call .fround() for sourceWeight.
+
                   this.filtersArray[ filterIndex ]
                     = sourceWeight * undoPreviousEscapingScale;
 
-!!! ...unfinished... (2025/07/04)
-// Perhaps, fround() inside .multiply_all_byNs()
-//
-// Or, call tBounds.fround() after .multiply_all_byNs() done.
-
+                  // Note: For pointwise convolution, do NOT fround()
+                  //       when multiplying. Do fround() when adding.
+                  //       Please see NumberImage_Base.clone_byPointwise().
+                  //
+                  // (2025/07/05)
                   tBounds
                     .set_byBoundsArray(
                       this.boundsArraySet.afterUndoPreviousActivationEscaping,
@@ -774,7 +777,15 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                     .multiply_byN( sourceWeight );
                 }
 
+!!! ...unfinished... (2025/07/05)
+// call .fround() after .add_one_byBounds() done.
+
                 // Determine .afterFilter
+                //
+                // Note: For pointwise convolution, do fround() when adding.
+                //       Please see NumberImage_Base.clone_byPointwise().
+                //
+                // (2025/07/05)
                 this.boundsArraySet.afterFilter.add_one_byBounds(
                   outChannel, tBounds );
 
@@ -833,19 +844,26 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             // Non-pass-through half channels.
             } else {
               biasValue = sourceWeightArray[ sourceIndex ];
+
+!!! ...unfinished... (2025/07/05)
+// call .fround() for biasValue.
+
               ++sourceIndex;
             }
 
             // Note: Use adding instead of assignment.
             this.biasesArray[ biasIndex ] += biasValue;
 
-!!! ...unfinished... (2025/07/04)
-// Perhaps, fround() inside .multiply_all_byNs()
-//
-// Or, call tBounds.fround() after .multiply_all_byNs() done.
+!!! ...unfinished... (2025/07/05)
+// call .fround() after .add_one_byN() done.
 
             // Determine .afterBias
             // Shift the value bounds by the bias.
+            //
+            // Note: For bias, do fround() when adding.
+            //       Please see NumberImage_Base.modify_byBias().
+            //
+            // (2025/07/05)
             this.boundsArraySet.afterBias.add_one_byN( outChannel, biasValue );
 
             ++biasIndex;

@@ -383,9 +383,9 @@ class NumberImage_Base extends Recyclable.Root {
             let outIndex = outIndexBaseC + outChannel;
             let filterIndex = filterIndexBase + outChannel;
 
-            // Note: According to experiment, the accumulation error
-            // will be similar to tensorflow.js if only fround() the input
-            // (including previous non-completed convolution).
+            // Note: According to experiment, the accumulation error will be
+            //       similar to tensorflow.js if only fround() the input
+            //       (including previous non-completed convolution).
             imageOut.dataArray[ outIndex ] = Math.fround(
               imageOut.dataArray[ outIndex ] + (
                 (
@@ -434,8 +434,7 @@ class NumberImage_Base extends Recyclable.Root {
           let filterIndex = filterIndexBase + outChannel;
 
 !!! ...unfinished... (2025/07/04)
-// Perhaps, fround( pointwiseFiltersArray[ filterIndex ] ) and .fround()
-// inside .multiply_byN() and .add_one_byBounds()
+// Perhaps, fround( pointwiseFiltersArray[ filterIndex ] )
 //
 // Or, call tBounds.fround() after .add_one_byBounds() done.
 
@@ -1192,10 +1191,8 @@ class NumberImage_Base extends Recyclable.Root {
     for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
 
 !!! ...unfinished... (2025/07/04)
-// Perhaps, fround( biasesArray[ inChannel ] ) and .fround()
-// inside .add_one_byN()
-//
-// Or, call tBounds.fround() after .add_one_byN() done.
+// Perhaps, fround( biasesArray[ inChannel ] )
+// call tBounds.fround() after .add_one_byN() done.
 
       imageIn.boundsArraySet.afterBias.add_one_byN(
         inChannel, biasesArray[ inChannel ] );
