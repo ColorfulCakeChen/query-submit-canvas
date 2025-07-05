@@ -131,6 +131,12 @@ class Embedding_FiltersArray_Multi extends FiltersArray_Base {
           let filterValue = inputWeightArray[ sourceIndex ];
           ++sourceIndex;
 
+          // Note: fround() for all source (i.e. input, filter and bias).
+          //       Please see Embedding_Reference_Base.calcResult().
+          //
+          // (2025/07/05)
+          filterValue = Math.fround( filterValue );
+
           filtersArray[ filterIndex ] = filterValue;
           ++filterIndex;
 

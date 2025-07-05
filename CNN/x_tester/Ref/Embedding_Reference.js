@@ -526,6 +526,10 @@ class Embedding_Reference_Base
         BoundsArraySet.InputsOutputs, preFilledBounds
       );
 
+
+!!! ...unfinished... (2025/07/05)
+// call .fround()
+
       imageOut.boundsArraySet.output0.set_all_byBoundsArray(
         testParams.out_boundsArray );
     }
@@ -566,8 +570,11 @@ class Embedding_Reference_Base
           for ( let outChannelSub = outChannelSubBegin;
             outChannelSub < channelMultiplier; ++outChannelSub ) {
 
+            // Note: fround() for all source (i.e. input, filter and bias).
+            //
+            // (2025/07/05)
             imageOut.dataArray[ outElementIndex ]
-              = vocabularyTable[ vocabularyElementIndex ];
+              = Math.fround( vocabularyTable[ vocabularyElementIndex ] );
 
             ++vocabularyElementIndex;
             ++outElementIndex;
