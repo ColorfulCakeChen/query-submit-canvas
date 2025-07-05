@@ -807,11 +807,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                           this.filtersArray[ filterIndex ]
                             = filterValuePassThrough;
 
-!!! ...unfinished... (2025/07/04)
-// Perhaps, fround() inside .multiply_all_byNs()
-//
-// Or, call tBounds.fround() after .multiply_all_byNs() done.
-
                           tBounds
                             .set_byBoundsArray(
                               this.boundsArraySet.afterUndoPreviousActivationEscaping,
@@ -829,13 +824,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                         let sourceWeight = sourceWeightArray[ sourceIndex ];
                         ++sourceIndex;
 
+!!! ...unfinished... (2025/07/05)
+// call .fround() for sourceWeight.
+
                         this.filtersArray[ filterIndex ]
                           = sourceWeight * undoPreviousEscapingScale;
-
-!!! ...unfinished... (2025/07/04)
-// Perhaps, fround() inside .multiply_all_byNs()
-//
-// Or, call tBounds.fround() after .multiply_all_byNs() done.
 
                         tBounds
                           .set_byBoundsArray(
@@ -843,6 +836,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                             inChannel )
                           .multiply_byN( sourceWeight );
                       }
+
+!!! ...unfinished... (2025/07/05)
+// call .fround() after .add_one_outputChannel_byBounds() done.
 
                       // Accumulate value bounds for the filter position
                       // (across the whole virtual input image).
@@ -866,13 +862,14 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                         tBounds.set_byBoundsArray(
                           this.boundsArraySet.input0.boundsArray, inChannel );
 
-!!! ...unfinished... (2025/07/04)
-// Perhaps, fround() inside .multiply_all_byNs()
-//
-// Or, call tBounds.fround() after .multiply_all_byNs() done.
-
                         // Accumulate value bounds for the filter position
                         // (across the whole virtual input image).
+                        //
+                        // Note: For avg pooling, do NOT fround() when adding.
+                        //       Do fround() when dividing instead. Please see
+                        //       NumberImage_Base.clone_byDepthwise().
+                        //
+                        // (2025/07/05)
                         virtualImageOutput_afterFilter_BoundsArray_PerPixel
                           .add_one_outputChannel_byBounds(
                             outChannel, filterY, filterX, tBounds );
@@ -970,10 +967,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               // Note: Use adding instead of assignment.
               this.biasesArray[ biasIndex ] += biasValue;
 
-!!! ...unfinished... (2025/07/04)
-// Perhaps, fround() inside .multiply_all_byNs()
-//
-// Or, call tBounds.fround() after .multiply_all_byNs() done.
+!!! ...unfinished... (2025/07/05)
+// call .fround() after .add_one_byN() done.
 
               // Determine .afterBias
               // Shift the value bounds by the bias.
@@ -1004,6 +999,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
           virtualImageOutput_afterFilter_BoundsArray_PerPixel
             .divide_all_by_accumulationCounts();
+
+!!! ...unfinished... (2025/07/05)
+// call .fround() after .divide_all_by_accumulationCounts() done.
+
         }
 
         virtualImageOutput_afterFilter_BoundsArray_PerPixel

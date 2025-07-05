@@ -921,10 +921,9 @@ class NumberImage_Base extends Recyclable.Root {
                         // );
 
 !!! ...unfinished... (2025/07/04)
-// Perhaps, fround( depthwiseFiltersArray[ filterIndex ] ) and .fround()
-// inside .multiply_byN() and .add_one_byBounds()
+// Perhaps, fround( depthwiseFiltersArray[ filterIndex ] )
 //
-// Or, call tBounds.fround() after .add_one_byBounds() done.
+// call tBounds.fround() after .add_one_byBounds() done.
 
                         // Note: .afterUndoPreviousActivationEscaping has
                         //        already been multiplied by
