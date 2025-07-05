@@ -121,6 +121,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
    *   Return this object self.
    */
   set_byParamsNumberArrayObject_ParamsOut( weightElementOffsetBegin = 0 ) {
+    const funcNameInMessage = "set_byParamsNumberArrayObject_ParamsOut";
+
     let embeddingParams = this.out;
 
     this.generate_out_inferencedParams();
@@ -210,8 +212,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
             bBoundsOk &&= this.out_boundsArray.is_one_contain_N(
               outChannel, vocabularyId );
             if ( !bBoundsOk )
-              throw Error( `Embedding_TestParams.Base`
-                + `.set_byParamsNumberArrayObject_ParamsOut(): `
+              throw Error( `Embedding_TestParams.Base.${funcNameInMessage}(): `
                 + `vocabularyId=${vocabularyId} `
                 + `should be in bounds `
                 + `[ ${this.out_boundsArray.lowers[ outChannel ]}, `
@@ -229,23 +230,56 @@ class Embedding_TestParams_Base extends TestParams.Base {
               = vocabularyElementArray[ vocabularyElementIndex ];
             ++vocabularyElementIndex;
 
+            // Note: fround() for all source (i.e. input, filter and bias).
+            // (2025/07/05)
+            vocabularyElementValue = Math.fround( vocabularyElementValue );
+
             let tableChannel = outChannelSub - outChannelSubBegin;
+
             bBoundsOk &&= this.out_boundsArray.is_one_contain_N(
               outChannel, vocabularyElementValue );
+
+            if ( !bBoundsOk )
+              throw Error( `Embedding_TestParams.Base.${funcNameInMessage}(): `
+                + `vocabularyId=${vocabularyId}, `
+                + `outChannel=${outChannel}, `
+                + `vocabularyElementArray=[ ${vocabularyElementArray} ], `
+                + `vocabularyElementArray[ ${vocabularyElementIndex} ]=`
+                  + `${vocabularyElementArray[ vocabularyElementIndex ]}, `
+                + `vocabularyElementValue=${vocabularyElementValue}, `
+                + `should be in bounds `
+                + `[ ${this.out_boundsArray.lowers[ outChannel ]}, `
+                + `${this.out_boundsArray.uppers[ outChannel ]} ].`
+              );
+
+            // Note: This may not be true because this.out_boundsArray is
+            //       computed from the extracted vocabularyElementValue which
+            //       has been fround().
+            //
+            // (2025/07/05)
             bBoundsOk &&= this.out_boundsArray.is_one_in_LowerUpper(
               outChannel,
               vocabularyElementArray.boundsArray_byChannel.lowers[ tableChannel ],
               vocabularyElementArray.boundsArray_byChannel.uppers[ tableChannel ] );
+
             if ( !bBoundsOk )
-              throw Error( `Embedding_TestParams.Base`
-                + `.set_byParamsNumberArrayObject_ParamsOut(): `
+              throw Error( `Embedding_TestParams.Base.${funcNameInMessage}(): `
                 + `vocabularyId=${vocabularyId}, `
+                + `outChannel=${outChannel}, `
                 + `vocabularyElementArray=[ ${vocabularyElementArray} ], `
-                + `vocabularyElementArray[ ${outChannel} ]=${vocabularyElementValue} `
+                + `vocabularyElementArray[ ${vocabularyElementIndex} ]=`
+                  + `${vocabularyElementArray[ vocabularyElementIndex ]}, `
+                + `vocabularyElementValue=${vocabularyElementValue}, `
+
+                + `.out_boundsArray.lowers=[ ${this.out_boundsArray.lowers} ], `
+                + `.out_boundsArray.uppers=[ ${this.out_boundsArray.uppers} ], `
+                
+                + `.out_boundsArray.lowers[ ${outChannel} ]=`
+                  + `${this.out_boundsArray.lowers[ outChannel ]}, `
+                + `.out_boundsArray.uppers[ ${outChannel} ]=`
+                  + `${this.out_boundsArray.uppers[ outChannel ]}, `
+
                 + `should be in bounds `
-                + `[ ${this.out_boundsArray.lowers[ outChannel ]}, `
-                + `${this.out_boundsArray.uppers[ outChannel ]} ] `
-                + `and bounds `
                 + `[ ${vocabularyElementArray.boundsArray_byChannel.lowers[ tableChannel ]}, `
                 + `${vocabularyElementArray.boundsArray_byChannel.uppers[ tableChannel ]} ].`
               );
