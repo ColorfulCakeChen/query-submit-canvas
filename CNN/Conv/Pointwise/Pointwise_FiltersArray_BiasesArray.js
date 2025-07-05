@@ -844,12 +844,17 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             // Non-pass-through half channels.
             } else {
               biasValue = sourceWeightArray[ sourceIndex ];
+              ++sourceIndex;
+            }
 
 !!! ...unfinished... (2025/07/05)
 // call .fround() for biasValue.
 
-              ++sourceIndex;
-            }
+            // Note: For all source, do fround().
+            //       Please see NumberImage_Base.modify_byBias().
+            //
+            // (2025/07/05)
+            biasValue = Math.fround( biasValue );
 
             // Note: Use adding instead of assignment.
             this.biasesArray[ biasIndex ] += biasValue;
