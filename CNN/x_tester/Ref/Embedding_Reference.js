@@ -526,10 +526,10 @@ class Embedding_Reference_Base
         BoundsArraySet.InputsOutputs, preFilledBounds
       );
 
-
-!!! ...unfinished... (2025/07/05)
-// call .fround()
-
+      // Note: testParams.out_boundsArray should have been fround() inside
+      //       Embedding_TestParams_Base.set_byParamsNumberArrayObject_ParamsOut().
+      //
+      // (2025/07/05)
       imageOut.boundsArraySet.output0.set_all_byBoundsArray(
         testParams.out_boundsArray );
     }
