@@ -852,13 +852,20 @@ TestParams_Base.integer_numberArray_randomParams = {
  *
  * Use small but expressable floating value (e.g. 1/2, 1/4, 1/8, ...,
  * 1/(2**n)) so that the result of multiply-add will not be too large.
- * 
+ *
+ *
+ * 3. float32 vs. float64
+ *
+ * The value 0.05 can not be precisely represented by float32. That is,
+ * ( Math.fround( 0.05 ) !== 0.05 ).
+ *
+ * So, including it in number sequence (e.g. ( weightsValueBegin == -0.55 ) )
+ * could test whether Math.fround() is used properly.
+ *
  */
 TestParams_Base.filterWeights_numberArray_randomParams = {
 
-  // (2025/06/25 Modified)
-  //weightsValueBegin: 0,
-  weightsValueBegin: -0.5,
+  weightsValueBegin: -0.55,
 
   weightsValueStep:  1 / ( 2 ** 3 ), // i.e. ( 1 / 8 )
   //weightsValueStep:  1 / ( 2 ** 5 ), // i.e. ( 1 / 32 )
