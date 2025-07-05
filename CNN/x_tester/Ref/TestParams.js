@@ -865,6 +865,7 @@ TestParams_Base.integer_numberArray_randomParams = {
  */
 TestParams_Base.filterWeights_numberArray_randomParams = {
 
+  // Note: Include 0.05 in number sequence to test fround().
   weightsValueBegin: -0.55,
 
   weightsValueStep:  1 / ( 2 ** 3 ), // i.e. ( 1 / 8 )
