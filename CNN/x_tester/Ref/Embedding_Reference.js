@@ -570,11 +570,14 @@ class Embedding_Reference_Base
           for ( let outChannelSub = outChannelSubBegin;
             outChannelSub < channelMultiplier; ++outChannelSub ) {
 
+            let vocabularyElementValue
+              = vocabularyTable[ vocabularyElementIndex ];
+!!!
             // Note: fround() for all source (i.e. input, filter and bias).
-            //
             // (2025/07/05)
-            imageOut.dataArray[ outElementIndex ]
-              = Math.fround( vocabularyTable[ vocabularyElementIndex ] );
+            vocabularyElementValue = Math.fround( vocabularyElementValue );
+
+            imageOut.dataArray[ outElementIndex ] = vocabularyElementValue;
 
             ++vocabularyElementIndex;
             ++outElementIndex;

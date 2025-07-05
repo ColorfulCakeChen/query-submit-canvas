@@ -182,12 +182,16 @@ class Embedding_TestParams_Base extends TestParams.Base {
             outChannelSub < embeddingParams.channelMultiplier;
             ++outChannelSub ) {
 
-            let vocabularyElement
+            let vocabularyElementValue
               = vocabularyElementArray[ vocabularyElementIndex ];
             ++vocabularyElementIndex;
 
+            // Note: fround() for all source (i.e. input, filter and bias).
+            // (2025/07/05)
+            vocabularyElementValue = Math.fround( vocabularyElementValue );
+
             this.out_boundsArray.enlarge_one_byN(
-              outChannel, vocabularyElement );
+              outChannel, vocabularyElementValue );
             ++outChannel;
           }
         }
@@ -221,13 +225,13 @@ class Embedding_TestParams_Base extends TestParams.Base {
             outChannelSub < embeddingParams.channelMultiplier;
             ++outChannelSub ) {
 
-            let vocabularyElement
+            let vocabularyElementValue
               = vocabularyElementArray[ vocabularyElementIndex ];
             ++vocabularyElementIndex;
 
             let tableChannel = outChannelSub - outChannelSubBegin;
             bBoundsOk &&= this.out_boundsArray.is_one_contain_N(
-              outChannel, vocabularyElement );
+              outChannel, vocabularyElementValue );
             bBoundsOk &&= this.out_boundsArray.is_one_in_LowerUpper(
               outChannel,
               vocabularyElementArray.boundsArray_byChannel.lowers[ tableChannel ],
@@ -237,7 +241,7 @@ class Embedding_TestParams_Base extends TestParams.Base {
                 + `.set_byParamsNumberArrayObject_ParamsOut(): `
                 + `vocabularyId=${vocabularyId}, `
                 + `vocabularyElementArray=[ ${vocabularyElementArray} ], `
-                + `vocabularyElementArray[ ${outChannel} ]=${vocabularyElement} `
+                + `vocabularyElementArray[ ${outChannel} ]=${vocabularyElementValue} `
                 + `should be in bounds `
                 + `[ ${this.out_boundsArray.lowers[ outChannel ]}, `
                 + `${this.out_boundsArray.uppers[ outChannel ]} ] `
