@@ -1321,7 +1321,8 @@ class HeightWidthDepth {
 
         {
           asserter_Equal
-            = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
+            = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.0001 );
+            // = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
 
           this.neuralWorker_PerformanceTest_init();
 

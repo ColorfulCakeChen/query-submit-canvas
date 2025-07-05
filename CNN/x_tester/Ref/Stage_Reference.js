@@ -49,11 +49,12 @@ class Stage_Reference_Base
     this.Block_Reference = Block_Reference.Base.Pool.get_or_create_by(
       this, "Block_Reference" );
 
-//!!! (2022/08/05 Temp Remarked) For debug floating-point accumulated error
-//    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.005 );
-//!!! (2025/05/26 Temp Remarked) For debug floating-point accumulated error
-    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
-    // this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.02, 0.005 );
+//!!! (2025/07/05 Temp Remarked) For debug floating-point accumulated error
+    this.asserter_Equal
+      = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.0001 );
+      // = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
+      // = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.02, 0.005 );
+      // = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.005 );
 
     // For reducing memory allocation.
 
