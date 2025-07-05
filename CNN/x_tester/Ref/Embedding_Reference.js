@@ -572,7 +572,7 @@ class Embedding_Reference_Base
 
             let vocabularyElementValue
               = vocabularyTable[ vocabularyElementIndex ];
-!!!
+
             // Note: fround() for all source (i.e. input, filter and bias).
             // (2025/07/05)
             vocabularyElementValue = Math.fround( vocabularyElementValue );
