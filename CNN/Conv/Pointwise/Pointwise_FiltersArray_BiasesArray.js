@@ -693,10 +693,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         for ( let inChannel = 0;
           inChannel < this.inputChannelCount; ++inChannel ) {
 
-          let undoPreviousEscapingScale
+          const undoPreviousEscapingScale
             = input_scaleArraySet_undo.scales[ inChannel ];
 
-          let filterValuePassThrough
+          const filterValuePassThrough
             = thePassThroughStyleInfo.filterValue * undoPreviousEscapingScale;
 
           let outChannel = outChannelBegin;
@@ -735,12 +735,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                   if ( inChannelToPartBegin == outChannelSub ) {
                     this.filtersArray[ filterIndex ] = filterValuePassThrough;
 
-!!! ...unfinished... (2025/07/04)
-// Perhaps, fround() inside .multiply_all_byNs()
-//
-// Or, call tBounds.fround() after .multiply_all_byNs() done.
-
-
+                    // Note: For pointwise convolution, do NOT fround()
+                    //       when multiplying. Do fround() when adding.
+                    //       Please see NumberImage_Base.clone_byPointwise().
+                    //
+                    // (2025/07/05)
                     tBounds
                       .set_byBoundsArray(
                         this.boundsArraySet.afterUndoPreviousActivationEscaping,
@@ -759,8 +758,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                   let sourceWeight = sourceWeightArray[ sourceIndex ];
                   ++sourceIndex;
 
-!!! ...unfinished... (2025/07/05)
-// call .fround() for sourceWeight.
+                  // Note: fround() for all source (i.e. input, filter and bias).
+                  //       Please see NumberImage_Base.clone_byPointwise().
+                  //
+                  // (2025/07/05)
+                  sourceWeight = Math.fround( sourceWeight );
 
                   this.filtersArray[ filterIndex ]
                     = sourceWeight * undoPreviousEscapingScale;
@@ -847,10 +849,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               ++sourceIndex;
             }
 
-!!! ...unfinished... (2025/07/05)
-// call .fround() for biasValue.
-
-            // Note: For all source, do fround().
+            // Note: fround() for all source (i.e. input, filter and bias).
             //       Please see NumberImage_Base.modify_byBias().
             //
             // (2025/07/05)

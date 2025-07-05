@@ -777,10 +777,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                     break InChannelPartIndexLoop;
                   }
 
-                  let undoPreviousEscapingScale = inputScaleBoundsArray
+                  const undoPreviousEscapingScale = inputScaleBoundsArray
                     .scaleArraySet.undo.scales[ inChannel ];
 
-                  let filterValuePassThrough
+                  const filterValuePassThrough
                      = thePassThroughStyleInfo.filterValue
                          * undoPreviousEscapingScale;
 
@@ -824,8 +824,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                         let sourceWeight = sourceWeightArray[ sourceIndex ];
                         ++sourceIndex;
 
-!!! ...unfinished... (2025/07/05)
-// call .fround() for sourceWeight.
+                        // Note: fround() for all source (i.e. input, filter and bias).
+                        //       Please see NumberImage_Base.clone_byDepthwise().
+                        //
+                        // (2025/07/05)
+                        sourceWeight = Math.fround( sourceWeight );
 
                         this.filtersArray[ filterIndex ]
                           = sourceWeight * undoPreviousEscapingScale;
@@ -975,10 +978,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                 ++sourceIndex;
               }
 
-!!! ...unfinished... (2025/07/05)
-// call .fround() for biasValue.
-
-              // Note: For all source, do fround().
+              // Note: fround() for all source (i.e. input, filter and bias).
               //       Please see NumberImage_Base.modify_byBias().
               //
               // (2025/07/05)
