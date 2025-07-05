@@ -826,29 +826,42 @@ TestParams_Base.integer_numberArray_randomParams = {
   weightsDivisorForRemainder: 1024,
 };
 
-/**
- * 
- */
-class SMALL {
-  constructor() {
-    this.STEP_BASE = 1 / ( 2 ** 3 ); // i.e. ( 1 / 8 ) = 0.125
-    this.POSITIVE_VALUE = 0.5;
 
-    // Note: Value 0.05 can not be precisely represented by float32. That is,
-    //       ( Math.fround( 0.05 ) !== 0.05 ).
-    this.FROUND_DELTA = 0.05;
-
-    this.ZEROABLE_FACTOR
-      = this.SMALL_POSITIVE / this.SMALL_STEP_BASE; // 4 = 0.5 / 0.125
-
-    this.STEP = this.STEP_BASE + this.FROUND_DELTA; // 0.175 = 0.125 + 0.05
-
-    // - 0.7 = - ( 0.175 * 4 )
-    this.NEGATIVE_VALUE = - ( this.STEP * this.ZEROABLE_FACTOR );
-  }
-}
-
-TestParams_Base.SMALL_PARAMS = new SMALL();
+//!!! ...unfinished... (2025/07/05 Remarked) does not workable.
+// /**
+//  * 
+//  */
+// class SMALL {
+//   constructor() {
+//     this.STEP_BASE = 1 / ( 2 ** 3 ); // i.e. ( 1 / 8 ) = 0.125
+//     this.POSITIVE_VALUE = 0.5;
+//
+//     // Note: Value 0.05 can not be precisely represented by float32. That is,
+//     //       ( Math.fround( 0.05 ) !== 0.05 ).
+//     this.FROUND_DELTA = 0.05;
+//
+//     this.ZEROABLE_FACTOR
+//       = this.SMALL_POSITIVE / this.SMALL_STEP_BASE; // 4 = 0.5 / 0.125
+//
+//     this.STEP = this.STEP_BASE + this.FROUND_DELTA; // 0.175 = 0.125 + 0.05
+//
+// //!!! ...unfinished... (2025/07/05 Remarked) does not workable.
+//     // A value:
+//     //
+//     //   - Negative but near zero. So, negative and positive convolution kernel
+//     //       filter could be generated.
+//     //
+//     //   - Include 0.05 which can not be represented precisely by float32. So,
+//     //       fround() could be tested.
+//     //
+//     //   - Zero could be produced (?) 
+//     //
+//     // - 0.7 = - ( 0.175 * 4 )
+//     this.NEGATIVE_VALUE = - ( this.STEP * this.ZEROABLE_FACTOR );
+//   }
+// }
+//
+// TestParams_Base.SMALL_PARAMS = new SMALL();
 
 
 /**
@@ -899,13 +912,13 @@ TestParams_Base.SMALL_PARAMS = new SMALL();
  */
 TestParams_Base.filterWeights_numberArray_randomParams = {
 
-  weightsValueBegin: TestParams_Base.SMALL_PARAMS.NEGATIVE_VALUE,
+  weightsValueBegin: -0.50,  // Test: All zero convolution kernel filter.
   // weightsValueBegin: -0.55,  // Test: fround().
-  // weightsValueBegin: -0.50,  // Test: All zero convolution kernel filter.
+  // weightsValueBegin: TestParams_Base.SMALL_PARAMS.NEGATIVE_VALUE,
 
-  weightsValueStep: TestParams_Base.SMALL_PARAMS.STEP,
-  // weightsValueStep:  1 / ( 2 ** 3 ), // i.e. ( 1 / 8 )
+  weightsValueStep:  1 / ( 2 ** 3 ), // i.e. ( 1 / 8 )
   // weightsValueStep:  1 / ( 2 ** 5 ), // i.e. ( 1 / 32 )
+  // weightsValueStep: TestParams_Base.SMALL_PARAMS.STEP,
 
   // Use larger negative variation to generate negative result.
   weightsRandomOffset: {
