@@ -842,6 +842,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
                       // Accumulate value bounds for the filter position
                       // (across the whole virtual input image).
+                      //
+                      // Note: For deothwise convolution, do fround() when
+                      //       adding. This is different from avg pooling.
+                      //       Please see NumberImage_Base.clone_byDepthwise().
+                      //
+                      // (2025/07/05)
                       virtualImageOutput_afterFilter_BoundsArray_PerPixel
                         .add_one_outputChannel_byBounds(
                           outChannel, filterY, filterX, tBounds );
@@ -855,10 +861,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                       if ( this.AvgMax_Or_ChannelMultiplier
                              == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
 
-                        // (Because avg pooling can not undo previous
-                        // activation escaping scale, use .input0 instead of
-                        // .afterUndoPreviousActivationEscaping to calculate
-                        // value bounds.)
+                        // Note: Because avg pooling can not undo previous
+                        //       activation escaping scale, use .input0 instead
+                        //       of .afterUndoPreviousActivationEscaping to
+                        //       calculate value bounds.
                         tBounds.set_byBoundsArray(
                           this.boundsArraySet.input0.boundsArray, inChannel );
 
