@@ -163,8 +163,6 @@ class ScaleTranslateArray {
     return this;
   }
 
-!!!
-
 
   /**
    * @param {number} thisIndex
