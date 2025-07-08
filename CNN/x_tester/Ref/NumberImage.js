@@ -1,10 +1,11 @@
 export { NumberImage_Base as Base };
 
+import * as BoundsArraySet_Asserter from "../../util/BoundsArraySet_Asserter.js";
 import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as RandTools from "../../util/RandTools.js";
 import * as TableLogger from "../../util/TableLogger.js";
-import * as TensorTools from "../../util/TensorTools.js";
+//import * as TensorTools from "../../util/TensorTools.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
@@ -2405,12 +2406,12 @@ class NumberImage_Base extends Recyclable.Root {
    *   Assert every pixel whether inside aBoundsArray of its channel.
    */
   assert_pixels_byBoundsArray( aBoundsArray ) {
-    TensorTools.Comparator.assert_NumberArray_byBoundsArray(
+    BoundsArraySet_Asserter.assert_NumberArray_byBoundsArray(
       this.dataArray,
       this.height, this.width, this.depth
     );
 
-// !!! (2025/07/08 Remarked) Used TensorTools.Comparator.assert_NumberArray_byBoundsArray() instead.
+// !!! (2025/07/08 Remarked) Used BoundsArraySet_Asserter.assert_NumberArray_byBoundsArray() instead.
 //     //!!! (2022/08/12 Temp Added) Temp skip checking for finding out real value.
 //     //return;
 //

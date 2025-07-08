@@ -2,7 +2,6 @@ export { Comparator, Asserter_Equal };
 
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
-import * as FloatValue from "../Unpacker/FloatValue.js";
 
 /**
  *
@@ -43,94 +42,6 @@ class Comparator {
     }
 
     return true;
-  }
-
-  /**
-   * @param {tf.tensor3d} aTensor3d
-   *   The tensor3d to be verified along every channel.
-   *
-   * @param {FloatValue.BoundsArray} aBoundsArray
-   *   Assert every pixel whether inside aBoundsArray of its channel.
-   */
-  static assert_Tensor3d_byBoundsArray( aTensor3d, aBoundsArray ) {
-    const funcNameInMessage = "assert_Tensor3d_byBoundsArray";
-
-    if ( !aTensor3d )
-      throw Error( `TensorTools.Comparator.${funcNameInMessage}(): `
-        + `aTensor3d ( ${aTensor3d} ) should not be null or undefined.`
-      );
-
-    const shape = aTensor3d.shape;
-    if ( !shape )
-      throw Error( `TensorTools.Comparator.${funcNameInMessage}(): `
-        + `aTensor3d.shape ( ${shape} ) should not be null or undefined.`
-      );
-
-    if ( shape.length != 3 )
-      throw Error( `TensorTools.Comparator.${funcNameInMessage}(): `
-        + `aTensor3d.shape = [ ${shape} ], `
-        + `aTensor3d.shape.length ( ${shape.length} ) should be 3.`
-      );
-
-    const dataArray = aTensor3d.dataSync();
-    if ( !dataArray )
-      throw Error( `TensorTools.Comparator.${funcNameInMessage}(): `
-        + `Failed to get dataArray ( ${dataArray} )`
-        + `from aTensor3d ( ${aTensor3d} ).`
-      );
-
-    const [ height, width, depth ] = shape;
-    Comparator.assert_NumberArray_byBoundsArray(
-      dataArray,
-      height, width, depth,
-      aBoundsArray
-     )
-  }
-
-  /**
-   * @param {number[]} dataArray
-   *   The 1d number array (which will be viewed as an 2d image with dimnsion
-   * ( height, width, depth ).
-   *
-   * @param {number} height
-   *   The image height for interpreting dataArray[].
-   *
-   * @param {number} width
-   *   The image width for interpreting dataArray[].
-   *
-   * @param {number} depth
-   *   The image deoth (channels) for interpreting dataArray[].
-   *
-   * @param {FloatValue.BoundsArray} aBoundsArray
-   *   Assert every pixel whether inside aBoundsArray of its channel.
-   */
-  static assert_NumberArray_byBoundsArray(
-    dataArray,
-    height, width, depth,
-    aBoundsArray ) {
-
-    const funcNameInMessage = "assert_NumberArray_byBoundsArray";
-
-    //!!! (2022/08/12 Temp Added) Temp skip checking for finding out real value.
-    //return;
-
-    let pixelValue;
-    let i = 0;
-    for ( let y = 0; y < height; ++y ) {
-      for ( let x = 0; x < width; ++x ) {
-        for ( let c = 0; c < depth; ++c, ++i ) {
-          pixelValue = dataArray[ i ];
-          if ( !( aBoundsArray.is_one_contain_N( c, pixelValue ) ) ) {
-            debugger;
-            throw Error( `TensorTools.Comparator.${funcNameInMessage}(): `
-              + `at ( x, y, c ) = ( ${x}, ${y}, ${c} ), `
-              + `.dataArray[ ${i} ] = ( ${pixelValue} ) should be in bounds `
-              + `[ ${aBoundsArray.lowers[ c ]}, ${aBoundsArray.uppers[ c ]} ].`
-            );
-          }
-        }
-      }
-    }
   }
 
 }
