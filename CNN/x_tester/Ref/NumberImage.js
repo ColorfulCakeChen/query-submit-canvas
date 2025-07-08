@@ -4,6 +4,7 @@ import * as Pool from "../../util/Pool.js";
 import * as Recyclable from "../../util/Recyclable.js";
 import * as RandTools from "../../util/RandTools.js";
 import * as TableLogger from "../../util/TableLogger.js";
+import * as TensorTools from "../../util/TensorTools.js";
 import * as FloatValue from "../../Unpacker/FloatValue.js";
 import * as ValueDesc from "../../Unpacker/ValueDesc.js";
 import * as Weights from "../../Unpacker/Weights.js";
@@ -2404,26 +2405,32 @@ class NumberImage_Base extends Recyclable.Root {
    *   Assert every pixel whether inside aBoundsArray of its channel.
    */
   assert_pixels_byBoundsArray( aBoundsArray ) {
-    //!!! (2022/08/12 Temp Added) Temp skip checking for finding out real value.
-    //return;
-!!!
-    let pixelValue;
-    let i = 0;
-    for ( let y = 0; y < this.height; ++y ) {
-      for ( let x = 0; x < this.width; ++x ) {
-        for ( let c = 0; c < this.depth; ++c, ++i ) {
-          pixelValue = this.dataArray[ i ];
-          if ( !( aBoundsArray.is_one_contain_N( c, pixelValue ) ) ) {
-            debugger;
-            throw Error( `NumberImage.Base.assert_output_BoundsArray(): `
-              + `at ( x, y, c ) = ( ${x}, ${y}, ${c} ), `
-              + `.dataArray[ ${i} ] = ( ${pixelValue} ) should be in bounds `
-              + `[ ${aBoundsArray.lowers[ c ]}, ${aBoundsArray.uppers[ c ]} ].`
-            )
-          }
-        }
-      }
-    }
+    TensorTools.Comparator.assert_NumberArray_byBoundsArray(
+      this.dataArray,
+      this.height, this.width, this.depth
+    );
+
+// !!! (2025/07/08 Remarked) Used TensorTools.Comparator.assert_NumberArray_byBoundsArray() instead.
+//     //!!! (2022/08/12 Temp Added) Temp skip checking for finding out real value.
+//     //return;
+//
+//     let pixelValue;
+//     let i = 0;
+//     for ( let y = 0; y < this.height; ++y ) {
+//       for ( let x = 0; x < this.width; ++x ) {
+//         for ( let c = 0; c < this.depth; ++c, ++i ) {
+//           pixelValue = this.dataArray[ i ];
+//           if ( !( aBoundsArray.is_one_contain_N( c, pixelValue ) ) ) {
+//             debugger;
+//             throw Error( `NumberImage.Base.assert_output_BoundsArray(): `
+//               + `at ( x, y, c ) = ( ${x}, ${y}, ${c} ), `
+//               + `.dataArray[ ${i} ] = ( ${pixelValue} ) should be in bounds `
+//               + `[ ${aBoundsArray.lowers[ c ]}, ${aBoundsArray.uppers[ c ]} ].`
+//             )
+//           }
+//         }
+//       }
+//     }
   }
 
   /**
