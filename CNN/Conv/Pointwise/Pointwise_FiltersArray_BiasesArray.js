@@ -775,7 +775,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                     .set_byBoundsArray(
                       this.boundsArraySet.afterUndoPreviousActivationEscaping,
                       inChannel )
-                    .multiply_byN( sourceWeight );
+                    .multiply_byN( sourceWeight )
+                    // Do NOT fround here.
+                    ;
                 }
 
                 // Determine .afterFilter

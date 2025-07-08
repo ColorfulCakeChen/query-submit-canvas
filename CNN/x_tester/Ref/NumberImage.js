@@ -363,6 +363,7 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut.boundsArraySet.set_bPassThroughArray_all( bPassThrough );
 
     // Pointwise Convolution
+    let filterValue;
     for ( let y = 0; y < imageIn.height; ++y ) {
       let indexBaseX = ( y * imageIn.width );
 
@@ -385,6 +386,8 @@ class NumberImage_Base extends Recyclable.Root {
             let outIndex = outIndexBaseC + outChannel;
             let filterIndex = filterIndexBase + outChannel;
 
+            filterValue = Math.fround( pointwiseFiltersArray[ filterIndex ] );
+
             // Note: According to experiment, the accumulation error will be
             //       similar to tensorflow.js if only fround() the input
             //       (including previous non-completed convolution).
@@ -393,7 +396,7 @@ class NumberImage_Base extends Recyclable.Root {
                 (
                   Math.fround( imageIn.dataArray[ inIndex ] )
                     * undoPreviousEscapingScale
-                ) * Math.fround( pointwiseFiltersArray[ filterIndex ] )
+                ) * filterValue
               )
             );
 
@@ -426,6 +429,8 @@ class NumberImage_Base extends Recyclable.Root {
       }
 
       // Calculate value bounds of every output channels (i.e. .afterFilter).
+      let filterIndex;
+      let filterValue;
       let tBounds = FloatValue.Bounds.Pool.get_or_create_by( 0, 0 );
       for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
         let filterIndexBase = ( inChannel * pointwiseChannelCount );
@@ -433,12 +438,8 @@ class NumberImage_Base extends Recyclable.Root {
         for ( let outChannel = 0;
           outChannel < pointwiseChannelCount; ++outChannel ) {
 
-          let filterIndex = filterIndexBase + outChannel;
-
-!!! ...unfinished... (2025/07/04)
-// Perhaps, fround( pointwiseFiltersArray[ filterIndex ] )
-//
-// Or, call tBounds.fround() after .add_one_byBounds() done.
+          filterIndex = filterIndexBase + outChannel;
+          filterValue = Math.fround( pointwiseFiltersArray[ filterIndex ] );
 
           // Note: .afterUndoPreviousActivationEscaping has already been
           //       multiplied by undoPreviousEscapingScale.
@@ -446,10 +447,13 @@ class NumberImage_Base extends Recyclable.Root {
             .set_byBoundsArray(
               imageOut.boundsArraySet.afterUndoPreviousActivationEscaping,
               inChannel )
-            .multiply_byN( pointwiseFiltersArray[ filterIndex ] );
+            .multiply_byN( filterValue )
+            // Do NOT fround here.
+            ;
 
-          imageOut.boundsArraySet.afterFilter.add_one_byBounds(
-            outChannel, tBounds );
+          imageOut.boundsArraySet.afterFilter
+            .add_one_byBounds( outChannel, tBounds )
+            .fround_one( outChannel );
         }
       }
       tBounds.disposeResources_and_recycleToPool();
@@ -851,7 +855,7 @@ class NumberImage_Base extends Recyclable.Root {
                        = ( ( filterIndexBaseX + filterX )
                              * outputChannelCount );
 
-                       const filterIndex = filterIndexBaseC + outChannel;
+                    const filterIndex = filterIndexBaseC + outChannel;
 
                     switch ( depthwise_AvgMax_Or_ChannelMultiplier ) {
                       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG: // Avg pooling
@@ -877,8 +881,10 @@ class NumberImage_Base extends Recyclable.Root {
                         tBounds.set_byBoundsArray(
                           imageOut.boundsArraySet.input0.boundsArray,
                           inChannel );
-                        afterFilter_BoundsArray_perPixel.add_one_byBounds(
-                          outIndex, tBounds );
+                        afterFilter_BoundsArray_perPixel
+                          .add_one_byBounds( outIndex, tBounds )
+                          // Do NOT fround here.
+                          ;
                         break;
 
                       case ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX: // Max pooling
@@ -921,11 +927,6 @@ class NumberImage_Base extends Recyclable.Root {
                         //       )
                         // );
 
-!!! ...unfinished... (2025/07/04)
-// Perhaps, fround( depthwiseFiltersArray[ filterIndex ] )
-//
-// call tBounds.fround() after .add_one_byBounds() done.
-
                         // Note: .afterUndoPreviousActivationEscaping has
                         //        already been multiplied by
                         //        undoPreviousEscapingScale.
@@ -933,10 +934,13 @@ class NumberImage_Base extends Recyclable.Root {
                           .set_byBoundsArray(
                             imageOut.boundsArraySet.afterUndoPreviousActivationEscaping,
                             inChannel )
-                          .multiply_byN( filterValue );
+                          .multiply_byN( filterValue )
+                          // Do NOT fround here.
+                          ;
 
-                        afterFilter_BoundsArray_perPixel.add_one_byBounds(
-                          outIndex, tBounds );
+                        afterFilter_BoundsArray_perPixel
+                          .add_one_byBounds( outIndex, tBounds )
+                          .fround_one( outIndex );
                         break;
                     }
                   }
@@ -962,13 +966,10 @@ class NumberImage_Base extends Recyclable.Root {
               //   Math.fround( imageOut.dataArray[ outIndex ] )
               //     / Math.fround( avgDivisor ) );
 
-!!! ...unfinished... (2025/07/04)
-// Perhaps, .fround()inside .divide_one_byN()
-//
-// Or, call tBounds.fround() after .divide_one_byN() done.
-
-              afterFilter_BoundsArray_perPixel.divide_one_byN(
-                outIndex, avgDivisor ); // value bounds is also averaged.
+              // value bounds is also averaged.
+              afterFilter_BoundsArray_perPixel
+                .divide_one_byN( outIndex, avgDivisor )
+                .fround_one(  )
             }
           }
         }
@@ -1191,13 +1192,9 @@ class NumberImage_Base extends Recyclable.Root {
     // Calculate value bounds of every output channels (i.e. .afterBias) by
     // shifting as the bias.
     for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
-
-!!! ...unfinished... (2025/07/04)
-// Perhaps, fround( biasesArray[ inChannel ] )
-// call tBounds.fround() after .add_one_byN() done.
-
-      imageIn.boundsArraySet.afterBias.add_one_byN(
-        inChannel, biasesArray[ inChannel ] );
+      imageIn.boundsArraySet.afterBias
+        .add_one_byN( inChannel, biasesArray[ inChannel ] )
+        .fround_one( inChannel );
     }
 
     if ( bTableLog ) {
@@ -1587,10 +1584,8 @@ class NumberImage_Base extends Recyclable.Root {
          //       is supported to broadcast in the same channel (i.e. not
          //       across channels).
          //
-        .add_all_byScaleBoundsArray_all( another.boundsArraySet.output0 );
-
-!!! ...unfinished... (2025/07/04)
-// call BoundsArray.fround_all() after .add_all_byScaleBoundsArray_all() done.
+        .add_all_byScaleBoundsArray_all( another.boundsArraySet.output0 )
+        .fround_all();
 
       imageOutNew.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
     }
@@ -1721,10 +1716,8 @@ class NumberImage_Base extends Recyclable.Root {
          //       it is supported to broadcast in the same channel (i.e. not
          //       across channels).
          //
-        .multiply_all_byScaleBoundsArray_all( another.boundsArraySet.output0 );
-
-!!! ...unfinished... (2025/07/08)
-// call BoundsArray.fround_all() after .multiply_all_byScaleBoundsArray_all() done.
+        .multiply_all_byScaleBoundsArray_all( another.boundsArraySet.output0 )
+        .fround_all();
 
       imageOutNew.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
     }
