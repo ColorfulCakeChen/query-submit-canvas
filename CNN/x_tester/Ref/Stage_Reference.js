@@ -51,7 +51,7 @@ class Stage_Reference_Base
 
 //!!! (2025/07/05 Temp Remarked) For debug floating-point accumulated error
     this.asserter_Equal
-      = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.0001 );
+      = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.001, 0.00001 );
       // = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
       // = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.02, 0.005 );
       // = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.4, 0.005 );

@@ -63,7 +63,7 @@ class NeuralNet_Reference_Base
 // For clamped and integerized output, acceptable delta should be smaller.
 //    this.asserter_Equal
     this.asserter_Equal
-      = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.001, 0.0001 );
+      = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.001, 0.00001 );
       // = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
 
     // For reducing memory allocation.

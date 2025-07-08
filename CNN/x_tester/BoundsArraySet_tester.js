@@ -392,7 +392,7 @@ async function* tester( progressParent ) {
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
   
   let asserter_Equal
-    = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.001 );
+    = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.001, 0.00001 );
 
   try {
 
