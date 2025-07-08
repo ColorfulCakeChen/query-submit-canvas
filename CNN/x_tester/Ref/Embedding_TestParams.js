@@ -383,8 +383,8 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
       bTableLog: [
         // (2025/06/03 Temp Remarked) For debug.
-        //0, 0
-        1, 1
+        0, 0
+        // 1, 1
       ],
     };
 

@@ -46,7 +46,7 @@ function assert_Tensor3d_byBoundsArray( aTensor3d, aBoundsArray ) {
     dataArray,
     height, width, depth,
     aBoundsArray
-    )
+  );
 }
 
 /**
