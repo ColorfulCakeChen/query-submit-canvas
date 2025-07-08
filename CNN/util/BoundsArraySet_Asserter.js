@@ -1,3 +1,5 @@
+export { assert_Tensor3d_byBoundsArray };
+export { assert_NumberArray_byBoundsArray };
 export { assert_BoundsArray };
 export { assert_ScaleBoundsArray };
 export { assert_ScaleBoundsArray_output0_output1 };
