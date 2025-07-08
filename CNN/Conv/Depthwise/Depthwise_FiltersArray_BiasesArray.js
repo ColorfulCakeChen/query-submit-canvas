@@ -833,9 +833,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                         this.filtersArray[ filterIndex ]
                           = sourceWeight * undoPreviousEscapingScale;
 
-                        // Note: For depthwise convolution, do NOT fround()
-                        //       when multiplying. Do fround() when adding.
-                        //       Please see NumberImage_Base.clone_byDepthwise().
+                        // Note: For depthwise convolution, do NOT fround() here
+                        //       (i.e. when multiplying).
                         //
                         // (2025/07/05)
                         tBounds
@@ -845,20 +844,19 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                           .multiply_byN( sourceWeight );
                       }
 
-!!! ...unfinished... (2025/07/05)
-// call .fround() after .add_one_outputChannel_byBounds() done.
-
                       // Accumulate value bounds for the filter position
                       // (across the whole virtual input image).
                       //
-                      // Note: For depthwise convolution, do fround() when
-                      //       adding. This is different from avg pooling.
+                      // Note: For depthwise convolution, do fround() here
+                      //       (i.e. when adding). This is different from avg
+                      //       pooling.
                       //       Please see NumberImage_Base.clone_byDepthwise().
                       //
                       // (2025/07/05)
                       virtualImageOutput_afterFilter_BoundsArray_PerPixel
                         .add_one_outputChannel_byBounds(
-                          outChannel, filterY, filterX, tBounds );
+                          outChannel, filterY, filterX, tBounds )
+                        .fround_one( outChannel );
 
                     // 1.1.2 ( !this.filtersArray ). No filters array to be
                     //       extracted. (i.e. avg/max pooling)
@@ -987,9 +985,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               // Note: Use adding instead of assignment.
               this.biasesArray[ biasIndex ] += biasValue;
 
-!!! ...unfinished... (2025/07/05)
-// call .fround() after .add_one_byN() done.
-
               // Determine .afterBias
               // Shift the value bounds by the bias.
               //
@@ -997,8 +992,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               //       Please see NumberImage_Base.modify_byBias().
               //
               // (2025/07/05)
-              this.boundsArraySet.afterBias.add_one_byN(
-                outChannel, biasValue );
+              this.boundsArraySet.afterBias
+                .add_one_byN( outChannel, biasValue )
+                .fround_one( outChannel );
 
               ++biasIndex;
 
@@ -1023,11 +1019,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         if ( this.AvgMax_Or_ChannelMultiplier
                == ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG ) {
           virtualImageOutput_afterFilter_BoundsArray_PerPixel
-            .divide_all_by_accumulationCounts();
-
-!!! ...unfinished... (2025/07/05)
-// call .fround() after .divide_all_by_accumulationCounts() done.
-
+            .divide_all_by_accumulationCounts()
+            .fround_all();
         }
 
         virtualImageOutput_afterFilter_BoundsArray_PerPixel

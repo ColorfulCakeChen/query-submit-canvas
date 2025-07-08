@@ -126,15 +126,10 @@ class ConvBiasActivation extends InputsOutputs {
   set_afterUndoPreviousActivationEscaping_by_input0_undoScales(
     channelShuffler_inputGroupCount ) {
 
-
-!!! ...unfinished... (2025/07/04)
-// Perhaps, fround() inside .multiply_all_byNs()
-//
-// Or, call tBounds.fround() after .multiply_all_byNs() done.
-
     this.afterUndoPreviousActivationEscaping
       .set_all_byBoundsArray( this.input0.boundsArray )
-      .multiply_all_byNs( this.input0.scaleArraySet.undo.scales );
+      .multiply_all_byNs( this.input0.scaleArraySet.undo.scales )
+      .fround_all();
 
     // Undo the channel shuffling.
     if ( channelShuffler_inputGroupCount > 0 ) {

@@ -767,9 +767,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                   this.filtersArray[ filterIndex ]
                     = sourceWeight * undoPreviousEscapingScale;
 
-                  // Note: For pointwise convolution, do NOT fround()
-                  //       when multiplying. Do fround() when adding.
-                  //       Please see NumberImage_Base.clone_byPointwise().
+                  // Note: For pointwise convolution, do NOT fround() here
+                  //       (i.e. when multiplying).
                   //
                   // (2025/07/05)
                   tBounds
@@ -779,17 +778,16 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                     .multiply_byN( sourceWeight );
                 }
 
-!!! ...unfinished... (2025/07/05)
-// call .fround() after .add_one_byBounds() done.
-
                 // Determine .afterFilter
                 //
-                // Note: For pointwise convolution, do fround() when adding.
+                // Note: For pointwise convolution, do fround() here (i.e.
+                //       when adding).
                 //       Please see NumberImage_Base.clone_byPointwise().
                 //
                 // (2025/07/05)
-                this.boundsArraySet.afterFilter.add_one_byBounds(
-                  outChannel, tBounds );
+                this.boundsArraySet.afterFilter
+                  .add_one_byBounds( outChannel, tBounds )
+                  .fround_one( outChannel );
 
               } else {
                 // All input channels which is not in range use zero filter
@@ -858,9 +856,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             // Note: Use adding instead of assignment.
             this.biasesArray[ biasIndex ] += biasValue;
 
-!!! ...unfinished... (2025/07/05)
-// call .fround() after .add_one_byN() done.
-
             // Determine .afterBias
             // Shift the value bounds by the bias.
             //
@@ -868,7 +863,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             //       Please see NumberImage_Base.modify_byBias().
             //
             // (2025/07/05)
-            this.boundsArraySet.afterBias.add_one_byN( outChannel, biasValue );
+            this.boundsArraySet.afterBias
+              .add_one_byN( outChannel, biasValue )
+              .fround_one( outChannel );
 
             ++biasIndex;
 
