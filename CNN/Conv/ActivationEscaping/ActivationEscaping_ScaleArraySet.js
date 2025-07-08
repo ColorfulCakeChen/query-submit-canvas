@@ -403,6 +403,32 @@ class ScaleArraySet extends Recyclable.Root {
 
 
   /**
+   * @param {number} thisIndex
+   *   The array index of this.do.scales[] and this.undo.scales[].
+   *
+   * @return {ScaleArraySet}
+   *   Return this (modified) object whose .do.scales[ thisIndex ] and
+   * .undo.scales[ thisIndex ] has been fround()ed.
+   */
+  fround_one( thisIndex ) {
+    this.do.fround_one( thisIndex );
+    this.undo.fround_one( thisIndex );
+    return this;
+  }
+
+  /**
+   * @return {ScaleArraySet}
+   *   Return this (modified) object whose .do.scales[] and .undo.scales[]
+   * has been all fround()ed.
+   */
+  fround_all() {
+    this.do.fround_all();
+    this.undo.fround_all();
+    return this;
+  }
+
+
+  /**
    * Return strings for all the headers displayed in one line (i.e. one row)
    * when logging this object as a table.
    *

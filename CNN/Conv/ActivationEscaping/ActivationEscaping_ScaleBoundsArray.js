@@ -348,6 +348,39 @@ class ScaleBoundsArray extends Recyclable.Root {
 
 
   /**
+   * @param {number} thisIndex
+   *   The array index of this.scaleArraySet.do.scales[],
+   * this.scaleArraySet.undo.scales[],
+   * this.boundsArray.lowers[], this.boundsArray.uppers[].
+   *
+   * @return {ScaleBoundsArray}
+   *   Return this (modified) object whose
+   * .scaleArraySet.do.scales[ thisIndex ],
+   * .scaleArraySet.undo.scales[ thisIndex ],
+   * .boundsArray.lowers[ thisIndex ], .boundsArray.uppers[ thisIndex ]
+   * has been fround()ed.
+   */
+  fround_one( thisIndex ) {
+    this.scaleArraySet.fround_one( thisIndex );
+    this.boundsArray.fround_one( thisIndex );
+    return this;
+  }
+
+  /**
+   * @return {ScaleBoundsArray}
+   *   Return this (modified) object whose
+   * .scaleArraySet.do.scales[], .scaleArraySet.undo.scales[],
+   * .boundsArray.lowers[], .boundsArray.uppers[ ]
+   * has been all fround()ed.
+   */
+  fround_all() {
+    this.scaleArraySet.fround_all();
+    this.boundsArray.fround_all();
+    return this;
+  }
+
+
+  /**
    * @param {ScaleBoundsArray} lowerHalfScaleBoundsArray
    *   The ScaleBoundsArray of the 1st output. Its .length will be modified.
    *
