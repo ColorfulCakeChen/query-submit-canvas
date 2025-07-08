@@ -969,7 +969,7 @@ class NumberImage_Base extends Recyclable.Root {
               // value bounds is also averaged.
               afterFilter_BoundsArray_perPixel
                 .divide_one_byN( outIndex, avgDivisor )
-                .fround_one(  )
+                .fround_one( outIndex )
             }
           }
         }
