@@ -48,7 +48,7 @@ const gTestGeneratorFuncMap = new Map( [
   // [ HierarchicalNameable_tester.tester, true ],
 
   // [ CNN_Block_tester.tester, true ],
-  [ CNN_Embedding_tester.tester, true ],
+  // [ CNN_Embedding_tester.tester, true ],
   // [ CNN_NeuralNet_tester.tester, true ],
   // [ CNN_Operation_tester.tester, true ],
   [ CNN_Stage_tester.tester, true ],

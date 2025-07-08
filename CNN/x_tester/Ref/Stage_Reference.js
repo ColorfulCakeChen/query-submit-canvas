@@ -394,7 +394,7 @@ class Stage_Reference_Base
 
       // Check pixel values whether inside bounds.
       BoundsArraySet_Asserter.assert_Tensor3d_byBoundsArray(
-        stage_toBeCompared,
+        outputTensor3d,
         stage_toBeCompared.output0.scaleBoundsArray.boundsArray );
 
       // Compare to outputTensor3d_original.
