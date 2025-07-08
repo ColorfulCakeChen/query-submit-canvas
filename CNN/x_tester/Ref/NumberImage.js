@@ -2407,7 +2407,8 @@ class NumberImage_Base extends Recyclable.Root {
   assert_pixels_byBoundsArray( aBoundsArray ) {
     BoundsArraySet_Asserter.assert_NumberArray_byBoundsArray(
       this.dataArray,
-      this.height, this.width, this.depth
+      this.height, this.width, this.depth,
+      aBoundsArray
     );
 
 // !!! (2025/07/08 Remarked) Used BoundsArraySet_Asserter.assert_NumberArray_byBoundsArray() instead.
