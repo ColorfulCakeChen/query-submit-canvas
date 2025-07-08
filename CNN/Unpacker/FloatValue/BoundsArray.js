@@ -56,6 +56,13 @@ class BoundsArray extends Recyclable.Root {
 
   /** @override */
   disposeResources() {
+
+//!!! (2025/07/08 Temp Added) For Debug.
+    // Find out when appear strange data member "undefined".
+    // (2025/07/08 Temp Added) For Debug.
+    if ( Number.isNaN( this.lowers[ undefined] ) )
+      debugger;
+
     this.lowers.length = 0;
     this.uppers.length = 0;
     super.disposeResources();
