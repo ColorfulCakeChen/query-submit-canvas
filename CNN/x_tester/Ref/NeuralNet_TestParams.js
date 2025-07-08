@@ -386,8 +386,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
       output_asInputValueRange: [
         NeuralNet.Params.output_asInputValueRange.valueDesc.range.min,
         // NeuralNet.Params.output_asInputValueRange.valueDesc.range.max,
-        // NeuralNet.Params.output_asInputValueRange.valueDesc.range.min
-        NeuralNet.Params.output_asInputValueRange.valueDesc.range.max
+        NeuralNet.Params.output_asInputValueRange.valueDesc.range.min
+        // NeuralNet.Params.output_asInputValueRange.valueDesc.range.max
       ],
 
       bKeepInputTensor: [
