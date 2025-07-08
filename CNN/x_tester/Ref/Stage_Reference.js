@@ -385,16 +385,17 @@ class Stage_Reference_Base
 
     {
       // Test correctness of Stage BoundsArraySet.
-      this.assert_imageOut_BoundsArraySet( stage_toBeCompared, this.testCorrectness_imageOutReference, stage_toBeCompared );
+      this.assert_imageOut_BoundsArraySet( stage_toBeCompared,
+        this.testCorrectness_imageOutReference, stage_toBeCompared );
 
       //!!! (2022/07/23 Remarked) Compare to outputTensor3d_original directly.
       //// Test correctness of Stage.apply.
       //this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, this.testCorrectness_imageOutReference, stage );
 
-!!! ...unfinished... (2025/07/04)
-// should also check pixel value whether inside bounds.
-// similar to NumberImage.Base.assert_pixels_byBoundsArray()
-
+      // Check pixel values whether inside bounds.
+      BoundsArraySet_Asserter.assert_Tensor3d_byBoundsArray(
+        stage_toBeCompared,
+        stage_toBeCompared.output0.scaleBoundsArray.boundsArray );
 
       // Compare to outputTensor3d_original.
       let output_original = outputTensor3d_original.dataSync();

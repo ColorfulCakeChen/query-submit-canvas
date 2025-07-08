@@ -486,10 +486,10 @@ class NeuralNet_Reference_Base
       //this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d,
       //  this.testCorrectness_imageOutReference, neuralNet );
 
-!!! ...unfinished... (2025/07/04)
-// should also check pixel value whether inside bounds.
-// similar to NumberImage.Base.assert_pixels_byBoundsArray()
-
+      // Check pixel values whether inside bounds.
+      BoundsArraySet_Asserter.assert_Tensor3d_byBoundsArray(
+        outputTensor3d,
+        neuralNet_toBeCompared.output_scaleBoundsArray.boundsArray );
 
       // Compare to outputTensor3d_original.
       let output_original = outputTensor3d_original.dataSync();
