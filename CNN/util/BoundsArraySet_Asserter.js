@@ -42,7 +42,7 @@ function assert_Tensor3d_byBoundsArray( aTensor3d, aBoundsArray ) {
     );
 
   const [ height, width, depth ] = shape;
-  Comparator.assert_NumberArray_byBoundsArray(
+  assert_NumberArray_byBoundsArray(
     dataArray,
     height, width, depth,
     aBoundsArray
