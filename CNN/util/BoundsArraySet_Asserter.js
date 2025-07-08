@@ -12,7 +12,7 @@ import * as FloatValue from "../Unpacker/FloatValue.js";
  * @param {FloatValue.BoundsArray} aBoundsArray
  *   Assert every pixel whether inside aBoundsArray of its channel.
  */
-assert_Tensor3d_byBoundsArray( aTensor3d, aBoundsArray ) {
+function assert_Tensor3d_byBoundsArray( aTensor3d, aBoundsArray ) {
   const funcNameInMessage = "assert_Tensor3d_byBoundsArray";
 
   if ( !aTensor3d )
@@ -64,7 +64,7 @@ assert_Tensor3d_byBoundsArray( aTensor3d, aBoundsArray ) {
  * @param {FloatValue.BoundsArray} aBoundsArray
  *   Assert every pixel whether inside aBoundsArray of its channel.
  */
-assert_NumberArray_byBoundsArray(
+function assert_NumberArray_byBoundsArray(
   dataArray,
   height, width, depth,
   aBoundsArray ) {

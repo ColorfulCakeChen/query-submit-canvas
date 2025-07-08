@@ -269,10 +269,10 @@ class Embedding_Reference_Base
       this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d,
         this.testCorrectness_imageOutReference, embedding );
 
-!!! ...unfinished... (2025/07/04)
-// should also check pixel value whether inside bounds.
-// similar to NumberImage.Base.assert_pixels_byBoundsArray()
-
+      // Check pixel values whether inside bounds.
+      BoundsArraySet_Asserter.assert_Tensor3d_byBoundsArray(
+        outputTensor3d,
+        embedding.output_scaleBoundsArray.boundsArray );
 
       embedding.disposeResources_and_recycleToPool();
       embedding = null;

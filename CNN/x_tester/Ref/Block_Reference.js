@@ -609,9 +609,18 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
     this.assert_imageOut_Tensors_byNumberArrays(
       outputTensor3dArray, imageOutReferenceArray, block );
 
-!!! ...unfinished... (2025/07/04)
-// should also check pixel value whether inside bounds.
-// similar to NumberImage.Base.assert_pixels_byBoundsArray()
+    // Check pixel values whether inside bounds.
+    {
+      if ( outputTensor3dArray[ 0 ] )
+        BoundsArraySet_Asserter.assert_Tensor3d_byBoundsArray(
+          outputTensor3dArray[ 0 ],
+          block.output0.scaleBoundsArray.boundsArray );
+
+      if ( outputTensor3dArray[ 1 ] )
+        BoundsArraySet_Asserter.assert_Tensor3d_byBoundsArray(
+          outputTensor3dArray[ 1 ],
+          block.output1.scaleBoundsArray.boundsArray );
+    }
 
     block.disposeResources_and_recycleToPool();
     block = null;

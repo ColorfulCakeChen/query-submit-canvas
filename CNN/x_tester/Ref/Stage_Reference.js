@@ -253,16 +253,17 @@ class Stage_Reference_Base
       }
 
       // Test correctness of Stage BoundsArraySet.
-      this.assert_imageOut_BoundsArraySet( stage, this.testCorrectness_imageOutReference, stage );
+      this.assert_imageOut_BoundsArraySet( stage,
+        this.testCorrectness_imageOutReference, stage );
 
       // Test correctness of Stage.apply.
-      this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d, this.testCorrectness_imageOutReference, stage );
+      this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d,
+        this.testCorrectness_imageOutReference, stage );
 
-
-!!! ...unfinished... (2025/07/04)
-// should also check pixel value whether inside bounds.
-// similar to NumberImage.Base.assert_pixels_byBoundsArray()
-
+      // Check pixel values whether inside bounds.
+      BoundsArraySet_Asserter.assert_Tensor3d_byBoundsArray(
+        outputTensor3d,
+        stage.output0.scaleBoundsArray.boundsArray );
 
       // Compare result of ShuffleNetV2 and ShuffleNetV2_byMobileNetV1.
       Stage_Reference_Base.stage_compare_ShuffleNetV2_and_ShuffleNetV2_byMobileNetV1.call( this,

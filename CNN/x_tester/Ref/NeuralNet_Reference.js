@@ -308,12 +308,10 @@ class NeuralNet_Reference_Base
       this.assert_imageOut_Tensors_byNumberArrays( outputTensor3d,
         this.testCorrectness_imageOutReference, neuralNet );
 
-!!! ...unfinished... (2025/07/04)
-// should also check pixel value whether inside bounds.
-// similar to NumberImage.Base.assert_pixels_byBoundsArray()
-      TensorTools.Comparator.assert_Tensor3d_byBoundsArray(
-        outputTensor3d, ???aBoundsArray );
-
+      // Check pixel values whether inside bounds.
+      BoundsArraySet_Asserter.assert_Tensor3d_byBoundsArray(
+        outputTensor3d,
+        neuralNet.output_scaleBoundsArray.boundsArray );
 
       // Compare result of ShuffleNetV2 and ShuffleNetV2_byMobileNetV1.
       NeuralNet_Reference_Base
