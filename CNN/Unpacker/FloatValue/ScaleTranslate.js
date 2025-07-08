@@ -112,4 +112,16 @@ class ScaleTranslate {
       this.translate * aScaleTranslate.scale ) + aScaleTranslate.translate );
   }
 
+
+  /**
+   * @return {ScaleTranslate}
+   *   Return this (modified) object whose .scale and .translate has been
+   * fround()ed.
+   */
+  fround() {
+    this.scale = Math.fround( this.scale );
+    this.upper = translate.fround( this.translate );
+    return this;
+  }
+
 }

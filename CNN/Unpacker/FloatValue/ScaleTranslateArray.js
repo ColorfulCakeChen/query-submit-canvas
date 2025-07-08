@@ -163,4 +163,40 @@ class ScaleTranslateArray {
     return this;
   }
 
+!!!
+
+
+  /**
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
+   *
+   * @return {ScaleTranslateArray}
+   *   Return this (modified) object whose .scales[ thisIndex ] and
+   * .translates[ thisIndex ] has been fround()ed.
+   */
+  fround_one_byN( thisIndex ) {
+    const scale = Math.fround( this.scales[ thisIndex ] );
+    const translate = Math.fround( this.translates[ thisIndex ] );
+    this.scales[ thisIndex ] = scale;
+    this.translates[ thisIndex ] = translate;
+    return this;
+  }
+
+  /**
+   * @return {ScaleTranslateArray}
+   *   Return this (modified) object whose .scales[] and.translates[] has been
+   * all fround()ed.
+   */
+  fround_all() {
+    let scale;
+    let translate;
+    for ( let i = 0; i < this.lowers.length; ++i ) {
+      scale = Math.fround( this.scales[ i ] );
+      upper = Math.fround( this.translates[ i ] );
+      this.scales[ i ] = scale;
+      this.translates[ i ] = translate;
+    }
+    return this;
+  }
+
 }

@@ -1541,6 +1541,41 @@ class BoundsArray extends Recyclable.Root {
       .add_all_byNs( aScaleTranslateArray.translates ) );
   }
 
+
+  /**
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object whose .lowers[ thisIndex ] and
+   * .uppers[ thisIndex ] has been fround()ed.
+   */
+  fround_one_byN( thisIndex ) {
+    const lower = Math.fround( this.lowers[ thisIndex ] );
+    const upper = Math.fround( this.uppers[ thisIndex ] );
+    this.lowers[ thisIndex ] = lower;
+    this.uppers[ thisIndex ] = upper;
+    return this;
+  }
+
+  /**
+   * @return {BoundsArray}
+   *   Return this (modified) object whose .lowers[] and.uppers[] has been all
+   * fround()ed.
+   */
+  fround_all() {
+    let lower;
+    let upper;
+    for ( let i = 0; i < this.lowers.length; ++i ) {
+      lower = Math.fround( this.lowers[ i ] );
+      upper = Math.fround( this.uppers[ i ] );
+      this.lowers[ i ] = lower;
+      this.uppers[ i ] = upper;
+    }
+    return this;
+  }
+
+
   /**
    * @param {number} thisIndex
    *   Use which Bounds of this BoundsArray to clamp the value.

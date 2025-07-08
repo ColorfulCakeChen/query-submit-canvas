@@ -727,6 +727,19 @@ class Bounds extends Recyclable.Root {
     return this.multiply_byN( aScaleTranslate.scale ).add_byN( aScaleTranslate.translate );
   }
 
+
+  /**
+   * @return {Bounds}
+   *   Return this (modified) object whose .lower and .upper has been
+   * fround()ed.
+   */
+  fround() {
+    this.lower = Math.fround( this.lower );
+    this.upper = Math.fround( this.upper );
+    return this;
+  }
+
+
   /**
    * @param {number} value
    *   The value to be clamped. (will be converted to 32-bits floating-point

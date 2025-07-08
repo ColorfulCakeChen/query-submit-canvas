@@ -469,6 +469,34 @@ class ScaleArray extends Recyclable.Root {
 
 
   /**
+   * @param {number} thisIndex
+   *   The array index of this.scales[].
+   *
+   * @return {ScaleArray}
+   *   Return this (modified) object whose .scales[ thisIndex ] has been
+   * fround()ed.
+   */
+  fround_one_byN( thisIndex ) {
+    const scale = Math.fround( this.scales[ thisIndex ] );
+    this.scales[ thisIndex ] = scale;
+    return this;
+  }
+
+  /**
+   * @return {ScaleArray}
+   *   Return this (modified) object whose .scales[] has been all fround()ed.
+   */
+  fround_all() {
+    let scale;
+    for ( let i = 0; i < this.scales.length; ++i ) {
+      scale = Math.fround( this.scales[ i ] );
+      this.scales[ i ] = scale;
+    }
+    return this;
+  }
+
+
+  /**
    * Return strings for all the headers displayed in one line (i.e. one row)
    * when logging this object as a table.
    *
