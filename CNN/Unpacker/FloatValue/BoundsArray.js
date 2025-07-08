@@ -58,10 +58,10 @@ class BoundsArray extends Recyclable.Root {
   disposeResources() {
 
 //!!! (2025/07/08 Temp Added) For Debug.
-    // Find out when appear strange data member "undefined".
-    // (2025/07/08 Temp Added) For Debug.
-    if ( Number.isNaN( this.lowers[ undefined] ) )
-      debugger;
+//     // Find out when appear strange data member "undefined".
+//     // (2025/07/08 Temp Added) For Debug.
+//     if ( Number.isNaN( this.lowers[ undefined] ) )
+//       debugger;
 
     this.lowers.length = 0;
     this.uppers.length = 0;
@@ -1547,14 +1547,6 @@ class BoundsArray extends Recyclable.Root {
    * .uppers[ thisIndex ] has been fround()ed.
    */
   fround_one( thisIndex ) {
-
-//!!! (2025/07/08 Temp Added) For Debug.
-    // Find out when appear strange data member "undefined".
-    // (2025/07/08 Temp Added) For Debug.
-    if ( Number.isNaN( this.lowers[ undefined] ) )
-      debugger;
-
-
     const lower = Math.fround( this.lowers[ thisIndex ] );
     const upper = Math.fround( this.uppers[ thisIndex ] );
     this.lowers[ thisIndex ] = lower;
@@ -1568,13 +1560,6 @@ class BoundsArray extends Recyclable.Root {
    * fround()ed.
    */
   fround_all() {
-
-//!!! (2025/07/08 Temp Added) For Debug.
-    // Find out when appear strange data member "undefined".
-    // (2025/07/08 Temp Added) For Debug.
-    if ( Number.isNaN( this.lowers[ undefined] ) )
-      debugger;
-
     let lower;
     let upper;
     for ( let i = 0; i < this.lowers.length; ++i ) {
