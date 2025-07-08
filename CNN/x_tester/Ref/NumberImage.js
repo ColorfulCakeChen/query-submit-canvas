@@ -1589,6 +1589,9 @@ class NumberImage_Base extends Recyclable.Root {
          //
         .add_all_byScaleBoundsArray_all( another.boundsArraySet.output0 );
 
+!!! ...unfinished... (2025/07/04)
+// call BoundsArray.fround_all() after .add_all_byScaleBoundsArray_all() done.
+
       imageOutNew.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
     }
 
@@ -1719,6 +1722,9 @@ class NumberImage_Base extends Recyclable.Root {
          //       across channels).
          //
         .multiply_all_byScaleBoundsArray_all( another.boundsArraySet.output0 );
+
+!!! ...unfinished... (2025/07/08)
+// call BoundsArray.fround_all() after .multiply_all_byScaleBoundsArray_all() done.
 
       imageOutNew.assert_pixels_byBoundsArray_output(); // Verify pixels' bounds.
     }

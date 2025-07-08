@@ -161,6 +161,10 @@ class MultiplyTwoTensors extends Root {
     this.boundsArraySet.output0
       .set_all_byScaleBoundsArray( inputScaleBoundsArray0 )
       .multiply_all_byScaleBoundsArray_all( inputScaleBoundsArray1 );
+
+!!! ...unfinished... (2025/07/08)
+// call BoundsArray.fround_all() after .multiply_all_byScaleBoundsArray_all() done.
+
   }
 
   /** Setup this.output0.
