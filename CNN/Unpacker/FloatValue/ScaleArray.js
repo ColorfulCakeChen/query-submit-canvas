@@ -76,7 +76,6 @@ class ScaleArray extends Recyclable.Root {
    *   Return true, if all .scales[] equal to N.
    */
   is_all_EQ_byN( N = 1 ) {
-    N = Math.fround( N );
     for ( let i = 0; i < this.scales.length; ++i) {
       if ( this.scales[ i ] != N )
         return false;
@@ -97,7 +96,7 @@ class ScaleArray extends Recyclable.Root {
    *   Return this (modified) object.
    */
   set_one_byN( thisIndex, N = 1 ) {
-    this.scales[ thisIndex ] = Math.fround( N );
+    this.scales[ thisIndex ] = ( N );
     return this;
   }
 
@@ -173,7 +172,7 @@ class ScaleArray extends Recyclable.Root {
    */
   set_one_byUndo_N( thisIndex, N ) {
     // Reciprocal will undo the scale. (Note: Not work for zero.)
-    this.scales[ thisIndex ] = Math.fround( 1 / Math.fround( N ) );
+    this.scales[ thisIndex ] = ( 1 / ( N ) );
     return this;
   }
 
@@ -192,7 +191,7 @@ class ScaleArray extends Recyclable.Root {
    */
   set_one_byUndo_Ns( thisIndex, Ns, aIndex ) {
     // Reciprocal will undo the scale. (Note: Not work for zero.)
-    this.scales[ thisIndex ] = Math.fround( 1 / Math.fround( Ns[ aIndex ] ) );
+    this.scales[ thisIndex ] = ( 1 / ( Ns[ aIndex ] ) );
     return this;
   }
 
@@ -223,7 +222,7 @@ class ScaleArray extends Recyclable.Root {
    *   Return this (modified) object.
    */
   set_all_byN( N = 1 ) {
-    this.scales.fill( Math.fround( N ) );
+    this.scales.fill( ( N ) );
     return this;
   }
 
@@ -236,7 +235,7 @@ class ScaleArray extends Recyclable.Root {
    */
   set_all_byNs( Ns ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
-      this.scales[ i ] = Math.fround( Ns[ i ] );
+      this.scales[ i ] = ( Ns[ i ] );
     }
     return this;
   }
@@ -262,7 +261,7 @@ class ScaleArray extends Recyclable.Root {
   set_all_byUndo_Ns( Ns ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
       // Reciprocal will undo the scale. (Note: Not work for zero.)
-      this.scales[ i ] = Math.fround( 1 / Math.fround( Ns[ i ] ) );
+      this.scales[ i ] = ( 1 / ( Ns[ i ] ) );
     }
     return this;
   }
@@ -434,9 +433,8 @@ class ScaleArray extends Recyclable.Root {
    *   Return this (modified) object whose values are ( this.scales[] * N ).
    */
   multiply_all_byN( N = 1 ) {
-    N = Math.fround( N );
     for ( let i = 0; i < this.scales.length; ++i ) {
-      this.scales[ i ] = Math.fround( this.scales[ i ] * N );
+      this.scales[ i ] = ( this.scales[ i ] * N );
     }
     return this;
   }
@@ -450,7 +448,7 @@ class ScaleArray extends Recyclable.Root {
    */
   multiply_all_byNs( Ns ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
-      this.scales[ i ] = Math.fround( this.scales[ i ] * Math.fround( Ns[ i ] ) );
+      this.scales[ i ] = ( this.scales[ i ] * ( Ns[ i ] ) );
     }
     return this;
   }
@@ -476,7 +474,7 @@ class ScaleArray extends Recyclable.Root {
    *   Return this (modified) object whose .scales[ thisIndex ] has been
    * fround()ed.
    */
-  fround_one_byN( thisIndex ) {
+  fround_one( thisIndex ) {
     const scale = Math.fround( this.scales[ thisIndex ] );
     this.scales[ thisIndex ] = scale;
     return this;
@@ -572,20 +570,20 @@ class ScaleArray extends Recyclable.Root {
     // Confirm ( lower <= upper ).
     let srcLower, srcUpper;
     if ( fromLower < fromUpper ) {
-      srcLower = Math.fround( fromLower );
-      srcUpper = Math.fround( fromUpper );
+      srcLower = ( fromLower );
+      srcUpper = ( fromUpper );
     } else {
-      srcLower = Math.fround( fromUpper );
-      srcUpper = Math.fround( fromLower );
+      srcLower = ( fromUpper );
+      srcUpper = ( fromLower );
     }
 
     let dstLower, dstUpper;
     if ( toLower < toUpper ) {
-      dstLower = Math.fround( toLower );
-      dstUpper = Math.fround( toUpper );
+      dstLower = ( toLower );
+      dstUpper = ( toUpper );
     } else {
-      dstLower = Math.fround( toUpper );
-      dstUpper = Math.fround( toLower );
+      dstLower = ( toUpper );
+      dstUpper = ( toLower );
     }
 
     // Note:

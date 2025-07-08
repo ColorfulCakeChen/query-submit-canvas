@@ -60,7 +60,7 @@ class Bounds extends Recyclable.Root {
   }
 
   get difference() {
-    let difference = Math.fround( this.upper - this.lower );
+    let difference = ( this.upper - this.lower );
     return difference;
   }
 
@@ -73,7 +73,6 @@ class Bounds extends Recyclable.Root {
    *   Return true, if ( .lower <= N ) and ( .upper >= N ).
    */
   is_contain_N( N ) {
-    N = Math.fround( N );
     if ( ( this.lower <= N ) && ( this.upper >= N ) )
       return true;
     return false;
@@ -92,11 +91,11 @@ class Bounds extends Recyclable.Root {
   is_contain_LowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
     if ( aLower < aUpper ) {
-      lower = Math.fround( aLower );
-      upper = Math.fround( aUpper );
+      lower = ( aLower );
+      upper = ( aUpper );
     } else {
-      lower = Math.fround( aUpper );
-      upper = Math.fround( aLower );
+      lower = ( aUpper );
+      upper = ( aLower );
     }
 
     if ( ( this.lower <= lower ) && ( this.upper >= upper ) )
@@ -146,11 +145,11 @@ class Bounds extends Recyclable.Root {
   is_in_LowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
     if ( aLower < aUpper ) {
-      lower = Math.fround( aLower );
-      upper = Math.fround( aUpper );
+      lower = ( aLower );
+      upper = ( aUpper );
     } else {
-      lower = Math.fround( aUpper );
-      upper = Math.fround( aLower );
+      lower = ( aUpper );
+      upper = ( aLower );
     }
 
     if ( ( this.lower >= lower ) && ( this.upper <= upper ) )
@@ -209,7 +208,7 @@ class Bounds extends Recyclable.Root {
    *   Return this (modified) object which is [ n, N ].
    */
   set_byN( N ) {
-    this.lower = this.upper = Math.fround( N );
+    this.lower = this.upper = ( N );
     return this;
   }
 
@@ -225,11 +224,11 @@ class Bounds extends Recyclable.Root {
    */
   set_byLowerUpper( aLower, aUpper ) {
     if ( aLower < aUpper ) { // Confirm ( lower <= upper ).
-      this.lower = Math.fround( aLower );
-      this.upper = Math.fround( aUpper );
+      this.lower = ( aLower );
+      this.upper = ( aUpper );
     } else {
-      this.lower = Math.fround( aUpper );
-      this.upper = Math.fround( aLower );
+      this.lower = ( aUpper );
+      this.upper = ( aLower );
     }
     return this;
   }
@@ -303,7 +302,6 @@ class Bounds extends Recyclable.Root {
    *   Return this (modified) object.
    */
   enlarge_byN( N ) {
-    N = Math.fround( N );
     if ( this.lower > N )
       this.lower = N;
     if ( this.upper < N )
@@ -324,11 +322,11 @@ class Bounds extends Recyclable.Root {
   enlarge_byLowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
     if ( aLower < aUpper ) {
-      lower = Math.fround( aLower );
-      upper = Math.fround( aUpper );
+      lower = ( aLower );
+      upper = ( aUpper );
     } else {
-      lower = Math.fround( aUpper );
-      upper = Math.fround( aLower );
+      lower = ( aUpper );
+      upper = ( aLower );
     }
 
     if ( this.lower > lower )
@@ -379,11 +377,11 @@ class Bounds extends Recyclable.Root {
   clamp_byLowerUpper( aLower, aUpper ) {
     let anotherLower, anotherUpper; // Confirm ( anotherLower <= anotherUpper )
     if ( aLower < aUpper ) {
-      anotherLower = Math.fround( aLower );
-      anotherUpper = Math.fround( aUpper );
+      anotherLower = ( aLower );
+      anotherUpper = ( aUpper );
     } else {
-      anotherLower = Math.fround( aUpper );
-      anotherUpper = Math.fround( aLower );
+      anotherLower = ( aUpper );
+      anotherUpper = ( aLower );
     }
 
     // Because two bounds may be totally non-intersected, both thisLower and
@@ -460,7 +458,6 @@ class Bounds extends Recyclable.Root {
    * this.add_LowerUpper( N, N ).
    */
   add_byN( N ) {
-    N = Math.fround( N );
 
     // Confirm the lower and upper. And then, add corresponds.
     let thisLower, thisUpper;
@@ -472,8 +469,8 @@ class Bounds extends Recyclable.Root {
       thisUpper = this.lower;
     }
 
-    this.lower = Math.fround( thisLower + N );
-    this.upper = Math.fround( thisUpper + N );
+    this.lower = ( thisLower + N );
+    this.upper = ( thisUpper + N );
     return this;
   }
 
@@ -491,11 +488,11 @@ class Bounds extends Recyclable.Root {
   add_byLowerUpper( aLower, aUpper ) {
     let lower, upper; // Confirm ( lower <= upper ).
     if ( aLower < aUpper ) {
-      lower = Math.fround( aLower );
-      upper = Math.fround( aUpper );
+      lower = ( aLower );
+      upper = ( aUpper );
     } else {
-      lower = Math.fround( aUpper );
-      upper = Math.fround( aLower );
+      lower = ( aUpper );
+      upper = ( aLower );
     }
 
     // Confirm the lower and upper. And then, add corresponds.
@@ -508,8 +505,8 @@ class Bounds extends Recyclable.Root {
       thisUpper = this.lower;
     }
 
-    this.lower = Math.fround( thisLower + lower );
-    this.upper = Math.fround( thisUpper + upper );
+    this.lower = ( thisLower + lower );
+    this.upper = ( thisUpper + upper );
     return this;
   }
 
@@ -584,11 +581,10 @@ class Bounds extends Recyclable.Root {
    * this.add_Bounds( this ).
    */
   multiply_byN( N ) {
-    N = Math.fround( N );
     // Because the different sign of lower and upper, it needs compute all
     // combinations to determine the bounds of result.
-    const lower_N = Math.fround( this.lower * N );
-    const upper_N = Math.fround( this.upper * N );
+    const lower_N = ( this.lower * N );
+    const upper_N = ( this.upper * N );
     this.lower = Math.min( lower_N, upper_N );
     this.upper = Math.max( lower_N, upper_N );
     return this;
@@ -606,14 +602,12 @@ class Bounds extends Recyclable.Root {
    * [ aLower, aUpper ].
    */
   multiply_byLowerUpper( aLower, aUpper ) {
-    aLower = Math.fround( aLower );
-    aUpper = Math.fround( aUpper );
     // Because the different sign of lower and upper, it needs compute all
     // combination to determine the bounds of result.
-    const lower_lower = Math.fround( this.lower * aLower );
-    const lower_upper = Math.fround( this.lower * aUpper );
-    const upper_lower = Math.fround( this.upper * aLower );
-    const upper_upper = Math.fround( this.upper * aUpper );
+    const lower_lower = ( this.lower * aLower );
+    const lower_upper = ( this.lower * aUpper );
+    const upper_lower = ( this.upper * aLower );
+    const upper_upper = ( this.upper * aUpper );
     this.lower = Math.min( lower_lower, lower_upper, upper_lower, upper_upper );
     this.upper = Math.max( lower_lower, lower_upper, upper_lower, upper_upper );
     return this;
@@ -703,11 +697,10 @@ class Bounds extends Recyclable.Root {
    *   Return this (modified) object.
    */
   divide_byN( N ) {
-    N = Math.fround( N );
     // Because the different sign of lower and upper, it needs compute all
     // combinations to determine the bounds of result.
-    const lower_N = Math.fround( this.lower / N );
-    const upper_N = Math.fround( this.upper / N );
+    const lower_N = ( this.lower / N );
+    const upper_N = ( this.upper / N );
     this.lower = Math.min( lower_N, upper_N );
     this.upper = Math.max( lower_N, upper_N );
     return this;
@@ -751,7 +744,6 @@ class Bounds extends Recyclable.Root {
    * Bounds [ this.lower, this.upper ].
    */
   clamp_or_zeroIfNaN( value ) {
-    value = Math.fround( value );
     if ( Number.isNaN( value ) )
       value = 0; // If NaN, view it as 0.
     return Math.max( this.lower, Math.min( value, this.upper ) );

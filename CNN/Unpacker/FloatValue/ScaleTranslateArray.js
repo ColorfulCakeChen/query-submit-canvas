@@ -33,8 +33,6 @@ class ScaleTranslateArray {
    * values.
    */
   set_all_by_scale_translate( scale = 1, translate = 0 ) {
-    scale = Math.fround( scale );
-    translate = Math.fround( translate );
     for ( let i = 0; i < this.scales.length; ++i ) {
       this.scales[ i ] = scale;
       this.translates[ i ] = translate;
@@ -69,11 +67,11 @@ class ScaleTranslateArray {
   set_all_byUndo_ScaleTranslateArray( aScaleTranslateArray ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
       // Reciprocal will undo the scale. (Note: Not work for zero.)
-      this.scales[ i ] = Math.fround( 1 / aScaleTranslateArray.scales[ i ] );
+      this.scales[ i ] = ( 1 / aScaleTranslateArray.scales[ i ] );
 
       // Negative translate, and multiply by undo-scale because translate comes
       // after scale.
-      this.translates[ i ] = Math.fround(
+      this.translates[ i ] = (
         ( - aScaleTranslateArray.translates[ i ] ) * this.scales[ i ] );
     }
     return this;
@@ -120,13 +118,13 @@ class ScaleTranslateArray {
     //
     for ( let i = 0; i < this.scales.length; ++i ) {
       // scale = ( target_difference / source_difference );
-      this.scales[ i ] = Math.fround(
+      this.scales[ i ] = (
         ( target.uppers[ i ] - target.lowers[ i ] )
           / ( source.uppers[ i ] - source.lowers[ i ] ) );
 
-      this.translates[ i ] = Math.fround(
+      this.translates[ i ] = (
         target.lowers[ i ]
-          - Math.fround( this.scales[ i ] * source.lowers[ i ] ) );
+          - ( this.scales[ i ] * source.lowers[ i ] ) );
     }
     return this;
   }
@@ -152,11 +150,11 @@ class ScaleTranslateArray {
   scaleTranslate_all_byScaleTranslateArray( aScaleTranslateArray ) {
     for ( let i = 0; i < this.scales.length; ++i ) {
 
-      this.scales[ i ] = Math.fround( Math.fround(
+      this.scales[ i ] = ( (
         this.scales[ i ]     * aScaleTranslateArray.scales[ i ] )
           + aScaleTranslateArray.translates[ i ] );
 
-      this.translates[ i ] = Math.fround( Math.fround(
+      this.translates[ i ] = ( (
         this.translates[ i ] * aScaleTranslateArray.scales[ i ] )
           + aScaleTranslateArray.translates[ i ] );
     }
@@ -172,7 +170,7 @@ class ScaleTranslateArray {
    *   Return this (modified) object whose .scales[ thisIndex ] and
    * .translates[ thisIndex ] has been fround()ed.
    */
-  fround_one_byN( thisIndex ) {
+  fround_one( thisIndex ) {
     const scale = Math.fround( this.scales[ thisIndex ] );
     const translate = Math.fround( this.translates[ thisIndex ] );
     this.scales[ thisIndex ] = scale;

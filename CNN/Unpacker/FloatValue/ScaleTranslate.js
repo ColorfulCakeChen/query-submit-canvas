@@ -14,8 +14,8 @@ export { ScaleTranslate };
 class ScaleTranslate {
 
   constructor( scale = 1, translate = 0 ) {
-    this.scale = Math.fround( scale );
-    this.translate = Math.fround( translate );
+    this.scale = ( scale );
+    this.translate = ( translate );
   }
 
   clone() {
@@ -27,8 +27,8 @@ class ScaleTranslate {
    * (i.e. no scale and no translate).
    */
   set_by_scale_translate( scale = 1, translate = 0 ) {
-    this.scale = Math.fround( scale );
-    this.translate = Math.fround( translate );
+    this.scale = ( scale );
+    this.translate = ( translate );
   }
 
   /**
@@ -50,12 +50,12 @@ class ScaleTranslate {
    */
   set_byUndo_ScaleTranslate( aScaleTranslate ) {
     // Reciprocal will undo the scale. (Note: Not work for zero.)
-    this.scale = Math.fround( 1 / aScaleTranslate.scale );
+    this.scale = ( 1 / aScaleTranslate.scale );
 
     // Negative translate, and multiply by undo-scale because translate comes
     // after scale.
     this.translate
-      = Math.fround( ( - aScaleTranslate.translate ) * this.scale );
+      = ( ( - aScaleTranslate.translate ) * this.scale );
   }
 
   /**
@@ -91,8 +91,8 @@ class ScaleTranslate {
     //   - scale  = 0.2
     //   - translate = -3.4
     //
-    this.scale = Math.fround( target.difference / source.difference );
-    this.translate = Math.fround( target.lower - ( this.scale * source.lower ) );
+    this.scale = ( target.difference / source.difference );
+    this.translate = ( target.lower - ( this.scale * source.lower ) );
   }
 
   /**
@@ -105,10 +105,10 @@ class ScaleTranslate {
    */
   scaleTranslate_byScaleTranslate( aScaleTranslate ) {
 
-    this.scale = Math.fround( Math.fround(
+    this.scale = ( (
       this.scale     * aScaleTranslate.scale ) + aScaleTranslate.translate );
 
-    this.translate = Math.fround( Math.fround(
+    this.translate = ( (
       this.translate * aScaleTranslate.scale ) + aScaleTranslate.translate );
   }
 
