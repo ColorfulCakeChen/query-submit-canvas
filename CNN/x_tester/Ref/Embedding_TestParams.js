@@ -342,23 +342,29 @@ class Embedding_TestParams_Base extends TestParams.Base {
     // will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
 
-      // (2025/06/04 Temp Remarked) For debug.
-      input_height: [ 1, 5 ],
-      input_width: [ 1, 5 ],
-      // input_height: [ 1, 3 ],
-      // input_width: [ 1, 3 ],
+      input_height: [
+        // 1,
+        3,
+        // 3
+        5
+      ],
+
+      input_width: [
+        // 1,
+        3,
+        // 3
+        5
+      ],
 
       input_channelCount: [
         1, //Embedding.Params.input_channelCount.valueDesc.range.min,
         2
-        // (2025/06/04 Temp Remarked) For debug.
         // 4
       ],
 
       channelMultiplier: [
         1, //Embedding.Params.channelMultiplier.valueDesc.range.min,
         2
-        // (2025/06/04 Temp Remarked) For debug.
         // 4
       ],
 
