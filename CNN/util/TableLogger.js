@@ -619,11 +619,11 @@ TableLogger_Base.defaultParams = {
   headerPrefixEmpty: "",
 
   // The width of a column of the table log.
-  characterCountPerField: 30,
+  characterCountPerField: 20, //30,
 
   // How many digits (after the decimal point) should be displayed when
   // outputting a number to the table log.
-  digitCountAfterDecimalPoint: 20, //10,
+  digitCountAfterDecimalPoint: 10, //20,
 
   // The separator string (between field) when call Array.join() to generate
   // one line (one row) of the table log.
