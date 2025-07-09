@@ -1061,7 +1061,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         + `.${funcNameInMessage}(): `
         + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] `
         + `total input channel count ( ${inChannelEnd} ) `
-        +`should be ( ${this.inputChannelCount} ).` );
+        + `should be ( ${this.inputChannelCount} ).` );
   }
 
   /**
