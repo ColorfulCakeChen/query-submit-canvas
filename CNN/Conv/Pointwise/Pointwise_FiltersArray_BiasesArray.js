@@ -630,6 +630,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     sourceWeightArray, weightElementOffsetBegin,
     inputScaleBoundsArray, aFiltersBiasesPartInfoArray ) {
 
+    const funcNameInMessage
+      = "set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale";
+
     const thePassThroughStyleInfo
       = ValueDesc.PassThroughStyle.Singleton.getInfo_byId(
           this.nPassThroughStyleId );
@@ -891,7 +894,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     if ( outChannelEnd != this.outputChannelCount )
       throw Error( `Pointwise.FiltersArray_BiasesArray`
-        + `.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(): `
+        + `.${funcNameInMessage}(): `
         + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total `
         + `output channel count ( ${outChannelEnd} ) `
         + `should be ( ${this.outputChannelCount} ).` );
