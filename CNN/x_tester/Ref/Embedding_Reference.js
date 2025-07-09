@@ -107,12 +107,14 @@ class Embedding_Reference_Base
       const groupLabel = `testParams.id == ${testParams.id}`;
       console.groupCollapsed( groupLabel );
 
+      console.groupCollapsed( "imageIn" );
       {
         const imageIn_imageHeaderPrefix = "imageIn";
         const imageIn_strSubheader = undefined;
         this.testCorrectness_imageIn.TableLog_header_body(
           imageIn_imageHeaderPrefix, imageIn_strSubheader );
       }
+      console.groupEnd(); // imageIn
     }
 
     this.testCorrectness_imageOutReference = this.calcResult(
@@ -205,12 +207,16 @@ class Embedding_Reference_Base
 
         const imageIn_ScaleBoundsArray = imageIn_BoundsArraySet.output0;
 
-        const tensorIn_imageHeaderPrefix = "tensorIn";
-        const tensorIn_strSubheader = undefined;
-        TableLogger.Base.Singleton.log_tensor3d_along_depth(
-          tensorIn_imageHeaderPrefix, tensorIn_strSubheader,
-          inputTensor3d,
-          imageIn_ScaleBoundsArray );
+        console.groupCollapsed( "tensorIn" );
+        {
+          const tensorIn_imageHeaderPrefix = "tensorIn";
+          const tensorIn_strSubheader = undefined;
+          TableLogger.Base.Singleton.log_tensor3d_along_depth(
+            tensorIn_imageHeaderPrefix, tensorIn_strSubheader,
+            inputTensor3d,
+            imageIn_ScaleBoundsArray );
+        }
+        console.groupEnd(); // tensorIn
       }
 
       // The difference tensor count will be the generated tensor count (i.e.
