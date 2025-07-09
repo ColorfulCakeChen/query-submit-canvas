@@ -623,7 +623,7 @@ TableLogger_Base.defaultParams = {
 
   // How many digits (after the decimal point) should be displayed when
   // outputting a number to the table log.
-  digitCountAfterDecimalPoint: 10,
+  digitCountAfterDecimalPoint: 20, //10,
 
   // The separator string (between field) when call Array.join() to generate
   // one line (one row) of the table log.
