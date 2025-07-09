@@ -37,8 +37,6 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
 
   /**  */
   #setAsConstructor_self() {
-    // Record value bounds of every generated number array.
-    this.NumberArrayToBoundsMap = new Map();
   }
 
   /** @override */
@@ -49,13 +47,6 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
 
   /** @override */
   clear() {
-    {
-      for ( let bounds of this.NumberArrayToBoundsMap.values() ) {
-        bounds.disposeResources_and_recycleToPool();
-      }
-      this.NumberArrayToBoundsMap.clear();
-    }
-
     for ( let numberArray of this.values() ) {
       numberArray.disposeResources_and_recycleToPool();
     }
