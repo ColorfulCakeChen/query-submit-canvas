@@ -475,151 +475,149 @@ class TestParams_Base extends Recyclable.Root {
     }
   }
 
+//!!! (2025/07/09 Remarked) seems not used.
+//   /**
+//    * Ensure io_object[ propertyName ] exists as a number array with specified
+//    * length. It will be filled with random number as
+//    * ( sequence_nunmer + random_number_offset ).
+//    *
+//    * @param {object} io_object
+//    *   The object to be checked and modified.
+//    *
+//    * @param {string} propertyName
+//    *   The property io_object[ propertyName ] will be ensured as a number
+//    * array.
+//    *
+//    * @param {number} height
+//    *   The length of axis0 of the io_object[ propertyName ].
+//    *
+//    * @param {number} width
+//    *   The length of axis1 of the io_object[ propertyName ].
+//    *
+//    * @param {number} channelCount
+//    *   The length of axis2 of the io_object[ propertyName ].
+//    *
+//    * @param {number} valueBegin
+//    *   The first value of filled sequence.
+//    *
+//    * @param {number} valueStep
+//    *   The incremental value of every next filled value in the sequence.
+//    *
+//    * @param {number} randomOffsetMin
+//    *   The random number offet lower bound.
+//    *
+//    * @param {number} randomOffsetMax
+//    *   The random number offet upperer bound.
+//    *
+//    * @param {number} divisorForRemainder
+//    *   The divisor for restricting value bounds.
+//    */
+//   static ensure_object_property_numberArray_length_filled(
+//     io_object, propertyName,
+//     height, width, channelCount,
+//     valueBegin = 0, valueStep = 1,
+//     randomOffsetMin = 0, randomOffsetMax = 0,
+//     divisorForRemainder = ( 2 ** 26 ) ) {
+//
+//     if (
+//            // The property does not exist.
+//            ( io_object[ propertyName ] == undefined )
+//
+//            // The property exists but is not an array.
+//         || ( !( io_object[ propertyName ] instanceof Array ) )
+//        ) {
+//       // Ensure array with specified length.
+//       io_object[ propertyName ] = new Array( elementCount );
+//
+//     // The property exists and is an array.
+//     } else {
+//       // Ensure it with specified length.
+//       io_object[ propertyName ].length = elementCount;
+//     }
+//
+//     RandTools.fill_numberArray( io_object[ propertyName ],
+//       height, width, channelCount,
+//       valueBegin, valueStep,
+//       randomOffsetMin, randomOffsetMax, divisorForRemainder );
+//   }
 
-  /**
-   * Ensure io_object[ propertyName ] exists as a number array with specified
-   * length. It will be filled with random number as
-   * ( sequence_nunmer + random_number_offset ).
-   *
-   * @param {object} io_object
-   *   The object to be checked and modified.
-   *
-   * @param {string} propertyName
-   *   The property io_object[ propertyName ] will be ensured as a number
-   * array.
-   *
-   * @param {number} height
-   *   The length of axis0 of the io_object[ propertyName ].
-   *
-   * @param {number} width
-   *   The length of axis1 of the io_object[ propertyName ].
-   *
-   * @param {number} channelCount
-   *   The length of axis2 of the io_object[ propertyName ].
-   *
-   * @param {number} valueBegin
-   *   The first value of filled sequence.
-   *
-   * @param {number} valueStep
-   *   The incremental value of every next filled value in the sequence.
-   *
-   * @param {number} randomOffsetMin
-   *   The random number offet lower bound.
-   *
-   * @param {number} randomOffsetMax
-   *   The random number offet upperer bound.
-   *
-   * @param {number} divisorForRemainder
-   *   The divisor for restricting value bounds.
-   */
-  static ensure_object_property_numberArray_length_filled(
-    io_object, propertyName,
-    height, width, channelCount,
-    valueBegin = 0, valueStep = 1,
-    randomOffsetMin = 0, randomOffsetMax = 0,
-    divisorForRemainder = ( 2 ** 26 ) ) {
-
-    if (
-           // The property does not exist.
-           ( io_object[ propertyName ] == undefined )
-
-           // The property exists but is not an array.
-        || ( !( io_object[ propertyName ] instanceof Array ) )
-       ) {
-      // Ensure array with specified length.
-      io_object[ propertyName ] = new Array( elementCount );
-
-    // The property exists and is an array.
-    } else {
-      // Ensure it with specified length.
-      io_object[ propertyName ].length = elementCount;
-    }
-
-    RandTools.fill_numberArray( io_object[ propertyName ],
-      height, width, channelCount,
-      valueBegin, valueStep,
-      randomOffsetMin, randomOffsetMax, divisorForRemainder );
-  }
-
-  /**
-   * Similar to
-   * TestParams_Base.ensure_object_property_numberArray_length_filled(). But
-   * the property will be a shared number array. Its value may be shared with
-   * other caller.
-   *
-   * This may have better performance because of number array re-using (instead
-   * of re-generating).
-   *
-   *
-   * @param {object} io_object
-   *   The object to be checked and modified.
-   *
-   * @param {string} propertyName
-   *   The property io_object[ propertyName ] will be ensured as a number
-   * array.
-   *
-   * @param {number} height
-   *   The length of axis0 of the io_object[ propertyName ].
-   *
-   * @param {number} width
-   *   The length of axis1 of the io_object[ propertyName ].
-   *
-   * @param {number} channelCount
-   *   The length of axis2 of the io_object[ propertyName ].
-   *
-   * @param {number} valueBegin
-   *   The first value of filled sequence.
-   *
-   * @param {number} valueStep
-   *   The incremental value of every next filled value in the sequence.
-   *
-   * @param {number} randomOffsetMin
-   *   The random number offet lower bound.
-   *
-   * @param {number} randomOffsetMax
-   *   The random number offet upperer bound.
-   *
-   * @param {number} divisorForRemainder
-   *   The divisor for restricting value bounds.
-   *
-   */
-  ensure_object_property_numberArray_length_existed(
-    io_object, propertyName,
-    height, width, channelCount,
-    valueBegin = 0, valueStep = 1,
-    randomOffsetMin = 0, randomOffsetMax = 0,
-    divisorForRemainder = ( 2 ** 26 )
-  ) {
-
-    const alwaysFixedRandomMinMax = TestParams_Base.alwaysFixedRandomMinMax;
-
-    // Think:
-    //
-    // Perhaps, let sequence begin from the previous sequence's last value so
-    // that every convolution kernel filter will be slightly different.
-    //
-    // However, this method may invalidate the SequenceRandom_NumberArray_Bag
-    // effectiveness because every sequence will be different.
-    //
-    // (2025/07/04)
-
-    io_object[ propertyName ]
-      = this.SequenceRandom_NumberArray_Bag
-          .get_by_elementCount_randomOffsetMin_randomOffsetMax(
-            height, width, channelCount,
-            valueBegin, valueStep,
-            randomOffsetMin, randomOffsetMax, divisorForRemainder,
-            alwaysFixedRandomMinMax
-          );
-  }
+//!!! (2025/07/09 Remarked) Integrate into .fill_object_property_numberArray() directly.
+//   /**
+//    * The property io_object[ propertyName ] will be set a shared number array.
+//    * Its value is shared with other caller.
+//    *
+//    * This may have better performance because of number array re-using (instead
+//    * of re-generating).
+//    *
+//    *
+//    * @param {object} io_object
+//    *   The object to be checked and modified.
+//    *
+//    * @param {string} propertyName
+//    *   The property io_object[ propertyName ] will be ensured as a (shared)
+//    * number array. (So, please do NOT modify its content because other caller
+//    * will also use it.)
+//    *
+//    * @param {number} height
+//    *   The length of axis0 of the io_object[ propertyName ].
+//    *
+//    * @param {number} width
+//    *   The length of axis1 of the io_object[ propertyName ].
+//    *
+//    * @param {number} channelCount
+//    *   The length of axis2 of the io_object[ propertyName ].
+//    *
+//    * @param {number} valueBegin
+//    *   The first value of filled sequence.
+//    *
+//    * @param {number} valueStep
+//    *   The incremental value of every next filled value in the sequence.
+//    *
+//    * @param {number} randomOffsetMin
+//    *   The random number offet lower bound.
+//    *
+//    * @param {number} randomOffsetMax
+//    *   The random number offet upperer bound.
+//    *
+//    * @param {number} divisorForRemainder
+//    *   The divisor for restricting value bounds.
+//    *
+//    */
+//   ensure_object_property_numberArray_length_existed(
+//     io_object, propertyName,
+//     height, width, channelCount,
+//     valueBegin = 0, valueStep = 1,
+//     randomOffsetMin = 0, randomOffsetMax = 0,
+//     divisorForRemainder = ( 2 ** 26 )
+//   ) {
+//
+//     const alwaysFixedRandomMinMax = TestParams_Base.alwaysFixedRandomMinMax;
+//
+//     // Think:
+//     //
+//     // Perhaps, let sequence begin from the previous sequence's last value so
+//     // that every convolution kernel filter will be slightly different.
+//     //
+//     // However, this method may invalidate the SequenceRandom_NumberArray_Bag
+//     // effectiveness because every sequence will be different.
+//     //
+//     // (2025/07/04)
+//
+//     io_object[ propertyName ]
+//       = this.SequenceRandom_NumberArray_Bag
+//           .get_by_elementCount_randomOffsetMin_randomOffsetMax(
+//             height, width, channelCount,
+//             valueBegin, valueStep,
+//             randomOffsetMin, randomOffsetMax, divisorForRemainder,
+//             alwaysFixedRandomMinMax
+//           );
+//   }
 
   /**
    * Fill an object's property as a number array.
    *
-   * Similar to
-   * TestParams_Base.ensure_object_property_numberArray_length_filled(). But
-   * the property will be a shared number array. Its value may be shared with
-   * other caller.
+   * The property io_object[ propertyName ] will be set a shared number array.
+   * Its value is shared with other caller.
    *
    * This may have better performance because of number array re-using (instead
    * of re-generating).
@@ -629,8 +627,10 @@ class TestParams_Base extends Recyclable.Root {
    *   The object to be checked and modified.
    *
    * @param {string} propertyName
-   *   The property io_object[ propertyName ] will be ensured as a number array.
-   * 
+   *   The property io_object[ propertyName ] will be ensured as a (shared)
+   * number array. (So, please do NOT modify its content because other caller
+   * will also use it.)
+   *
    * @param {number} height
    *   The length of axis0 of the io_object[ propertyName ].
    *
@@ -662,16 +662,39 @@ class TestParams_Base extends Recyclable.Root {
 
     const alwaysFixedRandomMinMax = TestParams_Base.alwaysFixedRandomMinMax;
 
-    this.ensure_object_property_numberArray_length_existed(
-      io_object, propertyName,
-      height, width, channelCount,
-      weightsValueBegin,
-      weightsValueStep,
-      weightsRandomOffset.min,
-      weightsRandomOffset.max,
-      weightsDivisorForRemainder,
-      alwaysFixedRandomMinMax
-    );
+//!!! (2025/07/09 Remarked) Embed .ensure_object_property_numberArray_length_existed() here directly.
+//     this.ensure_object_property_numberArray_length_existed(
+//       io_object, propertyName,
+//       height, width, channelCount,
+//       weightsValueBegin,
+//       weightsValueStep,
+//       weightsRandomOffset.min,
+//       weightsRandomOffset.max,
+//       weightsDivisorForRemainder,
+//       alwaysFixedRandomMinMax
+//     );
+
+    // Think:
+    //
+    // Perhaps, let sequence begin from the previous sequence's last value so
+    // that every convolution kernel filter will be slightly different.
+    //
+    // However, this method may invalidate the SequenceRandom_NumberArray_Bag
+    // effectiveness because every sequence will be different.
+    //
+    // (2025/07/04)
+
+    io_object[ propertyName ]
+      = this.SequenceRandom_NumberArray_Bag
+          .get_by_elementCount_randomOffsetMin_randomOffsetMax(
+            height, width, channelCount,
+            weightsValueBegin,
+            weightsValueStep,
+            weightsRandomOffset.min,
+            weightsRandomOffset.max,
+            weightsDivisorForRemainder,
+            alwaysFixedRandomMinMax
+          );
   }
 
   /**

@@ -55,12 +55,18 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
   }
 
   /**
-   * Similar to
-   * TestParams_Base.ensure_object_property_numberArray_length_filled(). But
-   * the property will be a shared number array. Its value may be shared with
-   * other caller.
+
+//!!! (2025/07/09 Remarked) seems not used.
+//    * Similar to
+//    * TestParams_Base.ensure_object_property_numberArray_length_filled(). But
+//    * the property will be a shared number array. Its value may be shared with
+//    * other caller.
+//    *
+//    * The property will be a shared number array. Its value may be shared with
+//    * other caller.
+
    *
-   * This may have better performance because of number array re-using (instead
+   * For improve test case performance because of number array re-using (instead
    * of re-generating).
    *
    *
@@ -92,6 +98,9 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
    * @param {number} randomOffsetMax
    *   The random number offet upperer bound.
    *
+   * @return {Recyclable.NumberArray_withBounds}
+   *    Return a shared number array. Its value will be shared with other
+   * caller (i.e. Please do NOT modify them).
    */
   get_by_elementCount_randomOffsetMin_randomOffsetMax(
     height, width, channelCount,
