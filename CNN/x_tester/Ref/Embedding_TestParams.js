@@ -350,23 +350,23 @@ class Embedding_TestParams_Base extends TestParams.Base {
 
       input_channelCount: [
         1, //Embedding.Params.input_channelCount.valueDesc.range.min,
-        // 2
+        2
         // (2025/06/04 Temp Remarked) For debug.
-        4
+        // 4
       ],
 
       channelMultiplier: [
         1, //Embedding.Params.channelMultiplier.valueDesc.range.min,
-        // 2
+        2
         // (2025/06/04 Temp Remarked) For debug.
-        4
+        // 4
       ],
 
       vocabularyCountPerInputChannel: [
         256, //Embedding.Params.vocabularyCountPerInputChannel.valueDesc.range.min,
         // (2025/06/04 Temp Remarked) For debug.
-        257
-        // 256
+        // 257
+        256
       ],
 
       bEmbedVocabularyId: [
@@ -377,14 +377,14 @@ class Embedding_TestParams_Base extends TestParams.Base {
       bKeepInputTensor: [
         Embedding.Params.bKeepInputTensor.valueDesc.range.min,
         // Embedding.Params.bKeepInputTensor.valueDesc.range.max
-        // Embedding.Params.bKeepInputTensor.valueDesc.range.min
-        Embedding.Params.bKeepInputTensor.valueDesc.range.max
+        Embedding.Params.bKeepInputTensor.valueDesc.range.min
+        // Embedding.Params.bKeepInputTensor.valueDesc.range.max
       ],
 
       bTableLog: [
         // (2025/06/03 Temp Remarked) For debug.
-        0, 0
-        // 1, 1
+        // 0, 0
+        1, 1
       ],
     };
 
