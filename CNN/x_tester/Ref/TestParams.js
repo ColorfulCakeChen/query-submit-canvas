@@ -740,23 +740,6 @@ class TestParams_Base extends Recyclable.Root {
 
     let valuePair = config.paramValuePairArray[ currentParamDescConfigIndex ];
 
-//!!! (2025/06/19 Modified)
-// Create config.paramValuePairArray when config created (at class ParamDescConfigAll).
-//     // Prepare an re-usable object for placing the value pair of current
-//     // ParamDesc. (For reducing memory re-allocation.)
-//     let valuePair;
-//     {
-//       let paramValuePairArray = config.paramValuePairArray;
-//       if ( !paramValuePairArray ) {
-//         paramValuePairArray = config.paramValuePairArray
-//           = new Array( paramDescConfigArray.length );
-//         for ( let i = 0; i < paramValuePairArray.length; ++i ) {
-//           paramValuePairArray[ i ] = {};
-//         }
-//       }
-//       valuePair = paramValuePairArray[ currentParamDescConfigIndex ];
-//     }
-
     let nextParamDescConfigIndex = currentParamDescConfigIndex + 1;
 
     let paramDescConfig = paramDescConfigArray[ currentParamDescConfigIndex ];
