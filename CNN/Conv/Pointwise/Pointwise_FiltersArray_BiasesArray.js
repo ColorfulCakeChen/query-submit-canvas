@@ -895,8 +895,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     if ( outChannelEnd != this.outputChannelCount )
       throw Error( `Pointwise.FiltersArray_BiasesArray`
         + `.${funcNameInMessage}(): `
-        + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] total `
-        + `output channel count ( ${outChannelEnd} ) `
+        + `aFiltersBiasesPartInfoArray[ inChannelPartInfoArray[] ] `
+        + `total output channel count ( ${outChannelEnd} ) `
         + `should be ( ${this.outputChannelCount} ).` );
 
     // Release temporary resources.
