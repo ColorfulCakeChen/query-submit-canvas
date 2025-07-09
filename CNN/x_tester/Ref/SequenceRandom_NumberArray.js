@@ -55,7 +55,8 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
   }
 
   /**
-   * Similar to Base.ensure_object_property_numberArray_length_filled(). But
+   * Similar to
+   * TestParams_Base.ensure_object_property_numberArray_length_filled(). But
    * the property will be a shared number array. Its value may be shared with
    * other caller.
    *
