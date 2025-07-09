@@ -23,26 +23,20 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
 
   /**
    *
-   * @param {number} nCountPerSameSpec
-   *   For the same specification, provide how many different result number
-   * array (and randomly select them).
    */
-  constructor( nCountPerSameSpec = 10 ) {
+  constructor() {
     super();
-    this.#setAsConstructor_self( nCountPerSameSpec );
+    this.#setAsConstructor_self();
   }
 
   /** @override */
-  setAsConstructor( nCountPerSameSpec = 10 ) {
+  setAsConstructor() {
     super.setAsConstructor();
-    this.#setAsConstructor_self( nCountPerSameSpec );
+    this.#setAsConstructor_self();
   }
 
   /**  */
-  #setAsConstructor_self( nCountPerSameSpec = 10 ) {
-    this.nRandSpecIdMin = 0;
-    this.nRandSpecIdMax = Math.max( 0, nCountPerSameSpec - 1 );
-
+  #setAsConstructor_self() {
     // Record value bounds of every generated number array.
     this.NumberArrayToBoundsMap = new Map();
   }
@@ -115,16 +109,13 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
     alwaysFixedRandomMinMax = undefined
    ) {
 
-    let nRandSpecId = RandTools.getRandomIntInclusive(
-      this.nRandSpecIdMin, this.nRandSpecIdMax );
-
     let numberArray = this.get_or_create_by_arguments1_etc(
       Bag.create_by, this,
       height, width, channelCount,
       valueBegin, valueStep,
       randomOffsetMin, randomOffsetMax, divisorForRemainder,
-      alwaysFixedRandomMinMax,
-      nRandSpecId );
+      alwaysFixedRandomMinMax
+    );
 
     return numberArray;
   }
@@ -136,8 +127,8 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
     height, width, channelCount,
     valueBegin, valueStep,
     randomOffsetMin, randomOffsetMax, divisorForRemainder,
-    alwaysFixedRandomMinMax,
-    nRandSpecId ) {
+    alwaysFixedRandomMinMax
+  ) {
 
     // For debug.
     //if ( Number.isNaN( elementCount ) ) {
@@ -147,7 +138,6 @@ class Bag extends Recyclable.Base( MultiLayerMap.Base ) {
     let numberArray
       = Recyclable.NumberArray_withBounds.Pool.get_or_create_by();
 
-    // Note: nRandSpecId is not used when generating number array.
     RandTools.fill_numberArray( numberArray,
       height, width, channelCount,
       valueBegin, valueStep,
