@@ -1177,13 +1177,16 @@ class NumberImage_Base extends Recyclable.Root {
         + `should match input image channel count (${imageIn.depth}). `
         + `(${parametersDesc})` );
 
+
+    let biasValue;
+
     let index = 0;
     for ( let y = 0; y < imageIn.height; ++y ) {
       for ( let x = 0; x < imageIn.width; ++x ) {
         for ( let channel = 0; channel < imageIn.depth; ++channel ) {
+          biasValue = Math.fround( biasesArray[ channel ] );
           imageIn.dataArray[ index ] = Math.fround(
-            Math.fround( imageIn.dataArray[ index ] )
-              + Math.fround( biasesArray[ channel ] ) );
+            Math.fround( imageIn.dataArray[ index ] ) + biasValue );
           ++index;
         }
       }
@@ -1192,8 +1195,9 @@ class NumberImage_Base extends Recyclable.Root {
     // Calculate value bounds of every output channels (i.e. .afterBias) by
     // shifting as the bias.
     for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
+      biasValue = Math.fround( biasesArray[ channel ] );
       imageIn.boundsArraySet.afterBias
-        .add_one_byN( inChannel, biasesArray[ inChannel ] )
+        .add_one_byN( inChannel, biasValue )
         .fround_one( inChannel );
     }
 
