@@ -168,13 +168,21 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
    *   The value bounds to be added to this BoundsArray_PerPixel for the
    * specified depthwise filter position.
    *
+   * @param {boolean} bDo_fround
+   *   - If true, do fround() after the tBounds be added. Usually for
+   *       depthwise convolution.
+   *   - If false, do NOT fround() after the tBounds be added. Usually for
+   *       average pooling.
+   *   - (This behavior is according to NumberImage_Base.clone_byDepthwise().)
+   *
    * @return {Depthwise_BoundsArray_PerPixel}
    *   Return this (modified) object.
    */
   add_one_outputChannel_byBounds(
     outputChannel,
     filterY, filterX,
-    tBounds
+    tBounds,
+    bDo_fround
   ) {
     const imageInput_BeginY = - this.imageInfo.padHeightTop;
     const imageInput_BeginX = - this.imageInfo.padWidthLeft;
@@ -231,6 +239,9 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
 //   - here should NOT .fround_one() if avg pooling.
 
         ;
+
+        if ( bDo_fround )
+          this.fround_one( imageOutput_elementIndex );
       }
     }
     return this;

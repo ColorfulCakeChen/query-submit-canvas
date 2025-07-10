@@ -857,22 +857,22 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                       // Accumulate value bounds for the filter position
                       // (across the whole virtual input image).
                       //
-                      // Note: For depthwise convolution, do fround() here
-                      //       (i.e. when adding). This is different from avg
-                      //       pooling.
-                      //       Please see NumberImage_Base.clone_byDepthwise().
+                      // Note1: For depthwise convolution, do fround() here
+                      //        (i.e. when adding). This is different from avg
+                      //        pooling.
+                      //        Please see NumberImage_Base.clone_byDepthwise().
                       //
-                      // (2025/07/05)
+                      // Note2: Here should not call .fround_one( outChannel )
+                      //        directly because it is not by channel but by every
+                      //        pixel. Use ( bDo_fround == true ) instead.
+                      //
+                      // (2025/07/10)
+                      const bDo_fround = true; // fround (for depthwise convolution)
                       virtualImageOutput_afterFilter_BoundsArray_PerPixel
                         .add_one_outputChannel_byBounds(
-                          outChannel, filterY, filterX, tBounds )
-!!!???
-!!! ...unfinished... (2025/07/10)
-// here should not .fround_one( outChannel ) because is not by channel
-// but by every pixel.
-// The .fround_one() should be done inside .add_one_outputChannel_byBounds().
-
-                        .fround_one( outChannel );
+                          outChannel, filterY, filterX, tBounds,
+                          bDo_fround
+                        );
 
                     // 1.1.2 ( !this.filtersArray ). No filters array to be
                     //       extracted. (i.e. avg/max pooling)
@@ -898,15 +898,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                         //       NumberImage_Base.clone_byDepthwise().
                         //
                         // (2025/07/05)
+                        const bDo_fround = false; // NOT fround (for average pooling)
                         virtualImageOutput_afterFilter_BoundsArray_PerPixel
                           .add_one_outputChannel_byBounds(
-                            outChannel, filterY, filterX, tBounds )
-                          // ??? Do NOT fround here.
-
-!!! ...unfinished... (2025/07/10)
-// Perhaps, should .fround_all() for virtualImageOutput_afterFilter_BoundsArray_PerPixel
-
-                            ;
+                            outChannel, filterY, filterX, tBounds,
+                            bDo_fround
+                         );
 
                       } else {
                         // For maximum pooling, value bounds is exactly the
