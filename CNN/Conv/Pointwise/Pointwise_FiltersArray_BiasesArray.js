@@ -858,6 +858,9 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
             // (2025/07/05)
             biasValue = Math.fround( biasValue );
 
+!!! ...unfinished... (2025/07/10)
+// Perhaps, should fround() the result ( this.biasesArray[ biasIndex ] + biasValue )
+
             // Note: Use adding instead of assignment.
             this.biasesArray[ biasIndex ] += biasValue;
 
