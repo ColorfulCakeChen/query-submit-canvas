@@ -1194,11 +1194,11 @@ class NumberImage_Base extends Recyclable.Root {
 
     // Calculate value bounds of every output channels (i.e. .afterBias) by
     // shifting as the bias.
-    for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
-      biasValue = Math.fround( biasesArray[ inChannel ] );
+    for ( let channel = 0; channel < imageIn.depth; ++channel ) {
+      biasValue = Math.fround( biasesArray[ channel ] );
       imageIn.boundsArraySet.afterBias
-        .add_one_byN( inChannel, biasValue )
-        .fround_one( inChannel );
+        .add_one_byN( channel, biasValue )
+        .fround_one( channel );
     }
 
     if ( bTableLog ) {
