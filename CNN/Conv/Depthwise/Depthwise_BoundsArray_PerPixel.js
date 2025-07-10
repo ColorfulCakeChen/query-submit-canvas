@@ -229,16 +229,7 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
         // inside the input image.
         ++this.accumulationCounts[ imageOutput_elementIndex ];
 
-        this.add_one_byBounds( imageOutput_elementIndex, tBounds )
-
-!!! ...unfinished... (2025/07/10)
-// Perhaps, should .fround_one()
-//
-// According to NumberImage_Base.clone_byDepthwise(),
-//   - here should .fround_one() if depthwise conv.
-//   - here should NOT .fround_one() if avg pooling.
-
-        ;
+        this.add_one_byBounds( imageOutput_elementIndex, tBounds );
 
         if ( bDo_fround )
           this.fround_one( imageOutput_elementIndex );
