@@ -221,7 +221,12 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
         // inside the input image.
         ++this.accumulationCounts[ imageOutput_elementIndex ];
 
-        this.add_one_byBounds( imageOutput_elementIndex, tBounds );
+        this.add_one_byBounds( imageOutput_elementIndex, tBounds )
+
+!!! ...unfinished... (2025/07/10)
+// Perhaps, should .fround_one()
+
+        ;
       }
     }
     return this;
