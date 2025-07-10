@@ -850,6 +850,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 // What if ( filterY, filterX ) is outside the source image?
 // For example, filter 2x2 stride_2 to shrink image shape [ 3, 4, 6 ] to [ 2, 2, 6 ]?
 // The result BoundsArray will be different from NumerImage_Base.clone_byDepthwise().
+//
+// Perhaps, virtualImage should be the same size and shape as real input image?
 
                       // Accumulate value bounds for the filter position
                       // (across the whole virtual input image).
