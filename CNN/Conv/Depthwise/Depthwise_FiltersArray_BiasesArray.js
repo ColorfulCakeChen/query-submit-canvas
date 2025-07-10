@@ -707,7 +707,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     { // 0.2 Init .afterBias
       this.boundsArraySet.afterBias.set_all_byN( 0 );
 
-!!! ...unfinished... (2025/07/10)
+//!!! ...unfinished... (2025/07/10)
 // Why fetching bias by adding (not by assigning)?
 
       // Because biases is fetched by adding, it should be initialized to zero.
@@ -1004,10 +1004,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               // (2025/07/05)
               biasValue = Math.fround( biasValue );
 
-!!! ...unfinished... (2025/07/10)
+//!!! ...unfinished... (2025/07/10)
 // Perhaps, should fround() the result ( this.biasesArray[ biasIndex ] + biasValue )
 //
 // Why fetching bias by adding (not by assigning)?
+              if ( this.biasesArray[ biasIndex ] != 0 )
+                debugger; // Find out when it is not zero?
 
               // Note: Use adding instead of assignment.
               this.biasesArray[ biasIndex ] += biasValue;
