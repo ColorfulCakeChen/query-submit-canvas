@@ -1195,7 +1195,7 @@ class NumberImage_Base extends Recyclable.Root {
     // Calculate value bounds of every output channels (i.e. .afterBias) by
     // shifting as the bias.
     for ( let inChannel = 0; inChannel < imageIn.depth; ++inChannel ) {
-      biasValue = Math.fround( biasesArray[ channel ] );
+      biasValue = Math.fround( biasesArray[ inChannel ] );
       imageIn.boundsArraySet.afterBias
         .add_one_byN( inChannel, biasValue )
         .fround_one( inChannel );
