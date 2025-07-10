@@ -918,8 +918,8 @@ TestParams_Base.integer_numberArray_randomParams = {
  */
 TestParams_Base.filterWeights_numberArray_randomParams = {
 
-  weightsValueBegin: -0.50,  // Test: All zero convolution kernel filter.
-  // weightsValueBegin: -0.55,  // Test: fround().
+  // weightsValueBegin: -0.50,  // Test: All zero convolution kernel filter.
+  weightsValueBegin: -0.55,  // Test: fround().
   // weightsValueBegin: TestParams_Base.SMALL_PARAMS.NEGATIVE_VALUE,
 
   weightsValueStep:  1 / ( 2 ** 3 ), // i.e. ( 1 / 8 )
