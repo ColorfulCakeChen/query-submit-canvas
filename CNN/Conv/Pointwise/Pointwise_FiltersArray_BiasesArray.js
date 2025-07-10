@@ -893,7 +893,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     //    been visited totally.
     //
     this.boundsArraySet.afterBias.add_all_byBoundsArray(
-      this.boundsArraySet.afterFilter );
+      this.boundsArraySet.afterFilter )
+
+!!! ...unfinished... (2025/07/10)
+// Perhaps, should .fround_all() for .afterBias
+
+      ;
 
     if ( outChannelEnd != this.outputChannelCount )
       throw Error( `Pointwise.FiltersArray_BiasesArray`
