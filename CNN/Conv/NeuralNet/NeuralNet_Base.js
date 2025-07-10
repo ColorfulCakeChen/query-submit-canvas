@@ -797,12 +797,16 @@ class NeuralNet_Base extends HierarchicalNameable.SeparatorDot_Root {
     const valueMax = this.embedding.vocabularyIdMax;
 
 
-!!! ...unfinished... (2025/07/10)
+//!!! (2025/07/10 Modified)
 // Perhaps, should consider between
 // original imageIn.boundsArraySet.output0.boundsArray
 // and new [ lower, upper ]. should not use new bound directly.
+//    io_scaleBoundsArray.boundsArray.set_all_byLowerUpper( valueMin, valueMax );
 
-    io_scaleBoundsArray.boundsArray.set_all_byLowerUpper( valueMin, valueMax );
+    // Note: Use clamp_Xxx() (rather than set_Xxx()) so that original bounds
+    //       are also considered.
+    // (2025/07/10)
+    io_scaleBoundsArray.boundsArray.clamp_all_byLowerUpper( valueMin, valueMax );
 
     // Note: This can not be implemented by Block's pointwise20ActivationId
     //       (e.g. CLIP_BY_VALUE_N0_P255, CLIP_BY_VALUE_N0_P65535,
