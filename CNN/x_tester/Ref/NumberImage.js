@@ -1254,6 +1254,12 @@ class NumberImage_Base extends Recyclable.Root {
 
     let imageIn = this;
 
+
+!!! ...unfinished... (2025/07/10)
+// Perhaps, should consider between
+// original imageIn.boundsArraySet.output0.boundsArray
+// and new [ lower, upper ]. should not use new bound directly.
+
     imageIn.boundsArraySet.output0.boundsArray.set_all_byLowerUpper(
       lowerBound, upperBound );
 
