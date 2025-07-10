@@ -303,35 +303,38 @@ class Block_TestParams_Base extends TestParams.Base {
     // will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
       input0_height: [
+        1,
         // 2,
-        3,
+        // 3,
         // 2
-        3
-        // 5
+        // 3
+        5
       ],
 
       input0_width: [
+        1,
+        // 2,
         // 3,
-        4,
+        // 4,
         // 3
         5
       ],
 
       input0_channelCount: [
-        2,
+        1,
+        // 2,
         // 3,
         // 3
         4
       ],
 
-//!!! (2022/07/06 Temp Added and Remarked) For speed-up debug.
       nConvBlockTypeId: [
-        // Block.Params.nConvBlockTypeId.valueDesc.range.min,
+        Block.Params.nConvBlockTypeId.valueDesc.range.min,
         // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL, // (0)
         // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL, // (1)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY, // (3)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL, // (4)
-        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
+        // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD, // (5)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY, // (6)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL, // (7)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2, // (8)
@@ -341,20 +344,19 @@ class Block_TestParams_Base extends TestParams.Base {
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL // (4)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD // (5)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY // (6)
-        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL // (7)
+        // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL // (7)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY // (10)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL // (11)
-        // Block.Params.nConvBlockTypeId.valueDesc.range.max
+        Block.Params.nConvBlockTypeId.valueDesc.range.max
       ],
 
-//!!! (2022/07/11 Temp Remarked) For speed-up debug.
       pointwise1ChannelCount: [
-        // 0,
-        1,
+        0,
+        // 1,
         // 3,
         // 1
-        2
-        // 3
+        // 2
+        3
         // 8
       ],
 
@@ -366,12 +368,11 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
       depthwise_AvgMax_Or_ChannelMultiplier: [
-//!!! (2025/06/26 Temp Remarked) For speed up debug.
-        // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
         // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,
         // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX,
         // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE,
-        1,
+        // 1,
         2
       ],
 
@@ -380,17 +381,17 @@ class Block_TestParams_Base extends TestParams.Base {
       //       tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 //!!! (2022/08/04 Temp Remarked) For debug neural net (only use 3x3).
       depthwiseFilterHeight: [
-        // Block.Params.depthwiseFilterHeight.valueDesc.range.min,
+        Block.Params.depthwiseFilterHeight.valueDesc.range.min,
         // 2,
-        3,
+        // 3,
         // 2
         depthwiseFilterMaxSize
       ],
 
       depthwiseFilterWidth: [
-        // Block.Params.depthwiseFilterWidth.valueDesc.range.min,
+        Block.Params.depthwiseFilterWidth.valueDesc.range.min,
         // 2,
-        3,
+        // 3,
         // 2
         depthwiseFilterMaxSize
       ],
@@ -416,8 +417,8 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
       depthwiseActivationId: [
-        // ValueDesc.ActivationFunction.Singleton.range.min + 0,
-        ValueDesc.ActivationFunction.Singleton.range.min + 1,
+        ValueDesc.ActivationFunction.Singleton.range.min + 0,
+        // ValueDesc.ActivationFunction.Singleton.range.min + 1,
         ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
@@ -427,18 +428,18 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
       nSqueezeExcitationChannelCountDivisor: [
-        // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE, // -2
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, // -1
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION, // 0
         // 1,
-        2,
+        // 2,
         3
       ],
 
       pointwise20ActivationId: [
-        // ValueDesc.ActivationFunction.Singleton.range.min + 0,
-        ValueDesc.ActivationFunction.Singleton.range.min + 1,
+        ValueDesc.ActivationFunction.Singleton.range.min + 0,
+        // ValueDesc.ActivationFunction.Singleton.range.min + 1,
         ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
@@ -447,8 +448,8 @@ class Block_TestParams_Base extends TestParams.Base {
       // speeding up testing.
  
       nActivationId: [
-        // ValueDesc.ActivationFunction.Singleton.range.min + 0,
-        ValueDesc.ActivationFunction.Singleton.range.min + 1,
+        ValueDesc.ActivationFunction.Singleton.range.min + 0,
+        // ValueDesc.ActivationFunction.Singleton.range.min + 1,
         ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
