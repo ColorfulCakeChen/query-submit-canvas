@@ -20,7 +20,7 @@ import * as Recyclable from "../../util/Recyclable.js";
  * @member {boolean} bPassThrough
  *   If true, this is a pass-through part and it will pass-through input
  * channel index in [ inChannelBegin, inChannelEnd ) to output. Otherwise, this
- * is a non-pass-through part and it will using filters and biases extracted
+ * is a non-pass-through part and it will use filters and biases extracted
  * from weights array to convolve input channel index in
  * [ inChannelBegin, inChannelEnd ) to output.
  */
