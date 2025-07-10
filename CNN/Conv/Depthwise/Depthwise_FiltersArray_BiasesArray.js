@@ -852,6 +852,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 // The result BoundsArray will be different from NumerImage_Base.clone_byDepthwise().
 //
 // Perhaps, virtualImage should be the same size and shape as real input image?
+// It seems .add_one_outputChannel_byBounds() has considered that.
 
                       // Accumulate value bounds for the filter position
                       // (across the whole virtual input image).
@@ -865,6 +866,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                       virtualImageOutput_afterFilter_BoundsArray_PerPixel
                         .add_one_outputChannel_byBounds(
                           outChannel, filterY, filterX, tBounds )
+!!!???
+!!! ...unfinished... (2025/07/10)
+// here should not .fround_one( outChannel ) because is not by channel
+// but by every pixel.
+// The .fround_one() should be done inside .add_one_outputChannel_byBounds().
+
                         .fround_one( outChannel );
 
                     // 1.1.2 ( !this.filtersArray ). No filters array to be
@@ -894,6 +901,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                         virtualImageOutput_afterFilter_BoundsArray_PerPixel
                           .add_one_outputChannel_byBounds(
                             outChannel, filterY, filterX, tBounds )
+                          // ??? Do NOT fround here.
 
 !!! ...unfinished... (2025/07/10)
 // Perhaps, should .fround_all() for virtualImageOutput_afterFilter_BoundsArray_PerPixel

@@ -225,6 +225,10 @@ class Depthwise_BoundsArray_PerPixel extends FloatValue.BoundsArray {
 
 !!! ...unfinished... (2025/07/10)
 // Perhaps, should .fround_one()
+//
+// According to NumberImage_Base.clone_byDepthwise(),
+//   - here should .fround_one() if depthwise conv.
+//   - here should NOT .fround_one() if avg pooling.
 
         ;
       }
