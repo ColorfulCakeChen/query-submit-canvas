@@ -846,7 +846,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                           ;
                       }
 
-!!! ...unfinished... (2025/07/10)
+//!!! ...unfinished... (2025/07/10)
 // What if ( filterY, filterX ) is outside the source image?
 // For example, filter 2x2 stride_2 to shrink image shape [ 3, 4, 6 ] to [ 2, 2, 6 ]?
 // The result BoundsArray will be different from NumerImage_Base.clone_byDepthwise().
