@@ -2410,28 +2410,6 @@ class NumberImage_Base extends Recyclable.Root {
       this.height, this.width, this.depth,
       aBoundsArray
     );
-
-// !!! (2025/07/08 Remarked) Used BoundsArraySet_Asserter.assert_NumberArray_byBoundsArray() instead.
-//     //!!! (2022/08/12 Temp Added) Temp skip checking for finding out real value.
-//     //return;
-//
-//     let pixelValue;
-//     let i = 0;
-//     for ( let y = 0; y < this.height; ++y ) {
-//       for ( let x = 0; x < this.width; ++x ) {
-//         for ( let c = 0; c < this.depth; ++c, ++i ) {
-//           pixelValue = this.dataArray[ i ];
-//           if ( !( aBoundsArray.is_one_contain_N( c, pixelValue ) ) ) {
-//             debugger;
-//             throw Error( `NumberImage.Base.assert_output_BoundsArray(): `
-//               + `at ( x, y, c ) = ( ${x}, ${y}, ${c} ), `
-//               + `.dataArray[ ${i} ] = ( ${pixelValue} ) should be in bounds `
-//               + `[ ${aBoundsArray.lowers[ c ]}, ${aBoundsArray.uppers[ c ]} ].`
-//             )
-//           }
-//         }
-//       }
-//     }
   }
 
   /**
@@ -2548,7 +2526,9 @@ class NumberImage_Base extends Recyclable.Root {
 
       imageNew = NumberImage_Base.Pool.get_or_create_by(
         height, width, channelCount, preFilledValue,
-        inputScaleBoundsArray, null, BoundsArraySet.InputsOutputs, aBounds );
+        inputScaleBoundsArray,
+        null, // input1_ScaleBoundsArray
+        BoundsArraySet.InputsOutputs, aBounds );
 
       // Because the newly created NumberImage.Base has already copy it.
       inputScaleBoundsArray.disposeResources_and_recycleToPool();
