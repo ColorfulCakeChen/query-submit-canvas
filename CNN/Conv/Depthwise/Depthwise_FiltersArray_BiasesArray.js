@@ -893,7 +893,12 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                         // (2025/07/05)
                         virtualImageOutput_afterFilter_BoundsArray_PerPixel
                           .add_one_outputChannel_byBounds(
-                            outChannel, filterY, filterX, tBounds );
+                            outChannel, filterY, filterX, tBounds )
+
+!!! ...unfinished... (2025/07/10)
+// Perhaps, should .fround_all() for virtualImageOutput_afterFilter_BoundsArray_PerPixel
+
+                            ;
 
                       } else {
                         // For maximum pooling, value bounds is exactly the
