@@ -1097,6 +1097,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
    * this.filtersArray and this.biasesArray.
    */
   apply_doEscapingScale_to_filtersArray_biasesArray() {
+    const doEscapingScaleArray
+      = this.boundsArraySet.output0.scaleArraySet.do.scales;
 
     if ( this.filtersArray ) {
       let filterIndex = 0;
@@ -1128,8 +1130,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                   outChannelSub < this.channelMultiplier;
                   ++outChannelSub, ++outChannel ) {
 
-                  let doEscapingScale = this.boundsArraySet.output0
-                    .scaleArraySet.do.scales[ outChannel ];
+                  const doEscapingScale = doEscapingScaleArray[ outChannel ];
 
                   // filter wieghts scaled.
                   this.filtersArray[ filterIndex ] *= doEscapingScale;
@@ -1159,8 +1160,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
           outChannelSub < this.channelMultiplier;
           ++outChannelSub, ++outChannel ) {
 
-          let doEscapingScale = this.boundsArraySet.output0
-            .scaleArraySet.do.scales[ outChannel ];
+          const doEscapingScale = doEscapingScaleArray[ outChannel ];
 
           // bias wieghts scaled.
           this.biasesArray[ biasIndex ] *= doEscapingScale;
