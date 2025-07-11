@@ -1320,9 +1320,16 @@ class HeightWidthDepth {
         let memoryInfo_testCorrectness_before = tf.memory();
 
         {
-          asserter_Equal
-            = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.001, 0.00001 );
-            // = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
+          {
+            // const acceptableDifferenceRate = 0.001;
+            const acceptableDifferenceRate = 2 ** (-70);
+
+            // const acceptableDifference = 0.00001;
+            const acceptableDifference = 2 ** (-70);
+
+            asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by(
+              acceptableDifferenceRate, acceptableDifference );
+          }
 
           this.neuralWorker_PerformanceTest_init();
 

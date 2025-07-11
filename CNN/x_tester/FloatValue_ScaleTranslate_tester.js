@@ -15,7 +15,16 @@ import * as Block from "../Conv/Block.js";
 class Base {
 
   constructor() {
-    this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by();
+    {
+      // const acceptableDifferenceRate = 0.001;
+      const acceptableDifferenceRate = 2 ** (-70);
+
+      // const acceptableDifference = 0.00001;
+      const acceptableDifference = 2 ** (-70);
+
+      this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by(
+        acceptableDifferenceRate, acceptableDifference );
+    }
   }
 
   assert_PropertyProperty_Value(

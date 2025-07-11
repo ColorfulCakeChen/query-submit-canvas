@@ -364,11 +364,19 @@ class HeightWidthDepth {
 
         // (Also for pre-compiling WebGL shaders.)
         {
-          const acceptableDifferenceRate = 0.05; //0.1; //0.01;
-          const acceptableDifference = 3;
+          {
+            // const acceptableDifferenceRate = 0.05;
+            // const acceptableDifferenceRate = 0.001;
+            const acceptableDifferenceRate = 2 ** (-70);
 
-          asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by(
-            acceptableDifferenceRate, acceptableDifference );
+            // const acceptableDifference = 3;
+            // const acceptableDifference = 0.00001;
+            const acceptableDifference = 2 ** (-70);
+
+            asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by(
+              acceptableDifferenceRate, acceptableDifference );
+          }
+
 
           // Correctness testing uses smaller shape.
           {
