@@ -45,10 +45,16 @@ class Embedding_Reference_Base
 
   /**  */
   #setAsConstructor_self() {
-    this.asserter_Equal
-      = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.001, 0.00001 );
-//!!! (2025/07/05 Remarked) For embedding, the difference should be small.
-//      = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
+    {
+      // const acceptableDifferenceRate = 0.001;
+      const acceptableDifferenceRate = 2 ** (-70);
+
+      // const acceptableDifference = 0.00001;
+      const acceptableDifference = 2 ** (-70);
+
+      this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by(
+        acceptableDifferenceRate, acceptableDifference );
+    }
   }
 
   /** @override */

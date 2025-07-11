@@ -61,10 +61,16 @@ class NeuralNet_Reference_Base
 
 //!!! (2023/04/15)
 // For clamped and integerized output, acceptable delta should be smaller.
-//    this.asserter_Equal
-    this.asserter_Equal
-      = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.001, 0.00001 );
-      // = TensorTools.Asserter_Equal.Pool.get_or_create_by( 0.01, 0.005 );
+    {
+      // const acceptableDifferenceRate = 0.001;
+      const acceptableDifferenceRate = 2 ** (-70);
+
+      // const acceptableDifference = 0.00001;
+      const acceptableDifference = 2 ** (-70);
+
+      this.asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by(
+        acceptableDifferenceRate, acceptableDifference );
+    }
 
     // For reducing memory allocation.
 
