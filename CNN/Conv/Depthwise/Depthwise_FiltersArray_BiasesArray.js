@@ -705,6 +705,10 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     }
 
     { // 0.2 Init .afterBias
+
+      // Note: .afterFilter needs not be initialized to zero because it will be
+      // calculated from virtualImageOutput_afterFilter_BoundsArray_PerPixel.
+
       this.boundsArraySet.afterBias.set_all_byN( 0 );
 
 //!!! ...unfinished... (2025/07/10)
