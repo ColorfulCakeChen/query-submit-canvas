@@ -913,7 +913,7 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     //
     if ( this.biasesArray )
       this.boundsArraySet.afterBias
-        .add_all_byBoundsArray( this.boundsArraySet.afterFilter );
+        .add_all_byBoundsArray( this.boundsArraySet.afterFilter )
         .fround_all();
     else
       this.boundsArraySet.afterBias
