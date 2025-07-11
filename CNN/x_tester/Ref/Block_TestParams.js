@@ -351,8 +351,8 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
       pointwise1ChannelCount: [
-        0,
-        // 1,
+        // 0,
+        1,
         // 3,
         // 1
         // 2
@@ -369,9 +369,9 @@ class Block_TestParams_Base extends TestParams.Base {
 
       depthwise_AvgMax_Or_ChannelMultiplier: [
         ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
-        // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,
-        // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX,
-        // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE,
+        // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,  // -2
+        // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX,  // -1
+        // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE, //  0
         // 1,
         2
       ],
@@ -419,7 +419,8 @@ class Block_TestParams_Base extends TestParams.Base {
       depthwiseActivationId: [
         ValueDesc.ActivationFunction.Singleton.range.min + 0,
         // ValueDesc.ActivationFunction.Singleton.range.min + 1,
-        ValueDesc.ActivationFunction.Singleton.range.min + 1
+        ValueDesc.ActivationFunction.Singleton.range.min + 0
+        // ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
       bSqueezeExcitationPrefix: [
@@ -440,7 +441,8 @@ class Block_TestParams_Base extends TestParams.Base {
       pointwise20ActivationId: [
         ValueDesc.ActivationFunction.Singleton.range.min + 0,
         // ValueDesc.ActivationFunction.Singleton.range.min + 1,
-        ValueDesc.ActivationFunction.Singleton.range.min + 1
+        ValueDesc.ActivationFunction.Singleton.range.min + 0
+        // ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
       // Because the logic of bias and activation function is simpler than
@@ -450,7 +452,8 @@ class Block_TestParams_Base extends TestParams.Base {
       nActivationId: [
         ValueDesc.ActivationFunction.Singleton.range.min + 0,
         // ValueDesc.ActivationFunction.Singleton.range.min + 1,
-        ValueDesc.ActivationFunction.Singleton.range.min + 1
+        ValueDesc.ActivationFunction.Singleton.range.min + 0
+        // ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
       bKeepInputTensor: [
