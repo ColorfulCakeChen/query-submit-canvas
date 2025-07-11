@@ -419,8 +419,8 @@ class Block_TestParams_Base extends TestParams.Base {
       depthwiseActivationId: [
         ValueDesc.ActivationFunction.Singleton.range.min + 0,
         // ValueDesc.ActivationFunction.Singleton.range.min + 1,
-        ValueDesc.ActivationFunction.Singleton.range.min + 0
-        // ValueDesc.ActivationFunction.Singleton.range.min + 1
+        // ValueDesc.ActivationFunction.Singleton.range.min + 0
+        ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
       bSqueezeExcitationPrefix: [
@@ -441,8 +441,8 @@ class Block_TestParams_Base extends TestParams.Base {
       pointwise20ActivationId: [
         ValueDesc.ActivationFunction.Singleton.range.min + 0,
         // ValueDesc.ActivationFunction.Singleton.range.min + 1,
-        ValueDesc.ActivationFunction.Singleton.range.min + 0
-        // ValueDesc.ActivationFunction.Singleton.range.min + 1
+        // ValueDesc.ActivationFunction.Singleton.range.min + 0
+        ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
       // Because the logic of bias and activation function is simpler than
@@ -452,8 +452,8 @@ class Block_TestParams_Base extends TestParams.Base {
       nActivationId: [
         ValueDesc.ActivationFunction.Singleton.range.min + 0,
         // ValueDesc.ActivationFunction.Singleton.range.min + 1,
-        ValueDesc.ActivationFunction.Singleton.range.min + 0
-        // ValueDesc.ActivationFunction.Singleton.range.min + 1
+        // ValueDesc.ActivationFunction.Singleton.range.min + 0
+        ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
       bKeepInputTensor: [
