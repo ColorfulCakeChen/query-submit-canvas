@@ -985,9 +985,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               outChannelSub < this.channelMultiplier;
               ++outChannelSub, ++outChannel ) {
 
-              // Note: bias is not responsible for
-              //       undoPreviousEscapingScale. (i.e. the filter already done
-              //       it)
+              // Note: bias is not responsible for undoPreviousEscapingScale.
+              //       (i.e. the filter already done it)
 
               // For pass-through half channels.
               if ( inChannelPartInfo.bPassThrough ) {
