@@ -704,23 +704,27 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
         = BoundsArray_PerPixel.Pool.get_or_create_by( virtualImageInfo );
     }
 
-    { // 0.2 Init .afterBias
+    { // 0.2 Init
 
       // Note: .afterFilter needs not be initialized to zero because it will be
       // calculated from virtualImageOutput_afterFilter_BoundsArray_PerPixel.
 
-      this.boundsArraySet.afterBias.set_all_byN( 0 );
-
+//!!! (2025/07/11 Remarked)
+// Because bias now is fetched by assigning (instead of by adding),
+// it no longer needs be initialized to zero.
+//
+//       this.boundsArraySet.afterBias.set_all_byN( 0 );
+//
 //!!! ...unfinished... (2025/07/10)
 // Why fetching bias by adding (not by assigning)?
-
-      // Because biases is fetched by adding, it should be initialized to zero.
-      // (Note: The .filtersArray is fetched by assigning, so it needs not be
-      // initialized.)
-      //
-      if ( this.biasesArray ) {
-        this.biasesArray.fill( 0 );
-      }
+//
+//       // Because biases is fetched by adding, it should be initialized to zero.
+//       // (Note: The .filtersArray is fetched by assigning, so it needs not be
+//       // initialized.)
+//       //
+//       if ( this.biasesArray ) {
+//         this.biasesArray.fill( 0 );
+//       }
     }
 
     // 1. Extracting weights of filters and biases. (Including extra scale.)
@@ -1007,26 +1011,34 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
               // (2025/07/05)
               biasValue = Math.fround( biasValue );
 
+              this.biasesArray[ biasIndex ] = biasValue;
+
+              this.boundsArraySet.afterBias
+                .set_one_byN( outChannel, biasValue );
+
+//!!! (2025/07/11 Remarked)
+// Let biasesArray be fetched by assigning (instead of by adding).
+//
 //!!! ...unfinished... (2025/07/10)
 // Perhaps, should fround() the result ( this.biasesArray[ biasIndex ] + biasValue )
 //
 // Why fetching bias by adding (not by assigning)?
-              if ( this.biasesArray[ biasIndex ] != 0 )
-                debugger; // Find out when it is not zero?
-
-              // Note: Use adding instead of assignment.
-              this.biasesArray[ biasIndex ] += biasValue;
-
-              // Determine .afterBias
-              // Shift the value bounds by the bias.
-              //
-              // Note: For bias, do fround() when adding.
-              //       Please see NumberImage_Base.modify_byBias().
-              //
-              // (2025/07/05)
-              this.boundsArraySet.afterBias
-                .add_one_byN( outChannel, biasValue )
-                .fround_one( outChannel );
+//               if ( this.biasesArray[ biasIndex ] != 0 )
+//                 debugger; // Find out when it is not zero?
+//
+//               // Note: Use adding instead of assignment.
+//               this.biasesArray[ biasIndex ] += biasValue;
+//
+//               // Determine .afterBias
+//               // Shift the value bounds by the bias.
+//               //
+//               // Note: For bias, do fround() when adding.
+//               //       Please see NumberImage_Base.modify_byBias().
+//               //
+//               // (2025/07/05)
+//               this.boundsArraySet.afterBias
+//                 .add_one_byN( outChannel, biasValue )
+//                 .fround_one( outChannel );
 
               ++biasIndex;
 
