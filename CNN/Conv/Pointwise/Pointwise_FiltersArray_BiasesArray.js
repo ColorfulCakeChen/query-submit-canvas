@@ -911,9 +911,13 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // A: Because .afterFilter is unknown before FiltersBiasesPartInfoArray has
     //    been visited totally.
     //
-    this.boundsArraySet.afterBias
-      .add_all_byBoundsArray( this.boundsArraySet.afterFilter )
-      .fround_all();
+    if ( this.biasesArray )
+      this.boundsArraySet.afterBias
+        .add_all_byBoundsArray( this.boundsArraySet.afterFilter );
+        .fround_all();
+    else
+      this.boundsArraySet.afterBias
+        .set_all_byBoundsArray( this.boundsArraySet.afterFilter );
 
     if ( outChannelEnd != this.outputChannelCount )
       throw Error( `Pointwise.FiltersArray_BiasesArray`
