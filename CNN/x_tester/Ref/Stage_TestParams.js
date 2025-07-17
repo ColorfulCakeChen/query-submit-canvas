@@ -392,8 +392,12 @@ class Stage_TestParams_Base extends TestParams.Base {
         // 2,
         // 3,
 
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE // -2
+        // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION // -1
+        // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION // 0
+        // 1
         // 2
-        3
+        // 3
       ],
 
       // Must have ActivationFunction (i.e. can not be NONE). Otherwise, it easily
