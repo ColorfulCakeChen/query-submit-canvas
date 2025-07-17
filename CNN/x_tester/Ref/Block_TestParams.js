@@ -306,9 +306,10 @@ class Block_TestParams_Base extends TestParams.Base {
         1,
         // 2,
         // 3,
+        1
         // 2
         // 3
-        5
+        // 5
       ],
 
       input0_width: [
@@ -316,8 +317,9 @@ class Block_TestParams_Base extends TestParams.Base {
         // 2,
         // 3,
         // 4,
+        1
         // 3
-        5
+        // 5
       ],
 
       input0_channelCount: [
@@ -325,7 +327,8 @@ class Block_TestParams_Base extends TestParams.Base {
         // 2,
         // 3,
         // 3
-        4
+        1
+        // 4
       ],
 
       nConvBlockTypeId: [
@@ -351,29 +354,28 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
       pointwise1ChannelCount: [
-        0,
+        // 0,
         // 1,
+        2,
         // 3,
         // 1
-        // 2
-        3
-        // 8
-      ],
-
-      pointwise20ChannelCount: [
-        1,
-        // 2,
-        3
+        2
+        // 3
         // 8
       ],
 
       depthwise_AvgMax_Or_ChannelMultiplier: [
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,  // -2
-        // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,  // -2
+        // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,  // -2
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,  // -2
         // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX,  // -1
         // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE, //  0
         // 1,
-        2
+
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG  // -2
+        // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX  // -1
+        // 0
+        // 1
+        // 2
       ],
 
       // (2021/10/06)
@@ -384,16 +386,18 @@ class Block_TestParams_Base extends TestParams.Base {
         Block.Params.depthwiseFilterHeight.valueDesc.range.min, // 1
         // 2,
         // 3,
+        1
         // 2
-        depthwiseFilterMaxSize
+        // depthwiseFilterMaxSize
       ],
 
       depthwiseFilterWidth: [
         Block.Params.depthwiseFilterWidth.valueDesc.range.min, // 1
         // 2,
         // 3,
+        1
         // 2
-        depthwiseFilterMaxSize
+        // depthwiseFilterMaxSize
       ],
 
       // (2022/05/02)
@@ -404,45 +408,57 @@ class Block_TestParams_Base extends TestParams.Base {
       //       those platforms.
       //
       depthwiseStridesPad: [
-        Block.Params.depthwiseStridesPad.valueDesc.range.min,
-        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID,  // (0)
+        // Block.Params.depthwiseStridesPad.valueDesc.range.min,
+        ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID,  // (0)
         // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME,   // (1)
         // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME,   // (2)
         // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID,  // (3)
-        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID   // (0)
+
+        ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID   // (0)
         // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME    // (1)
         // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME    // (2)
         // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID   // (3)
-        Block.Params.depthwiseStridesPad.valueDesc.range.max
+        // Block.Params.depthwiseStridesPad.valueDesc.range.max
       ],
 
       depthwiseActivationId: [
         ValueDesc.ActivationFunction.Singleton.range.min + 0,
         // ValueDesc.ActivationFunction.Singleton.range.min + 1,
-        // ValueDesc.ActivationFunction.Singleton.range.min + 0
-        ValueDesc.ActivationFunction.Singleton.range.min + 1
+        ValueDesc.ActivationFunction.Singleton.range.min + 0
+        // ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
       bSqueezeExcitationPrefix: [
-        ValueDesc.Bool.Singleton.range.min,
+        // ValueDesc.Bool.Singleton.range.min,
+        ValueDesc.Bool.Singleton.range.max,
+        // ValueDesc.Bool.Singleton.range.min
         ValueDesc.Bool.Singleton.range.max
       ],
 
       nSqueezeExcitationChannelCountDivisor: [
-        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min,
+        // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min, // -2
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE, // -2
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, // -1
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION, // 0
-        // 1,
+        1,
         // 2,
-        3
+        1
+        // 3
+      ],
+
+      pointwise20ChannelCount: [
+        1,
+        // 2,
+        1
+        // 3
+        // 8
       ],
 
       pointwise20ActivationId: [
         ValueDesc.ActivationFunction.Singleton.range.min + 0,
         // ValueDesc.ActivationFunction.Singleton.range.min + 1,
-        // ValueDesc.ActivationFunction.Singleton.range.min + 0
-        ValueDesc.ActivationFunction.Singleton.range.min + 1
+        ValueDesc.ActivationFunction.Singleton.range.min + 0
+        // ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
       // Because the logic of bias and activation function is simpler than
@@ -452,8 +468,8 @@ class Block_TestParams_Base extends TestParams.Base {
       nActivationId: [
         ValueDesc.ActivationFunction.Singleton.range.min + 0,
         // ValueDesc.ActivationFunction.Singleton.range.min + 1,
-        // ValueDesc.ActivationFunction.Singleton.range.min + 0
-        ValueDesc.ActivationFunction.Singleton.range.min + 1
+        ValueDesc.ActivationFunction.Singleton.range.min + 0
+        // ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
       bKeepInputTensor: [
@@ -465,8 +481,8 @@ class Block_TestParams_Base extends TestParams.Base {
 
       bTableLog: [
         // (2025/06/04 Temp Remarked) For debug.
-        0, 0
-        // 1, 1
+        // 0, 0
+        1, 1
       ],
     };
 
