@@ -158,10 +158,12 @@ async function* tester( progressParent ) {
   //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   // 1.
-  yield *testerBackend( progressCPU, "cpu" );
+  // yield *testerBackend( progressCPU, "cpu" );
+  yield *testerBackend( progressWebGL, "webgl" );
 
   // 2.
-  yield *testerBackend( progressWebGL, "webgl" );
+  // yield *testerBackend( progressWebGL, "webgl" );
+  yield *testerBackend( progressCPU, "cpu" );
 
   // (2025/06/19 Remarked)
   // // 3.
