@@ -329,8 +329,8 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
       nConvBlockTypeId: [
-        Block.Params.nConvBlockTypeId.valueDesc.range.min,
-        // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL, // (0)
+        // Block.Params.nConvBlockTypeId.valueDesc.range.min,
+        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL, // (0)
         // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL, // (1)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY, // (3)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL, // (4)
@@ -340,19 +340,19 @@ class Block_TestParams_Base extends TestParams.Base {
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2, // (8)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY, // (10)
 
-        // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL // (1)
+        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL // (1)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_TAIL // (4)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_HEAD // (5)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY // (6)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL // (7)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY // (10)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL // (11)
-        Block.Params.nConvBlockTypeId.valueDesc.range.max
+        // Block.Params.nConvBlockTypeId.valueDesc.range.max
       ],
 
       pointwise1ChannelCount: [
-        // 0,
-        1,
+        0,
+        // 1,
         // 3,
         // 1
         // 2
@@ -368,7 +368,7 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
       depthwise_AvgMax_Or_ChannelMultiplier: [
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,
+        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,  // -2
         // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,  // -2
         // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX,  // -1
         // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE, //  0
@@ -381,7 +381,7 @@ class Block_TestParams_Base extends TestParams.Base {
       //       tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 //!!! (2022/08/04 Temp Remarked) For debug neural net (only use 3x3).
       depthwiseFilterHeight: [
-        Block.Params.depthwiseFilterHeight.valueDesc.range.min,
+        Block.Params.depthwiseFilterHeight.valueDesc.range.min, // 1
         // 2,
         // 3,
         // 2
@@ -389,7 +389,7 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
       depthwiseFilterWidth: [
-        Block.Params.depthwiseFilterWidth.valueDesc.range.min,
+        Block.Params.depthwiseFilterWidth.valueDesc.range.min, // 1
         // 2,
         // 3,
         // 2
@@ -459,8 +459,8 @@ class Block_TestParams_Base extends TestParams.Base {
       bKeepInputTensor: [
         Block.Params.bKeepInputTensor.valueDesc.range.min,
         // Block.Params.bKeepInputTensor.valueDesc.range.max,
-        Block.Params.bKeepInputTensor.valueDesc.range.min
-        // Block.Params.bKeepInputTensor.valueDesc.range.max
+        // Block.Params.bKeepInputTensor.valueDesc.range.min
+        Block.Params.bKeepInputTensor.valueDesc.range.max
       ],
 
       bTableLog: [
