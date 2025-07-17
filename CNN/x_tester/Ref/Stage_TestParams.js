@@ -317,20 +317,20 @@ class Stage_TestParams_Base extends TestParams.Base {
       input_width:  [
         4,
         // 5,
-        4
-        // 5
+        // 4
+        5
       ],
 
       input_channelCount: [
         3,
         // 4,
-        3
-        // 4
+        // 3
+        4
       ],
 
       nConvStageTypeId: [
-        // Stage.Params.nConvStageTypeId.valueDesc.range.min,
-        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,           // (0)
+        Stage.Params.nConvStageTypeId.valueDesc.range.min,
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1,           // (0)
         // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID, // (1)
         // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN,      // (2)
         // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2,           // (3)
@@ -339,7 +339,7 @@ class Stage_TestParams_Base extends TestParams.Base {
         // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID, // (6)
         // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21,             // (7)
 
-        ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1           // (0)
+        // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1           // (0)
         // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V1_PAD_VALID // (1)
         // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2_THIN      // (2)
         // ValueDesc.ConvStageType.Singleton.Ids.MOBILE_NET_V2           // (3)
@@ -347,29 +347,29 @@ class Stage_TestParams_Base extends TestParams.Base {
         // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1           // (5)
         // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_PAD_VALID // (6)
         // ValueDesc.ConvStageType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21             // (7)
-        // Stage.Params.nConvStageTypeId.valueDesc.range.max
+        Stage.Params.nConvStageTypeId.valueDesc.range.max
       ],
 
       blockCountRequested: [
         Stage.Params.blockCountRequested.valueDesc.range.min, // 2
-        2
-        // Stage.Params.blockCountRequested.valueDesc.range.min + 3
+        // 2
+        Stage.Params.blockCountRequested.valueDesc.range.min + 3
       ],
 
       bPointwise1: [
-        // Stage.Params.bPointwise1.valueDesc.range.min,
-        Stage.Params.bPointwise1.valueDesc.range.max,
+        Stage.Params.bPointwise1.valueDesc.range.min,
+        // Stage.Params.bPointwise1.valueDesc.range.max,
         // Stage.Params.bPointwise1.valueDesc.range.min
         Stage.Params.bPointwise1.valueDesc.range.max
       ],
 
       depthwiseFilterHeight: [
-        // Stage.Params.depthwiseFilterHeight.valueDesc.range.min, // 1
-        2,
+        Stage.Params.depthwiseFilterHeight.valueDesc.range.min, // 1
+        // 2,
         // 3,
         // 1
-        2
-        // depthwiseFilterMaxSize
+        // 2
+        depthwiseFilterMaxSize
       ],
 
       // (2022/05/05)
@@ -379,21 +379,21 @@ class Stage_TestParams_Base extends TestParams.Base {
       depthwiseFilterWidth: [
         Stage.Params.depthwiseFilterWidth.valueDesc.range.min, // 2
         // 3,
-        2
-        // depthwiseFilterMaxSize
+        // 2
+        depthwiseFilterMaxSize
       ],
 
       nSqueezeExcitationChannelCountDivisor: [
-        // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min, // -2
+        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min, // -2
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE, // -2
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, // -1
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION, // 0
         // 1,
-        2,
+        // 2,
         // 3,
 
-        2
-        // 3
+        // 2
+        3
       ],
 
       // Must have ActivationFunction (i.e. can not be NONE). Otherwise, it easily
@@ -409,14 +409,14 @@ class Stage_TestParams_Base extends TestParams.Base {
       bKeepInputTensor: [
         Stage.Params.bKeepInputTensor.valueDesc.range.min,
         // Stage.Params.bKeepInputTensor.valueDesc.range.max,
-        Stage.Params.bKeepInputTensor.valueDesc.range.min
-        // Stage.Params.bKeepInputTensor.valueDesc.range.max
+        // Stage.Params.bKeepInputTensor.valueDesc.range.min
+        Stage.Params.bKeepInputTensor.valueDesc.range.max
       ],
 
       bTableLog: [
         // (2025/06/04 Temp Remarked) For debug.
-        // 0, 0
-        1, 1
+        0, 0
+        // 1, 1
       ],
     };
 
