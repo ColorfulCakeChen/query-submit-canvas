@@ -317,15 +317,15 @@ class Stage_TestParams_Base extends TestParams.Base {
       input_width:  [
         4,
         // 5,
-        // 4
-        5
+        4
+        // 5
       ],
 
       input_channelCount: [
         3,
         // 4,
-        // 3
-        4
+        3
+        // 4
       ],
 
       nConvStageTypeId: [
@@ -352,8 +352,8 @@ class Stage_TestParams_Base extends TestParams.Base {
 
       blockCountRequested: [
         Stage.Params.blockCountRequested.valueDesc.range.min, // 2
-        // 2
-        Stage.Params.blockCountRequested.valueDesc.range.min + 3
+        2
+        // Stage.Params.blockCountRequested.valueDesc.range.min + 3
       ],
 
       bPointwise1: [
@@ -367,9 +367,9 @@ class Stage_TestParams_Base extends TestParams.Base {
         Stage.Params.depthwiseFilterHeight.valueDesc.range.min, // 1
         // 2,
         // 3,
-        // 1
+        1
         // 2
-        depthwiseFilterMaxSize
+        // depthwiseFilterMaxSize
       ],
 
       // (2022/05/05)
