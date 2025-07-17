@@ -708,23 +708,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
       // Note: .afterFilter needs not be initialized to zero because it will be
       // calculated from virtualImageOutput_afterFilter_BoundsArray_PerPixel.
-
-//!!! (2025/07/11 Remarked)
-// Because bias now is fetched by assigning (instead of by adding),
-// it no longer needs be initialized to zero.
-//
-//       this.boundsArraySet.afterBias.set_all_byN( 0 );
-//
-//!!! ...unfinished... (2025/07/10)
-// Why fetching bias by adding (not by assigning)?
-//
-//       // Because biases is fetched by adding, it should be initialized to zero.
-//       // (Note: The .filtersArray is fetched by assigning, so it needs not be
-//       // initialized.)
-//       //
-//       if ( this.biasesArray ) {
-//         this.biasesArray.fill( 0 );
-//       }
     }
 
     // 1. Extracting weights of filters and biases. (Including extra scale.)
@@ -856,14 +839,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
                           // Do NOT fround here.
                           ;
                       }
-
-//!!! ...unfinished... (2025/07/10)
-// What if ( filterY, filterX ) is outside the source image?
-// For example, filter 2x2 stride_2 to shrink image shape [ 3, 4, 6 ] to [ 2, 2, 6 ]?
-// The result BoundsArray will be different from NumerImage_Base.clone_byDepthwise().
-//
-// Perhaps, virtualImage should be the same size and shape as real input image?
-// It seems .add_one_outputChannel_byBounds() has considered that.
 
                       // Accumulate value bounds for the filter position
                       // (across the whole virtual input image).
@@ -1015,30 +990,6 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
               this.boundsArraySet.afterBias
                 .set_one_byN( outChannel, biasValue );
-
-//!!! (2025/07/11 Remarked)
-// Let biasesArray be fetched by assigning (instead of by adding).
-//
-//!!! ...unfinished... (2025/07/10)
-// Perhaps, should fround() the result ( this.biasesArray[ biasIndex ] + biasValue )
-//
-// Why fetching bias by adding (not by assigning)?
-//               if ( this.biasesArray[ biasIndex ] != 0 )
-//                 debugger; // Find out when it is not zero?
-//
-//               // Note: Use adding instead of assignment.
-//               this.biasesArray[ biasIndex ] += biasValue;
-//
-//               // Determine .afterBias
-//               // Shift the value bounds by the bias.
-//               //
-//               // Note: For bias, do fround() when adding.
-//               //       Please see NumberImage_Base.modify_byBias().
-//               //
-//               // (2025/07/05)
-//               this.boundsArraySet.afterBias
-//                 .add_one_byN( outChannel, biasValue )
-//                 .fround_one( outChannel );
 
               ++biasIndex;
 
