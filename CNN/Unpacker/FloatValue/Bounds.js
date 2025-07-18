@@ -367,7 +367,7 @@ class Bounds extends Recyclable.Root {
 
   /**
    * @return {Bounds}
-   *   Return this (modified) object whose range is enlarged a little to the
+   *   Return this (modified) object whose bounds is enlarged a little to the
    * nearest two's integer power.
    */
   enalrge_byIntegerPowersOfTwo() {
