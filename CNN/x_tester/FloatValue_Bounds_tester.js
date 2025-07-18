@@ -922,7 +922,7 @@ function test_enalrge_byIntegerPowersOfTwo() {
 
       if ( !bShouldTrue )
         throw Error( `FloatValue_Bounds_tester.${funcNameInMessage}(): `
-          + `Something wrong. When ( a, b, c, d ) = `
+          + `Something wrong. When ( a, b ) = `
           + `( ${a}, ${b}  ).`
         );
     }
@@ -943,7 +943,7 @@ function test_enalrge_byIntegerPowersOfTwo() {
 function *testerCases( progressParent ) {
   const funcNameInMessage = "testerCases";
 
-  let testCaseCount = 2;
+  let testCaseCount = 3;
 
   let progressRoot = progressParent.root_get();
   let progressToAdvance = progressParent.child_add(
@@ -1013,6 +1013,10 @@ function *testerCases( progressParent ) {
   yield progressRoot;
 
   test_enlarge_contain_in();
+
+  progressToAdvance.value_advance();
+  yield progressRoot;
+
   test_enalrge_byIntegerPowersOfTwo();
 
   progressToAdvance.value_advance();
