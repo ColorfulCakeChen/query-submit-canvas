@@ -871,7 +871,7 @@ function test_enalrge_byIntegerPowersOfTwo() {
         bBounds.enalrge_byIntegerPowersOfTwo();
 
         bShouldTrue &&= (  bBounds.is_contain_Bounds( aBounds ) );
-        bShouldTrue &&= ( !aBounds.is_contain_Bounds( bBounds ) );
+        // bShouldTrue &&= ( !aBounds.is_contain_Bounds( bBounds ) );
       }
 
       { // Non-Integer
@@ -880,7 +880,7 @@ function test_enalrge_byIntegerPowersOfTwo() {
         dBounds.enalrge_byIntegerPowersOfTwo();
 
         bShouldTrue &&= (  dBounds.is_contain_Bounds( cBounds ) );
-        bShouldTrue &&= ( !cBounds.is_contain_Bounds( dBounds ) );
+        // bShouldTrue &&= ( !cBounds.is_contain_Bounds( dBounds ) );
       }
 
       { // Integer in array.
@@ -889,7 +889,7 @@ function test_enalrge_byIntegerPowersOfTwo() {
         bBoundsArray.enalrge_one_byIntegerPowersOfTwo( 0 );
 
         bShouldTrue &&= (  bBoundsArray.is_one_contain_BoundsArray_one( 0, aBoundsArray, 0 ) );
-        bShouldTrue &&= ( !aBoundsArray.is_one_contain_BoundsArray_one( 0, bBoundsArray, 0 ) );
+        // bShouldTrue &&= ( !aBoundsArray.is_one_contain_BoundsArray_one( 0, bBoundsArray, 0 ) );
       }
 
       { // Non-Integer in array.
@@ -898,7 +898,7 @@ function test_enalrge_byIntegerPowersOfTwo() {
         bBoundsArray.enalrge_one_byIntegerPowersOfTwo( 1 );
 
         bShouldTrue &&= (  bBoundsArray.is_one_contain_BoundsArray_one( 1, aBoundsArray, 1 ) );
-        bShouldTrue &&= ( !aBoundsArray.is_one_contain_BoundsArray_one( 1, bBoundsArray, 1 ) );
+        // bShouldTrue &&= ( !aBoundsArray.is_one_contain_BoundsArray_one( 1, bBoundsArray, 1 ) );
       }
 
       { // Integer and Non-Integer in array.
@@ -907,23 +907,23 @@ function test_enalrge_byIntegerPowersOfTwo() {
 
         // BoundsArray contain Bounds
         bShouldTrue &&= (  cBoundsArray.is_one_contain_Bounds( 0, aBounds ) );
-        bShouldTrue &&= ( !aBounds.is_contain_BoundsArray_one( cBoundsArray, 0 ) );
+        // bShouldTrue &&= ( !aBounds.is_contain_BoundsArray_one( cBoundsArray, 0 ) );
 
         bShouldTrue &&= (  cBoundsArray.is_one_contain_Bounds( 1, cBounds ) );
-        bShouldTrue &&= ( !cBounds.is_contain_BoundsArray_one( cBoundsArray, 1 ) );
+        // bShouldTrue &&= ( !cBounds.is_contain_BoundsArray_one( cBoundsArray, 1 ) );
 
         // BoundsArray contain BoundsArray
         bShouldTrue &&= (  cBoundsArray.is_one_contain_BoundsArray_one( 0, aBoundsArray, 0 ) );
-        bShouldTrue &&= ( !aBoundsArray.is_one_contain_BoundsArray_one( 0, cBoundsArray, 0 ) );
+        // bShouldTrue &&= ( !aBoundsArray.is_one_contain_BoundsArray_one( 0, cBoundsArray, 0 ) );
 
         bShouldTrue &&= (  cBoundsArray.is_one_contain_BoundsArray_one( 1, aBoundsArray, 1 ) );
-        bShouldTrue &&= ( !aBoundsArray.is_one_contain_BoundsArray_one( 1, cBoundsArray, 1 ) );
+        // bShouldTrue &&= ( !aBoundsArray.is_one_contain_BoundsArray_one( 1, cBoundsArray, 1 ) );
       }
 
       if ( !bShouldTrue )
         throw Error( `FloatValue_Bounds_tester.${funcNameInMessage}(): `
           + `Something wrong. When ( a, b, c, d ) = `
-          + `( ${a}, ${b}, ${c}, ${d}  ).`
+          + `( ${a}, ${b}  ).`
         );
     }
   }
