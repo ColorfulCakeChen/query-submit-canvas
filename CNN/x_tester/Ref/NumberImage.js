@@ -1077,8 +1077,7 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut.boundsArraySet.afterBias.enalrge_all_byIntegerPowersOfTwo();
 
     // For debug pixel value bounds.
-    imageOut.assert_pixels_byBoundsArray(
-      imageOut.boundsArraySet.afterBias );
+    imageOut.assert_pixels_byBoundsArray( imageOut.boundsArraySet.afterBias );
 
     // Activation Escaping.
     {
