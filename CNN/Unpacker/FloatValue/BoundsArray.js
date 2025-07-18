@@ -802,19 +802,19 @@ class BoundsArray extends Recyclable.Root {
   }
 
   /**
-   * @param {number} aIndex
-   *   The array index of aBoundsArray.lowers[] and aBoundsArray.uppers[].
+   * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
    *
    * @return {BoundsArray}
    *   Return this (modified) object whose bounds
    * [ .lowers[ aIndex ], .uppers[ aIndex ] ] is enlarged a little to the
    * nearest two's integer power.
    */
-  enalrge_one_byIntegerPowersOfTwo() {
+  enalrge_one_byIntegerPowersOfTwo( thisIndex ) {
     const lower = this.lowers[ thisIndex ];
     const upper = this.uppers[ thisIndex ];
     const lowerEnlarged = Bounds.enalrge_byIntegerPowersOfTwo_lower( lower );
-    const upperEnlarged = Bounds.enalrge_byIntegerPowersOfTwo_upper( upper )
+    const upperEnlarged = Bounds.enalrge_byIntegerPowersOfTwo_upper( upper );
     this.lowers[ thisIndex ] = lowerEnlarged;
     this.uppers[ thisIndex ] = upperEnlarged;
     return this;
@@ -835,6 +835,26 @@ class BoundsArray extends Recyclable.Root {
         this.lowers[ i ] = N;
       if ( this.uppers[ i ] < N )
         this.uppers[ i ] = N;
+    }
+    return this;
+  }
+!!!
+  /**
+   * @return {BoundsArray}
+   *   Return this (modified) object whose bounds [ .lowers[], .uppers[] ]
+   * is enlarged a little to the nearest two's integer power.
+   */
+  enalrge_all_byIntegerPowersOfTwo() {
+    const elementCount = this.lowers.length;
+    let lower, upper;
+    let lowerEnlarged, upperEnlarged;
+    for ( let i = 0; i < elementCount; ++i ) {
+      lower = this.lowers[ i ];
+      upper = this.uppers[ i ];
+      lowerEnlarged = Bounds.enalrge_byIntegerPowersOfTwo_lower( lower );
+      upperEnlarged = Bounds.enalrge_byIntegerPowersOfTwo_upper( upper );
+      this.lowers[ i ] = lowerEnlarged;
+      this.uppers[ i ] = upperEnlarged;
     }
     return this;
   }

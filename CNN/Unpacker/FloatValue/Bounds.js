@@ -374,7 +374,7 @@ class Bounds extends Recyclable.Root {
     const lower = this.lower;
     const upper = this.upper;
     const lowerEnlarged = Bounds.enalrge_byIntegerPowersOfTwo_lower( lower );
-    const upperEnlarged = Bounds.enalrge_byIntegerPowersOfTwo_upper( upper )
+    const upperEnlarged = Bounds.enalrge_byIntegerPowersOfTwo_upper( upper );
     this.lower = lowerEnlarged;
     this.upper = upperEnlarged;
     return this;
