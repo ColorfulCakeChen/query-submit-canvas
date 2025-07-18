@@ -391,14 +391,20 @@ class Bounds extends Recyclable.Root {
    */
   static enalrge_byIntegerPowersOfTwo_lower( lower ) {
     let lowerEnlarged;
-    if ( lower === 0 ) {
-      lowerEnlarged = - Bounds.FLOAT32_MIN_POSITIVE;
-    } else {
-      const lowerSign = Math.sign( lower );
-      const lowerAbs = Math.abs( lower );
+    if ( lower > 0 ) {
+      const lowerAbs = lower;
       const lowerLog2 = Math.log2( lowerAbs );
       const lowerLog2Floor = Math.floor( lowerLog2 );
-      lowerEnlarged = lowerSign * ( 2 ** lowerLog2Floor );
+      lowerEnlarged = ( 2 ** lowerLog2Floor );
+
+    } else if ( lower < 0 ) {
+      const lowerAbs = - lower;
+      const lowerLog2 = Math.log2( - lowerAbs );
+      const lowerLog2Ceil = Math.ceil( lowerLog2 );
+      lowerEnlarged = - ( 2 ** lowerLog2Ceil );
+
+    } else { // ( lower === 0 )
+      lowerEnlarged = - Bounds.FLOAT32_MIN_POSITIVE;
     }
     return lowerEnlarged;
   }
@@ -414,14 +420,20 @@ class Bounds extends Recyclable.Root {
    */
   static enalrge_byIntegerPowersOfTwo_upper( upper ) {
     let upperEnlarged;
-    if ( upper === 0 ) {
-      upperEnlarged = Bounds.FLOAT32_MIN_POSITIVE;
-    } else {
-      const upperSign = Math.sign( upper );
-      const upperAbs = Math.abs( upper );
+    if ( upper > 0 ) {
+      const upperAbs = upper;
       const upperLog2 = Math.log2( upperAbs );
       const upperLog2Ceil = Math.ceil( upperLog2 );
-      upperEnlarged = upperSign * ( 2 ** upperLog2Ceil );
+      upperEnlarged = ( 2 ** upperLog2Ceil );
+
+    } else if ( upper < 0 ) {
+      const upperAbs = - upper;
+      const upperLog2 = Math.log2( upperAbs );
+      const upperLog2Floor = Math.ceil( upperLog2 );
+      upperEnlarged = - ( 2 ** upperLog2Floor );
+
+    } else { // ( upper === 0 )
+      upperEnlarged = Bounds.FLOAT32_MIN_POSITIVE;
     }
     return upperEnlarged;
   }

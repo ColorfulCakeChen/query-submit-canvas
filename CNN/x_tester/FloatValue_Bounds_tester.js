@@ -923,7 +923,7 @@ function test_enalrge_byIntegerPowersOfTwo() {
       if ( !bShouldTrue )
         throw Error( `FloatValue_Bounds_tester.${funcNameInMessage}(): `
           + `Something wrong. When ( a, b ) = `
-          + `( ${a}, ${b}  ).`
+          + `( ${a}, ${b} ).`
         );
     }
   }
