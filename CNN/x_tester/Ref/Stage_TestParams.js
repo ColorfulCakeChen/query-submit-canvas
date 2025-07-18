@@ -354,12 +354,13 @@ class Stage_TestParams_Base extends TestParams.Base {
         // Stage.Params.blockCountRequested.valueDesc.range.min, // 2
         4,
         // 2
-        Stage.Params.blockCountRequested.valueDesc.range.min + 3
+        4
+        // Stage.Params.blockCountRequested.valueDesc.range.min + 3
       ],
 
       bPointwise1: [
-        Stage.Params.bPointwise1.valueDesc.range.min,
-        // Stage.Params.bPointwise1.valueDesc.range.max,
+        // Stage.Params.bPointwise1.valueDesc.range.min,
+        Stage.Params.bPointwise1.valueDesc.range.max,
         // Stage.Params.bPointwise1.valueDesc.range.min
         Stage.Params.bPointwise1.valueDesc.range.max
       ],
