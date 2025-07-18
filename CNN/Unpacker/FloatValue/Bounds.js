@@ -405,6 +405,52 @@ class Bounds extends Recyclable.Root {
     return this;
   }
 
+  /**
+   * @param {number}
+   *   The original lower of the bounds.
+   *
+   * @return {number}
+   *   Return the modified lower which is enlarged a little to the nearest
+   * two's integer power. If lower is 0 (which does not have logarithm), the
+   * largest normal negative value (of float32) will be used instead.
+   */
+  static enalrge_byIntegerPowersOfTwo_lower( lower ) {
+    let lowerEnlarged;
+    if ( lower === 0 ) {
+      lowerEnlarged = - Bounds.FLOAT32_MIN_POSITIVE;
+    } else {
+      const lowerSign = Math.sign( lower );
+      const lowerAbs = Math.abs( lower );
+      const lowerLog2 = Math.log2( lowerAbs );
+      const lowerLog2Floor = Math.floor( lowerLog2 );
+      lowerEnlarged = lowerSign * ( 2 ** lowerLog2Floor );
+    }
+    return lowerEnlarged;
+  }
+
+  /**
+   * @param {number}
+   *   The original upper of the bounds.
+   *
+   * @return {number}
+   *   Return the modified upper which is enlarged a little to the nearest
+   * two's integer power. If upper is 0 (which does not have logarithm), the
+   * smallest normal positive value (of float32) will be used instead.
+   */
+  static enalrge_byIntegerPowersOfTwo_upper( upper ) {
+    let upperEnlarged;
+    if ( upper === 0 ) {
+      upperEnlarged = Bounds.FLOAT32_MIN_POSITIVE;
+    } else {
+      const upperSign = Math.sign( upper );
+      const upperAbs = Math.abs( upper );
+      const upperLog2 = Math.log2( upperAbs );
+      const upperLog2Ceil = Math.ceil( upperLog2 );
+      upperEnlarged = upperSign * ( 2 ** upperLog2Ceil );
+    }
+    return upperEnlarged;
+  }
+
 
   /**
    * @param {number} aLower

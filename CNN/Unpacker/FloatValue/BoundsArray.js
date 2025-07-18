@@ -816,7 +816,7 @@ class BoundsArray extends Recyclable.Root {
 
     // Note: If 0, use the smallest absolute value (of float32) instead
     //       because 0 does not have logarithm.
-
+!!!
     let lowerEnlarged;
     if ( lower === 0 ) {
       lowerEnlarged = - Bounds.FLOAT32_MIN_POSITIVE;
