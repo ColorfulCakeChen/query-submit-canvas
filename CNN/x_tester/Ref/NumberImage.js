@@ -460,6 +460,19 @@ class NumberImage_Base extends Recyclable.Root {
       tBounds = null;
     }
 
+    // If no bias (after convolution/pooling), enlarge both .afterFilter and
+    // .afterBias value bounds a little (before activation) for
+    // non-pass-through channels.
+    //
+    // (Please see operation depthwise's and pointwise's
+    // .set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale())
+    //
+    // (2025/07/18)
+    if ( !bBias ) {
+      if ( !bPassThrough )
+        imageOut.boundsArraySet.afterFilter.enalrge_all_byIntegerPowersOfTwo();
+    }
+
     // For debug pixel value bounds.
     imageOut.assert_pixels_byBoundsArray(
       imageOut.boundsArraySet.afterFilter );
@@ -1015,6 +1028,19 @@ class NumberImage_Base extends Recyclable.Root {
       tBounds.disposeResources_and_recycleToPool();
       tBounds = null;
 
+      // If no bias (after convolution/pooling), enlarge both .afterFilter and
+      // .afterBias value bounds a little (before activation) for
+      // non-pass-through channels.
+      //
+      // (Please see operation depthwise's and pointwise's
+      // .set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale())
+      //
+      // (2025/07/18)
+      if ( !bBias ) {
+        if ( !bPassThrough )
+          imageOut.boundsArraySet.afterFilter.enalrge_all_byIntegerPowersOfTwo();
+      }
+
     } else { // For maximum pooling, the value bounds will not change.
       imageOut.boundsArraySet.afterFilter.set_all_byBoundsArray(
         imageOut.boundsArraySet.afterUndoPreviousActivationEscaping );
@@ -1165,19 +1191,6 @@ class NumberImage_Base extends Recyclable.Root {
     bTableLog, parametersDesc, ...biasNames ) {
 
     let imageIn = this;
-
-    if ( !bBias ) {
-      // If no bias (after convolution/pooling), enlarge both .afterFilter and
-      // .afterBias value bounds a little (before activation) for
-      // non-pass-through channels.
-      //
-      // (Please see operation depthwise's and pointwise's
-      // .set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale())
-      //
-      // (2025/07/18)
-      if ( !bPassThrough )
-        imageIn.boundsArraySet.afterFilter.enalrge_all_byIntegerPowersOfTwo();
-    }
 
     imageIn.boundsArraySet.afterBias.set_all_byBoundsArray(
       imageIn.boundsArraySet.afterFilter );
