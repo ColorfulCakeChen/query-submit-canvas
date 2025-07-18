@@ -1217,9 +1217,10 @@ class NumberImage_Base extends Recyclable.Root {
         .fround_one( channel );
     }
 
-    // Enlarge the value bounds a little (before activation escaping) for
+    // Enlarge the value bounds (.afterBias) a little (before activation) for
     // non-pass-through chnnels.
     //
+???
     // Because the accumulated error in backend webgl, the convolution (i.e.
     // many multiply and addition) result may exceeds the value bounds (which
     // is calculated here (i.e. by CPU (not by GPU)). This will result in
