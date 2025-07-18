@@ -26,6 +26,9 @@ class Bounds extends Recyclable.Root {
   static Pool = new Pool.Root( "FloatValue.Bounds.Pool",
     Bounds );
 
+  /** The minimum positive normal value of float32 ( 2 ** ( -126 ) ). */
+  static FLOAT32_MIN_POSITIVE = 2 ** ( -126 );
+
   /**
    */
   constructor( lower, upper ) {
@@ -368,16 +371,38 @@ class Bounds extends Recyclable.Root {
    * nearest two's integer power.
    */
   enalrge_byIntegerPowersOfTwo() {
+    const lower = this.lower;
+    const upper = this.upper;
 
-!!! ...unfinished... (2025/07/18)
-// What if lower or upper is 0?
+    // Note: If 0, use the smallest absolute value (of float32) instead
+    //       because 0 does not have logarithm.
 
-    const lowerSign = Math.sign( lower );
-    const upperSign = Math.sign( upper );
-     [ sign( lower ) * ( 2 ** Math.floor( Math.log2( lower ) ) ), sign( upper ) * ( 2 ** Math.ceil( Math.log2( upper ) ) ) ] 
+    let lowerEnlarged;
+    if ( lower === 0 ) {
+      lowerEnlarged = - Bounds.FLOAT32_MIN_POSITIVE;
+    } else {
+      const lowerSign = Math.sign( lower );
+      const lowerAbs = Math.abs( lower );
+      const lowerLog2 = Math.log2( lowerAbs );
+      const lowerLog2Floor = Math.floor( lowerLog2 );
+      lowerEnlarged = lowerSign * ( 2 ** lowerLog2Floor );
+    }
+
+    let upperEnlarged;
+    if ( upper === 0 ) {
+      upperEnlarged = Bounds.FLOAT32_MIN_POSITIVE;
+    } else {
+      const upperSign = Math.sign( upper );
+      const upperAbs = Math.abs( upper );
+      const upperLog2 = Math.log2( upperAbs );
+      const upperLog2Ceil = Math.ceil( upperLog2 );
+      upperEnlarged = upperSign * ( 2 ** upperLog2Ceil );
+    }
+
+    this.lower = lowerEnlarged;
+    this.upper = upperEnlarged;
 
     return this;
-
   }
 
 
