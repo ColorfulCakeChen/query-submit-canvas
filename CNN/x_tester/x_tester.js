@@ -41,13 +41,13 @@ const gTestGeneratorFuncMap = new Map( [
   // [ Float12_tester.tester, true ],
   // [ Uint12_tester.tester, true ],
 
-  [ FloatValue_Bounds_tester.tester, true ],
+  // [ FloatValue_Bounds_tester.tester, true ],
   // [ FloatValue_ScaleTranslate_tester.tester, true ],
   // [ BoundsArraySet_tester.tester, true ],
 
   // [ HierarchicalNameable_tester.tester, true ],
 
-  // [ CNN_Block_tester.tester, true ],
+  [ CNN_Block_tester.tester, true ],
   // [ CNN_Embedding_tester.tester, true ],
   // [ CNN_NeuralNet_tester.tester, true ],
   // [ CNN_Operation_tester.tester, true ],
