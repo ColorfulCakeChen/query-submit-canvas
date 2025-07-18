@@ -429,7 +429,7 @@ class Bounds extends Recyclable.Root {
     } else if ( upper < 0 ) {
       const upperAbs = - upper;
       const upperLog2 = Math.log2( upperAbs );
-      const upperLog2Floor = Math.ceil( upperLog2 );
+      const upperLog2Floor = Math.floor( upperLog2 );
       upperEnlarged = - ( 2 ** upperLog2Floor );
 
     } else { // ( upper === 0 )
