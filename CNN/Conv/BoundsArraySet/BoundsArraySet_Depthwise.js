@@ -65,7 +65,7 @@ class Depthwise extends ConvBiasActivation {
    *   Return the this object.
    */
   set_bPassThroughArray_all_byChannelPartInfoArray( aFiltersBiasesPartInfoArray ) {
-    
+
     // [ inChannelBegin, inChannelEnd ) are input channels of the current
     // FiltersBiasesPart.
     let inChannelBegin = 0, inChannelEnd = 0;

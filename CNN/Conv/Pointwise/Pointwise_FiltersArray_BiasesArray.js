@@ -561,11 +561,11 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
         // Round 1
         {
-          this.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
-            inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray,
+          this.boundsArraySet.set_bPassThroughArray_all_byChannelPartInfoArray(
             aFiltersBiasesPartInfoArray );
 
-          this.boundsArraySet.set_bPassThroughArray_all_byChannelPartInfoArray(
+          this.set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale(
+            inputWeightArray, weightElementOffsetBegin, inputScaleBoundsArray,
             aFiltersBiasesPartInfoArray );
 
           // Determine .activationEscaping_ScaleArraySet,
