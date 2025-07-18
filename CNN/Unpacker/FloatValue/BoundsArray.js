@@ -838,7 +838,7 @@ class BoundsArray extends Recyclable.Root {
     }
     return this;
   }
-!!!
+
   /**
    * @return {BoundsArray}
    *   Return this (modified) object whose bounds [ .lowers[], .uppers[] ]
