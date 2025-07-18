@@ -1164,6 +1164,14 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( !bBias ) {
 
+
+!!! ...unfinished... (2025/07/18)
+// if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ),
+// do not enlarge value bounds for channels with ( bPassThrough == true )
+// because these channels are just passed-through to next operation (i.e.
+// its multiplication will not increase accumuation error).
+
+
       // Even if no bias (after convolution/pooling), it still needs enlarge
       // the value bounds a little (before activation escaping).
       //
@@ -1213,6 +1221,14 @@ class NumberImage_Base extends Recyclable.Root {
         .add_one_byN( channel, biasValue )
         .fround_one( channel );
     }
+
+
+!!! ...unfinished... (2025/07/18)
+// if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ),
+// do not enlarge value bounds for channels with ( bPassThrough == true )
+// because these channels are just passed-through to next operation (i.e.
+// its multiplication will not increase accumuation error).
+
 
     // Enlarge the value bounds a little (before activation escaping).
     //

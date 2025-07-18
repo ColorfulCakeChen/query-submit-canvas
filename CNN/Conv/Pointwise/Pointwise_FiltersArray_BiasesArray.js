@@ -879,6 +879,14 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       this.boundsArraySet.afterBias
         .set_all_byBoundsArray( this.boundsArraySet.afterFilter );
 
+
+!!! ...unfinished... (2025/07/18)
+// if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ),
+// do not enlarge value bounds for channels with ( bPassThrough == true )
+// because these channels are just passed-through to next operation (i.e.
+// its multiplication will not increase accumuation error).
+
+
     // 4. Enlarge the value bounds a little (before activation escaping).
     //
     // Because the accumulated error in backend webgl, the convolution (i.e.
