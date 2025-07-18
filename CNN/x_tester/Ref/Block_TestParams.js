@@ -303,8 +303,8 @@ class Block_TestParams_Base extends TestParams.Base {
     // will be generated.
     let valueOutMinMax = this.valueOutMinMax = {
       input0_height: [
-        1,
-        // 2,
+        // 1,
+        2,
         // 3,
         // 1
         // 2
@@ -313,8 +313,8 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
       input0_width: [
-        1,
-        // 2,
+        // 1,
+        2,
         // 3,
         // 4,
         // 1
@@ -323,8 +323,8 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
       input0_channelCount: [
-        1,
-        // 2,
+        // 1,
+        2,
         // 3,
         // 3
         // 1
