@@ -337,6 +337,9 @@ class ConvBiasActivation extends InputsOutputs {
   adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThroughArray_nActivationId(
     nActivationId ) {
 
+    const funcNameInMessage
+      = "adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThroughArray_nActivationId";
+
     const theActivationFunctionInfo
       = ValueDesc.ActivationFunction.Singleton.getInfo_byId( nActivationId );
 
@@ -410,7 +413,7 @@ class ConvBiasActivation extends InputsOutputs {
               doEscapingScale = this.output0.scaleArraySet.do.scales[ outChannel ];
               if ( Number.isNaN( doEscapingScale ) == true )
                 throw Error( `BoundsArraySet.ConvBiasActivation`
-                  + `.adjust_afterFilter_afterBias_set_output0_by_afterBias_bPassThroughArray_nActivationId( `
+                  + `.${funcNameInMessage}( `
                     + `${ValueDesc.ActivationFunction.Singleton.getNameWithInt_byId( nActivationId )} ): `
                   + `this.output0.scaleArraySet.do.scales[ ${outChannel} ] `
                   + `( ${doEscapingScale} ) should not be NaN. `
