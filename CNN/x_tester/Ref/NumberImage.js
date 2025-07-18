@@ -1167,9 +1167,12 @@ class NumberImage_Base extends Recyclable.Root {
     let imageIn = this;
 
     if ( !bBias ) {
-      // If no bias (after convolution/pooling), enlarge the value bounds
-      // (.afterFilter) a little (before activation) for non-pass-through
-      // chnnels.
+      // If no bias (after convolution/pooling), enlarge both .afterFilter and
+      // .afterBias value bounds a little (before activation) for
+      // non-pass-through channels.
+      //
+      // (Please see operation depthwise's and pointwise's
+      // .set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale())
       //
       // (2025/07/18)
       if ( !bPassThrough )
@@ -1217,21 +1220,12 @@ class NumberImage_Base extends Recyclable.Root {
         .fround_one( channel );
     }
 
-    // Enlarge the value bounds (.afterBias) a little (before activation) for
-    // non-pass-through chnnels.
+    // Enlarge only .afterBias value bounds a little (before activation) for
+    // non-pass-through channels.
     //
-???
-    // Because the accumulated error in backend webgl, the convolution (i.e.
-    // many multiply and addition) result may exceeds the value bounds (which
-    // is calculated here (i.e. by CPU (not by GPU)). This will result in
-    // activation escaping failed. So, enlarge the value bounds to alleviate
-    // this issue.
+    // (Please see operation depthwise's and pointwise's
+    // .set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale())
     //
-    // However, for pass-through channels, they are just passed through to the
-    // next operation (i.e. not increase accumuation error). So, do not change
-    // their value bounds.
-    //
-    // (2025/07/18)
     if ( !bPassThrough )
       imageIn.boundsArraySet.afterBias.enalrge_all_byIntegerPowersOfTwo();
 

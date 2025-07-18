@@ -1047,19 +1047,21 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     //     has been visited totally.
     //
     // Q2: Why enlarge the value bounds a little (before activation) for
-    //     non-pass-through chnnels.
+    //     non-pass-through channels.
     // A2: To alleviate the accumulation error (between backend webgl and cpu).
     //     Because many multiplication and addition (i.e. convolution and bias)
     //     accumulate large error (calculated by GPU), the result values may
     //     exceed their bounds (calculated here (i.e. by CPU (not by GPU)).
     //
-    //     However, for pass-through channels, they are just passed through to
-    //     the next operation (i.e. will not increase accumulation error). So,
-    //     do not change their value bounds. Otheriwse, bounds will be not
-    //     matched between SHUFFLE_NET_V2 and SHUFFLE_NET_V2_BY_MOBILE_NET_V1.
+    // Q3: Why only enlarge the value bounds for non-pass-through channels.
+    // A3: For pass-through channels, they are just passed through to the next
+    //     operation (i.e. will not increase accumulation error). So, do not
+    //     change their value bounds. Otheriwse, the bounds will be mismatched
+    //     between SHUFFLE_NET_V2 and SHUFFLE_NET_V2_BY_MOBILE_NET_V1.
     //
-    //     Note: Activation function (no matter whether activation escaping)
-    //           may reduce accumulation error because it re-calibrates bounds.
+    // Q4: Why enlarge the value bounds before activation?
+    // A4: Activation function (no matter whether activation escaping) could
+    //     reduce accumulation error because it re-calibrates bounds.
     //
     // (2025/07/18)
 
