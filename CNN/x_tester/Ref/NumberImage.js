@@ -486,6 +486,7 @@ class NumberImage_Base extends Recyclable.Root {
 
     // Bias
     imageOut.modify_byBias( bPointwiseBias, pointwiseBiasesArray,
+      bPassThrough,
       bTableLog, parametersDesc, ...pointwiseNames, "bias" );
 
     // For debug pixel value bounds.
@@ -1050,8 +1051,8 @@ class NumberImage_Base extends Recyclable.Root {
     }
 
     // Bias
-    imageOut.modify_byBias(
-      bDepthwiseBias, depthwiseBiasesArray,
+    imageOut.modify_byBias( bDepthwiseBias, depthwiseBiasesArray,
+      bPassThrough,
       bTableLog, parametersDesc, ...depthwiseNames, "bias" );
 
     // For debug pixel value bounds.
@@ -1141,6 +1142,11 @@ class NumberImage_Base extends Recyclable.Root {
    * @param {number[]} biasesArray
    *   The bias values.
    *
+   * @param {boolean} bPassThrough
+   *   If true, the value bounds will not be enlarged to the nearest integer
+   * powers of two (because they are just passed-through and will not increase
+   * accumulation error).
+   *
    * @param {boolean} bTableLog
    *   If true, the process and result will be logged to console as table (for
    * debug).
@@ -1155,6 +1161,7 @@ class NumberImage_Base extends Recyclable.Root {
    *   Return this which may or may not be added bias (according to bBias).
    */
   modify_byBias( bBias, biasesArray,
+    bPassThrough,
     bTableLog, parametersDesc, ...biasNames ) {
 
     let imageIn = this;
@@ -1164,16 +1171,9 @@ class NumberImage_Base extends Recyclable.Root {
 
     if ( !bBias ) {
 
-
-!!! ...unfinished... (2025/07/18)
-// if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ),
-// do not enlarge value bounds for channels with ( bPassThrough == true )
-// because these channels are just passed-through to next operation (i.e.
-// its multiplication will not increase accumuation error).
-
-
       // Even if no bias (after convolution/pooling), it still needs enlarge
-      // the value bounds a little (before activation escaping).
+      // the value bounds a little (before activation escaping) for
+      // non-pass-through chnnels.
       //
       // Because the accumulated error in backend webgl, the convolution (i.e.
       // many multiply and addition) result may exceeds the value bounds (which
@@ -1182,7 +1182,8 @@ class NumberImage_Base extends Recyclable.Root {
       // this issue.
       //
       // (2025/07/18)
-      imageIn.boundsArraySet.afterBias.enalrge_all_byIntegerPowersOfTwo();
+      if ( !bPassThrough )
+        imageIn.boundsArraySet.afterBias.enalrge_all_byIntegerPowersOfTwo();
 
       return imageIn;
     }
@@ -1222,15 +1223,8 @@ class NumberImage_Base extends Recyclable.Root {
         .fround_one( channel );
     }
 
-
-!!! ...unfinished... (2025/07/18)
-// if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ),
-// do not enlarge value bounds for channels with ( bPassThrough == true )
-// because these channels are just passed-through to next operation (i.e.
-// its multiplication will not increase accumuation error).
-
-
-    // Enlarge the value bounds a little (before activation escaping).
+    // Enlarge the value bounds a little (before activation escaping) for
+    // non-pass-through chnnels.
     //
     // Because the accumulated error in backend webgl, the convolution (i.e.
     // many multiply and addition) result may exceeds the value bounds (which
@@ -1239,7 +1233,8 @@ class NumberImage_Base extends Recyclable.Root {
     // this issue.
     //
     // (2025/07/18)
-    imageIn.boundsArraySet.afterBias.enalrge_all_byIntegerPowersOfTwo();
+    if ( !bPassThrough )
+      imageIn.boundsArraySet.afterBias.enalrge_all_byIntegerPowersOfTwo();
 
     if ( bTableLog ) {
       console.groupCollapsed( `${biasNames[ biasNames.length - 1 ]}` );
