@@ -468,7 +468,7 @@ class NumberImage_Base extends Recyclable.Root {
     // .set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale())
     //
     // (2025/07/18)
-    if ( !bBias ) {
+    if ( !bPointwiseBias ) {
       if ( !bPassThrough )
         imageOut.boundsArraySet.afterFilter.enalrge_all_byIntegerPowersOfTwo();
     }
@@ -1028,22 +1028,22 @@ class NumberImage_Base extends Recyclable.Root {
       tBounds.disposeResources_and_recycleToPool();
       tBounds = null;
 
-      // If no bias (after convolution/pooling), enlarge both .afterFilter and
-      // .afterBias value bounds a little (before activation) for
-      // non-pass-through channels.
-      //
-      // (Please see operation depthwise's and pointwise's
-      // .set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale())
-      //
-      // (2025/07/18)
-      if ( !bBias ) {
-        if ( !bPassThrough )
-          imageOut.boundsArraySet.afterFilter.enalrge_all_byIntegerPowersOfTwo();
-      }
-
     } else { // For maximum pooling, the value bounds will not change.
       imageOut.boundsArraySet.afterFilter.set_all_byBoundsArray(
         imageOut.boundsArraySet.afterUndoPreviousActivationEscaping );
+    }
+
+    // If no bias (after convolution/pooling), enlarge both .afterFilter and
+    // .afterBias value bounds a little (before activation) for
+    // non-pass-through channels.
+    //
+    // (Please see operation depthwise's and pointwise's
+    // .set_filtersArray_biasesArray_afterFilter_afterBias_apply_undoPreviousEscapingScale())
+    //
+    // (2025/07/18)
+    if ( !bDepthwiseBias ) {
+      if ( !bPassThrough )
+        imageOut.boundsArraySet.afterFilter.enalrge_all_byIntegerPowersOfTwo();
     }
 
     // For debug pixel value bounds.
