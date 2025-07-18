@@ -690,6 +690,10 @@ function test_enlarge_contain_in() {
   let cBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
   let dBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
 
+  // The value 0.05 can not be precisely represented by float32. That is,
+  // ( Math.fround( 0.05 ) !== 0.05 ).
+  const delta_number = 0.05;
+
 !!! ...unfinishd... (2025/07/18)
 // Use non-integer.
 // Test enalrge_byIntegerPowersOfTwo()
