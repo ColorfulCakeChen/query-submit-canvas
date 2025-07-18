@@ -694,11 +694,6 @@ function test_enlarge_contain_in() {
   // ( Math.fround( 0.05 ) !== 0.05 ).
   const delta_number = 0.05;
 
-!!! ...unfinishd... (2025/07/18)
-// Use non-integer.
-// Test enalrge_byIntegerPowersOfTwo()
-// (should contain original bounds too)
-
   for ( let a = -2; a <= +2; ++a )
     for ( let b = -2; b <= +2; ++b )
       for ( let c = -2; c <= +2; ++c )
@@ -824,6 +819,16 @@ function test_enlarge_contain_in() {
             aBoundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
             aBoundsArray.enlarge_all_byN( a );
             bShouldTrue &&= aBoundsArray.is_all_contain_N( a );
+          }
+
+!!! ...unfinishd... (2025/07/18)
+// Test integer, non-integer and 0.
+// Test enalrge_byIntegerPowersOfTwo()
+// (should contain original bounds too)
+//
+// Test ( a.is_contain_Bounds( b ) ) and !( b.is_contain_Bounds( a ) )
+          {
+
           }
 
           if ( !bShouldTrue )
