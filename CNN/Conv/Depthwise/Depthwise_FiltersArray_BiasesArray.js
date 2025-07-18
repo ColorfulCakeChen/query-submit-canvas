@@ -1054,6 +1054,17 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       this.boundsArraySet.afterBias
         .set_all_byBoundsArray( this.boundsArraySet.afterFilter );
 
+    // 4. Enlarge the value bounds a little (before activation escaping).
+    //
+    // Because the accumulated error in backend webgl, the convolution (i.e.
+    // many multiply and addition) result may exceeds the value bounds (which
+    // is calculated here (i.e. by CPU (not by GPU)). This will result in
+    // activation escaping failed. So, enlarge the value bounds to alleviate
+    // this issue.
+    //
+    // (2025/07/18)
+    this.boundsArraySet.afterBias.enalrge_all_byIntegerPowersOfTwo();
+
     if ( inChannelEnd != this.inputChannelCount )
       throw Error( `Depthwise.FiltersArray_BiasesArray`
         + `.${funcNameInMessage}(): `
