@@ -362,6 +362,24 @@ class Bounds extends Recyclable.Root {
       aBoundsArray.lowers[ aIndex ], aBoundsArray.uppers[ aIndex ] );
   }
 
+  /**
+   * @return {Bounds}
+   *   Return this (modified) object whose range is enlarged a little to the
+   * nearest two's integer power.
+   */
+  enalrge_byIntegerPowersOfTwo() {
+
+!!! ...unfinished... (2025/07/18)
+// What if lower or upper is 0?
+
+    const lowerSign = Math.sign( lower );
+    const upperSign = Math.sign( upper );
+     [ sign( lower ) * ( 2 ** Math.floor( Math.log2( lower ) ) ), sign( upper ) * ( 2 ** Math.ceil( Math.log2( upper ) ) ) ] 
+
+    return this;
+
+  }
+
 
   /**
    * @param {number} aLower

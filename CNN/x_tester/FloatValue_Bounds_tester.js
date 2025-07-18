@@ -690,6 +690,11 @@ function test_enlarge_contain_in() {
   let cBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
   let dBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
 
+!!! ...unfinishd... (2025/07/18)
+// Use non-integer.
+// Test enalrge_byIntegerPowersOfTwo()
+// (should contain original bounds too)
+
   for ( let a = -2; a <= +2; ++a )
     for ( let b = -2; b <= +2; ++b )
       for ( let c = -2; c <= +2; ++c )
