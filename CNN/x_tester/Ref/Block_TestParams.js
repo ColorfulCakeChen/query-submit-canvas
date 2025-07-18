@@ -362,8 +362,8 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
       pointwise1ChannelCount: [
-        0,
-        // 1,
+        // 0,
+        1,
         // 2,
         // 3,
         // 1
