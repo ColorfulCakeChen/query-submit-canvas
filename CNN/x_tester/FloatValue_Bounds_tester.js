@@ -79,14 +79,14 @@ class Case {
       let clampedValue = this.aBounds.clamp_or_zeroIfNaN( randValue );
 
       if ( Number.isNaN( clampedValue ) == true )
-        throw Error( `jsPerf_FloatValue_Bounds.Cases()`
+        throw Error( `FloatValue_Bounds_tester.Cases()`
           + `.one_clamp_or_zeroIfNaN(): `
           + `clamp ( ${randValue} ) got ( ${clampedValue} ) `
           + `should never be NaN.` );
 
       if (   ( clampedValue < this.aBounds.lower )
           || ( clampedValue > this.aBounds.upper ) )
-        throw Error( `jsPerf_FloatValue_Bounds.Cases()`
+        throw Error( `FloatValue_Bounds_tester.Cases()`
           + `.one_clamp_or_zeroIfNaN(): `
           + `clamp ( ${randValue} ) got ( ${clampedValue} ) should between `
           + `[ ${this.aBounds.lower}, ${this.aBounds.upper} ].` );
@@ -127,7 +127,7 @@ class Case {
 
     let thisValue = this[ strBoundsTestName ][ lower_or_upper_name ];
     if ( thisValue != rhsArrayValue )
-      throw Error( `jsPerf_FloatValue_Bounds.testCorrectness(): `
+      throw Error( `FloatValue_Bounds_tester.testCorrectness(): `
         + `Case( caseId = ${this.caseId} )`
         + `.${strBoundsTestName}.${lower_or_upper_name} `
         + `( ${thisValue} ) should be ( ${rhsArrayValue} ).` );
@@ -593,7 +593,7 @@ class Cases {
               .clamp_or_zeroIfNaN( randValue );
 
         if ( lhsValue != rhsValue )
-          throw Error( `jsPerf_FloatValue_Bounds.Cases()`
+          throw Error( `FloatValue_Bounds_tester.Cases()`
             + `.one_clamp_or_zeroIfNaN(): `
             + `lhsValue ( ${lhsValue} ) should be rhsValue ( ${rhsValue} ).` );
       }
@@ -669,7 +669,7 @@ class Cases {
       [ lowers_or_uppers_name ][ lhsArrayIndex ];
 
     if ( thisValue != rhsArrayValue )
-      throw Error( `jsPerf_FloatValue_Bounds.testCorrectness(): `
+      throw Error( `FloatValue_Bounds_tester.testCorrectness(): `
         + `Cases( casesId = ${this.casesId} )`
         + `.${strBoundsArrayTestName}.${lowers_or_uppers_name}`
         + `[ ${lhsArrayIndex} ] `
@@ -679,7 +679,11 @@ class Cases {
 }
 
 
+/**
+ *
+ */
 function test_enlarge_contain_in() {
+  const funcNameInMessage = "test_enlarge_contain_in";
 
   let aBounds = FloatValue.Bounds.Pool.get_or_create_by();
   let bBounds = FloatValue.Bounds.Pool.get_or_create_by();
@@ -689,10 +693,6 @@ function test_enlarge_contain_in() {
   let bBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
   let cBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
   let dBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
-
-  // The value 0.05 can not be precisely represented by float32. That is,
-  // ( Math.fround( 0.05 ) !== 0.05 ).
-  const delta_number = 0.05;
 
   for ( let a = -2; a <= +2; ++a )
     for ( let b = -2; b <= +2; ++b )
@@ -821,22 +821,220 @@ function test_enlarge_contain_in() {
             bShouldTrue &&= aBoundsArray.is_all_contain_N( a );
           }
 
+          if ( !bShouldTrue )
+            throw Error( `FloatValue_Bounds_tester.${funcNameInMessage}(): `
+              + `Something wrong. When ( a, b, c, d ) = `
+              + `( ${a}, ${b}, ${c}, ${d}  ).`
+            );
+        }
+
+  aBounds.disposeResources_and_recycleToPool(); aBounds = null;
+  bBounds.disposeResources_and_recycleToPool(); bBounds = null;
+  cBounds.disposeResources_and_recycleToPool(); cBounds = null;
+  dBounds.disposeResources_and_recycleToPool(); dBounds = null;
+  aBoundsArray.disposeResources_and_recycleToPool(); aBoundsArray = null;
+  bBoundsArray.disposeResources_and_recycleToPool(); bBoundsArray = null;
+  cBoundsArray.disposeResources_and_recycleToPool(); cBoundsArray = null;
+  dBoundsArray.disposeResources_and_recycleToPool(); dBoundsArray = null;
+}
+
+/**
+ *
+ */
+function test_enalrge_byIntegerPowersOfTwo() {
+  const funcNameInMessage = "test_enalrge_byIntegerPowersOfTwo";
+
+  let aBounds = FloatValue.Bounds.Pool.get_or_create_by();
+  let bBounds = FloatValue.Bounds.Pool.get_or_create_by();
+  let cBounds = FloatValue.Bounds.Pool.get_or_create_by();
+  let dBounds = FloatValue.Bounds.Pool.get_or_create_by();
+  let aBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
+  let bBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
+  let cBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
+  let dBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
+
+  // The value 0.05 can not be precisely represented by float32. That is,
+  // ( Math.fround( 0.05 ) !== 0.05 ).
+  const delta_number = 0.05;
+
+  for ( let a = -2; a <= +2; ++a ) {
+    for ( let b = -2; b <= +2; ++b ) {
+      const a_non_integer = a - delta_number;
+      const b_non_integer = b + delta_number;
+
+      aBounds.set_byLowerUpper( a, b );
+
+      let bShouldTrue = true;
+
+      { // Integer
+        bBounds.set_byBounds( aBounds );
+        bBounds.enalrge_byIntegerPowersOfTwo();
+
+        bShouldTrue &&= (  bBounds.is_contain_Bounds( aBounds ) );
+        bShouldTrue &&= ( !aBounds.is_contain_Bounds( bBounds ) );
+      }
+
+      { // Non-Integer
+        cBounds.set_byLowerUpper( a_non_integer, b_non_integer );
+        dBounds.set_byBounds( cBounds );
+        dBounds.enalrge_byIntegerPowersOfTwo();
+
+        bShouldTrue &&= (  dBounds.is_contain_Bounds( cBounds ) );
+        bShouldTrue &&= ( !cBounds.is_contain_Bounds( dBounds ) );
+      }
+
+      { // Integer in array.
+        aBoundsArray.set_one_byLowerUpper( 0, a, b );
+        bBoundsArray.set_one_byBoundsArray( 0, aBoundsArray, 0 );
+        bBoundsArray.enalrge_one_byIntegerPowersOfTwo( 0 );
+
+        bShouldTrue &&= (  bBoundsArray.is_one_contain_BoundsArray_one( 0, aBoundsArray, 0 ) );
+        bShouldTrue &&= ( !aBoundsArray.is_one_contain_BoundsArray_one( 0, bBoundsArray, 0 ) );
+      }
+
+      { // Integer in array.
+        aBoundsArray.set_one_byLowerUpper( 1, a_non_integer, b_non_integer );
+        bBoundsArray.set_one_byBoundsArray( 1, aBoundsArray, 1 );
+        bBoundsArray.enalrge_one_byIntegerPowersOfTwo( 1 );
+
+        bShouldTrue &&= (  bBoundsArray.is_one_contain_BoundsArray_one( 1, aBoundsArray, 1 ) );
+        bShouldTrue &&= ( !aBoundsArray.is_one_contain_BoundsArray_one( 1, bBoundsArray, 1 ) );
+      }
+
+
+
+      bBoundsArray.set_one_byLowerUpper( 0, a, b );
+      bBoundsArray.set_one_byLowerUpper( 1, c, d );
+
+      cBoundsArray.set_one_byLowerUpper( 0, a, b );
+      cBoundsArray.set_one_byLowerUpper( 1, c, d );
+
+      dBoundsArray.set_one_byLowerUpper( 0, a, b );
+      dBoundsArray.set_one_byLowerUpper( 1, c, d );
+
+
+      // is_contain_Xxx(), is_in_Xxx()
+      {
+        if ( aBounds.is_contain_Bounds( bBounds ) )
+          bShouldTrue &&= bBounds.is_in_Bounds( aBounds );
+
+        if ( aBounds.is_in_Bounds( bBounds ) )
+          bShouldTrue &&= bBounds.is_contain_Bounds( aBounds );
+
+        if ( aBounds.is_contain_BoundsArray_one( aBoundsArray, 1 ) )
+          bShouldTrue &&= aBoundsArray.is_one_in_Bounds( 1, aBounds );
+
+        if ( aBounds.is_in_BoundsArray_one( aBoundsArray, 1 ) )
+          bShouldTrue &&= aBoundsArray.is_one_contain_Bounds( 1, aBounds );
+      }
+
+      if ( !aBounds.is_contain_Bounds( bBounds ) )
+        aBounds.enlarge_byN( c ).enlarge_byN( d );
+
+      bShouldTrue &&= aBounds.is_contain_N( c );
+      bShouldTrue &&= aBounds.is_contain_N( d );
+      bShouldTrue &&= aBounds.is_contain_Bounds( bBounds );
+      bShouldTrue &&= bBounds.is_in_Bounds( aBounds );
+      bShouldTrue &&= aBounds.is_contain_BoundsArray_one( bBoundsArray, 1 );
+      bShouldTrue &&= bBoundsArray.is_one_in_Bounds( 1, aBounds );
+
+      if ( !cBounds.is_contain_Bounds( bBounds ) )
+        cBounds.enlarge_byBounds( bBounds );
+
+      bShouldTrue &&= cBounds.is_contain_N( c );
+      bShouldTrue &&= cBounds.is_contain_N( d );
+      bShouldTrue &&= cBounds.is_contain_Bounds( bBounds );
+      bShouldTrue &&= bBounds.is_in_Bounds( cBounds );
+      bShouldTrue &&= cBounds.is_contain_BoundsArray_one( bBoundsArray, 1 );
+      bShouldTrue &&= bBoundsArray.is_one_in_Bounds( 1, cBounds );
+
+      if ( !dBounds.is_contain_BoundsArray_one( bBoundsArray, 1 ) )
+        dBounds.enlarge_byBoundsArray_one( bBoundsArray, 1 );
+
+      bShouldTrue &&= dBounds.is_contain_N( c );
+      bShouldTrue &&= dBounds.is_contain_N( d );
+      bShouldTrue &&= dBounds.is_contain_Bounds( bBounds );
+      bShouldTrue &&= bBounds.is_in_Bounds( dBounds );
+      bShouldTrue &&= dBounds.is_contain_BoundsArray_one( bBoundsArray, 1 );
+      bShouldTrue &&= bBoundsArray.is_one_in_Bounds( 1, dBounds );
+
+      if ( !aBoundsArray.is_one_contain_BoundsArray_one( 0, bBoundsArray, 1 ) )
+        aBoundsArray.enlarge_one_byN( 0, c ).enlarge_one_byN( 0, d );
+
+      bShouldTrue &&= aBoundsArray.is_one_contain_N( 0, c );
+      bShouldTrue &&= aBoundsArray.is_one_contain_N( 0, d );
+      bShouldTrue &&= aBoundsArray.is_one_contain_Bounds( 0, bBounds );
+      bShouldTrue &&= bBounds.is_in_BoundsArray_one( aBoundsArray, 0 );
+      bShouldTrue &&= aBoundsArray.is_one_contain_BoundsArray_one( 0,
+                        bBoundsArray, 1 );
+      bShouldTrue &&= bBoundsArray.is_one_in_BoundsArray_one( 1,
+                        aBoundsArray, 0 );
+
+      if ( !cBoundsArray.is_one_contain_BoundsArray_one( 0, bBoundsArray, 1 ) )
+        cBoundsArray.enlarge_one_byBounds( 0, bBounds );
+
+      bShouldTrue &&= cBoundsArray.is_one_contain_N( 0, c );
+      bShouldTrue &&= cBoundsArray.is_one_contain_N( 0, d );
+      bShouldTrue &&= cBoundsArray.is_one_contain_Bounds( 0, bBounds );
+      bShouldTrue &&= bBounds.is_in_BoundsArray_one( cBoundsArray, 0 );
+      bShouldTrue &&= cBoundsArray.is_one_contain_BoundsArray_one( 0,
+                        bBoundsArray, 1 );
+      bShouldTrue &&= bBoundsArray.is_one_in_BoundsArray_one( 1,
+                        cBoundsArray, 0 );
+
+      if ( !dBoundsArray.is_one_contain_BoundsArray_one( 0, bBoundsArray, 1 ) )
+        dBoundsArray.enlarge_one_byBoundsArray_one( 0, bBoundsArray, 1 );
+
+      bShouldTrue &&= dBoundsArray.is_one_contain_N( 0, c );
+      bShouldTrue &&= dBoundsArray.is_one_contain_N( 0, d );
+      bShouldTrue &&= dBoundsArray.is_one_contain_Bounds( 0, bBounds );
+      bShouldTrue &&= bBounds.is_in_BoundsArray_one( dBoundsArray, 0 );
+      bShouldTrue &&= dBoundsArray.is_one_contain_BoundsArray_one( 0,
+                        bBoundsArray, 1 );
+      bShouldTrue &&= bBoundsArray.is_one_in_BoundsArray_one( 1,
+                        dBoundsArray, 0 );
+
+      // PositiveInfinity_NegativeInfinity(), is_all_contain_Xxx(),
+      // is_all_in_Xxx()
+      {
+        aBounds.set_by_PositiveInfinity_NegativeInfinity();
+        aBounds.enlarge_byN( a ).enlarge_byN( b );
+
+        aBoundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
+        aBoundsArray.enlarge_one_byN( 0, a ).enlarge_one_byN( 0, b );
+        aBoundsArray.enlarge_one_byN( 1, a ).enlarge_one_byN( 1, b );
+        bShouldTrue &&= aBoundsArray.is_all_contain_Bounds( aBounds );
+        bShouldTrue &&= aBoundsArray.is_all_contain_BoundsArray_one(
+                          aBoundsArray, 0 );
+        bShouldTrue &&= aBoundsArray.is_all_in_Bounds( aBounds );
+        bShouldTrue &&= aBoundsArray.is_all_in_BoundsArray_one(
+                          aBoundsArray, 1 );
+      }
+
+      {
+        aBoundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
+        aBoundsArray.enlarge_all_byN( a );
+        bShouldTrue &&= aBoundsArray.is_all_contain_N( a );
+      }
+
 !!! ...unfinishd... (2025/07/18)
 // Test integer, non-integer and 0.
 // Test enalrge_byIntegerPowersOfTwo()
 // (should contain original bounds too)
 //
 // Test ( a.is_contain_Bounds( b ) ) and !( b.is_contain_Bounds( a ) )
-          {
+      {
 
-          }
+      }
 
-          if ( !bShouldTrue )
-            throw Error( `jsPerf_FloatValue_Bounds.test_enlarge_contain_in(): `
-              + `Something wrong. When ( a, b, c, d ) = `
-              + `( ${a}, ${b}, ${c}, ${d}  ).`
-            );
-        }
+
+      if ( !bShouldTrue )
+        throw Error( `FloatValue_Bounds_tester.${funcNameInMessage}(): `
+          + `Something wrong. When ( a, b, c, d ) = `
+          + `( ${a}, ${b}, ${c}, ${d}  ).`
+        );
+    }
+  }
 
   aBounds.disposeResources_and_recycleToPool(); aBounds = null;
   bBounds.disposeResources_and_recycleToPool(); bBounds = null;
@@ -923,6 +1121,7 @@ function *testerCases( progressParent ) {
   yield progressRoot;
 
   test_enlarge_contain_in();
+  test_enalrge_byIntegerPowersOfTwo();
 
   progressToAdvance.value_advance();
   yield progressRoot;
