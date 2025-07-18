@@ -332,8 +332,8 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
       nConvBlockTypeId: [
-        // Block.Params.nConvBlockTypeId.valueDesc.range.min, // (0)
-        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL, // (0)
+        Block.Params.nConvBlockTypeId.valueDesc.range.min, // (0)
+        // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL, // (0)
         // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL, // (1)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD, // (2)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY, // (3)
@@ -346,7 +346,7 @@ class Block_TestParams_Base extends TestParams.Base {
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY, // (10)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL, // (10)
 
-        ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL // (0)
+        // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL // (0)
         // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL // (1)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD // (2)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BODY // (3)
@@ -358,12 +358,12 @@ class Block_TestParams_Base extends TestParams.Base {
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD // (9)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY // (10)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL // (11)
-        // Block.Params.nConvBlockTypeId.valueDesc.range.max // (11)
+        Block.Params.nConvBlockTypeId.valueDesc.range.max // (11)
       ],
 
       pointwise1ChannelCount: [
-        // 0,
-        1,
+        0,
+        // 1,
         // 2,
         // 3,
         // 1
@@ -489,8 +489,8 @@ class Block_TestParams_Base extends TestParams.Base {
 
       bTableLog: [
         // (2025/06/04 Temp Remarked) For debug.
-        // 0, 0
-        1, 1
+        0, 0
+        // 1, 1
       ],
     };
 
