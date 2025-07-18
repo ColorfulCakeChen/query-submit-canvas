@@ -859,6 +859,34 @@ class BoundsArray extends Recyclable.Root {
     return this;
   }
 
+  /**
+   * @param {boolean[]} bPassThroughArray
+   *   A boolean array (whose .length should be the same as this.length). If
+   * true for a channel, the channel's value bounds will not be adjusted.
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object whose bounds [ .lowers[], .uppers[] ]
+   * is enlarged a little to the nearest two's integer power (except bounds
+   * with ( bPassThroughArray[ i ] == true ) ).
+   */
+  enalrge_all_byIntegerPowersOfTwo_except_PassThrough( bPassThroughArray ) {
+    const elementCount = this.lowers.length;
+    let bPassThrough;
+    let lower, upper;
+    let lowerEnlarged, upperEnlarged;
+    for ( let i = 0; i < elementCount; ++i ) {
+      bPassThrough = bPassThroughArray[ i ];
+      if ( bPassThrough )
+        continue;
+      lower = this.lowers[ i ];
+      upper = this.uppers[ i ];
+      lowerEnlarged = Bounds.enalrge_byIntegerPowersOfTwo_lower( lower );
+      upperEnlarged = Bounds.enalrge_byIntegerPowersOfTwo_upper( upper );
+      this.lowers[ i ] = lowerEnlarged;
+      this.uppers[ i ] = upperEnlarged;
+    }
+    return this;
+  }
 
   /**
    * @param {number} thisIndex
