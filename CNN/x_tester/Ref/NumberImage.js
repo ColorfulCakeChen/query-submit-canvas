@@ -488,6 +488,17 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut.modify_byBias( bPointwiseBias, pointwiseBiasesArray,
       bTableLog, parametersDesc, ...pointwiseNames, "bias" );
 
+    // Enlarge the value bounds a little (before activation escaping).
+    //
+    // Because the accumulated error in backend webgl, the convolution (i.e.
+    // many multiply and addition) result may exceeds the value bounds (which
+    // is calculated here (i.e. by CPU (not by GPU)). This will result in
+    // activation escaping failed. So, enlarge the value bounds to alleviate
+    // this issue.
+    //
+    // (2025/07/18)
+    imageOut.boundsArraySet.afterBias.enalrge_all_byIntegerPowersOfTwo();
+
     // For debug pixel value bounds.
     imageOut.assert_pixels_byBoundsArray( imageOut.boundsArraySet.afterBias );
 
@@ -1053,6 +1064,17 @@ class NumberImage_Base extends Recyclable.Root {
     imageOut.modify_byBias(
       bDepthwiseBias, depthwiseBiasesArray,
       bTableLog, parametersDesc, ...depthwiseNames, "bias" );
+
+    // Enlarge the value bounds a little (before activation escaping).
+    //
+    // Because the accumulated error in backend webgl, the convolution (i.e.
+    // many multiply and addition) result may exceeds the value bounds (which
+    // is calculated here (i.e. by CPU (not by GPU)). This will result in
+    // activation escaping failed. So, enlarge the value bounds to alleviate
+    // this issue.
+    //
+    // (2025/07/18)
+    imageOut.boundsArraySet.afterBias.enalrge_all_byIntegerPowersOfTwo();
 
     // For debug pixel value bounds.
     imageOut.assert_pixels_byBoundsArray(
