@@ -813,35 +813,10 @@ class BoundsArray extends Recyclable.Root {
   enalrge_one_byIntegerPowersOfTwo() {
     const lower = this.lowers[ thisIndex ];
     const upper = this.uppers[ thisIndex ];
-
-    // Note: If 0, use the smallest absolute value (of float32) instead
-    //       because 0 does not have logarithm.
-!!!
-    let lowerEnlarged;
-    if ( lower === 0 ) {
-      lowerEnlarged = - Bounds.FLOAT32_MIN_POSITIVE;
-    } else {
-      const lowerSign = Math.sign( lower );
-      const lowerAbs = Math.abs( lower );
-      const lowerLog2 = Math.log2( lowerAbs );
-      const lowerLog2Floor = Math.floor( lowerLog2 );
-      lowerEnlarged = lowerSign * ( 2 ** lowerLog2Floor );
-    }
-
-    let upperEnlarged;
-    if ( upper === 0 ) {
-      upperEnlarged = Bounds.FLOAT32_MIN_POSITIVE;
-    } else {
-      const upperSign = Math.sign( upper );
-      const upperAbs = Math.abs( upper );
-      const upperLog2 = Math.log2( upperAbs );
-      const upperLog2Ceil = Math.ceil( upperLog2 );
-      upperEnlarged = upperSign * ( 2 ** upperLog2Ceil );
-    }
-
+    const lowerEnlarged = Bounds.enalrge_byIntegerPowersOfTwo_lower( lower );
+    const upperEnlarged = Bounds.enalrge_byIntegerPowersOfTwo_upper( upper )
     this.lowers[ thisIndex ] = lowerEnlarged;
     this.uppers[ thisIndex ] = upperEnlarged;
-
     return this;
   }
 
