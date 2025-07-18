@@ -883,20 +883,22 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     //     do not change their value bounds. Otheriwse, bounds will be not
     //     matched between SHUFFLE_NET_V2 and SHUFFLE_NET_V2_BY_MOBILE_NET_V1.
     //
+    //     Note: Activation function (no matter whether activation escaping)
+    //           may reduce accumulation error because it re-calibrates bounds.
+    //
     // (2025/07/18)
 
     if ( this.biasesArray ) {
       this.boundsArraySet.afterBias
         .add_all_byBoundsArray( this.boundsArraySet.afterFilter )
-        .fround_all();
+        .fround_all()
 
-      // Since has bias, enlarge the .afterBias value bounds.
-      this.boundsArraySet.afterBias
+      // Since has bias, enlarge only .afterBias value bounds.
         .enalrge_all_byIntegerPowersOfTwo_exceptPassThrough(
           this.boundsArraySet.bPassThroughArray );
 
     } else {
-      // Since no bias, enlarge the .afterFilter value bounds.
+      // Since no bias, enlarge both .afterFilter and .afterBias value bounds.
       this.boundsArraySet.afterFilter
         .enalrge_all_byIntegerPowersOfTwo_exceptPassThrough(
           this.boundsArraySet.bPassThroughArray );

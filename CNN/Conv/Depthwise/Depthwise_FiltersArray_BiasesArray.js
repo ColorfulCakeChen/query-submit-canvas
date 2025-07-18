@@ -1042,36 +1042,45 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
 
     // 3. Combine .afterFilter to .afterBias.
     //
-    // Q: Why not combine when initializing .afterBias ?
-    // A: Because .afterFilter is unknown before FiltersBiasesPartInfoArray
-    //    has been visited totally.
+    // Q1: Why not combine when initializing .afterBias ?
+    // A1: Because .afterFilter is unknown before FiltersBiasesPartInfoArray
+    //     has been visited totally.
     //
-    if ( this.biasesArray )
-      this.boundsArraySet.afterBias
-        .add_all_byBoundsArray( this.boundsArraySet.afterFilter )
-        .fround_all();
-    else
-      this.boundsArraySet.afterBias
-        .set_all_byBoundsArray( this.boundsArraySet.afterFilter );
-
-    // 4. Enlarge the value bounds a little (before activation escaping) for
-    // non-pass-through chnnels.
+    // Q2: Why enlarge the value bounds a little (before activation) for
+    //     non-pass-through chnnels.
+    // A2: To alleviate the accumulation error (between backend webgl and cpu).
+    //     Because many multiplication and addition (i.e. convolution and bias)
+    //     accumulate large error (calculated by GPU), the result values may
+    //     exceed their bounds (calculated here (i.e. by CPU (not by GPU)).
     //
-    // Because the accumulated error in backend webgl, the convolution (i.e.
-    // many multiply and addition) result may exceeds the value bounds (which
-    // is calculated here (i.e. by CPU (not by GPU)). This will result in
-    // activation escaping failed. So, enlarge the value bounds to alleviate
-    // this issue.
+    //     However, for pass-through channels, they are just passed through to
+    //     the next operation (i.e. will not increase accumulation error). So,
+    //     do not change their value bounds. Otheriwse, bounds will be not
+    //     matched between SHUFFLE_NET_V2 and SHUFFLE_NET_V2_BY_MOBILE_NET_V1.
     //
-    // However, for pass-through channels, they are just passed through to the
-    // next operation (i.e. not increase accumuation error). So, do not change
-    // their value bounds.
+    //     Note: Activation function (no matter whether activation escaping)
+    //           may reduce accumulation error because it re-calibrates bounds.
     //
     // (2025/07/18)
-    this.boundsArraySet.afterBias
-      .enalrge_all_byIntegerPowersOfTwo_exceptPassThrough(
-        this.boundsArraySet.bPassThroughArray
-      );
+
+    if ( this.biasesArray ) {
+      this.boundsArraySet.afterBias
+        .add_all_byBoundsArray( this.boundsArraySet.afterFilter )
+        .fround_all()
+
+      // Since has bias, enlarge only .afterBias value bounds.
+        .enalrge_all_byIntegerPowersOfTwo_exceptPassThrough(
+          this.boundsArraySet.bPassThroughArray );
+
+    } else {
+      // Since no bias, enlarge both .afterFilter and .afterBias value bounds.
+      this.boundsArraySet.afterFilter
+        .enalrge_all_byIntegerPowersOfTwo_exceptPassThrough(
+          this.boundsArraySet.bPassThroughArray );
+
+      this.boundsArraySet.afterBias
+        .set_all_byBoundsArray( this.boundsArraySet.afterFilter );
+    }
 
     if ( inChannelEnd != this.inputChannelCount )
       throw Error( `Depthwise.FiltersArray_BiasesArray`
