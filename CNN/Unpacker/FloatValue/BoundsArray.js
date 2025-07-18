@@ -869,7 +869,7 @@ class BoundsArray extends Recyclable.Root {
    * is enlarged a little to the nearest two's integer power (except bounds
    * with ( bPassThroughArray[ i ] == true ) ).
    */
-  enalrge_all_byIntegerPowersOfTwo_except_PassThrough( bPassThroughArray ) {
+  enalrge_all_byIntegerPowersOfTwo_exceptPassThrough( bPassThroughArray ) {
     const elementCount = this.lowers.length;
     let bPassThrough;
     let lower, upper;
