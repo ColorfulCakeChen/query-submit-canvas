@@ -879,15 +879,8 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
       this.boundsArraySet.afterBias
         .set_all_byBoundsArray( this.boundsArraySet.afterFilter );
 
-
-!!! ...unfinished... (2025/07/18)
-// if ( nActivationId == ValueDesc.ActivationFunction.Singleton.Ids.NONE ),
-// do not enlarge value bounds for channels with ( bPassThrough == true )
-// because these channels are just passed-through to next operation (i.e.
-// its multiplication will not increase accumuation error).
-
-
-    // 4. Enlarge the value bounds a little (before activation escaping).
+    // 4. Enlarge the value bounds a little (before activation escaping) for
+    // non-pass-through chnnels.
     //
     // Because the accumulated error in backend webgl, the convolution (i.e.
     // many multiply and addition) result may exceeds the value bounds (which
@@ -895,8 +888,15 @@ let FiltersArray_BiasesArray = ( ParentClass = Object ) =>
     // activation escaping failed. So, enlarge the value bounds to alleviate
     // this issue.
     //
+    // However, for pass-through channels, they are just passed through to the
+    // next operation (i.e. not increase accumuation error). So, do not change
+    // their value bounds.
+    //
     // (2025/07/18)
-    this.boundsArraySet.afterBias.enalrge_all_byIntegerPowersOfTwo();
+    this.boundsArraySet.afterBias
+      .enalrge_all_byIntegerPowersOfTwo_exceptPassThrough(
+        this.boundsArraySet.bPassThroughArray
+      );
 
     if ( outChannelEnd != this.outputChannelCount )
       throw Error( `Pointwise.FiltersArray_BiasesArray`

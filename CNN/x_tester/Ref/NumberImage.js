@@ -1181,6 +1181,10 @@ class NumberImage_Base extends Recyclable.Root {
       // activation escaping failed. So, enlarge the value bounds to alleviate
       // this issue.
       //
+      // However, for pass-through channels, they are just passed through to the
+      // next operation (i.e. not increase accumuation error). So, do not change
+      // their value bounds.
+      //
       // (2025/07/18)
       if ( !bPassThrough )
         imageIn.boundsArraySet.afterBias.enalrge_all_byIntegerPowersOfTwo();
@@ -1231,6 +1235,10 @@ class NumberImage_Base extends Recyclable.Root {
     // is calculated here (i.e. by CPU (not by GPU)). This will result in
     // activation escaping failed. So, enlarge the value bounds to alleviate
     // this issue.
+    //
+    // However, for pass-through channels, they are just passed through to the
+    // next operation (i.e. not increase accumuation error). So, do not change
+    // their value bounds.
     //
     // (2025/07/18)
     if ( !bPassThrough )
