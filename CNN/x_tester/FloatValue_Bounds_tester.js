@@ -851,7 +851,7 @@ function test_enalrge_byIntegerPowersOfTwo() {
   let aBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
   let bBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
   let cBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
-  let dBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
+  // let dBoundsArray = FloatValue.BoundsArray.Pool.get_or_create_by( 2 );
 
   // The value 0.05 can not be precisely represented by float32. That is,
   // ( Math.fround( 0.05 ) !== 0.05 ).
@@ -892,7 +892,7 @@ function test_enalrge_byIntegerPowersOfTwo() {
         bShouldTrue &&= ( !aBoundsArray.is_one_contain_BoundsArray_one( 0, bBoundsArray, 0 ) );
       }
 
-      { // Integer in array.
+      { // Non-Integer in array.
         aBoundsArray.set_one_byLowerUpper( 1, a_non_integer, b_non_integer );
         bBoundsArray.set_one_byBoundsArray( 1, aBoundsArray, 1 );
         bBoundsArray.enalrge_one_byIntegerPowersOfTwo( 1 );
@@ -901,132 +901,24 @@ function test_enalrge_byIntegerPowersOfTwo() {
         bShouldTrue &&= ( !aBoundsArray.is_one_contain_BoundsArray_one( 1, bBoundsArray, 1 ) );
       }
 
+      { // Integer and Non-Integer in array.
+        cBoundsArray.set_all_byBoundsArray( aBoundsArray );
+        cBoundsArray.enalrge_all_byIntegerPowersOfTwo();
 
+        // BoundsArray contain Bounds
+        bShouldTrue &&= (  cBoundsArray.is_one_contain_Bounds( 0, aBounds ) );
+        bShouldTrue &&= ( !aBounds.is_contain_BoundsArray_one( cBoundsArray, 0 ) );
 
-      bBoundsArray.set_one_byLowerUpper( 0, a, b );
-      bBoundsArray.set_one_byLowerUpper( 1, c, d );
+        bShouldTrue &&= (  cBoundsArray.is_one_contain_Bounds( 1, cBounds ) );
+        bShouldTrue &&= ( !cBounds.is_contain_BoundsArray_one( cBoundsArray, 1 ) );
 
-      cBoundsArray.set_one_byLowerUpper( 0, a, b );
-      cBoundsArray.set_one_byLowerUpper( 1, c, d );
+        // BoundsArray contain BoundsArray
+        bShouldTrue &&= (  cBoundsArray.is_one_contain_BoundsArray_one( 0, aBoundsArray, 0 ) );
+        bShouldTrue &&= ( !aBoundsArray.is_one_contain_BoundsArray_one( 0, cBoundsArray, 0 ) );
 
-      dBoundsArray.set_one_byLowerUpper( 0, a, b );
-      dBoundsArray.set_one_byLowerUpper( 1, c, d );
-
-
-      // is_contain_Xxx(), is_in_Xxx()
-      {
-        if ( aBounds.is_contain_Bounds( bBounds ) )
-          bShouldTrue &&= bBounds.is_in_Bounds( aBounds );
-
-        if ( aBounds.is_in_Bounds( bBounds ) )
-          bShouldTrue &&= bBounds.is_contain_Bounds( aBounds );
-
-        if ( aBounds.is_contain_BoundsArray_one( aBoundsArray, 1 ) )
-          bShouldTrue &&= aBoundsArray.is_one_in_Bounds( 1, aBounds );
-
-        if ( aBounds.is_in_BoundsArray_one( aBoundsArray, 1 ) )
-          bShouldTrue &&= aBoundsArray.is_one_contain_Bounds( 1, aBounds );
+        bShouldTrue &&= (  cBoundsArray.is_one_contain_BoundsArray_one( 1, aBoundsArray, 1 ) );
+        bShouldTrue &&= ( !aBoundsArray.is_one_contain_BoundsArray_one( 1, cBoundsArray, 1 ) );
       }
-
-      if ( !aBounds.is_contain_Bounds( bBounds ) )
-        aBounds.enlarge_byN( c ).enlarge_byN( d );
-
-      bShouldTrue &&= aBounds.is_contain_N( c );
-      bShouldTrue &&= aBounds.is_contain_N( d );
-      bShouldTrue &&= aBounds.is_contain_Bounds( bBounds );
-      bShouldTrue &&= bBounds.is_in_Bounds( aBounds );
-      bShouldTrue &&= aBounds.is_contain_BoundsArray_one( bBoundsArray, 1 );
-      bShouldTrue &&= bBoundsArray.is_one_in_Bounds( 1, aBounds );
-
-      if ( !cBounds.is_contain_Bounds( bBounds ) )
-        cBounds.enlarge_byBounds( bBounds );
-
-      bShouldTrue &&= cBounds.is_contain_N( c );
-      bShouldTrue &&= cBounds.is_contain_N( d );
-      bShouldTrue &&= cBounds.is_contain_Bounds( bBounds );
-      bShouldTrue &&= bBounds.is_in_Bounds( cBounds );
-      bShouldTrue &&= cBounds.is_contain_BoundsArray_one( bBoundsArray, 1 );
-      bShouldTrue &&= bBoundsArray.is_one_in_Bounds( 1, cBounds );
-
-      if ( !dBounds.is_contain_BoundsArray_one( bBoundsArray, 1 ) )
-        dBounds.enlarge_byBoundsArray_one( bBoundsArray, 1 );
-
-      bShouldTrue &&= dBounds.is_contain_N( c );
-      bShouldTrue &&= dBounds.is_contain_N( d );
-      bShouldTrue &&= dBounds.is_contain_Bounds( bBounds );
-      bShouldTrue &&= bBounds.is_in_Bounds( dBounds );
-      bShouldTrue &&= dBounds.is_contain_BoundsArray_one( bBoundsArray, 1 );
-      bShouldTrue &&= bBoundsArray.is_one_in_Bounds( 1, dBounds );
-
-      if ( !aBoundsArray.is_one_contain_BoundsArray_one( 0, bBoundsArray, 1 ) )
-        aBoundsArray.enlarge_one_byN( 0, c ).enlarge_one_byN( 0, d );
-
-      bShouldTrue &&= aBoundsArray.is_one_contain_N( 0, c );
-      bShouldTrue &&= aBoundsArray.is_one_contain_N( 0, d );
-      bShouldTrue &&= aBoundsArray.is_one_contain_Bounds( 0, bBounds );
-      bShouldTrue &&= bBounds.is_in_BoundsArray_one( aBoundsArray, 0 );
-      bShouldTrue &&= aBoundsArray.is_one_contain_BoundsArray_one( 0,
-                        bBoundsArray, 1 );
-      bShouldTrue &&= bBoundsArray.is_one_in_BoundsArray_one( 1,
-                        aBoundsArray, 0 );
-
-      if ( !cBoundsArray.is_one_contain_BoundsArray_one( 0, bBoundsArray, 1 ) )
-        cBoundsArray.enlarge_one_byBounds( 0, bBounds );
-
-      bShouldTrue &&= cBoundsArray.is_one_contain_N( 0, c );
-      bShouldTrue &&= cBoundsArray.is_one_contain_N( 0, d );
-      bShouldTrue &&= cBoundsArray.is_one_contain_Bounds( 0, bBounds );
-      bShouldTrue &&= bBounds.is_in_BoundsArray_one( cBoundsArray, 0 );
-      bShouldTrue &&= cBoundsArray.is_one_contain_BoundsArray_one( 0,
-                        bBoundsArray, 1 );
-      bShouldTrue &&= bBoundsArray.is_one_in_BoundsArray_one( 1,
-                        cBoundsArray, 0 );
-
-      if ( !dBoundsArray.is_one_contain_BoundsArray_one( 0, bBoundsArray, 1 ) )
-        dBoundsArray.enlarge_one_byBoundsArray_one( 0, bBoundsArray, 1 );
-
-      bShouldTrue &&= dBoundsArray.is_one_contain_N( 0, c );
-      bShouldTrue &&= dBoundsArray.is_one_contain_N( 0, d );
-      bShouldTrue &&= dBoundsArray.is_one_contain_Bounds( 0, bBounds );
-      bShouldTrue &&= bBounds.is_in_BoundsArray_one( dBoundsArray, 0 );
-      bShouldTrue &&= dBoundsArray.is_one_contain_BoundsArray_one( 0,
-                        bBoundsArray, 1 );
-      bShouldTrue &&= bBoundsArray.is_one_in_BoundsArray_one( 1,
-                        dBoundsArray, 0 );
-
-      // PositiveInfinity_NegativeInfinity(), is_all_contain_Xxx(),
-      // is_all_in_Xxx()
-      {
-        aBounds.set_by_PositiveInfinity_NegativeInfinity();
-        aBounds.enlarge_byN( a ).enlarge_byN( b );
-
-        aBoundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
-        aBoundsArray.enlarge_one_byN( 0, a ).enlarge_one_byN( 0, b );
-        aBoundsArray.enlarge_one_byN( 1, a ).enlarge_one_byN( 1, b );
-        bShouldTrue &&= aBoundsArray.is_all_contain_Bounds( aBounds );
-        bShouldTrue &&= aBoundsArray.is_all_contain_BoundsArray_one(
-                          aBoundsArray, 0 );
-        bShouldTrue &&= aBoundsArray.is_all_in_Bounds( aBounds );
-        bShouldTrue &&= aBoundsArray.is_all_in_BoundsArray_one(
-                          aBoundsArray, 1 );
-      }
-
-      {
-        aBoundsArray.set_all_by_PositiveInfinity_NegativeInfinity();
-        aBoundsArray.enlarge_all_byN( a );
-        bShouldTrue &&= aBoundsArray.is_all_contain_N( a );
-      }
-
-!!! ...unfinishd... (2025/07/18)
-// Test integer, non-integer and 0.
-// Test enalrge_byIntegerPowersOfTwo()
-// (should contain original bounds too)
-//
-// Test ( a.is_contain_Bounds( b ) ) and !( b.is_contain_Bounds( a ) )
-      {
-
-      }
-
 
       if ( !bShouldTrue )
         throw Error( `FloatValue_Bounds_tester.${funcNameInMessage}(): `
@@ -1043,7 +935,7 @@ function test_enalrge_byIntegerPowersOfTwo() {
   aBoundsArray.disposeResources_and_recycleToPool(); aBoundsArray = null;
   bBoundsArray.disposeResources_and_recycleToPool(); bBoundsArray = null;
   cBoundsArray.disposeResources_and_recycleToPool(); cBoundsArray = null;
-  dBoundsArray.disposeResources_and_recycleToPool(); dBoundsArray = null;
+  // dBoundsArray.disposeResources_and_recycleToPool(); dBoundsArray = null;
 }
 
 
