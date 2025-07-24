@@ -444,8 +444,8 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
       bSqueezeExcitationPrefix: [
-        ValueDesc.Bool.Singleton.range.min,
-        // ValueDesc.Bool.Singleton.range.max,
+        // ValueDesc.Bool.Singleton.range.min,
+        ValueDesc.Bool.Singleton.range.max,
         // ValueDesc.Bool.Singleton.range.min
         ValueDesc.Bool.Singleton.range.max
       ],
