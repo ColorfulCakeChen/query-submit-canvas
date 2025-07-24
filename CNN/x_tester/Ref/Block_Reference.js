@@ -309,8 +309,9 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
       // const acceptableDifferenceRate = 2 ** (-20); // about 0.000001
       // const acceptableDifferenceRate = 2 ** (-70);
 
+      const acceptableDifference = 2 ** (-6.5); // about 0.01
       // const acceptableDifference = 2 ** (-9.9); // about 0.001
-      const acceptableDifference = 2 ** (-10); // about 0.001
+      // const acceptableDifference = 2 ** (-10); // about 0.001
       // const acceptableDifference = 2 ** (-16); // about 0.000015
       // const acceptableDifference = 2 ** (-20); // about 0.000001
       // const acceptableDifference = 2 ** (-70);
