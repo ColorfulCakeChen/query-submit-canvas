@@ -333,7 +333,7 @@ class Block_TestParams_Base extends TestParams.Base {
         // 4,
         // 1
         // 2
-        // 3
+        3
         // 4
       ],
 
