@@ -302,8 +302,9 @@ class Block_Reference_Base extends HierarchicalNameable.SeparatorSlash_Root {
 
 //!!! (2022/08/05 Temp Remarked) For debug floating-point accumulated error
     {
+      const acceptableDifferenceRate = 2 ** (-6.5); // about 0.01
       // const acceptableDifferenceRate = 2 ** (-9.9); // about 0.001
-      const acceptableDifferenceRate = 2 ** (-10); // about 0.001
+      // const acceptableDifferenceRate = 2 ** (-10); // about 0.001
       // const acceptableDifferenceRate = 2 ** (-16); // about 0.000015
       // const acceptableDifferenceRate = 2 ** (-20); // about 0.000001
       // const acceptableDifferenceRate = 2 ** (-70);
