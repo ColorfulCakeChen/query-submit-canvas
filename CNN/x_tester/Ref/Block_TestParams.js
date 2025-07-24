@@ -305,7 +305,8 @@ class Block_TestParams_Base extends TestParams.Base {
       input0_height: [
         // 1,
         // 2,
-        3,
+        // 3,
+        4,
         // 1
         // 2
         // 3
@@ -315,8 +316,8 @@ class Block_TestParams_Base extends TestParams.Base {
       input0_width: [
         // 1,
         // 2,
-        3,
-        // 4,
+        // 3,
+        4,
         // 1
         // 2
         // 3
@@ -327,6 +328,7 @@ class Block_TestParams_Base extends TestParams.Base {
         // 1,
         // 2,
         3,
+        // 4,
         // 1
         // 2
         // 3
