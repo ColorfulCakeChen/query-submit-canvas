@@ -365,28 +365,6 @@ class ConvBiasActivation extends InputsOutputs {
 
           if ( bPassThrough ) { // For channels will be activation-escaping.
 
-//!!! (2025/07/04 Remarked) Old Codes.
-// For bounds [ 0, 0 ], whether can just (like non-pass-through) let:
-//   this.output0.scaleArraySet.do.set_one_byN( outChannel, 1 );
-//   doEscapingScale = 1;
-// So that the .lowers[] and .uppers[] needs not be modified?
-// (bounds modification will result in bounds mismatched
-// between SHUFFLE_NET_V2_BY_MOBILE_NET_V1 and SHUFFLE_NET_V2. )
-//
-//             // If value bounds is [ 0, 0 ], adjust it to a range which includes
-//             // zero.
-//             //
-//             // This could happen when filters are all zero for outChannel. This
-//             // adjustment is necessary because the following
-//             // .set_one_by_fromLowerUpper_toLowerUpper() can not work for
-//             // bounds [ 0, 0 ].
-//             //
-//             if (   ( this.afterBias.lowers[ outChannel ] == 0 )
-//                 && ( this.afterBias.uppers[ outChannel ] == 0 ) ) {
-//               this.afterBias.lowers[ outChannel ] = -1;
-//               this.afterBias.uppers[ outChannel ] = +1;
-//             }
-
             // If value bounds is [ 0, 0 ], adjust it to a range which includes
             // zero.
             //
@@ -537,9 +515,6 @@ class ConvBiasActivation extends InputsOutputs {
   }
 
 
-//!!! ...unfinished... (2025/05/30)
-
-//!!! ...untested... (2025/05/28)
   /**
    * Log .bPassThroughArray, .afterUndoPreviousActivationEscaping,
    * .afterFilter, .afterBias, .afterActivation of this object as a table.
