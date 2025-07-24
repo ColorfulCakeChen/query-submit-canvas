@@ -310,7 +310,8 @@ class Block_TestParams_Base extends TestParams.Base {
         // 1
         // 2
         // 3
-        5
+        4
+        // 5
       ],
 
       input0_width: [
@@ -321,7 +322,8 @@ class Block_TestParams_Base extends TestParams.Base {
         // 1
         // 2
         // 3
-        5
+        4
+        // 5
       ],
 
       input0_channelCount: [
@@ -331,12 +333,12 @@ class Block_TestParams_Base extends TestParams.Base {
         // 4,
         // 1
         // 2
-        // 3
-        4
+        3
+        // 4
       ],
 
       nConvBlockTypeId: [
-        Block.Params.nConvBlockTypeId.valueDesc.range.min, // (0)
+        // Block.Params.nConvBlockTypeId.valueDesc.range.min, // (0)
         // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL, // (0)
         // ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V2_BODY_TAIL, // (1)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_HEAD, // (2)
@@ -346,7 +348,7 @@ class Block_TestParams_Base extends TestParams.Base {
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY, // (6)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL, // (7)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2, // (8)
-        // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD, // (9)
+        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD, // (9)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY, // (10)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL, // (11)
 
@@ -359,10 +361,10 @@ class Block_TestParams_Base extends TestParams.Base {
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_BODY // (6)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_MOBILE_NET_V1_TAIL // (7)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD_NO_DEPTHWISE2 // (8)
-        // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD // (9)
+        ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_HEAD // (9)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_BODY // (10)
         // ValueDesc.ConvBlockType.Singleton.Ids.SHUFFLE_NET_V2_BY_POINTWISE21_TAIL // (11)
-        Block.Params.nConvBlockTypeId.valueDesc.range.max // (11)
+        // Block.Params.nConvBlockTypeId.valueDesc.range.max // (11)
       ],
 
       pointwise1ChannelCount: [
@@ -370,18 +372,19 @@ class Block_TestParams_Base extends TestParams.Base {
         1,
         // 2,
         // 3,
-        // 1
+        1
         // 2
-        3
+        // 3
         // 8
       ],
 
       depthwise_AvgMax_Or_ChannelMultiplier: [
         // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.range.min,  // -2
-        ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,  // -2
+        // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG,  // -2
         // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX,  // -1
         // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.NONE, //  0
         // 1,
+        2,
 
         // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.AVG  // -2
         // ValueDesc.AvgMax_Or_ChannelMultiplier.Singleton.Ids.MAX  // -1
@@ -395,21 +398,21 @@ class Block_TestParams_Base extends TestParams.Base {
       //       tf.depthwiseConv2d() with ( depthwiseFilterWidth == 1 ).
 //!!! (2022/08/04 Temp Remarked) For debug neural net (only use 3x3).
       depthwiseFilterHeight: [
-        Block.Params.depthwiseFilterHeight.valueDesc.range.min, // 1
-        // 2,
+        // Block.Params.depthwiseFilterHeight.valueDesc.range.min, // 1
+        2,
         // 3,
         // 1
-        // 2
-        depthwiseFilterMaxSize
+        2
+        // depthwiseFilterMaxSize
       ],
 
       depthwiseFilterWidth: [
-        Block.Params.depthwiseFilterWidth.valueDesc.range.min, // 1
-        // 2,
+        // Block.Params.depthwiseFilterWidth.valueDesc.range.min, // 1
+        2,
         // 3,
         // 1
-        // 2
-        depthwiseFilterMaxSize
+        2
+        // depthwiseFilterMaxSize
       ],
 
       // (2022/05/02)
@@ -420,24 +423,24 @@ class Block_TestParams_Base extends TestParams.Base {
       //       those platforms.
       //
       depthwiseStridesPad: [
-        Block.Params.depthwiseStridesPad.valueDesc.range.min, // (0)
+        // Block.Params.depthwiseStridesPad.valueDesc.range.min, // (0)
         // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID,  // (0)
-        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME,   // (1)
+        ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME,   // (1)
         // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME,   // (2)
         // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID,  // (3)
 
         // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_VALID   // (0)
-        // ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME    // (1)
+        ValueDesc.StridesPad.Singleton.Ids.STRIDES_1_PAD_SAME    // (1)
         // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_SAME    // (2)
         // ValueDesc.StridesPad.Singleton.Ids.STRIDES_2_PAD_VALID   // (3)
-        Block.Params.depthwiseStridesPad.valueDesc.range.max // (3)
+        // Block.Params.depthwiseStridesPad.valueDesc.range.max // (3)
       ],
 
       depthwiseActivationId: [
         ValueDesc.ActivationFunction.Singleton.range.min + 0,
         // ValueDesc.ActivationFunction.Singleton.range.min + 1,
-        // ValueDesc.ActivationFunction.Singleton.range.min + 0
-        ValueDesc.ActivationFunction.Singleton.range.min + 1
+        ValueDesc.ActivationFunction.Singleton.range.min + 0
+        // ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
       bSqueezeExcitationPrefix: [
@@ -448,33 +451,33 @@ class Block_TestParams_Base extends TestParams.Base {
       ],
 
       nSqueezeExcitationChannelCountDivisor: [
-        ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min, // -2
+        // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.range.min, // -2
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE, // -2
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, // -1
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION, // 0
-        // 1,
+        1,
         // 2,
 
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.NONE // -2
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION // -1
         // ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.SQUEEZE_EXCITATION // 0
-        // 1
-        3
+        1
+        // 3
       ],
 
       pointwise20ChannelCount: [
         1,
         // 2,
-        // 1
-        3
+        1
+        // 3
         // 8
       ],
 
       pointwise20ActivationId: [
         ValueDesc.ActivationFunction.Singleton.range.min + 0,
         // ValueDesc.ActivationFunction.Singleton.range.min + 1,
-        // ValueDesc.ActivationFunction.Singleton.range.min + 0
-        ValueDesc.ActivationFunction.Singleton.range.min + 1
+        ValueDesc.ActivationFunction.Singleton.range.min + 0
+        // ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
       // Because the logic of bias and activation function is simpler than
@@ -484,8 +487,8 @@ class Block_TestParams_Base extends TestParams.Base {
       nActivationId: [
         ValueDesc.ActivationFunction.Singleton.range.min + 0,
         // ValueDesc.ActivationFunction.Singleton.range.min + 1,
-        // ValueDesc.ActivationFunction.Singleton.range.min + 0
-        ValueDesc.ActivationFunction.Singleton.range.min + 1
+        ValueDesc.ActivationFunction.Singleton.range.min + 0
+        // ValueDesc.ActivationFunction.Singleton.range.min + 1
       ],
 
       bKeepInputTensor: [
@@ -497,8 +500,8 @@ class Block_TestParams_Base extends TestParams.Base {
 
       bTableLog: [
         // (2025/06/04 Temp Remarked) For debug.
-        0, 0
-        // 1, 1
+        // 0, 0
+        1, 1
       ],
     };
 
