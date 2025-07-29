@@ -1501,11 +1501,11 @@ class HeightWidthDepth {
                     input_TypedArray, input_height_scaled, input_width_scaled,
                     alignmentMarkValueArray, previous_output_TypedArray );
 
-                let lhsNumberArray = resultFloat32ArrayArray[ neuralNetIndex ];
-                let rhsNumberArray = resultFloat32Array;
-                let lhsNumberArrayName = `output${neuralNetIndex}`;
-                let rhsNumberArrayName = `outputRef${neuralNetIndex}`;
-                let postfixMsg = testCase.testCaseName;
+                const lhsNumberArray = resultFloat32ArrayArray[ neuralNetIndex ];
+                const rhsNumberArray = resultFloat32Array;
+                const lhsNumberArrayName = `output${neuralNetIndex}`;
+                const rhsNumberArrayName = `outputRef${neuralNetIndex}`;
+                const postfixMsg = testCase.testCaseName;
 
                 asserter_Equal.assert_NumberArray_NumberArray(
                   lhsNumberArray, rhsNumberArray,
