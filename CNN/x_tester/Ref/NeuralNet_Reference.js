@@ -62,13 +62,13 @@ class NeuralNet_Reference_Base
 //!!! (2023/04/15)
 // For clamped and integerized output, acceptable delta should be smaller.
     {
-      // const acceptableDifferenceRate = 0.001;
-      const acceptableDifferenceRate = 2 ** (-13); // about 0.0001
+      const acceptableDifferenceRate = 2 ** (-9.9); // about 0.001
+      // const acceptableDifferenceRate = 2 ** (-13); // about 0.0001
       // const acceptableDifferenceRate = 2 ** (-16); // about 0.000015
       // const acceptableDifferenceRate = 2 ** (-70);
 
-      // const acceptableDifference = 0.00001;
-      const acceptableDifference = 2 ** (-13); // about 0.0001
+      const acceptableDifference = 2 ** (-9.9); // about 0.001
+      // const acceptableDifference = 2 ** (-13); // about 0.0001
       // const acceptableDifference = 2 ** (-16); // about 0.000015
       // const acceptableDifference = 2 ** (-70);
 
