@@ -1641,6 +1641,40 @@ class BoundsArray extends Recyclable.Root {
 
   /**
    * @param {number} thisIndex
+   *   The array index of this.lowers[] and this.uppers[].
+   *
+   * @return {BoundsArray}
+   *   Return this (modified) object whose .lowers[ thisIndex ] and
+   * .uppers[ thisIndex ] has been trunc()ed to integer.
+   */
+  trunc_one( thisIndex ) {
+    const lower = Math.trunc( this.lowers[ thisIndex ] );
+    const upper = Math.trunc( this.uppers[ thisIndex ] );
+    this.lowers[ thisIndex ] = lower;
+    this.uppers[ thisIndex ] = upper;
+    return this;
+  }
+
+  /**
+   * @return {BoundsArray}
+   *   Return this (modified) object whose .lowers[] and.uppers[] has been all
+   * trunc()ed to integer.
+   */
+  trunc_all() {
+    let lower;
+    let upper;
+    for ( let i = 0; i < this.lowers.length; ++i ) {
+      lower = Math.trunc( this.lowers[ i ] );
+      upper = Math.trunc( this.uppers[ i ] );
+      this.lowers[ i ] = lower;
+      this.uppers[ i ] = upper;
+    }
+    return this;
+  }
+
+
+  /**
+   * @param {number} thisIndex
    *   Use which Bounds of this BoundsArray to clamp the value.
    *
    * @param {number} value
