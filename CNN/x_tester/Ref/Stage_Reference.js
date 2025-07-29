@@ -51,13 +51,14 @@ class Stage_Reference_Base
 
 //!!! (2025/07/05 Temp Remarked) For debug floating-point accumulated error
     {
-      // const acceptableDifferenceRate = 0.001;
-      const acceptableDifferenceRate = 2 ** (-15); // about 0.00003
+      // const acceptableDifferenceRate = 2 ** (-6.5); // about 0.01
+      const acceptableDifferenceRate = 2 ** (-13); // about 0.0001
+      // const acceptableDifferenceRate = 2 ** (-15); // about 0.00003
       // const acceptableDifferenceRate = 2 ** (-16); // about 0.000015
       // const acceptableDifferenceRate = 2 ** (-70);
 
-      // const acceptableDifference = 0.00001;
-      const acceptableDifference = 2 ** (-15); // about 0.00003
+      const acceptableDifference = 2 ** (-13); // about 0.0001
+      // const acceptableDifference = 2 ** (-15); // about 0.00003
       // const acceptableDifference = 2 ** (-16); // about 0.000015
       // const acceptableDifference = 2 ** (-70);
 
