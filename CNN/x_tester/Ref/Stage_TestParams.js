@@ -417,8 +417,8 @@ class Stage_TestParams_Base extends TestParams.Base {
       bKeepInputTensor: [
         Stage.Params.bKeepInputTensor.valueDesc.range.min,
         // Stage.Params.bKeepInputTensor.valueDesc.range.max,
-        Stage.Params.bKeepInputTensor.valueDesc.range.min
-        // Stage.Params.bKeepInputTensor.valueDesc.range.max
+        // Stage.Params.bKeepInputTensor.valueDesc.range.min
+        Stage.Params.bKeepInputTensor.valueDesc.range.max
       ],
 
       bTableLog: [
