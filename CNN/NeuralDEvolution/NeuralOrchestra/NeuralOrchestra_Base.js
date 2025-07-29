@@ -654,6 +654,7 @@ class NeuralOrchestra_Base extends
     // The neuralNet should not keep-input-tensor because the input image is
     // created from canvas in real time.
     const bKeepInputTensor = false;
+    const bTableLog = false;
 
     this.neuralNetParamsBase = NeuralNet.ParamsBase.Pool.get_or_create_by(
       explicit_input_height, explicit_input_width, explicit_input_channelCount,
@@ -662,7 +663,8 @@ class NeuralOrchestra_Base extends
       nConvStageType,
       blockCountTotalRequested,
       output_channelCount, output_asInputValueRange,
-      bKeepInputTensor
+      bKeepInputTensor,
+      bTableLog
     );
   }
 

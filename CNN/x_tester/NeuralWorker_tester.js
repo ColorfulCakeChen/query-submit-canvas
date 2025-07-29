@@ -1152,7 +1152,9 @@ class HeightWidthDepth {
 
     // The neuralNet performance testing should not keep-input-tensor because
     // the input image is created from canvas in real time.
-    let bKeepInputTensor = false;
+    const bKeepInputTensor = false;
+
+    const bTableLog = false;
 
     // explicit_input_height,
     // explicit_input_width,
@@ -1162,7 +1164,8 @@ class HeightWidthDepth {
     // nConvStageTypeId,
     // blockCountTotalRequested,
     // output_channelCount, output_asInputValueRange,
-    // bKeepInputTensor
+    // bKeepInputTensor,
+    // bTableLog
     //
    
     // Create TestCases for every NeuralWorker.Mode
@@ -1190,7 +1193,8 @@ class HeightWidthDepth {
         nConvStageType,
         this.blockCountTotalRequested,
         this.output_channelCount, this.output_asInputValueRange,
-        bKeepInputTensor
+        bKeepInputTensor,
+        bTableLog
       );
 
       this.neuralWorker_PerformanceTest_addCase(
