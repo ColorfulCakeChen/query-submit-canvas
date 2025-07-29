@@ -377,8 +377,8 @@ class NeuralNet_TestParams_Base extends TestParams.Base {
         // 2
         // 3
         // 4
-        // 5
-        6
+        5
+        // 6
       ],
 
       output_channelCount: [
