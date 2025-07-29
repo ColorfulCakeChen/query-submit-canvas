@@ -810,6 +810,18 @@ class Bounds extends Recyclable.Root {
 
 
   /**
+   * @return {Bounds}
+   *   Return this (modified) object whose .lower and .upper has been
+   * trunc()ed to integer.
+   */
+  trunc() {
+    this.lower = Math.trunc( this.lower );
+    this.upper = Math.trunc( this.upper );
+    return this;
+  }
+
+
+  /**
    * @param {number} value
    *   The value to be clamped. (will be converted to 32-bits floating-point
    * number.)
