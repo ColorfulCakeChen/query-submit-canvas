@@ -1308,12 +1308,9 @@ class NumberImage_Base extends Recyclable.Root {
     // Note: Use clamp_Xxx() (rather than set_Xxx()) so that original bounds
     //       are also considered.
     // (2025/07/10)
-    imageIn.boundsArraySet.output0.boundsArray.clamp_all_byLowerUpper(
-      lowerBound, upperBound );
-
-!!! ...unfinished... (2025/07/29)
-// need trunc the bounds to integer.
-
+    imageIn.boundsArraySet.output0.boundsArray
+      .clamp_all_byLowerUpper( lowerBound, upperBound ) // clamp
+      .trunc_all(); // to integer
 
     let index = 0;
     for ( let y = 0; y < imageIn.height; ++y ) {

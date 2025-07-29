@@ -796,9 +796,17 @@ class NeuralNet_Base extends HierarchicalNameable.SeparatorDot_Root {
     const valueMin = 0;
     const valueMax = this.embedding.vocabularyIdMax;
 
-    // Note: This can not be implemented by Block's pointwise20ActivationId
-    //       (e.g. CLIP_BY_VALUE_N0_P255, CLIP_BY_VALUE_N0_P65535,
-    //       CLIP_BY_VALUE_N0_P2POW20, CLIP_BY_VALUE_N0_P2POW24, ...)
+    // Note: Use clamp_Xxx() (rather than set_Xxx()) so that original bounds
+    //       are also considered.
+    // (2025/07/10)
+    io_scaleBoundsArray.boundsArray
+      .clamp_all_byLowerUpper( valueMin, valueMax ) // clamp
+      .trunc_all(); // to integer;
+
+    // Note: This operation can not be implemented by Block's
+    //       pointwise20ActivationId (e.g. CLIP_BY_VALUE_N0_P255,
+    //       CLIP_BY_VALUE_N0_P65535, CLIP_BY_VALUE_N0_P2POW20,
+    //       CLIP_BY_VALUE_N0_P2POW24, ...)
     //
     // The reasons are:
     //   - MobileNetV2_Xxx has add-input-to-output behind pointwise2.
@@ -807,12 +815,6 @@ class NeuralNet_Base extends HierarchicalNameable.SeparatorDot_Root {
     //
 
     // 1. Let value be in range.
-
-    // Note: Use clamp_Xxx() (rather than set_Xxx()) so that original bounds
-    //       are also considered.
-    // (2025/07/10)
-    io_scaleBoundsArray.boundsArray.clamp_all_byLowerUpper( valueMin, valueMax );
-
     let valueClippedTensor;
     try {
       // Note: tf.clipByValue() is cheaper than tf.mod()
@@ -825,10 +827,6 @@ class NeuralNet_Base extends HierarchicalNameable.SeparatorDot_Root {
     }
 
     // 2. Let value be integer.
-
-!!! ...unfinished... (2025/07/29)
-// need trunc the bounds to integer.
-
     try {
       let intTensor = valueClippedTensor.cast( "int32" );
       return intTensor;
