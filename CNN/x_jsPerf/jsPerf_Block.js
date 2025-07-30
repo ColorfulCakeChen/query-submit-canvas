@@ -320,13 +320,13 @@ class HeightWidthDepth {
 
     // Test Case 7: (pointwise1 (bias, COS), depthwise (none), pointwise2 (bias))
     this.block_PerformanceTest_addCase(
-      "P64_bias_COS_P64_bias",
+      "P32_bias_COS_P32_bias",
       Block_TestParams.Base.Pool.get_or_create_by( 7 ).set_byParamsScattered(
         this.height, this.width, this.depth,
         ValueDesc.ConvBlockType.Singleton.Ids.MOBILE_NET_V1_HEAD_BODY_TAIL,
-           64,
+           32,
             0,     3, 3, 1, Block.Params.depthwiseActivationId.valueDesc.Ids.CLIP_BY_VALUE_N2_P2,
-           64, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
+           32, Block.Params.pointwise20ActivationId.valueDesc.Ids.NONE,
 
         ValueDesc.SqueezeExcitationChannelCountDivisor.Singleton.Ids.EXCITATION, false,
         ValueDesc.ActivationFunction.Singleton.Ids.CLIP_BY_VALUE_N2_P2,
