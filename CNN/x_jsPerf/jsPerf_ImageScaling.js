@@ -337,128 +337,129 @@ class HeightWidthDepth {
     const output_channelCount_original = this.output_channelCount;
     const largerFactor_original = this.largerFactor;
 
-    const TestCaseNameArray = [
-      "testImageScaling_by_OffscreenCanvas_from_Canvas",
-      "testImageScaling_by_OffscreenCanvas_from_Canvas_ImageData",
-      "testImageScaling_by_Tensor_from_Canvas",
-      "testImageScaling_by_Tensor_from_Canvas_ImageData",
-      "testImageScaling_by_Tensor_from_Canvas_TypedArray",
-
-      "testImageScaling_by_OffscreenCanvas_from_OffscreenCanvas",
-      "testImageScaling_by_OffscreenCanvas_from_OffscreenCanvas_ImageData",
-      "testImageScaling_by_Tensor_from_OffscreenCanvas",
-      "testImageScaling_by_Tensor_from_OffscreenCanvas_ImageData",
-      "testImageScaling_by_Tensor_from_OffscreenCanvas_TypedArray",
-    ];
-
-    let testCaseId, testCaseName;
-    try {
-      let pool_all_issuedCount_before = Pool.All.issuedCount;
-
-      yield;
-
-      let asserter_Equal;
-      try {
-        // Test memory leakage of imageSourceBag.
-        let memoryInfo_testCorrectness_before = tf.memory();
-
-        // (Also for pre-compiling WebGL shaders.)
-        {
-          {
-            // const acceptableDifferenceRate = 0.05;
-            // const acceptableDifferenceRate = 0.001;
-            const acceptableDifferenceRate = 2 ** (-70);
-
-            // const acceptableDifference = 3;
-            // const acceptableDifference = 0.00001;
-            const acceptableDifference = 2 ** (-70);
-
-            asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by(
-              acceptableDifferenceRate, acceptableDifference );
-          }
-
-
-          // Correctness testing uses smaller shape.
-          {
-            const output_height_temp = 2;
-            const output_width_temp = 3;
-            const output_channelCount_temp = 4;
-            const largerFactor_temp = 3;
-
-            this.init( output_height_temp, output_width_temp,
-              output_channelCount_temp, largerFactor_temp );
-            this.ImageScaling_PerformanceTest_init();
-          }
-
-          let output_TypedArray_previous;
-          let output_TypedArray;
-          for ( testCaseId = 0;
-            testCaseId < TestCaseNameArray.length; ++testCaseId ) {
-
-            testCaseName = TestCaseNameArray[ testCaseId ];
-
-            // Every test case should have the same result.
-            const bDownloadFromGPU = true;
-            output_TypedArray = this[ testCaseName ]( bDownloadFromGPU );
-            if ( output_TypedArray_previous ) {
-              let lhsNumberArray = output_TypedArray_previous;
-              let rhsNumberArray = output_TypedArray;
-              let lhsNumberArrayName
-                = `output_of_${TestCaseNameArray[ testCaseId - 1 ]}`;
-              let rhsNumberArrayName
-                = `output_of_${TestCaseNameArray[ testCaseId ]}`;
-
-              let prefixMsg = `testCaseId=${testCaseId},`;
-              let postfixMsg = "";
-
-              asserter_Equal.assert_NumberArray_NumberArray(
-                lhsNumberArray, rhsNumberArray,
-                prefixMsg,
-                lhsNumberArrayName, rhsNumberArrayName,
-                postfixMsg );
-            }
-
-            output_TypedArray_previous = output_TypedArray;
-          }
-        }
-
-        let memoryInfo_testCorrectness_after = tf.memory();
-
-        if ( memoryInfo_testCorrectness_after.numTensors
-               != memoryInfo_testCorrectness_before.numTensors )
-          throw Error( `testCorrectness() memory leak. `
-            + `result tensor count `
-            + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
-            + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ).`
-          );
-
-      } finally {
-        if ( asserter_Equal ) {
-          asserter_Equal.disposeResources_and_recycleToPool();
-          asserter_Equal = null;
-        }
-      }
-
-      Pool.Asserter.assert_Pool_issuedCount(
-        "jsPerf_ImageScaling.HeightWidthDepth.testCorrectness()",
-        pool_all_issuedCount_before );
-      yield;
-
-    } catch ( e ) {
-      let backendName = tf.getBackend();
-      let msg = `jsPerf_ImageScaling.HeightWidthDepth`
-        + `.${funcNameInMessage}(): `
-        + `backendName=${backendName}, `
-        + `testCaseId=${testCaseId}, `
-        + `testCaseName=${testCaseName}. `
-        + `${e}`;
-
-      console.log( msg );
-      alert( `${msg}` );
-
-      debugger;
-      throw e;
-    }
+//!!! (2025/07/30 Remarked) Moved to CNN_ImageScaling_tester.js
+//     const TestCaseNameArray = [
+//       "testImageScaling_by_OffscreenCanvas_from_Canvas",
+//       "testImageScaling_by_OffscreenCanvas_from_Canvas_ImageData",
+//       "testImageScaling_by_Tensor_from_Canvas",
+//       "testImageScaling_by_Tensor_from_Canvas_ImageData",
+//       "testImageScaling_by_Tensor_from_Canvas_TypedArray",
+//
+//       "testImageScaling_by_OffscreenCanvas_from_OffscreenCanvas",
+//       "testImageScaling_by_OffscreenCanvas_from_OffscreenCanvas_ImageData",
+//       "testImageScaling_by_Tensor_from_OffscreenCanvas",
+//       "testImageScaling_by_Tensor_from_OffscreenCanvas_ImageData",
+//       "testImageScaling_by_Tensor_from_OffscreenCanvas_TypedArray",
+//     ];
+//
+//     let testCaseId, testCaseName;
+//     try {
+//       let pool_all_issuedCount_before = Pool.All.issuedCount;
+//
+//       yield;
+//
+//       let asserter_Equal;
+//       try {
+//         // Test memory leakage of imageSourceBag.
+//         let memoryInfo_testCorrectness_before = tf.memory();
+//
+//         // (Also for pre-compiling WebGL shaders.)
+//         {
+//           {
+//             // const acceptableDifferenceRate = 0.05;
+//             // const acceptableDifferenceRate = 0.001;
+//             const acceptableDifferenceRate = 2 ** (-70);
+//
+//             // const acceptableDifference = 3;
+//             // const acceptableDifference = 0.00001;
+//             const acceptableDifference = 2 ** (-70);
+//
+//             asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by(
+//               acceptableDifferenceRate, acceptableDifference );
+//           }
+//
+//
+//           // Correctness testing uses smaller shape.
+//           {
+//             const output_height_temp = 2;
+//             const output_width_temp = 3;
+//             const output_channelCount_temp = 4;
+//             const largerFactor_temp = 3;
+//
+//             this.init( output_height_temp, output_width_temp,
+//               output_channelCount_temp, largerFactor_temp );
+//             this.ImageScaling_PerformanceTest_init();
+//           }
+//
+//           let output_TypedArray_previous;
+//           let output_TypedArray;
+//           for ( testCaseId = 0;
+//             testCaseId < TestCaseNameArray.length; ++testCaseId ) {
+//
+//             testCaseName = TestCaseNameArray[ testCaseId ];
+//
+//             // Every test case should have the same result.
+//             const bDownloadFromGPU = true;
+//             output_TypedArray = this[ testCaseName ]( bDownloadFromGPU );
+//             if ( output_TypedArray_previous ) {
+//               let lhsNumberArray = output_TypedArray_previous;
+//               let rhsNumberArray = output_TypedArray;
+//               let lhsNumberArrayName
+//                 = `output_of_${TestCaseNameArray[ testCaseId - 1 ]}`;
+//               let rhsNumberArrayName
+//                 = `output_of_${TestCaseNameArray[ testCaseId ]}`;
+//
+//               let prefixMsg = `testCaseId=${testCaseId},`;
+//               let postfixMsg = "";
+//
+//               asserter_Equal.assert_NumberArray_NumberArray(
+//                 lhsNumberArray, rhsNumberArray,
+//                 prefixMsg,
+//                 lhsNumberArrayName, rhsNumberArrayName,
+//                 postfixMsg );
+//             }
+//
+//             output_TypedArray_previous = output_TypedArray;
+//           }
+//         }
+//
+//         let memoryInfo_testCorrectness_after = tf.memory();
+//
+//         if ( memoryInfo_testCorrectness_after.numTensors
+//                != memoryInfo_testCorrectness_before.numTensors )
+//           throw Error( `testCorrectness() memory leak. `
+//             + `result tensor count `
+//             + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
+//             + `should be ( ${memoryInfo_testCorrectness_before.numTensors} ).`
+//           );
+//
+//       } finally {
+//         if ( asserter_Equal ) {
+//           asserter_Equal.disposeResources_and_recycleToPool();
+//           asserter_Equal = null;
+//         }
+//       }
+//
+//       Pool.Asserter.assert_Pool_issuedCount(
+//         "jsPerf_ImageScaling.HeightWidthDepth.testCorrectness()",
+//         pool_all_issuedCount_before );
+//       yield;
+//
+//     } catch ( e ) {
+//       let backendName = tf.getBackend();
+//       let msg = `jsPerf_ImageScaling.HeightWidthDepth`
+//         + `.${funcNameInMessage}(): `
+//         + `backendName=${backendName}, `
+//         + `testCaseId=${testCaseId}, `
+//         + `testCaseName=${testCaseName}. `
+//         + `${e}`;
+//
+//       console.log( msg );
+//       alert( `${msg}` );
+//
+//       debugger;
+//       throw e;
+//     }
 
     try {
       // After correctness testing done, use large shape for performance testing.
