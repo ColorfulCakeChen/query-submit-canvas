@@ -16,6 +16,16 @@ import * as NeuralNet from "../Conv/NeuralNet.js";
 
 /**
  * A test set.
+ *
+ *
+ * @member {HTMLCanvasElement} input_Canvas
+ *   The canvas used for testing.
+ *
+ * @member {ImageData} input_ImageData
+ *   The image data snapshot of .input_Canvas.
+ *
+ * @member {OffscreenCanvas} input_OffscreenCanvas
+ *   The off-screen canvas used for testing.
  */
 class HeightWidthDepth {
 
