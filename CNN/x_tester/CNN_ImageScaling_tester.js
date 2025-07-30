@@ -34,8 +34,6 @@ async function *testerBackend( progressParent, backendName ) {
     }
   }
 
-!!! ...unfinished... (2025/07/30)
-
   const TestCaseNameArray = [
     "testImageScaling_by_OffscreenCanvas_from_Canvas",
     "testImageScaling_by_OffscreenCanvas_from_Canvas_ImageData",
@@ -120,10 +118,8 @@ async function *testerBackend( progressParent, backendName ) {
 
           output_TypedArray_previous = output_TypedArray;
 
-!!!
           progressToAdvance.value_advance();
           yield progressRoot;
-
         }
       }
 
@@ -174,7 +170,6 @@ async function *testerBackend( progressParent, backendName ) {
     throw Error( e );
   }
 
-!!!
 }
 
 /**
