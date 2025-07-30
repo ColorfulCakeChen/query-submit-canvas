@@ -113,8 +113,8 @@ class PerformanceTestCase extends Recyclable.Root {
 
       let progress = ValueMax.Percentage.Aggregate.Pool.get_or_create_by();
       let neuralNet = this.neuralNet = NeuralNet.Base.Pool.get_or_create_by(
-        null,                                 // parentNameable
-        `NeuralNet_Reference_${testCaseName}` // neuralNetName
+        null,                                      // parentNameable
+        `NeuralNet_Reference_${this.testCaseName}` // neuralNetName
       );
 
       let bInitOk = neuralNet.init( progress,

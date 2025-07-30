@@ -96,8 +96,8 @@ class PerformanceTestCase extends Recyclable.Root {
         stageTestParams.out.input_channelCount );
 
       let stage = Stage_Reference.Base.Stage_create(
-        null,                              // parentNameable
-        `Stage_Reference_${testCaseName}`, // stageName
+        null,                                   // parentNameable
+        `Stage_Reference_${this.testCaseName}`, // stageName
         stageTestParams, inputImage.boundsArraySet.output0 );
 
       this.stage = stage;
