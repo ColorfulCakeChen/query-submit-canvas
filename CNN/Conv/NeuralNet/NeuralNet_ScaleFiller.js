@@ -585,8 +585,8 @@ class NeuralNet_ScaleFiller {
    *   - faster than .createTensor_by_scale_TypedArray().
    *       But this method can only handle image (i.e. not any shape tensor).
    *
-   * Note3: According to performance testing, in backend "webgl", the method
-   *        list from fast to slow are:
+   * Note3: According to performance testing, in backend "webgl", the methods
+   *        listed from fast to slow are:
    *   - .createImageData_by_scale_Canvas( HTMLCanvasElement | OffscreenCanvas )
    *   - .createTensor_by_scale_PixelData( OffscreenCanvas )
    *   - .createTensor_by_scale_PixelData( HTMLCanvasElement )
