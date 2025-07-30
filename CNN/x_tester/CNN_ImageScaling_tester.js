@@ -3,7 +3,7 @@ export { tester };
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
 //import * as RandTools from "../util/RandTools.js";
-//import * as TensorTools from "../util/TensorTools.js";
+import * as TensorTools from "../util/TensorTools.js";
 import * as ValueMax from "../util/ValueMax.js";
 import { HeightWidthDepth } from "../x_jsPerf/jsPerf_ImageScaling.js"; 
 
