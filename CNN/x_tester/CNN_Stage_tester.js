@@ -87,7 +87,7 @@ async function *testerBackend( progressParent, backendName ) {
           //       be very large, yielding every time may be very slow.
         }
 
-      // Q: Why not catch exception inside Block_Reference.testCorrectness()?
+      // Q: Why not catch exception inside Stage_Reference.testCorrectness()?
       // A: To catch testParamsGenerator's exception.
       } catch ( e ) {
         let backendName = tf.getBackend();

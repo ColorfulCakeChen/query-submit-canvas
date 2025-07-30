@@ -1,4 +1,5 @@
 export { init, testCorrectness, disposeResources };
+export { HeightWidthDepth };
 
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";

@@ -1,22 +1,14 @@
 export { tester };
 
-import * as FloatValue from "../Unpacker/FloatValue.js";
-import * as ValueRange from "../Unpacker/ValueRange.js";
-import * as ValueDesc from "../Unpacker/ValueDesc.js";
-import * as Weights from "../Unpacker/Weights.js";
+//import * as FloatValue from "../Unpacker/FloatValue.js";
+//import * as ValueRange from "../Unpacker/ValueRange.js";
+//import * as ValueDesc from "../Unpacker/ValueDesc.js";
+//import * as Weights from "../Unpacker/Weights.js";
 import * as Pool from "../util/Pool.js";
 import * as Recyclable from "../util/Recyclable.js";
 //import * as RandTools from "../util/RandTools.js";
 //import * as TensorTools from "../util/TensorTools.js";
-import * as ValueMax from "../util/ValueMax.js";
-import * as ActivationEscaping from "../Conv/ActivationEscaping.js";
-//import * as BoundsArraySet from "../Conv/BoundsArraySet.js";
-import * as NeuralNet from "../Conv/NeuralNet.js";
-import * as NeuralNet_Reference from "./Ref/NeuralNet_Reference.js";
-import * as NeuralNet_TestParams from "./Ref/NeuralNet_TestParams.js"; 
-import * as BatchIdCalculator from "./Ref/BatchIdCalculator.js";
-import * as ImageSourceBag from "./Ref/ImageSourceBag.js"; 
-//import * as NumberImage from "./Ref/NumberImage.js"; 
+import { HeightWidthDepth } from "../x_jsPerf/jsPerf_ImageScaling.js"; 
 
 /**
  * @param {string} backendName
@@ -42,98 +34,6 @@ async function *testerBackend( progressParent, backendName ) {
     }
   }
 
-  {
-    // Test memory leakage of imageSourceBag.
-    let memoryInfo_testCorrectness_before = tf.memory();
-
-    {
-      // Note: imageSourceBag should not be created outside tidy() because
-      //       tidy() will dispose tensors dynamically created in them.
-      let imageSourceBag
-        = ImageSourceBag.Base.Pool.get_or_create_by( "int32" );
-
-      let testParams = NeuralNet_TestParams.Base.Pool.get_or_create_by();
-      let theParamDescConfigAll = testParams.ParamDescConfigAll_create();
-      let testParamsGenerator
-        = testParams.ParamsGenerator( theParamDescConfigAll );
-      let testReference = NeuralNet_Reference.Base.Pool.get_or_create_by(
-        null, "NeuralNet_Reference" );
-
-      // Set up correct test case count (all permuattion combination count).
-      testCaseCount = theParamDescConfigAll.permutationCombination_count();
-      progressToAdvance.max = testCaseCount;
-
-      let batchIdCalculator = new BatchIdCalculator.Base(
-        testCaseCount, 1 * 1000 );
-      batchIdCalculator.displayTotalCount();
-
-      try {
-        for ( let testParams of testParamsGenerator ) {
-          let bDisplayed = batchIdCalculator.checkAndDisplay( testParams.id );
-
-          // Since just entering a new batch section, take a break so that
-          // memory garbage collector could be activated to work.
-          if ( bDisplayed )
-            yield progressRoot;
-
-          testReference.testCorrectness( imageSourceBag, testParams );
-
-          // Q: Why not use .value_advance()?
-          // A: Because some TestParams combination is illegal and will not be
-          //    yielded to be tested, incremental advancing (i.e.
-          //    .value_advance()) may not reach the final progress.
-          progressToAdvance.value = testParams.id + 1;
-
-          // Note: Do not yield every test case. Because test case count may
-          //       be very large, yielding every time may be very slow.
-        }
-
-      // Q: Why not catch exception inside Block_Reference.testCorrectness()?
-      // A: To catch testParamsGenerator's exception.
-      } catch ( e ) {
-        let backendName = tf.getBackend();
-        let msg = `CNN_NeuralNet_tester.${funcNameInMessage}(): `
-          + `backendName=${backendName}, `
-          + `NeuralNet, ( yieldCount == ${testParams.yieldCount} ), `
-          + `testParams.id == ${testParams.id}`;
-
-        console.log( msg );
-        alert( `${msg}\n${e}` );
-
-        //debugger;
-        throw e;
-      }
-
-      batchIdCalculator.checkAndDisplay( testParams.id );
-      yield progressRoot;
-
-      testReference.disposeResources_and_recycleToPool();
-      testReference = null;
-
-      testParams.disposeResources_and_recycleToPool();
-      testParams = null;
-
-      imageSourceBag.disposeResources_and_recycleToPool();
-      imageSourceBag = null;
-    }
-
-    let memoryInfo_testCorrectness_after = tf.memory();
-
-    if ( memoryInfo_testCorrectness_after.numTensors
-            != memoryInfo_testCorrectness_before.numTensors ) {
-
-      const backendName = tf.getBackend();
-      const msg = `CNN_NeuralNet_tester.${funcNameInMessage}(): `
-        + `backendName=${backendName}, `
-        + ` memory leak. `
-        + `result tensor count `
-        + `( ${memoryInfo_testCorrectness_after.numTensors} ) `
-        + `should be `
-        + `( ${memoryInfo_testCorrectness_before.numTensors} ) `
-      throw Error( msg );
-    }
-  }
-
 !!! ...unfinished... (2025/07/30)
 
   const TestCaseNameArray = [
@@ -154,9 +54,12 @@ async function *testerBackend( progressParent, backendName ) {
   try {
     let pool_all_issuedCount_before = Pool.All.issuedCount;
 
-    yield;
+    // Set up correct test case count (all permuattion combination count).
+    testCaseCount = TestCaseNameArray.length;
+    progressToAdvance.max = testCaseCount;
 
     let asserter_Equal;
+    let testData;
     try {
       // Test memory leakage of imageSourceBag.
       let memoryInfo_testCorrectness_before = tf.memory();
@@ -176,24 +79,22 @@ async function *testerBackend( progressParent, backendName ) {
             acceptableDifferenceRate, acceptableDifference );
         }
 
-
         // Correctness testing uses smaller shape.
         {
-          const output_height_temp = 2;
-          const output_width_temp = 3;
-          const output_channelCount_temp = 4;
-          const largerFactor_temp = 3;
+          const output_height = 2;
+          const output_width = 3;
+          const output_channelCount = 4;
+          const largerFactor = 3;
 
-          this.init( output_height_temp, output_width_temp,
-            output_channelCount_temp, largerFactor_temp );
-          this.ImageScaling_PerformanceTest_init();
+          testData = new HeightWidthDepth(
+            output_height, output_width, output_channelCount, largerFactor );
+
+          testData.ImageScaling_PerformanceTest_init();
         }
 
         let output_TypedArray_previous;
         let output_TypedArray;
-        for ( testCaseId = 0;
-          testCaseId < TestCaseNameArray.length; ++testCaseId ) {
-
+        for ( testCaseId = 0; testCaseId < testCaseCount; ++testCaseId ) {
           testCaseName = TestCaseNameArray[ testCaseId ];
 
           // Every test case should have the same result.
@@ -218,6 +119,11 @@ async function *testerBackend( progressParent, backendName ) {
           }
 
           output_TypedArray_previous = output_TypedArray;
+
+!!!
+          progressToAdvance.value_advance();
+          yield progressRoot;
+
         }
       }
 
@@ -237,6 +143,10 @@ async function *testerBackend( progressParent, backendName ) {
       }
 
     } finally {
+      if ( testData ) {
+        testData.disposeResources();
+        testData = null;
+      }
       if ( asserter_Equal ) {
         asserter_Equal.disposeResources_and_recycleToPool();
         asserter_Equal = null;
@@ -246,7 +156,8 @@ async function *testerBackend( progressParent, backendName ) {
     Pool.Asserter.assert_Pool_issuedCount(
       `CNN_ImageScaling_tester.${funcNameInMessage}()`,
       pool_all_issuedCount_before );
-    yield;
+
+    yield progressRoot;
 
   } catch ( e ) {
     let backendName = tf.getBackend();
@@ -257,10 +168,10 @@ async function *testerBackend( progressParent, backendName ) {
       + `${e}`;
 
     console.log( msg );
-    alert( `${msg}` );
+    alert( `${msg}\n${e}` );
 
     debugger;
-    throw e;
+    throw Error( e );
   }
 
 !!!
