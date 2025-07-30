@@ -110,7 +110,12 @@ class HeightWidthDepth {
 
   }
 
-  /** Fill input data. */
+  /**
+   * Fill input data.
+   *
+   * @param {ImageData} theImageData
+   *   The image data which will be filled values.
+   */
   static ImageData_init_fill( theImageData ) {
 
     // Restrict data value between [ 0, ( vocabularyCountPerChannel - 1 ) ].
