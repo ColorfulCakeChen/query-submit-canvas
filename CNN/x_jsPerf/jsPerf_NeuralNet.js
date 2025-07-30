@@ -277,7 +277,7 @@ class HeightWidthDepth {
     // nConvStageTypeId,
     // blockCountTotalRequested,
     // output_channelCount, output_asInputValueRange,
-    // bKeepInputTensor
+    // bKeepInputTensor, bTableLog
     //
 
     // Test Case 0: (MobileNetV1)
