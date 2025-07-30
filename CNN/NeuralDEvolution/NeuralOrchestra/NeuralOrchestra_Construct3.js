@@ -660,7 +660,7 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
     this.AI_gameTime_endSeconds = undefined;
 
     // Q: What if DrawingCanvas resolution changed during .getImagePixelData()?
-    //    Wheteher will getImagePixelDataPromise never resolve?
+    //    Whether will getImagePixelDataPromise never resolve?
     //
     // A: It is very likely that nothing special needs to be taken for
     //    resolution change because DrawingCanvas will only be recreated
