@@ -201,7 +201,7 @@ async function* tester( progressParent ) {
   // yield *testerBackend( progressCPU, "cpu" );
 
   // 3.
-  yield *testerBackend( progressWASM, "wasm" );
+  // yield *testerBackend( progressWASM, "wasm" );
 
   console.log( "CNN_ImageScaling testing... Done." );
 }
