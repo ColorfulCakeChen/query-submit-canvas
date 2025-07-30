@@ -189,8 +189,9 @@ async function* tester( progressParent ) {
   let progressWebGL = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
-  let progressWASM = progressParent.child_add(
-    ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
+  // (2025/07/30 Remarked)
+  // let progressWASM = progressParent.child_add(
+  //   ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
   // 1.
   yield *testerBackend( progressCPU, "cpu" );
@@ -200,7 +201,8 @@ async function* tester( progressParent ) {
   yield *testerBackend( progressWebGL, "webgl" );
   // yield *testerBackend( progressCPU, "cpu" );
 
-  // 3.
+  // (2025/07/30 Remarked)
+  // // 3.
   // yield *testerBackend( progressWASM, "wasm" );
 
   console.log( "CNN_ImageScaling testing... Done." );
