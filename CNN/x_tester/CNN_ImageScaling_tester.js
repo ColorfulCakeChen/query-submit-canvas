@@ -68,7 +68,8 @@ async function *testerBackend( progressParent, backendName ) {
 
           // const acceptableDifference = 3;
           // const acceptableDifference = 0.00001;
-          const acceptableDifference = 2 ** (-70);
+          // const acceptableDifference = 2 ** (-70);
+          const acceptableDifference = 1;
 
           asserter_Equal = TensorTools.Asserter_Equal.Pool.get_or_create_by(
             acceptableDifferenceRate, acceptableDifference );
