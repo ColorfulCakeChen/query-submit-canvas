@@ -25,7 +25,7 @@ import * as ImageSourceBag from "../x_tester/Ref/ImageSourceBag.js";
 /**
  * Test CNN Block.
  *
- * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/1504/colorfulcakechen-cnn-block-3569f0d8a3260ea9a08d9c50affc}
+ * @see {@link https://www.measurethat.net/Benchmarks/Show/11973/1505/colorfulcakechen-cnn-block-3b6721ce94752313d64aac7b2152}
  */
 
 /**
