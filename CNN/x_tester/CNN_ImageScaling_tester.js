@@ -94,7 +94,7 @@ async function *testerBackend( progressParent, backendName ) {
 
           // Every test case should have the same result.
           const bDownloadFromGPU = true;
-          output_TypedArray = this[ testCaseName ]( bDownloadFromGPU );
+          output_TypedArray = testData[ testCaseName ]( bDownloadFromGPU );
           if ( output_TypedArray_previous ) {
             let lhsNumberArray = output_TypedArray_previous;
             let rhsNumberArray = output_TypedArray;
