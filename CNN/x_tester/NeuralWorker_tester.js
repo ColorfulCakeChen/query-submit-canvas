@@ -342,11 +342,11 @@ class PerformanceTestCase extends Recyclable.Root {
         weightArrayBuffer_partitionCount );
 
       {
-        if ( neuralWorkerProxies.alignmentMarkValueArray_nonEmpty )
+        if ( neuralWorkerProxies.alignmentMarkValueArrayArray_nonEmpty )
           throw Error( `NeuralWorker_tester.PerformanceTestCase`
             + `.${funcNameInMessage}(): `
-            + `.alignmentMarkValueArray_nonEmpty `
-            + `( ${neuralWorkerProxies.alignmentMarkValueArray_nonEmpty} ) `
+            + `.alignmentMarkValueArrayArray_nonEmpty `
+            + `( ${neuralWorkerProxies.alignmentMarkValueArrayArray_nonEmpty} ) `
             + `should be false after .init_async() done. `
             + `${neuralWorkerProxies}` );
 
@@ -436,11 +436,11 @@ class PerformanceTestCase extends Recyclable.Root {
           + `${neuralWorkerProxies}` );
 
       {
-        if ( neuralWorkerProxies.alignmentMarkValueArray_nonEmpty )
+        if ( neuralWorkerProxies.alignmentMarkValueArrayArray_nonEmpty )
           throw Error( `NeuralWorker_tester.PerformanceTestCase`
             + `.${funcNameInMessage}(): .neuralWorkerProxies`
-            + `.alignmentMarkValueArray_nonEmpty `
-            + `( ${neuralWorkerProxies.alignmentMarkValueArray_nonEmpty} ) `
+            + `.alignmentMarkValueArrayArray_nonEmpty `
+            + `( ${neuralWorkerProxies.alignmentMarkValueArrayArray_nonEmpty} ) `
             + `should be false after .NeuralNetArray_create_async() done. `
             + `${neuralWorkerProxies}` );
 
