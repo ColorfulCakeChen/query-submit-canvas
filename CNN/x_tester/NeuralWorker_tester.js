@@ -1515,6 +1515,16 @@ class HeightWidthDepth {
                 const rhsNumberArrayName = `outputRef${neuralNetIndex}`;
                 const postfixMsg = testCase.testCaseName;
 
+//!!! (2025/07/31 Temp Added)
+// For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
+                {
+                  const msg =
+                      `lhsNumberArray = [ ${lhsNumberArray} ], `
+                    + `rhsNumberArray = [ ${rhsNumberArray} ]`
+                    ;
+                  alert( msg );
+                }
+
                 asserter_Equal.assert_NumberArray_NumberArray(
                   lhsNumberArray, rhsNumberArray,
                   prefixMsg,
