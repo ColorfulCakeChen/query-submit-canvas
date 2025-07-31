@@ -321,7 +321,8 @@ class PerformanceTestCase extends Recyclable.Root {
     const vocabularyCountPerInputChannel
       = this.neuralNetParamsBase.vocabularyCountPerInputChannel;
 
-    const weightArrayBuffer_partitionCount = this.weightArrayBuffer_partitionCount;
+    const weightArrayBuffer_partitionCount
+      = this.weightArrayBuffer_partitionCount;
 
     try {
       await tf.ready(); // Ensure tf.getBackend() workable.
