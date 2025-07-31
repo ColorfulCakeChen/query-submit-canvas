@@ -1490,8 +1490,16 @@ class HeightWidthDepth {
                 const input_TypedArray = this.input_TypedArray_clone();
 
 //!!! ...unfinished... (2025/05/21)
-// Problem: If fill alignment mark or fill previous output, the results of
-// neural worker and nueral net (local) seems not matching.
+// Problem: In mobile phone (moto e40) and backend webgl, if fill alignment
+// mark or fill previous output, the results of neural worker and nueral
+// net (local) seems not matching.
+//
+// This issue does not existed, when:
+//   - In desktop computer
+//   - In mobile phone (moto e40) and backend cpu
+//   - In mobile phone (moto e40) and backend webgl, but do not fill anything
+//     (either alignment mark or previoud output) as implict input
+//
 
                 // NeuralNet_try_result_async() should be called after
                 // NeuralWorkerProxies_prepare_async() so that the
@@ -1670,9 +1678,10 @@ async function* testerBackendAll( progressParent,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       blockCountTotalRequested,
       output_channelCount,
-      "cpu", bAscent_or_Descent,
-//!!! (2025/07/31 Temp Remarked) For test mobile mismatch.
-      // "webgl", bAscent_or_Descent,
+      "webgl", bAscent_or_Descent,
+//!!! (2025/07/31 Temp Modified)
+// For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
+//      "cpu", bAscent_or_Descent,
     );
 
     bAscent_or_Descent = true; // Ascent
@@ -1684,9 +1693,10 @@ async function* testerBackendAll( progressParent,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       blockCountTotalRequested,
       output_channelCount,
-      "webgl", bAscent_or_Descent,
-//!!! (2025/07/31 Temp Remarked) For test mobile.
-      // "cpu", bAscent_or_Descent,
+      "cpu", bAscent_or_Descent,
+//!!! (2025/07/31 Temp Modified)
+// For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
+//      "webgl", bAscent_or_Descent,
     );
   }
 
