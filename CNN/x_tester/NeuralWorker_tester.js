@@ -1670,7 +1670,9 @@ async function* testerBackendAll( progressParent,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       blockCountTotalRequested,
       output_channelCount,
-      "webgl", bAscent_or_Descent,
+      "cpu", bAscent_or_Descent,
+//!!! (2025/07/31 Temp Remarked) For test mobile mismatch.
+      // "webgl", bAscent_or_Descent,
     );
 
     bAscent_or_Descent = true; // Ascent
@@ -1682,7 +1684,9 @@ async function* testerBackendAll( progressParent,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       blockCountTotalRequested,
       output_channelCount,
-      "cpu", bAscent_or_Descent,
+      "webgl", bAscent_or_Descent,
+//!!! (2025/07/31 Temp Remarked) For test mobile.
+      // "cpu", bAscent_or_Descent,
     );
   }
 
