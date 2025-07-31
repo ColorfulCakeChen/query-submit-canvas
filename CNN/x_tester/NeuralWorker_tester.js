@@ -1521,8 +1521,8 @@ class HeightWidthDepth {
                   const backendName = tf.getBackend();
                   const msg = `${postfixMsg}: `
                     + `backendName = ${backendName}, `
-                    + `lhsNumberArray = [ ${lhsNumberArray} ], `
-                    + `rhsNumberArray = [ ${rhsNumberArray} ]`
+                    + `lhsNumberArray (NeuralWorker) = [ ${lhsNumberArray} ], `
+                    + `rhsNumberArray (NeuralNet (local)) = [ ${rhsNumberArray} ]`
                     ;
                   alert( msg );
                 }
@@ -1690,10 +1690,10 @@ async function* testerBackendAll( progressParent,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       blockCountTotalRequested,
       output_channelCount,
-      // "webgl", bAscent_or_Descent,
+      "webgl", bAscent_or_Descent,
 //!!! (2025/07/31 Temp Modified)
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
-      "cpu", bAscent_or_Descent,
+      // "cpu", bAscent_or_Descent,
     );
 
     bAscent_or_Descent = true; // Ascent
@@ -1705,10 +1705,10 @@ async function* testerBackendAll( progressParent,
       vocabularyChannelCount, vocabularyCountPerInputChannel,
       blockCountTotalRequested,
       output_channelCount,
-      // "cpu", bAscent_or_Descent,
+      "cpu", bAscent_or_Descent,
 //!!! (2025/07/31 Temp Modified)
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
-      "webgl", bAscent_or_Descent,
+      // "webgl", bAscent_or_Descent,
     );
   }
 
