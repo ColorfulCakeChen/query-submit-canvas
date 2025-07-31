@@ -1289,7 +1289,7 @@ class HeightWidthDepth {
       }
     }
 
-    let backendName = tf.getBackend();
+    const backendName = tf.getBackend();
     console.log( `NeuralWorker ( ${backendName} ) testing...` );
 
     const ExecutionTimeInfoTimes = 10;
@@ -1477,6 +1477,18 @@ class HeightWidthDepth {
                     // (2025/05/20 Modified)
                     alignmentMarkValueArray = neuralWorkerProxies
                       .alignmentMarkValueArrayArray[ neuralNetIndex ];
+
+//!!! (2025/07/31 Temp Added)
+// For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
+                    {
+                      const msg = `${testCase.testCaseName}: `
+                        + `backendName = ${backendName}, `
+                        + `neuralNetIndex = ${neuralNetIndex}, `
+                        + `alignmentMarkValueArray = [ ${alignmentMarkValueArray} ]`
+                        ;
+                      alert( msg );
+                    }
+
                   }
 
                   if ( this.ImplicitInputModeInfo
@@ -1484,6 +1496,17 @@ class HeightWidthDepth {
                     previous_output_TypedArray
                       = previous_output_TypedArrayArray_for_verification[
                           neuralNetIndex ];
+
+//!!! (2025/07/31 Temp Added)
+// For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
+                    {
+                      const msg = `${testCase.testCaseName}: `
+                        + `backendName = ${backendName}, `
+                        + `neuralNetIndex = ${neuralNetIndex}, `
+                        + `previous_output_TypedArray = [ ${previous_output_TypedArray} ]`
+                        ;
+                      alert( msg );
+                    }
                   }
                 }
 
@@ -1518,7 +1541,6 @@ class HeightWidthDepth {
 //!!! (2025/07/31 Temp Added)
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
                 {
-                  const backendName = tf.getBackend();
                   const msg = `${postfixMsg}: `
                     + `backendName = ${backendName}, `
                     + `lhsNumberArray (NeuralWorker) = [ ${lhsNumberArray} ], `
