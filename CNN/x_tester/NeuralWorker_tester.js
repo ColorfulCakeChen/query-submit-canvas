@@ -1076,7 +1076,7 @@ class HeightWidthDepth {
     // If ( vocabulary count <= 256 ) and ( channel count == 4 ), use canvas.
     if (   ( vocabularyCountPerInputChannel <= ( 2 ** 8 ) ) // 256
         && ( input_channelCount == 4 ) ) { // Use ImageData.
-    
+
       let imageData = new ImageData(
         this.input_TypedArray, input_width_scaled, input_height_scaled );
 
