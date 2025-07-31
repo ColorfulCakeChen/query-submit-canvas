@@ -1430,6 +1430,19 @@ class HeightWidthDepth {
                 timeInfo.elapsed = timeInfo.end - timeInfo.begin;
                 timeInfo.elapsedTotal += timeInfo.elapsed;
 
+
+//!!! (2025/07/31 Temp Added)
+// For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
+                {
+                  const msg = `${testCase.testCaseName}: NeuralWorker, `
+                    + `backendName = ${backendName}, `
+                    + `timeTimesIndex = ${timeTimesIndex}, `
+                    + `resultFloat32ArrayArray[ 0 ] = [ ${resultFloat32ArrayArray[ 0 ]} ], `
+                    + `resultFloat32ArrayArray[ 1 ] = [ ${resultFloat32ArrayArray[ 1 ]} ]`
+                    ;
+                  alert( msg );
+                }
+
                 // Deep copy the last 2nd testing result (i.e. the last 1st
                 // input) as previous time output for verification.
                 if ( timeTimesIndex == ( timeInfo.times - 2 ) ) {
