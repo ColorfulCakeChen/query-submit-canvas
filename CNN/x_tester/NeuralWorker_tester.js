@@ -1518,8 +1518,10 @@ class HeightWidthDepth {
 //!!! (2025/07/31 Temp Added)
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
                 {
-                  const msg =
-                      `lhsNumberArray = [ ${lhsNumberArray} ], `
+                  const backendName = tf.getBackend();
+                  const msg = `${postfixMsg}: `
+                    + `backendName = ${backendName}, `
+                    + `lhsNumberArray = [ ${lhsNumberArray} ], `
                     + `rhsNumberArray = [ ${rhsNumberArray} ]`
                     ;
                   alert( msg );
