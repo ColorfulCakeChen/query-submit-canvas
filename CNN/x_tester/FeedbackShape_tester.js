@@ -863,7 +863,7 @@ class TestCase {
       headerPrefix,
       strSubheader,
       this.from_output_valueArray,
-      height, width, input_channelCount,
+      height, width, channelCount,
       null, // (aBoundsArray_or_aScaleBoundsArray)
       null  // (bPassThroughArray)
     );
