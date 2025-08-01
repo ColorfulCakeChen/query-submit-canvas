@@ -43,6 +43,28 @@ class NeuralNet_FeedbackToInput_from {
     return str;
   }
 
+  /**
+   * Log as table.
+   *
+   * @param {string} headerPrefix
+   *   It will be used as the header of table log.
+   */
+  TableLog_FeedbackToInput_from( headerPrefix ) {
+    console.groupCollapsed( headerPrefix );
+
+    const str = ``
+      + `from_valueCount ( original, expanded ) = ( `
+        + `${this.from_valueCount_original}, `
+        + `${this.from_valueCount_expanded} ), `
+      + `from_pixelCount ( original, expanded ) = ( `
+        + `${this.from_pixelCount_original}, `
+        + `${this.from_pixelCount_expanded} )`
+      ;
+
+    console.log( str );
+    console.groupEnd();
+  }
+
 }
 
 
@@ -173,7 +195,7 @@ class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
   }
 
   /**
-   * Log the .feedbackShape as table.
+   * Log as table.
    *
    * @param {string} headerPrefix
    *   It will be used as the header of table log.

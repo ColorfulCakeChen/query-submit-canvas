@@ -802,7 +802,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
   }
 
   /**
-   * Log the .feedbackShape as table.
+   * Log as table.
    *
    * @param {string} headerPrefix
    *   It will be used as the header of table log.
