@@ -176,7 +176,7 @@ class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
 
 
 /**
- * Information for placing feedback (i.e. previous explicit and implicit
+ * Information for placing feedback (i.e. previous (explicit and implicit)
  * output) to (implicit) input.
  *
  *
