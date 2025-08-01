@@ -46,8 +46,8 @@ class TestCase {
       this.feedback_valueCount
     );
 
-    // const exponentBase = 10;
-    const exponentBase = 6;
+    const exponentBase = 10;
+    // const exponentBase = 6;
 
     this.from_value_offset_exponent_per_neuralNet = Math.ceil(
       Math.log( feedbackShape.area.from_valueCount_expanded )
@@ -99,9 +99,29 @@ class TestCase {
       }
     }
 
+    const characterCountPerField_original
+      = TableLogger.Base.Singleton.characterCountPerField;
+    const digitCountAfterDecimalPoint_oroginal
+      = TableLogger.Base.Singleton.digitCountAfterDecimalPoint;
+
+    // Adjust TableLogger parameters so that large image width could be looked
+    // clearly.
+    if ( this.bTableLog ) {
+      TableLogger.Base.Singleton.characterCountPerField = 10;
+      TableLogger.Base.Singleton.digitCountAfterDecimalPoint = 0;
+    }
+
     this.test_properties();
     this.test_valueArray_get();
     this.test_set_implicit_input();
+
+    // Restore default TableLogger parameters.
+    if ( this.bTableLog ) {
+      TableLogger.Base.Singleton.characterCountPerField
+        = characterCountPerField_original;
+      TableLogger.Base.Singleton.digitCountAfterDecimalPoint
+        = digitCountAfterDecimalPoint_oroginal;
+    }
   }
 
   /** */
