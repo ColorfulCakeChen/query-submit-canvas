@@ -198,12 +198,21 @@ class TableLogger_Base {
     const funcNameInMessage = "log_array_as_image_along_depth";
 
     const elementCount = height * width * depth;
-    if ( dataArray.length != elementCount )
-      throw Error( `TableLogger_Base.${funcNameInMessage}(): `
+    if ( dataArray.length != elementCount ) {
+      const msg = `TableLogger_Base.${funcNameInMessage}(): `
         + `dataArray.length ( ${dataArray.length} ) `
         + `should be ( ${elementCount} ) for shape `
         + `( height, width, depth ) = ( ${height}, ${width}, ${depth} ).`
-      );
+        ;
+
+      const elementCountDelta = elementCount - dataArray.length;
+      if ( elementCountDelta < depth ) {
+        // If difference is smaller than one pixel, just warning.
+        console.warn( msg );
+      } else {
+        throw Error( msg );
+      }
+    }
 
     // Determine bounds array.
     let boundsArray;

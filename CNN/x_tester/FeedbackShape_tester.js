@@ -857,6 +857,7 @@ class TestCase {
     const feedbackShape = this.feedbackShape;
     const height = feedbackShape.area.height_pixelCount_original;
     const width = feedbackShape.area.width_pixelCount_original;
+!!!
     const channelCount = feedbackShape.input_channelCount;
 
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
