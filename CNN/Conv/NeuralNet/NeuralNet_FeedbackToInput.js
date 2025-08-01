@@ -203,15 +203,9 @@ class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
   TableLog_FeedbackToInput_Area( headerPrefix ) {
     console.groupCollapsed( headerPrefix );
 
-!!! ...unfinished... (2025/08/01)
+    super.TableLog_FeedbackToInput_from( "from" );
+
     const str = ``
-
-        `from_valueCount_original=${this.from_valueCount_original}, `
-      + `from_valueCount_expanded=${this.from_valueCount_expanded}, `
-      + `from_pixelCount_original=${this.from_pixelCount_original}, `
-      + `from_pixelCount_expanded=${this.from_pixelCount_expanded}`
-
-
       + `multiplier ( height, width ) = ( `
         + `${this.height_multiplier}, ${this.width_multiplier} ),\n`
 
@@ -235,13 +229,9 @@ class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
       + `width_gap_pixelCount ( original, expanded ) = ( `
         + `${this.gap_width_pixelCount_original}, `
         + `${this.gap_width_pixelCount_expanded} ),\n`
-
-
-!!!
       ;
 
     console.log( str );
-
     console.groupEnd();
   }
 }

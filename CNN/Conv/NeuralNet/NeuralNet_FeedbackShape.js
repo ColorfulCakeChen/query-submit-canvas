@@ -810,6 +810,8 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
   TableLog_FeedbackShape( headerPrefix ) {
     console.groupCollapsed( headerPrefix );
 
+    this.area.TableLog_FeedbackToInput_Area( "area" );
+
     // console.groupCollapsed( "explicit_input" );
     const str = ``
       + `input ( height, width, channelCount ) = ( `
@@ -836,15 +838,9 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
       + `( pixelCount, valueCount ) = ( `
         + `${this.explicit_input_pixelCount}, `
         + `${this.explicit_input_valueCount} ),\n`
-
-!!! ...unfinished... (2025/08/01)
-// Area
       ;
 
-    // console.groupEnd();
-    
     console.log( str );
-
     console.groupEnd();
   }
 }
