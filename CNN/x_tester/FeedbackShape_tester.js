@@ -917,6 +917,9 @@ class TestCase {
     const width = feedbackShape.input_width;
     const channelCount = feedbackShape.input_channelCount;
 
+    if ( !strSubheader )
+      strSubheader = feedbackShape.toString();
+
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
       headerPrefix,
       strSubheader,
