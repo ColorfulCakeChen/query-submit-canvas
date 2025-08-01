@@ -1,7 +1,7 @@
 export { tester };
 
 import * as RandTools from "../util/RandTools.js";
-import * as TableLogger from "../../util/TableLogger.js";
+import * as TableLogger from "../util/TableLogger.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as NeuralNet from "../Conv/NeuralNet.js";
 
