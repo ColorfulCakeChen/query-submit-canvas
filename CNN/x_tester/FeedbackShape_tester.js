@@ -806,36 +806,6 @@ class TestCase {
   }
 
   /**
-   * If .bTableLog is true, log the .nextInputArray as table.
-   *
-   * @param {string} headerPrefix
-   *   It will be used as the header of table log.
-   *
-   * @param {string} strSubheader
-   *   A string will be logged between image header and data array. If null or
-   * undefined, there is no subheader.
-   */
-  TableLog_nextInputArray_if_requested( headerPrefix, strSubheader ) {
-    if ( !this.bTableLog )
-      return;
-
-    console.groupCollapsed( headerPrefix );
-
-    TableLogger.Base.Singleton.log_array_as_image_along_depth(
-      headerPrefix,
-      strSubheader,
-      this.nextInputArray,
-      this.explicit_input_height,
-      this.explicit_input_width,
-      this.explicit_input_channelCount,
-      null, // (aBoundsArray_or_aScaleBoundsArray)
-      null  // (bPassThroughArray)
-    );
-
-    console.groupEnd();
-  }
-
-  /**
    * If .bTableLog is true, log the .alignmentMarkValueArray as table.
    *
    * @param {string} headerPrefix
@@ -851,13 +821,16 @@ class TestCase {
 
     console.groupCollapsed( headerPrefix );
 
+    const feedbackShape = this.feedbackShape;
+    const channelCount = feedbackShape.explicit_input_channelCount;
+
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
       headerPrefix,
       strSubheader,
       this.alignmentMarkValueArray,
       1, // (height)
       1, // (width,)
-      this.explicit_input_channelCount,
+      channelCount,
       null, // (aBoundsArray_or_aScaleBoundsArray)
       null  // (bPassThroughArray)
     );
@@ -881,15 +854,49 @@ class TestCase {
 
     console.groupCollapsed( headerPrefix );
 
-    const height = this.feedbackShape.area.height_pixelCount_original;
-    const width =this.feedbackShape.area.width_pixelCount_original;
-    const channelCount = this.explicit_input_channelCount;
+    const feedbackShape = this.feedbackShape;
+    const height = feedbackShape.area.height_pixelCount_original;
+    const width = feedbackShape.area.width_pixelCount_original;
+    const channelCount = feedbackShape.explicit_input_channelCount;
 
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
       headerPrefix,
       strSubheader,
       this.from_output_valueArray,
       height, width, input_channelCount,
+      null, // (aBoundsArray_or_aScaleBoundsArray)
+      null  // (bPassThroughArray)
+    );
+
+    console.groupEnd();
+  }
+
+  /**
+   * If .bTableLog is true, log the .nextInputArray as table.
+   *
+   * @param {string} headerPrefix
+   *   It will be used as the header of table log.
+   *
+   * @param {string} strSubheader
+   *   A string will be logged between image header and data array. If null or
+   * undefined, there is no subheader.
+   */
+  TableLog_nextInputArray_if_requested( headerPrefix, strSubheader ) {
+    if ( !this.bTableLog )
+      return;
+
+    console.groupCollapsed( headerPrefix );
+
+    const feedbackShape = this.feedbackShape;
+    const height = feedbackShape.explicit_input_height;
+    const width = feedbackShape.explicit_input_width;
+    const channelCount = feedbackShape.explicit_input_channelCount;
+
+    TableLogger.Base.Singleton.log_array_as_image_along_depth(
+      headerPrefix,
+      strSubheader,
+      this.nextInputArray,
+      height, width, channelCount,
       null, // (aBoundsArray_or_aScaleBoundsArray)
       null  // (bPassThroughArray)
     );
