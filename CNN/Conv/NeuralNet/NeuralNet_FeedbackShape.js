@@ -812,12 +812,21 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
     // console.groupCollapsed( "explicit_input" );
     const str = ``
-      + `explicit_input ( height, width, channelCount ) = ( `
+      + `explicit_input `
+        + `( height, width, channelCount ) ( pixelCount, valueCount ) = ( `
         + `${this.explicit_input_height}, `
         + `${this.explicit_input_width}, `
-        + `${this.explicit_input_channelCount} ), `
-      + `explicit_input_pixelCount=${this.explicit_input_pixelCount}, `
-      + `explicit_input_valueCount=${this.explicit_input_valueCount}, `
+        + `${this.explicit_input_channelCount} ) ( `
+        + `${this.explicit_input_pixelCount}, `
+        + `${this.explicit_input_valueCount} ),\n`
+
+      + `implicit_input `
+        + `( height, width, channelCount ) ( pixelCount, valueCount ) = ( `
+        + `${this.implicit_input_height}, `
+        + `${this.implicit_input_width}, `
+        + `${this.implicit_input_channelCount} ) (  `
+        + `${this.implicit_input_pixelCount}, `
+        + `${this.implicit_input_valueCount} ),\n`
 
       ;
 
