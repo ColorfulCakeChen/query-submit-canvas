@@ -417,7 +417,7 @@ class TestCase {
         let from_output_pixelCount
           = RandTools.getRandomIntInclusive( 0, pixelCountMax );
 
-        //!!! (2023/04/28 Remarked) Too mant to test.
+        //!!! (2023/04/28 Remarked) Too many to test.
         // for ( let from_output_pixelCount = 0;
         //   from_output_pixelCount < pixelCountMax;
         //   ++from_output_pixelCount )
