@@ -479,12 +479,15 @@ class TestCase {
       console.groupCollapsed( testCaseHeader );
     }
 
-    TableLog_alignmentMarkValueArray_if_requested( "alignmentMarkValueArray" );
-    TableLog_from_output_valueArray_if_requested( "from_output_valueArray" );
+    this.TableLog_alignmentMarkValueArray_if_requested(
+      "alignmentMarkValueArray" );
+
+    this.TableLog_from_output_valueArray_if_requested(
+      "from_output_valueArray" );
 
     this.nextInputArray_explicit_fill();
 
-    TableLog_nextInputArray_if_requested( "original" );
+    this.TableLog_nextInputArray_if_requested( "original" );
 
     // fill implicit input.
     feedbackShape
@@ -493,7 +496,7 @@ class TestCase {
         this.alignmentMarkValueArray,
         this.from_output_valueArray );
 
-    TableLog_nextInputArray_if_requested( "filled" );
+    this.TableLog_nextInputArray_if_requested( "filled" );
 
     this.nextInputArray_explicit_check();
     this.nextInputArray_alignmentMarkValueArray_check();
