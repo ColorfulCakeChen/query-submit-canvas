@@ -51,11 +51,11 @@ const gTestGeneratorFuncMap = new Map( [
   // [ CNN_Block_tester.tester, true ],
   // [ CNN_Embedding_tester.tester, true ],
   // [ CNN_ImageScaling_tester.tester, true ],
-  [ CNN_NeuralNet_tester.tester, true ],
+  // [ CNN_NeuralNet_tester.tester, true ],
   // [ CNN_Operation_tester.tester, true ],
   // [ CNN_Stage_tester.tester, true ],
 
-  // [ FeedbackShape_tester.tester, true ],
+  [ FeedbackShape_tester.tester, true ],
 
   // [ GSheets_tester.tester, true ],
 
