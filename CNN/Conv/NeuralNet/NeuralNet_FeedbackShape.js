@@ -820,7 +820,7 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         + `${this.input_channelCount} ), `
       + `( pixelCount, valueCount, width_valueCount ) = ( `
         + `${this.input_pixelCount}, `
-        + `${this.input_valueCount},`
+        + `${this.input_valueCount}, `
         + `${this.input_width_valueCount} ),\n`
 
       + `implicit_input ( height, width, channelCount ) = ( `
