@@ -877,14 +877,15 @@ class TestCase {
 
     console.groupCollapsed( headerPrefix );
 
+    const height = this.feedbackShape.area.height_pixelCount_original;
+    const width =this.feedbackShape.area.width_pixelCount_original;
+    const channelCount = this.explicit_input_channelCount;
+
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
       headerPrefix,
       strSubheader,
       this.from_output_valueArray,
-!!!
-      1, // (height)
-      1, // (width,)
-      this.explicit_input_channelCount,
+      height, width, input_channelCount,
       null, // (aBoundsArray_or_aScaleBoundsArray)
       null  // (bPassThroughArray)
     );
