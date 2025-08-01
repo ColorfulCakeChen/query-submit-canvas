@@ -78,10 +78,10 @@ class TestCase {
       }
     }
 
-    // Multiplying 10 can always exceed any from_value (i.e. any feedback
-    // value) and alignment mark value.
+    // Multiplying exponentBase (e.g. 10) can always exceed any from_value
+    // (i.e. any feedback value) and alignment mark value.
     this.explcit_input_value_base_positive
-      = ( this.from_value_offset_per_neuralNet * 10 ) + 1;
+      = ( this.from_value_offset_per_neuralNet * exponentBase ) + 1;
 
     // from_output_valueArray
     {
