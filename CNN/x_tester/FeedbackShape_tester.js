@@ -504,10 +504,7 @@ class TestCase {
       const testCaseHeader = `testCaseId = ${this.testCaseId}`;
       console.groupCollapsed( testCaseHeader );
 
-      console.groupCollapsed( "parameters" );
-      const strParams = feedbackShape.toString();
-      console.log( strParams );
-      console.groupEnd();
+      this.TableLog_feedbackShape_if_requested( "feedbackShape" );
     }
 
     this.TableLog_alignmentMarkValueArray_if_requested(
@@ -833,6 +830,20 @@ class TestCase {
         } // y_multiplier
       } // y
     }
+  }
+
+  /**
+   * If .bTableLog is true, log the .feedbackShape as table.
+   *
+   * @param {string} headerPrefix
+   *   It will be used as the header of table log.
+   */
+  TableLog_feedbackShape_if_requested( headerPrefix ) {
+    if ( !this.bTableLog )
+      return;
+
+    const feedbackShape = this.feedbackShape;
+    feedbackShape.TableLog_feedbackShape( headerPrefix );
   }
 
   /**
