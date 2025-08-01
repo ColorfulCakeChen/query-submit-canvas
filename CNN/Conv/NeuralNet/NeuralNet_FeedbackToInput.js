@@ -48,7 +48,7 @@ class NeuralNet_FeedbackToInput_from {
 
 /**
  * Describe a cuboid in the neural network's input for filling the previous
- * output (i.e. feedback) a neural network to the next time input.
+ * output (i.e. feedback) to the next time input.
  *
  *
  * @member {number} height_multiplier
