@@ -331,9 +331,10 @@ class TableLogger_Base {
         for ( let x = 0; x < width; ++x, elementIndex += depth ) {
           elementValue = dataArray[ elementIndex ];
 
-          valueString = elementValue
-            ?.toFixed( digitCountAfterDecimalPoint )
-            ?.padStart( characterCountPerField );
+          // Note: Use Number() so that undefined can be handled.
+          valueString = Number( elementValue )
+            .toFixed( digitCountAfterDecimalPoint )
+            .padStart( characterCountPerField );
 
           bodyFields.push( valueString );
         }
