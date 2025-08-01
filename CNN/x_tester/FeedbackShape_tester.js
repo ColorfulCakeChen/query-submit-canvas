@@ -843,7 +843,7 @@ class TestCase {
       return;
 
     const feedbackShape = this.feedbackShape;
-    feedbackShape.TableLog_feedbackShape( headerPrefix );
+    feedbackShape.TableLog_FeedbackShape( headerPrefix );
   }
 
   /**
