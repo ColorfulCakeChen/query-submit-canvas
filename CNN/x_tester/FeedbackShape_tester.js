@@ -503,6 +503,11 @@ class TestCase {
     if ( this.bTableLog ) {
       const testCaseHeader = `testCaseId = ${this.testCaseId}`;
       console.groupCollapsed( testCaseHeader );
+
+      console.groupCollapsed( "parameters" );
+      const strParams = feedbackShape.toString();
+      console.log( strParams );
+      console.groupEnd();
     }
 
     this.TableLog_alignmentMarkValueArray_if_requested(
@@ -916,9 +921,6 @@ class TestCase {
     const height = feedbackShape.input_height;
     const width = feedbackShape.input_width;
     const channelCount = feedbackShape.input_channelCount;
-
-    if ( !strSubheader )
-      strSubheader = feedbackShape.toString();
 
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
       headerPrefix,
