@@ -479,12 +479,12 @@ class TestCase {
       console.groupCollapsed( testCaseHeader );
     }
 
+    TableLog_alignmentMarkValueArray_if_requested( "alignmentMarkValueArray" );
+    TableLog_from_output_valueArray_if_requested( "from_output_valueArray" );
+
     this.nextInputArray_explicit_fill();
 
     TableLog_nextInputArray_if_requested( "original" );
-
-!!! ...unfinished... (2025/08/01) table log .alignmentMarkValueArray
-!!! ...unfinished... (2025/08/01) table log .from_output_valueArray
 
     // fill implicit input.
     feedbackShape
@@ -823,6 +823,67 @@ class TestCase {
       this.nextInputArray,
       this.explicit_input_height,
       this.explicit_input_width,
+      this.explicit_input_channelCount,
+      null, // (aBoundsArray_or_aScaleBoundsArray)
+      null  // (bPassThroughArray)
+    );
+
+    console.groupEnd();
+  }
+
+  /**
+   * If .bTableLog is true, log the .alignmentMarkValueArray as table.
+   *
+   * @param {string} headerPrefix
+   *   It will be used as the header of table log.
+   *
+   * @param {string} strSubheader
+   *   A string will be logged between image header and data array. If null or
+   * undefined, there is no subheader.
+   */
+  TableLog_alignmentMarkValueArray_if_requested( headerPrefix, strSubheader ) {
+    if ( !this.bTableLog )
+      return;
+
+    console.groupCollapsed( headerPrefix );
+
+    TableLogger.Base.Singleton.log_array_as_image_along_depth(
+      headerPrefix,
+      strSubheader,
+      this.alignmentMarkValueArray,
+      1, // (height)
+      1, // (width,)
+      this.explicit_input_channelCount,
+      null, // (aBoundsArray_or_aScaleBoundsArray)
+      null  // (bPassThroughArray)
+    );
+
+    console.groupEnd();
+  }
+
+  /**
+   * If .bTableLog is true, log the .from_output_valueArray as table.
+   *
+   * @param {string} headerPrefix
+   *   It will be used as the header of table log.
+   *
+   * @param {string} strSubheader
+   *   A string will be logged between image header and data array. If null or
+   * undefined, there is no subheader.
+   */
+  TableLog_from_output_valueArray_if_requested( headerPrefix, strSubheader ) {
+    if ( !this.bTableLog )
+      return;
+
+    console.groupCollapsed( headerPrefix );
+
+    TableLogger.Base.Singleton.log_array_as_image_along_depth(
+      headerPrefix,
+      strSubheader,
+      this.from_output_valueArray,
+!!!
+      1, // (height)
+      1, // (width,)
       this.explicit_input_channelCount,
       null, // (aBoundsArray_or_aScaleBoundsArray)
       null  // (bPassThroughArray)
