@@ -1052,7 +1052,9 @@ const gTestCases = new TestCases();
  *
  */
 async function* tester( progressParent ) {
-  console.log( `NeuralNet.FeedbackShape testing...` );
+  const testCaseCount = gTestCases.length;
+
+  console.log( `NeuralNet.FeedbackShape testing... ( ${testCaseCount} )` );
 
   let progressRoot = progressParent.root_get();
 
