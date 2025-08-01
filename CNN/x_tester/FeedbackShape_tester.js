@@ -822,7 +822,7 @@ class TestCase {
     console.groupCollapsed( headerPrefix );
 
     const feedbackShape = this.feedbackShape;
-    const channelCount = feedbackShape.explicit_input_channelCount;
+    const channelCount = feedbackShape.input_channelCount;
 
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
       headerPrefix,
@@ -857,7 +857,7 @@ class TestCase {
     const feedbackShape = this.feedbackShape;
     const height = feedbackShape.area.height_pixelCount_original;
     const width = feedbackShape.area.width_pixelCount_original;
-    const channelCount = feedbackShape.explicit_input_channelCount;
+    const channelCount = feedbackShape.input_channelCount;
 
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
       headerPrefix,
@@ -888,9 +888,9 @@ class TestCase {
     console.groupCollapsed( headerPrefix );
 
     const feedbackShape = this.feedbackShape;
-    const height = feedbackShape.explicit_input_height;
-    const width = feedbackShape.explicit_input_width;
-    const channelCount = feedbackShape.explicit_input_channelCount;
+    const height = feedbackShape.input_height;
+    const width = feedbackShape.input_width;
+    const channelCount = feedbackShape.input_channelCount;
 
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
       headerPrefix,
