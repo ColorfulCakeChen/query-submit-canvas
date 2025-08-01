@@ -463,7 +463,7 @@ class TestCase {
 
     const feedbackShape = this.feedbackShape;
     const input_channelCount = feedbackShape.input_channelCount;
-
+ 
     if (   !this.nextInputArray
         || ( this.nextInputArray.length != feedbackShape.input_valueCount ) )
       this.nextInputArray = new Int32Array( feedbackShape.input_valueCount );
@@ -472,12 +472,16 @@ class TestCase {
 
     this.nextInputArray_explicit_fill();
 
+!!! ...unfinished... (2025/08/01) table log .nextInputArray
+
     // fill implicit input.
     feedbackShape
       .implicit_input_set_by_alignmentMarkValueArray_previousOutputTypedArray(
         this.nextInputArray,
         this.alignmentMarkValueArray,
         this.from_output_valueArray );
+
+!!! ...unfinished... (2025/08/01) table log .nextInputArray
 
     this.nextInputArray_explicit_check();
     this.nextInputArray_alignmentMarkValueArray_check();
@@ -781,6 +785,40 @@ class TestCase {
       } // y
     }
   }
+
+//!!!
+  /**
+   * If .bTableLog is true, log the .nextInputArray as table.
+   *
+   * @param {string} headerPrefix
+   *   It will be used as the header of table log.
+   *
+   * @param {string} strSubheader
+   *   A string will be logged between image header and data array. If null or
+   * undefined, there is no subheader.
+   */
+  TableLog_nextInputArray_if_requested(
+    headerPrefix, strSubheader
+  ) {
+
+    if ( !this.bTableLog )
+      return;
+
+    console.groupCollapsed( headerPrefix );
+
+    TableLogger.Base.Singleton.log_array_as_image_along_depth(
+      headerPrefix,
+      strSubheader,
+      this.nextInputArray,
+      height, width, depth,
+      null, // (aBoundsArray_or_aScaleBoundsArray)
+      null  // (bPassThroughArray)
+    );
+
+    console.groupEnd();
+  }
+//!!!
+
 
   assert_Area_LE( propertyName, value ) {
     this.assert_LE( "test", this.feedbackShape, "area", propertyName, value );
