@@ -812,28 +812,28 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
     // console.groupCollapsed( "explicit_input" );
     const str = ``
-      + `input ( height, width, channelCount ) `
-        + `( pixelCount, valueCount, width_valueCount ) = ( `
+      + `input ( height, width, channelCount ) = ( `
         + `${this.input_height}, `
         + `${this.input_width}, `
-        + `${this.input_channelCount} ) (  `
-        + `${this.implicit_input_pixelCount}, `
-        + `${this.implicit_input_valueCount},`
+        + `${this.input_channelCount} ), `
+      + `( pixelCount, valueCount, width_valueCount ) = ( `
+        + `${this.input_pixelCount}, `
+        + `${this.input_valueCount},`
         + `${this.input_width_valueCount} ),\n`
 
-      + `implicit_input ( height, width, channelCount ) `
-        + `( pixelCount, valueCount ) = ( `
+      + `implicit_input ( height, width, channelCount ) = ( `
         + `${this.implicit_input_height}, `
         + `${this.implicit_input_width}, `
-        + `${this.implicit_input_channelCount} ) (  `
+        + `${this.implicit_input_channelCount} ), `
+      + `( pixelCount, valueCount ) = ( `
         + `${this.implicit_input_pixelCount}, `
         + `${this.implicit_input_valueCount} ),\n`
 
-      + `explicit_input ( height, width, channelCount ) `
-        + `( pixelCount, valueCount ) = ( `
+      + `explicit_input ( height, width, channelCount ) = ( `
         + `${this.explicit_input_height}, `
         + `${this.explicit_input_width}, `
-        + `${this.explicit_input_channelCount} ) ( `
+        + `${this.explicit_input_channelCount} ), `
+      + `( pixelCount, valueCount ) = ( `
         + `${this.explicit_input_pixelCount}, `
         + `${this.explicit_input_valueCount} ),\n`
 
