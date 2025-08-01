@@ -235,8 +235,8 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
    *
    * @param {Uint8ClampedArray|Int32Array} input_TypedArray
    *   The (next time) input of the pair of neural networks. Usually, it is
-   * integer typed array. It should large enough to contain both implicit and
-   * explicit input.
+   * integer typed array. It should be large enough to contain both implicit
+   * and explicit input.
    *
    * @param {Uint8ClampedArray|Int32Array|number[]} alignmentMarkValueArray
    *   A non-negative integer array (as a pixel) representing the neural
