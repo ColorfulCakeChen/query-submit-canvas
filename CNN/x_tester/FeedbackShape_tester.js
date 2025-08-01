@@ -27,6 +27,10 @@ class TestCase {
 
     //!!! (2023/04/28 Remarked) Use Int32Array instead.
     //this.nextInputArray = new Array();
+
+    // (2025/08/01 Remarked) For debug.
+    // this.bTableLog = false;
+    this.bTableLog = true;
   }
 
   /** */
@@ -470,9 +474,17 @@ class TestCase {
     else
       this.nextInputArray.fill( 0 );
 
+    if ( this.bTableLog ) {
+      const testCaseHeader = `testCaseId = ${this.testCaseId}`;
+      console.groupCollapsed( testCaseHeader );
+    }
+
     this.nextInputArray_explicit_fill();
 
-!!! ...unfinished... (2025/08/01) table log .nextInputArray
+    TableLog_nextInputArray_if_requested( "original" );
+
+!!! ...unfinished... (2025/08/01) table log .alignmentMarkValueArray
+!!! ...unfinished... (2025/08/01) table log .from_output_valueArray
 
     // fill implicit input.
     feedbackShape
@@ -481,11 +493,14 @@ class TestCase {
         this.alignmentMarkValueArray,
         this.from_output_valueArray );
 
-!!! ...unfinished... (2025/08/01) table log .nextInputArray
+    TableLog_nextInputArray_if_requested( "filled" );
 
     this.nextInputArray_explicit_check();
     this.nextInputArray_alignmentMarkValueArray_check();
     this.nextInputArray_feedback_check();
+
+    if ( this.bTableLog )
+      console.groupEnd();
   }
 
   /** */
@@ -786,7 +801,6 @@ class TestCase {
     }
   }
 
-//!!!
   /**
    * If .bTableLog is true, log the .nextInputArray as table.
    *
@@ -797,10 +811,7 @@ class TestCase {
    *   A string will be logged between image header and data array. If null or
    * undefined, there is no subheader.
    */
-  TableLog_nextInputArray_if_requested(
-    headerPrefix, strSubheader
-  ) {
-
+  TableLog_nextInputArray_if_requested( headerPrefix, strSubheader ) {
     if ( !this.bTableLog )
       return;
 
@@ -810,15 +821,15 @@ class TestCase {
       headerPrefix,
       strSubheader,
       this.nextInputArray,
-      height, width, depth,
+      this.explicit_input_height,
+      this.explicit_input_width,
+      this.explicit_input_channelCount,
       null, // (aBoundsArray_or_aScaleBoundsArray)
       null  // (bPassThroughArray)
     );
 
     console.groupEnd();
   }
-//!!!
-
 
   assert_Area_LE( propertyName, value ) {
     this.assert_LE( "test", this.feedbackShape, "area", propertyName, value );
