@@ -222,13 +222,13 @@ class TableLogger_Base {
       aBoundsArray = aBoundsArray_or_aScaleBoundsArray;
       boundsArray = aBoundsArray;
 
-    } else {
+    } else if ( aBoundsArray_or_aScaleBoundsArray )
       throw Error( `TableLogger_Base.${funcNameInMessage}(): `
         + `aBoundsArray_or_aScaleBoundsArray `
         + `( ${aBoundsArray_or_aScaleBoundsArray} ) `
         + `should be instance of either`
         + `ActivationEscaping.ScaleBoundsArray `
-        + `or FloatValue.BoundsArray.`
+        + `or FloatValue.BoundsArray or null.`
       );
     }
 
