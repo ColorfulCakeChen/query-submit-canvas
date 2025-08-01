@@ -802,12 +802,12 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
   }
 
   /**
-   * If .bTableLog is true, log the .feedbackShape as table.
+   * Log the .feedbackShape as table.
    *
    * @param {string} headerPrefix
    *   It will be used as the header of table log.
    */
-  TableLog_feedbackShape( headerPrefix ) {
+  TableLog_FeedbackShape( headerPrefix ) {
     console.groupCollapsed( headerPrefix );
 
     // console.groupCollapsed( "explicit_input" );
@@ -837,17 +837,13 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         + `${this.explicit_input_pixelCount}, `
         + `${this.explicit_input_valueCount} ),\n`
 
+!!! ...unfinished... (2025/08/01)
+// Area
       ;
 
     // console.groupEnd();
     
     console.log( str );
-
-
-!!!
-    const strParams = feedbackShape.toString();
-    console.log( strParams );
-
 
     console.groupEnd();
   }

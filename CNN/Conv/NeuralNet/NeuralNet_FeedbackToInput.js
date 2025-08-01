@@ -172,6 +172,80 @@ class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
     return str;
   }
 
+  /**
+   * Log the .feedbackShape as table.
+   *
+   * @param {string} headerPrefix
+   *   It will be used as the header of table log.
+   */
+  TableLog_FeedbackToInput_Area( headerPrefix ) {
+    console.groupCollapsed( headerPrefix );
+
+!!! ...unfinished... (2025/08/01)
+    const str = ``
+
+        `from_valueCount_original=${this.from_valueCount_original}, `
+      + `from_valueCount_expanded=${this.from_valueCount_expanded}, `
+      + `from_pixelCount_original=${this.from_pixelCount_original}, `
+      + `from_pixelCount_expanded=${this.from_pixelCount_expanded}`
+
+
+      + `multiplier ( height, width ) = ( `
+        + `${this.height_multiplier}, ${this.width_multiplier} ),\n`
+
+      + `to_pixelCount ( original, expanded ) = ( `
+        +`${this.to_pixelCount_original}, ${this.to_pixelCount_expanded} ),\n`
+
+      + `height_pixelCount ( original, expanded, expanded_with_gap ) = ( `
+        + `${this.height_pixelCount_original}, `
+        + `${this.height_pixelCount_expanded}, `
+        + `${this.height_with_gap_pixelCount_expanded} ),\n`
+
+      + `width_pixelCount ( original, expanded, expanded_with_gap ) = ( `
+        + `${this.width_pixelCount_original}, `
+        + `${this.width_pixelCount_expanded}, `
+        + `${this.width_with_gap_pixelCount_expanded} ),\n`
+
+      + `gap_height_pixelCount_original=${this.gap_height_pixelCount_original}, `
+      + `gap_height_pixelCount_expanded=${this.gap_height_pixelCount_expanded}, `
+
+      + `gap_width_pixelCount_original=${this.gap_width_pixelCount_original}, `
+      + `gap_width_pixelCount_expanded=${this.gap_width_pixelCount_expanded}`
+
+
+!!!      
+      + `input ( height, width, channelCount ) = ( `
+        + `${this.input_height}, `
+        + `${this.input_width}, `
+        + `${this.input_channelCount} ), `
+      + `( pixelCount, valueCount, width_valueCount ) = ( `
+        + `${this.input_pixelCount}, `
+        + `${this.input_valueCount},`
+        + `${this.input_width_valueCount} ),\n`
+
+      + `implicit_input ( height, width, channelCount ) = ( `
+        + `${this.implicit_input_height}, `
+        + `${this.implicit_input_width}, `
+        + `${this.implicit_input_channelCount} ), `
+      + `( pixelCount, valueCount ) = ( `
+        + `${this.implicit_input_pixelCount}, `
+        + `${this.implicit_input_valueCount} ),\n`
+
+      + `explicit_input ( height, width, channelCount ) = ( `
+        + `${this.explicit_input_height}, `
+        + `${this.explicit_input_width}, `
+        + `${this.explicit_input_channelCount} ), `
+      + `( pixelCount, valueCount ) = ( `
+        + `${this.explicit_input_pixelCount}, `
+        + `${this.explicit_input_valueCount} ),\n`
+
+!!!
+      ;
+
+    console.log( str );
+
+    console.groupEnd();
+  }
 }
 
 
