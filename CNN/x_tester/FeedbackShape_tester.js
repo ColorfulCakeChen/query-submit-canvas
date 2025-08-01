@@ -107,7 +107,7 @@ class TestCase {
     // Adjust TableLogger parameters so that large image width could be looked
     // clearly.
     if ( this.bTableLog ) {
-      TableLogger.Base.Singleton.characterCountPerField = 10;
+      TableLogger.Base.Singleton.characterCountPerField = 5;
       TableLogger.Base.Singleton.digitCountAfterDecimalPoint = 0;
     }
 
