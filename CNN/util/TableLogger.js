@@ -332,8 +332,8 @@ class TableLogger_Base {
           elementValue = dataArray[ elementIndex ];
 
           valueString = elementValue
-            .toFixed( digitCountAfterDecimalPoint )
-            .padStart( characterCountPerField );
+            ?.toFixed( digitCountAfterDecimalPoint )
+            ?.padStart( characterCountPerField );
 
           bodyFields.push( valueString );
         }
