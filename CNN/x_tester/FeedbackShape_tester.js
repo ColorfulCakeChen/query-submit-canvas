@@ -46,11 +46,16 @@ class TestCase {
       this.feedback_valueCount
     );
 
+    // const exponentBase = 10;
+    const exponentBase = 6;
+
     this.from_value_offset_exponent_per_neuralNet = Math.ceil(
-      Math.log10( feedbackShape.area.from_valueCount_expanded ) );
+      Math.log( feedbackShape.area.from_valueCount_expanded )
+        / Math.log( exponentBase )
+     );
 
     this.from_value_offset_per_neuralNet
-      = 10 ** this.from_value_offset_exponent_per_neuralNet;
+      = exponentBase ** this.from_value_offset_exponent_per_neuralNet;
 
     this.from_value_base_positive
       = ( this.from_value_offset_per_neuralNet * 0 ) + 1;
