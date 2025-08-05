@@ -163,6 +163,33 @@ class TableLogger_Base {
    * depth). The 0th channel is logged first. And then, the 1st channel,
    * the 2nd channel, ...
    *
+   * @see TableLogger_Base.toString_array_as_image_along_depth()
+   */
+  log_array_as_image_along_depth(
+    strImageHeaderPrefix,
+    strSubheader,
+    dataArray,
+    height, width, depth,
+    aBoundsArray_or_aScaleBoundsArray,
+    bPassThroughArray,
+    bAllowShapeMismatchElementCount
+  ) {
+
+    // const funcNameInMessage = "log_array_as_image_along_depth";
+
+    const tableText = this.toString_array_as_image_along_depth(
+      strImageHeaderPrefix,
+      strSubheader,
+      dataArray,
+      height, width, depth,
+      aBoundsArray_or_aScaleBoundsArray,
+      bPassThroughArray,
+      bAllowShapeMismatchElementCount );
+
+    console.log( tableText );
+  }
+
+  /**
    *
    * @param {string} strImageHeaderPrefix
    *   A string will be logged before the image header.
@@ -199,8 +226,14 @@ class TableLogger_Base {
    *       ( height * width * depth ). (but a warning will be logged.)
    *   - If false, dataArray.length must be the same as
    *       ( height * width * depth ).
+   *
+   * @return {string}
+   *   Return a string describing a number array (viewed as 2d image with
+   * multiple channels) as a table. For human reading easierly, it is listed
+   * by channel (i.e. along the depth). The 0th channel is logged first. And
+   * then, the 1st channel, the 2nd channel, ...
    */
-  log_array_as_image_along_depth(
+  toString_array_as_image_along_depth(
     strImageHeaderPrefix,
     strSubheader,
     dataArray,
@@ -210,7 +243,7 @@ class TableLogger_Base {
     bAllowShapeMismatchElementCount
   ) {
 
-    const funcNameInMessage = "log_array_as_image_along_depth";
+    const funcNameInMessage = "toString_array_as_image_along_depth";
 
     const elementCount = height * width * depth;
     if ( dataArray.length != elementCount ) {
@@ -359,7 +392,7 @@ class TableLogger_Base {
     // Log all lines in one time to avoid logging too quickily. (If log too
     // quickly, some log will be abbreviated.)
     const tableText = tableLines.join( lineJoinSeparator );
-    console.log( tableText );
+    return tableText;
   }
 
   /**
