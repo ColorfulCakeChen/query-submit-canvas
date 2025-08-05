@@ -832,11 +832,13 @@ class PerformanceTestCase extends Recyclable.Root {
 
     const strSubheader = "";
 
-    TableLogger.Base.Singleton.toString_tensor3d_along_depth(
+    const tableText = TableLogger.Base.Singleton.toString_tensor3d_along_depth(
       headerPrefix,
       strSubheader,
       aTensor3d
     );
+
+    alert( tableText );
 
     // Restore default TableLogger parameters.
     {
