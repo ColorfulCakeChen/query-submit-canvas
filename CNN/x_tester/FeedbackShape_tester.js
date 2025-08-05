@@ -1067,7 +1067,7 @@ class TestCases {
     // this.feedback_valueCount_MinMax = new MinMax( 0, 5 );
 
     //!!! (2023/04/26 Remarked) For table log. (higher)
-    this.explicit_input_height_MinMax = new MinMax( 10, 15 );
+    this.explicit_input_height_MinMax = new MinMax( 8, 13 );
     this.explicit_input_width_MinMax = new MinMax( 0, 5 );
     this.explicit_input_channelCount_MinMax = new MinMax( 0, 5 );
     this.feedback_valueCount_MinMax = new MinMax( 0, 5 );
