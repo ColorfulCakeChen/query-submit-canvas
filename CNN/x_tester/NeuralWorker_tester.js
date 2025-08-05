@@ -1518,14 +1518,14 @@ class HeightWidthDepth {
                 neuralNetIndex < testCase.neuralNetCount;
                 ++neuralNetIndex ) {
 
+                let msg_verify = `${testCase.testCaseName}: `
+                  + `backendName = ${backendName}, `
+                  + `neuralNetIndex = ${neuralNetIndex}`
+                  ;
+
                 let alignmentMarkValueArray;
                 let previous_output_TypedArray;
                 {
-                  let msg = `${testCase.testCaseName}: `
-                    + `backendName = ${backendName}, `
-                    + `neuralNetIndex = ${neuralNetIndex}`
-                    ;
-
                   if ( this.ImplicitInputModeInfo
                          .implicit_input_bFillAlignmentMark ) {
 
@@ -1538,7 +1538,7 @@ class HeightWidthDepth {
                     alignmentMarkValueArray = neuralWorkerProxies
                       .alignmentMarkValueArrayArray[ neuralNetIndex ];
 
-                    msg += `, `
+                    msg_verify += `, `
                       + `alignmentMarkValueArray = [ ${alignmentMarkValueArray} ]`;
                   }
 
@@ -1548,18 +1548,8 @@ class HeightWidthDepth {
                       = previous_output_TypedArrayArray_for_verification[
                           neuralNetIndex ];
 
-                    msg += `, `
+                    msg_verify += `, `
                       + `previous_output_TypedArray = [ ${previous_output_TypedArray} ]`;
-                  }
-
-//!!! (2025/07/31 Temp Added)
-// For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
-                  if (   ( this.ImplicitInputModeInfo
-                             .implicit_input_bFillAlignmentMark )
-                      || ( this.ImplicitInputModeInfo
-                             .implicit_input_bFillPreviousOutput ) ) {
-
-                      alert( msg );
                   }
                 }
 
@@ -1594,12 +1584,11 @@ class HeightWidthDepth {
 //!!! (2025/07/31 Temp Added)
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
                 {
-                  const msg = `${postfixMsg}: NeuralNet (local), `
-                    + `backendName = ${backendName}, `
+                  msg_verify += `, `
                     + `lhsNumberArray (NeuralWorker) = [ ${lhsNumberArray} ], `
                     + `rhsNumberArray (NeuralNet) = [ ${rhsNumberArray} ]`
                     ;
-                  alert( msg );
+                  alert( msg_verify );
                 }
 
                 asserter_Equal.assert_NumberArray_NumberArray(
