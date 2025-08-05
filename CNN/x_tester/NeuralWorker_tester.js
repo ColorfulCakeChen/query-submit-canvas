@@ -5,6 +5,7 @@ import * as Recyclable from "../util/Recyclable.js";
 import * as PartTime from "../util/PartTime.js";
 import * as RandTools from "../util/RandTools.js";
 import * as ScriptLoader from "../util/ScriptLoader.js";
+import * as TableLogger from "../util/TableLogger.js";
 import * as TensorTools from "../util/TensorTools.js";
 import * as ValueMax from "../util/ValueMax.js";
 import * as ValueDesc from "../Unpacker/ValueDesc.js";
@@ -779,6 +780,10 @@ class PerformanceTestCase extends Recyclable.Root {
       let { done, value: [ sourceTensor, sourceTypedArrayAsyncFunction ] }
         = await createTensor_asyncGenerator.next();
 
+//!!! (2025/08/05 Temp Added) For debug in mobile phone.
+      this.TableLog_tensor3d( "NeuralNet_try_result_async( sourceTensor )",
+        sourceTensor );
+
       outputTensor3d = neuralNet.apply( sourceTensor );
       resultFloat32Array = outputTensor3d.dataSync();
 
@@ -806,6 +811,40 @@ class PerformanceTestCase extends Recyclable.Root {
     }
 
     return resultFloat32Array;
+  }
+
+  /**
+   * 
+   */
+  TableLog_tensor3d( headerPrefix, aTensor3d ) {
+
+    const {
+      characterCountPerField_original,
+      digitCountAfterDecimalPoint_oroginal
+    } = TableLogger.Base.Singleton;
+
+    // Adjust TableLogger parameters so that large image width could be looked
+    // clearly.
+    {
+      TableLogger.Base.Singleton.characterCountPerField = 3;
+      TableLogger.Base.Singleton.digitCountAfterDecimalPoint = 0;
+    }
+
+    const strSubheader = "";
+
+    TableLogger.Base.Singleton.toString_tensor3d_along_depth(
+      headerPrefix,
+      strSubheader,
+      aTensor3d
+    );
+
+    // Restore default TableLogger parameters.
+    {
+      TableLogger.Base.Singleton.characterCountPerField
+        = characterCountPerField_original;
+      TableLogger.Base.Singleton.digitCountAfterDecimalPoint
+        = digitCountAfterDecimalPoint_oroginal;
+    }
   }
 
   /** Generate random filter weight for neural network. */
