@@ -214,23 +214,23 @@ class NeuralNet_FeedbackToInput_Area extends NeuralNet_FeedbackToInput_from {
 
       + `pixelCount_original ( height, width ) = ( `
         + `${this.height_pixelCount_original}, `
-        + `${this.width_pixelCount_original}),\n`
+        + `${this.width_pixelCount_original} ),\n`
 
       + `pixelCount_gap_original ( height, width ) = ( `
         + `${this.gap_height_pixelCount_original}, `
-        + `${this.gap_width_pixelCount_original}),\n`
+        + `${this.gap_width_pixelCount_original} ),\n`
 
       + `pixelCount_expanded ( height, width ) = ( `
         + `${this.height_pixelCount_expanded}, `
-        + `${this.width_pixelCount_expanded}),\n`
+        + `${this.width_pixelCount_expanded} ),\n`
 
       + `pixelCount_gap_expanded ( height, width ) = ( `
         + `${this.gap_height_pixelCount_expanded}, `
-        + `${this.gap_width_pixelCount_expanded}),\n`
+        + `${this.gap_width_pixelCount_expanded} ),\n`
 
       + `pixelCount_expanded_with_gap ( height, width ) = ( `
         + `${this.height_with_gap_pixelCount_expanded}, `
-        + `${this.width_with_gap_pixelCount_expanded}),\n`
+        + `${this.width_with_gap_pixelCount_expanded} ),\n`
       ;
 
     console.log( str );
