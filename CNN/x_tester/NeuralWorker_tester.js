@@ -781,7 +781,7 @@ class PerformanceTestCase extends Recyclable.Root {
         = await createTensor_asyncGenerator.next();
 
 //!!! (2025/08/05 Temp Added) For debug in mobile phone.
-      this.TableLog_tensor3d( "NeuralNet_try_result_async( sourceTensor )",
+      this.TableLog_tensor3d( "NeuralNet_try_result_async(): sourceTensor",
         sourceTensor );
 
       outputTensor3d = neuralNet.apply( sourceTensor );
@@ -818,10 +818,10 @@ class PerformanceTestCase extends Recyclable.Root {
    */
   TableLog_tensor3d( headerPrefix, aTensor3d ) {
 
-    const {
-      characterCountPerField_original,
-      digitCountAfterDecimalPoint_oroginal
-    } = TableLogger.Base.Singleton;
+    const characterCountPerField_original
+      = TableLogger.Base.Singleton.characterCountPerField;
+    const digitCountAfterDecimalPoint_oroginal
+      = TableLogger.Base.Singleton.digitCountAfterDecimalPoint;
 
     // Adjust TableLogger parameters so that large image width could be looked
     // clearly.
