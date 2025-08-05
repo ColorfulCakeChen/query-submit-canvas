@@ -11,7 +11,8 @@ class TestCase {
   /** */
   constructor( testCaseId, feedbackShape,
     explicit_input_height, explicit_input_width, explicit_input_channelCount,
-    feedback_valueCount
+    feedback_valueCount,
+    bTableLog
   ) {
     this.testCaseId = testCaseId;
     this.feedbackShape = feedbackShape;
@@ -20,6 +21,7 @@ class TestCase {
     this.explicit_input_width = explicit_input_width;
     this.explicit_input_channelCount = explicit_input_channelCount;
     this.feedback_valueCount = feedback_valueCount;
+    this.bTableLog = bTableLog;
 
     this.to_valueArray = new Array();
 
@@ -28,10 +30,6 @@ class TestCase {
 
     //!!! (2023/04/28 Remarked) Use Int32Array instead.
     //this.nextInputArray = new Array();
-
-    // (2025/08/01 Remarked) For debug.
-    this.bTableLog = false;
-    // this.bTableLog = true;
   }
 
   /** */
@@ -1074,6 +1072,9 @@ class TestCases {
     this.explicit_input_channelCount_MinMax = new MinMax( 0, 5 );
     this.feedback_valueCount_MinMax = new MinMax( 0, 5 );
 
+    // (2025/08/01 Remarked) For debug.
+    // this.bTableLog = false;
+    this.bTableLog = true;
 
     this.length = this.explicit_input_height_MinMax.length
       * this.explicit_input_width_MinMax.length
@@ -1096,7 +1097,8 @@ class TestCases {
             v <= this.feedback_valueCount_MinMax.max; ++v ) {
 
             let testCase = new TestCase(
-              testCaseId, this.feedbackShape, h, w, c, v );
+              testCaseId, this.feedbackShape, h, w, c, v,
+              this.bTableLog );
             yield testCase;
 
             ++testCaseId;
