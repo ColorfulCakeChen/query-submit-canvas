@@ -864,6 +864,7 @@ class TestCase {
 
     const feedbackShape = this.feedbackShape;
     const channelCount = feedbackShape.input_channelCount;
+    const bAllowShapeMismatchElementCount = false;
 
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
       headerPrefix,
@@ -873,7 +874,8 @@ class TestCase {
       1, // (width,)
       channelCount,
       null, // (aBoundsArray_or_aScaleBoundsArray)
-      null  // (bPassThroughArray)
+      null, // (bPassThroughArray)
+      bAllowShapeMismatchElementCount
     );
 
     console.groupEnd();
@@ -900,13 +902,18 @@ class TestCase {
     const width = feedbackShape.area.width_pixelCount_original;
     const channelCount = feedbackShape.input_channelCount;
 
+    // It is possible that previous output can not fully fill the feedback
+    // shape.
+    const bAllowShapeMismatchElementCount = true;
+
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
       headerPrefix,
       strSubheader,
       this.from_output_valueArray,
       height, width, channelCount,
       null, // (aBoundsArray_or_aScaleBoundsArray)
-      null  // (bPassThroughArray)
+      null, // (bPassThroughArray)
+      bAllowShapeMismatchElementCount
     );
 
     console.groupEnd();
@@ -932,6 +939,7 @@ class TestCase {
     const height = feedbackShape.input_height;
     const width = feedbackShape.input_width;
     const channelCount = feedbackShape.input_channelCount;
+    const bAllowShapeMismatchElementCount = false;
 
     TableLogger.Base.Singleton.log_array_as_image_along_depth(
       headerPrefix,
@@ -939,7 +947,8 @@ class TestCase {
       this.nextInputArray,
       height, width, channelCount,
       null, // (aBoundsArray_or_aScaleBoundsArray)
-      null  // (bPassThroughArray)
+      null, // (bPassThroughArray)
+      bAllowShapeMismatchElementCount
     );
 
     console.groupEnd();

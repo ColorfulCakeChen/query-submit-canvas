@@ -118,13 +118,20 @@ class TableLogger_Base {
    *   If true for a channel, the channel's header will be marked as
    * pass-through (from input to output). It can be null (or
    * undefined).
+   *
+   * @param {boolean} bAllowShapeMismatchElementCount
+   *   - If true, dataArray.length could be different from
+   *       ( height * width * depth ).
+   *   - If false, dataArray.length must be the same as
+   *       ( height * width * depth ).
    */
   log_tensor3d_along_depth(
     strImageHeaderPrefix,
     strSubheader,
     aTensor3d,
     aBoundsArray_or_aScaleBoundsArray,
-    bPassThroughArray
+    bPassThroughArray,
+    bAllowShapeMismatchElementCount
   ) {
 
     const funcNameInMessage = "log_tensor3d_along_depth";
@@ -143,7 +150,8 @@ class TableLogger_Base {
       dataArray,
       height, width, depth,
       aBoundsArray_or_aScaleBoundsArray,
-      bPassThroughArray
+      bPassThroughArray,
+      bAllowShapeMismatchElementCount
     );
   }
 
@@ -185,6 +193,12 @@ class TableLogger_Base {
    *   If true for a channel, the channel's header will be marked as
    * pass-through (from input to output). It can be null (or
    * undefined).
+   *
+   * @param {boolean} bAllowShapeMismatchElementCount
+   *   - If true, dataArray.length could be different from
+   *       ( height * width * depth ). (but a warning will be logged.)
+   *   - If false, dataArray.length must be the same as
+   *       ( height * width * depth ).
    */
   log_array_as_image_along_depth(
     strImageHeaderPrefix,
@@ -192,7 +206,8 @@ class TableLogger_Base {
     dataArray,
     height, width, depth,
     aBoundsArray_or_aScaleBoundsArray,
-    bPassThroughArray
+    bPassThroughArray,
+    bAllowShapeMismatchElementCount
   ) {
 
     const funcNameInMessage = "log_array_as_image_along_depth";
@@ -207,12 +222,8 @@ class TableLogger_Base {
 
       console.warn( msg );
 
-      const elementCountDelta = elementCount - dataArray.length;
-      if ( elementCountDelta < depth ) {
-        // If difference is smaller than one pixel, just warning.
-      } else {
+      if ( !bAllowShapeMismatchElementCount )
         throw Error( msg );
-      }
     }
 
     // Determine bounds array.
@@ -332,7 +343,7 @@ class TableLogger_Base {
         for ( let x = 0; x < width; ++x, elementIndex += depth ) {
           elementValue = dataArray[ elementIndex ];
 
-          // Note: Use Number() so that undefined can be handled.
+          // Note: Use Number() so that "undefined" value can be handled.
           valueString = Number( elementValue )
             .toFixed( digitCountAfterDecimalPoint )
             .padStart( characterCountPerField );
