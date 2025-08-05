@@ -817,7 +817,15 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
       + `areaCount ( height_areaCount, width_areaCount, areaCount ) = ( `
         + `${this.height_areaCount}, `
         + `${this.width_areaCount}, `
-        + `${this.areaCount} ), `
+        + `${this.areaCount} ),\n`
+
+      + `area[ 0 ] position ( left, top ) = ( `
+        + `${this.area_position_leftArray[ 0 ]}, `
+        + `${this.area_position_topArray[ 0 ]} ),\n`
+
+      + `area[ 1 ] position ( left, top ) = ( `
+        + `${this.area_position_leftArray[ 1 ]}, `
+        + `${this.area_position_topArray[ 1 ]} ),\n`
 
       + `input ( height, width, channelCount ) = ( `
         + `${this.input_height}, `
