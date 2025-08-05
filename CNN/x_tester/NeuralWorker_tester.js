@@ -47,6 +47,8 @@ class UIControls {
     TestProgressBar: null,
 
     NeuralWorker_Performance_Table: null,
+
+    DebugInfo_pre: null,
   };
 
   numeric_controls = {}; // Numeric controls.
@@ -74,7 +76,6 @@ class UIControls {
 
     for ( let controlName in this.controls_all ) {
       let htmlElement = document.getElementById( controlName );
-      //this[ controlName ] = htmlElement;
       this.controls_all[ controlName ] = htmlElement;
 
       if ( controlName.endsWith( postfixNumber ) ) { // Numeric controls.
@@ -1588,7 +1589,14 @@ class HeightWidthDepth {
                     + `lhsNumberArray (NeuralWorker) = [ ${lhsNumberArray} ], `
                     + `rhsNumberArray (NeuralNet) = [ ${rhsNumberArray} ]`
                     ;
-                  alert( msg_verify );
+
+                  const controls_all = g_Controls.controls_all;
+                  const DebugInfo_pre = controls_all.DebugInfo_pre;
+                  if ( DebugInfo_pre.textContent.length > 0 )
+                    DebugInfo_pre.textContent += "\n";
+
+                  DebugInfo_pre += msg_verify;
+                  // alert( msg_verify );
                 }
 
                 asserter_Equal.assert_NumberArray_NumberArray(
