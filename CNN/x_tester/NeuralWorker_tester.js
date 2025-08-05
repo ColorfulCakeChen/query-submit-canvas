@@ -781,6 +781,9 @@ class PerformanceTestCase extends Recyclable.Root {
       let { done, value: [ sourceTensor, sourceTypedArrayAsyncFunction ] }
         = await createTensor_asyncGenerator.next();
 
+!!! ...unfinished... (2025/08/05)
+// Add UI control to toggle whether output to DebugInfo_pre
+
 //!!! (2025/08/05 Temp Added) For debug in mobile phone.
       this.TableLog_tensor3d( "NeuralNet_try_result_async(): sourceTensor",
         sourceTensor );
@@ -838,7 +841,6 @@ class PerformanceTestCase extends Recyclable.Root {
       strSubheader,
       aTensor3d
     );
-
 
     const controls_all = g_Controls.controls_all;
     const DebugInfo_pre = controls_all.DebugInfo_pre;
