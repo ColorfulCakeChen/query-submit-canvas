@@ -1424,6 +1424,9 @@ class HeightWidthDepth {
             progressToAdvance.value_advance();
             yield progressRoot;
 
+            const controls_all = g_Controls.controls_all;
+            const DebugInfo_pre = controls_all.DebugInfo_pre;
+
             let resultFloat32ArrayArray;
             let previous_output_TypedArrayArray_for_verification;
 
@@ -1482,7 +1485,9 @@ class HeightWidthDepth {
                     + `resultFloat32ArrayArray[ 0 ] = [ ${resultFloat32ArrayArray[ 0 ]} ], `
                     + `resultFloat32ArrayArray[ 1 ] = [ ${resultFloat32ArrayArray[ 1 ]} ]`
                     ;
-                  alert( msg );
+
+                  DebugInfo_pre.textContent += msg + "\n";
+                  // alert( msg );
                 }
 
                 // Deep copy the last 2nd testing result (i.e. the last 1st
@@ -1590,12 +1595,7 @@ class HeightWidthDepth {
                     + `rhsNumberArray (NeuralNet) = [ ${rhsNumberArray} ]`
                     ;
 
-                  const controls_all = g_Controls.controls_all;
-                  const DebugInfo_pre = controls_all.DebugInfo_pre;
-                  if ( DebugInfo_pre.textContent.length > 0 )
-                    DebugInfo_pre.textContent += "\n";
-
-                  DebugInfo_pre += msg_verify;
+                  DebugInfo_pre.textContent += msg_verify + "\n";
                   // alert( msg_verify );
                 }
 
