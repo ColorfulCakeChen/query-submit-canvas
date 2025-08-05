@@ -99,6 +99,33 @@ class TableLogger_Base {
   }
 
   /**
+   * @see TableLogger_Base.log_array_as_image_along_depth()
+   * @see TableLogger_Base.toString_tensor3d_as_image_along_depth()
+   */
+  log_tensor3d_along_depth(
+    strImageHeaderPrefix,
+    strSubheader,
+    aTensor3d,
+    aBoundsArray_or_aScaleBoundsArray,
+    bPassThroughArray,
+    bAllowShapeMismatchElementCount
+  ) {
+
+    const funcNameInMessage = "log_tensor3d_along_depth";
+
+    const tableText = this.toString_tensor3d_along_depth(
+      strImageHeaderPrefix,
+      strSubheader,
+      aTensor3d,
+      aBoundsArray_or_aScaleBoundsArray,
+      bPassThroughArray,
+      bAllowShapeMismatchElementCount
+    );
+
+    console.log( tableText );
+  }
+
+  /**
    * @param {string} strImageHeaderPrefix
    *   A string will be logged before the image header.
    *
@@ -125,7 +152,7 @@ class TableLogger_Base {
    *   - If false, dataArray.length must be the same as
    *       ( height * width * depth ).
    */
-  log_tensor3d_along_depth(
+  toString_tensor3d_along_depth(
     strImageHeaderPrefix,
     strSubheader,
     aTensor3d,
@@ -134,7 +161,7 @@ class TableLogger_Base {
     bAllowShapeMismatchElementCount
   ) {
 
-    const funcNameInMessage = "log_tensor3d_along_depth";
+    const funcNameInMessage = "toString_tensor3d_along_depth";
 
     const shape = aTensor3d.shape;
     if ( shape.length != 3 )
@@ -145,7 +172,7 @@ class TableLogger_Base {
 
     const [ height, width, depth ] = shape;
     const dataArray = aTensor3d.dataSync();
-    this.log_array_as_image_along_depth(
+    const tableText = this.toString_array_as_image_along_depth(
       strImageHeaderPrefix, strSubheader,
       dataArray,
       height, width, depth,
@@ -153,6 +180,7 @@ class TableLogger_Base {
       bPassThroughArray,
       bAllowShapeMismatchElementCount
     );
+    return tableText;
   }
 
   /**
