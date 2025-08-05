@@ -1521,6 +1521,11 @@ class HeightWidthDepth {
                 let alignmentMarkValueArray;
                 let previous_output_TypedArray;
                 {
+                  let msg = `${testCase.testCaseName}: `
+                    + `backendName = ${backendName}, `
+                    + `neuralNetIndex = ${neuralNetIndex}`
+                    ;
+
                   if ( this.ImplicitInputModeInfo
                          .implicit_input_bFillAlignmentMark ) {
 
@@ -1533,17 +1538,8 @@ class HeightWidthDepth {
                     alignmentMarkValueArray = neuralWorkerProxies
                       .alignmentMarkValueArrayArray[ neuralNetIndex ];
 
-//!!! (2025/07/31 Temp Added)
-// For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
-                    {
-                      const msg = `${testCase.testCaseName}: `
-                        + `backendName = ${backendName}, `
-                        + `neuralNetIndex = ${neuralNetIndex}, `
-                        + `alignmentMarkValueArray = [ ${alignmentMarkValueArray} ]`
-                        ;
-                      alert( msg );
-                    }
-
+                    msg += `, `
+                      + `alignmentMarkValueArray = [ ${alignmentMarkValueArray} ]`;
                   }
 
                   if ( this.ImplicitInputModeInfo
@@ -1552,16 +1548,18 @@ class HeightWidthDepth {
                       = previous_output_TypedArrayArray_for_verification[
                           neuralNetIndex ];
 
+                    msg += `, `
+                      + `previous_output_TypedArray = [ ${previous_output_TypedArray} ]`;
+                  }
+
 //!!! (2025/07/31 Temp Added)
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
-                    {
-                      const msg = `${testCase.testCaseName}: `
-                        + `backendName = ${backendName}, `
-                        + `neuralNetIndex = ${neuralNetIndex}, `
-                        + `previous_output_TypedArray = [ ${previous_output_TypedArray} ]`
-                        ;
+                  if (   ( this.ImplicitInputModeInfo
+                             .implicit_input_bFillAlignmentMark )
+                      || ( this.ImplicitInputModeInfo
+                             .implicit_input_bFillPreviousOutput ) ) {
+
                       alert( msg );
-                    }
                   }
                 }
 
@@ -1596,10 +1594,10 @@ class HeightWidthDepth {
 //!!! (2025/07/31 Temp Added)
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
                 {
-                  const msg = `${postfixMsg}: `
+                  const msg = `${postfixMsg}: NeuralNet (local), `
                     + `backendName = ${backendName}, `
                     + `lhsNumberArray (NeuralWorker) = [ ${lhsNumberArray} ], `
-                    + `rhsNumberArray (NeuralNet (local)) = [ ${rhsNumberArray} ]`
+                    + `rhsNumberArray (NeuralNet) = [ ${rhsNumberArray} ]`
                     ;
                   alert( msg );
                 }
