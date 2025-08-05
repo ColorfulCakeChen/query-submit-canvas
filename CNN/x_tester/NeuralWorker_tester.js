@@ -839,7 +839,12 @@ class PerformanceTestCase extends Recyclable.Root {
       aTensor3d
     );
 
-    alert( tableText );
+
+    const controls_all = g_Controls.controls_all;
+    const DebugInfo_pre = controls_all.DebugInfo_pre;
+
+    DebugInfo_pre.textContent += tableText + "\n";
+    // alert( tableText );
 
     // Restore default TableLogger parameters.
     {
