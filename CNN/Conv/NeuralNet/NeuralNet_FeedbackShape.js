@@ -814,6 +814,11 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
 
     // console.groupCollapsed( "explicit_input" );
     const str = ``
+      + `areaCount ( height_areaCount, width_areaCount, areaCount ) = ( `
+        + `${this.height_areaCount}, `
+        + `${this.width_areaCount}, `
+        + `${this.areaCount} ), `
+
       + `input ( height, width, channelCount ) = ( `
         + `${this.input_height}, `
         + `${this.input_width}, `

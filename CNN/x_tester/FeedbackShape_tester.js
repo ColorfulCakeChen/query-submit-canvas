@@ -1132,12 +1132,11 @@ async function* tester( progressParent ) {
   let progressToAdvance = progressParent.child_add(
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( gTestCases.length ) );
 
-  // Try every test case.
-  let testCaseGenerator = gTestCases.testCase_generator();
-
   // const countPerYield = 10 * 1000;
   const countPerYield = Math.ceil( testCaseCount / 100 );
 
+  // Try every test case.
+  let testCaseGenerator = gTestCases.testCase_generator();
   for ( let testCase of testCaseGenerator ) {
     testCase.test();
 
