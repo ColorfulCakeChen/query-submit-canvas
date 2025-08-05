@@ -1055,10 +1055,10 @@ class TestCases {
     // this.feedback_valueCount_MinMax = new MinMax( 0, 100 );
 
     //!!! (2025/08/01 Temp Remarked) For test table log.
-    // this.explicit_input_height_MinMax = new MinMax( 0, 30 );
-    // this.explicit_input_width_MinMax = new MinMax( 0, 30 );
-    // this.explicit_input_channelCount_MinMax = new MinMax( 0, 30 );
-    // this.feedback_valueCount_MinMax = new MinMax( 0, 30 );
+    this.explicit_input_height_MinMax = new MinMax( 0, 30 );
+    this.explicit_input_width_MinMax = new MinMax( 0, 30 );
+    this.explicit_input_channelCount_MinMax = new MinMax( 0, 30 );
+    this.feedback_valueCount_MinMax = new MinMax( 0, 30 );
 
     //!!! (2023/04/26 Remarked) For table log.
     // this.explicit_input_height_MinMax = new MinMax( 0, 5 );
@@ -1073,8 +1073,8 @@ class TestCases {
     this.feedback_valueCount_MinMax = new MinMax( 0, 5 );
 
     // (2025/08/01 Remarked) For debug.
-    // this.bTableLog = false;
-    this.bTableLog = true;
+    this.bTableLog = false;
+    // this.bTableLog = true;
 
     this.length = this.explicit_input_height_MinMax.length
       * this.explicit_input_width_MinMax.length
