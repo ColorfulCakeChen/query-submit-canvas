@@ -819,13 +819,13 @@ class NeuralNet_FeedbackShape extends NeuralNet_FeedbackToInput {
         + `${this.width_areaCount}, `
         + `${this.areaCount} ),\n`
 
-      + `area[ 0 ] position ( left, top ) = ( `
-        + `${this.area_position_leftArray[ 0 ]}, `
-        + `${this.area_position_topArray[ 0 ]} ),\n`
+      + `area[ 0 ] position ( top, left ) = ( `
+        + `${this.area_position_topArray[ 0 ]}, `
+        + `${this.area_position_leftArray[ 0 ]} ),\n`
 
-      + `area[ 1 ] position ( left, top ) = ( `
-        + `${this.area_position_leftArray[ 1 ]}, `
-        + `${this.area_position_topArray[ 1 ]} ),\n`
+      + `area[ 1 ] position ( top, left ) = ( `
+        + `${this.area_position_topArray[ 1 ]}, `
+        + `${this.area_position_leftArray[ 1 ]} ),\n`
 
       + `input ( height, width, channelCount ) = ( `
         + `${this.input_height}, `
