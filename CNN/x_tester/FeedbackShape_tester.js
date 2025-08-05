@@ -1133,8 +1133,11 @@ async function* tester( progressParent ) {
     ValueMax.Percentage.Concrete.Pool.get_or_create_by( gTestCases.length ) );
 
   // Try every test case.
-  const countPerYield = 10 * 1000;
   let testCaseGenerator = gTestCases.testCase_generator();
+
+  // const countPerYield = 10 * 1000;
+  const countPerYield = Math.ceil( testCaseCount / 100 );
+
   for ( let testCase of testCaseGenerator ) {
     testCase.test();
 
