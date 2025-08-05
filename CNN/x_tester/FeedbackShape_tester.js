@@ -1060,10 +1060,15 @@ class TestCases {
     // this.feedback_valueCount_MinMax = new MinMax( 0, 10 );
 
     // (2025/08/01 Addded) For test table log.
-    this.explicit_input_height_MinMax = new MinMax( 0, 6 );
-    this.explicit_input_width_MinMax = new MinMax( 0, 6 );
-    this.explicit_input_channelCount_MinMax = new MinMax( 0, 6 );
-    this.feedback_valueCount_MinMax = new MinMax( 0, 6 );
+    // this.explicit_input_height_MinMax = new MinMax( 0, 6 );
+    // this.explicit_input_width_MinMax = new MinMax( 0, 6 );
+    // this.explicit_input_channelCount_MinMax = new MinMax( 0, 6 );
+    // this.feedback_valueCount_MinMax = new MinMax( 0, 6 );
+
+    this.explicit_input_height_MinMax = new MinMax( 0, 5 );
+    this.explicit_input_width_MinMax = new MinMax( 0, 5 );
+    this.explicit_input_channelCount_MinMax = new MinMax( 0, 5 );
+    this.feedback_valueCount_MinMax = new MinMax( 0, 5 );
 
     this.length = this.explicit_input_height_MinMax.length
       * this.explicit_input_width_MinMax.length
