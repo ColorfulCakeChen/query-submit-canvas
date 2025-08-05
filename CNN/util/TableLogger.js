@@ -205,10 +205,11 @@ class TableLogger_Base {
         + `( height, width, depth ) = ( ${height}, ${width}, ${depth} ).`
         ;
 
+      console.warn( msg );
+
       const elementCountDelta = elementCount - dataArray.length;
       if ( elementCountDelta < depth ) {
         // If difference is smaller than one pixel, just warning.
-        console.warn( msg );
       } else {
         throw Error( msg );
       }
