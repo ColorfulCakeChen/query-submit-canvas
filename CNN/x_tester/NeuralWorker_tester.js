@@ -1436,6 +1436,9 @@ class HeightWidthDepth {
 
             testCase = testCaseArray[ testCaseIndex ];
 
+            if ( this.bDebugInfo )
+              DebugInfo_pre.textContent += `${testCase.testCaseName}:\n`;
+
             // First time test the case. Release all other test cases' neural
             // networks (so that there will be enough memory). Create the
             // specified neural network.
@@ -1503,7 +1506,9 @@ class HeightWidthDepth {
 //!!! (2025/07/31 Temp Added)
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
                 if ( this.bDebugInfo ) {
-                  const msg = `${testCase.testCaseName}: NeuralWorker, `
+//!!! (2025/08/06 Remarked) testCaseName moved to header.
+                  // const msg = `${testCase.testCaseName}: NeuralWorker, `
+                  const msg = `NeuralWorker, `
                     + `timeTimesIndex = ${timeTimesIndex}, `
                     + `resultFloat32ArrayArray[ 0 ] = [ ${resultFloat32ArrayArray[ 0 ]} ], `
                     + `resultFloat32ArrayArray[ 1 ] = [ ${resultFloat32ArrayArray[ 1 ]} ]`
@@ -1549,7 +1554,9 @@ class HeightWidthDepth {
 
                 let msg_verify;
                 if ( this.bDebugInfo )
-                  msg_verify = `${testCase.testCaseName}: `
+//!!! (2025/08/06 Remarked) testCaseName moved to header.
+                  // msg_verify = `${testCase.testCaseName}: `
+                  msg_verify = `NeuralNet, `
                     + `neuralNetIndex = ${neuralNetIndex}`
                     ;
 
