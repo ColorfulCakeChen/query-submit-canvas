@@ -1505,7 +1505,6 @@ class HeightWidthDepth {
                 timeInfo.elapsed = timeInfo.end - timeInfo.begin;
                 timeInfo.elapsedTotal += timeInfo.elapsed;
 
-
 //!!! (2025/07/31 Temp Added)
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
                 if ( this.bDebugInfo ) {
@@ -1553,6 +1552,10 @@ class HeightWidthDepth {
                 neuralNetIndex < testCase.neuralNetCount;
                 ++neuralNetIndex ) {
 
+                if ( this.bDebugInfo )
+                  DebugInfo_pre.textContent += `    `
+                    + `neuralNetIndex = ${neuralNetIndex}\n`
+
                 let alignmentMarkValueArray;
                 let previous_output_TypedArray;
                 {
@@ -1569,8 +1572,8 @@ class HeightWidthDepth {
                       .alignmentMarkValueArrayArray[ neuralNetIndex ];
 
                     if ( this.bDebugInfo )
-                      DebugInfo_pre.textContent += `    `
-                        + `alignmentMarkValueArray = [ `
+                      DebugInfo_pre.textContent += `      `
+                        + `alignmentMarkValueArrayArray[ ${neuralNetIndex} ] = [ `
                         + `${alignmentMarkValueArray} ]\n`;
                   }
 
@@ -1581,8 +1584,8 @@ class HeightWidthDepth {
                           neuralNetIndex ];
 
                     if ( this.bDebugInfo )
-                      DebugInfo_pre.textContent += `    `
-                        + `previous_output_TypedArray = [ `
+                      DebugInfo_pre.textContent += `      `
+                        + `previous_output_TypedArrayArra[ ${neuralNetIndex} ] = [ `
                         + `${previous_output_TypedArray} ]\n`;
                   }
                 }
@@ -1618,10 +1621,8 @@ class HeightWidthDepth {
 //!!! (2025/07/31 Temp Added)
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
                 if ( this.bDebugInfo )
-                  DebugInfo_pre.textContent += `    `
-                    + `neuralNetIndex = ${neuralNetIndex}, `
-                    + `resultFloat32Array = [ ${resultFloat32Array} ]\n`
-                    ;
+                  DebugInfo_pre.textContent += `      `
+                    + `resultFloat32Array = [ ${resultFloat32Array} ]\n`;
 
                 asserter_Equal.assert_NumberArray_NumberArray(
                   lhsNumberArray, rhsNumberArray,
