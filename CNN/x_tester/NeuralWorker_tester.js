@@ -1454,6 +1454,9 @@ class HeightWidthDepth {
             progressToAdvance.value_advance();
             yield progressRoot;
 
+            if ( this.bDebugInfo )
+              DebugInfo_pre.textContent += `  NeuralWorker\n`;
+
             let resultFloat32ArrayArray;
             let previous_output_TypedArrayArray_for_verification;
 
@@ -1506,10 +1509,7 @@ class HeightWidthDepth {
 //!!! (2025/07/31 Temp Added)
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
                 if ( this.bDebugInfo ) {
-//!!! (2025/08/06 Remarked) testCaseName moved to header.
-                  // const msg = `${testCase.testCaseName}: NeuralWorker, `
-                  const msg = `NeuralWorker, `
-                    + `timeTimesIndex = ${timeTimesIndex}, `
+                  const msg = `    timeTimesIndex = ${timeTimesIndex}, `
                     + `resultFloat32ArrayArray[ 0 ] = [ ${resultFloat32ArrayArray[ 0 ]} ], `
                     + `resultFloat32ArrayArray[ 1 ] = [ ${resultFloat32ArrayArray[ 1 ]} ]`
                     ;
@@ -1548,17 +1548,12 @@ class HeightWidthDepth {
               const prefixMsg = "NeuralNet";
               const postfixMsg = testCase.testCaseName;
 
+              if ( this.bDebugInfo )
+                DebugInfo_pre.textContent += `  NeuralNet\n`;
+
               for ( let neuralNetIndex = 0;
                 neuralNetIndex < testCase.neuralNetCount;
                 ++neuralNetIndex ) {
-
-                let msg_verify;
-                if ( this.bDebugInfo )
-//!!! (2025/08/06 Remarked) testCaseName moved to header.
-                  // msg_verify = `${testCase.testCaseName}: `
-                  msg_verify = `NeuralNet, `
-                    + `neuralNetIndex = ${neuralNetIndex}`
-                    ;
 
                 let alignmentMarkValueArray;
                 let previous_output_TypedArray;
@@ -1576,8 +1571,9 @@ class HeightWidthDepth {
                       .alignmentMarkValueArrayArray[ neuralNetIndex ];
 
                     if ( this.bDebugInfo )
-                      msg_verify += `, `
-                        + `alignmentMarkValueArray = [ ${alignmentMarkValueArray} ]`;
+                      DebugInfo_pre.textContent += `    `
+                        + `alignmentMarkValueArray = [ `
+                        + `${alignmentMarkValueArray} ]\n`;
                   }
 
                   if ( this.ImplicitInputModeInfo
@@ -1587,8 +1583,9 @@ class HeightWidthDepth {
                           neuralNetIndex ];
 
                     if ( this.bDebugInfo )
-                      msg_verify += `, `
-                        + `previous_output_TypedArray = [ ${previous_output_TypedArray} ]`;
+                      DebugInfo_pre.textContent += `    `
+                        + `previous_output_TypedArray = [ `
+                        + `${previous_output_TypedArray} ]\n`;
                   }
                 }
 
@@ -1622,15 +1619,11 @@ class HeightWidthDepth {
 
 //!!! (2025/07/31 Temp Added)
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
-                if ( this.bDebugInfo ) {
-                  msg_verify += `, `
-                    + `lhsNumberArray (NeuralWorker) = [ ${lhsNumberArray} ], `
-                    + `rhsNumberArray (NeuralNet) = [ ${rhsNumberArray} ]`
+                if ( this.bDebugInfo )
+                  DebugInfo_pre.textContent += `    `
+                    + `neuralNetIndex = ${neuralNetIndex}, `
+                    + `resultFloat32Array = [ ${resultFloat32Array} ]\n`
                     ;
-
-                  DebugInfo_pre.textContent += msg_verify + "\n";
-                  // alert( msg_verify );
-                }
 
                 asserter_Equal.assert_NumberArray_NumberArray(
                   lhsNumberArray, rhsNumberArray,
