@@ -1437,7 +1437,7 @@ class HeightWidthDepth {
             testCase = testCaseArray[ testCaseIndex ];
 
             if ( this.bDebugInfo )
-              DebugInfo_pre.textContent += `${testCase.testCaseName}:\n`;
+              DebugInfo_pre.textContent += `\n${testCase.testCaseName}:\n`;
 
             // First time test the case. Release all other test cases' neural
             // networks (so that there will be enough memory). Create the
