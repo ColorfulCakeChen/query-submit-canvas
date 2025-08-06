@@ -1455,7 +1455,7 @@ class HeightWidthDepth {
             yield progressRoot;
 
             if ( this.bDebugInfo )
-              DebugInfo_pre.textContent += `  NeuralWorker\n`;
+              DebugInfo_pre.textContent += `  NeuralWorker:\n`;
 
             let resultFloat32ArrayArray;
             let previous_output_TypedArrayArray_for_verification;
@@ -1509,13 +1509,11 @@ class HeightWidthDepth {
 //!!! (2025/07/31 Temp Added)
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
                 if ( this.bDebugInfo ) {
-                  const msg = `    timeTimesIndex = ${timeTimesIndex}, `
+                  DebugInfo_pre.textContent += `    `
+                    + `timeTimesIndex = ${timeTimesIndex}, `
                     + `resultFloat32ArrayArray[ 0 ] = [ ${resultFloat32ArrayArray[ 0 ]} ], `
-                    + `resultFloat32ArrayArray[ 1 ] = [ ${resultFloat32ArrayArray[ 1 ]} ]`
+                    + `resultFloat32ArrayArray[ 1 ] = [ ${resultFloat32ArrayArray[ 1 ]} ]\n`
                     ;
-
-                  DebugInfo_pre.textContent += msg + "\n";
-                  // alert( msg );
                 }
 
                 // Deep copy the last 2nd testing result (i.e. the last 1st
@@ -1549,7 +1547,7 @@ class HeightWidthDepth {
               const postfixMsg = testCase.testCaseName;
 
               if ( this.bDebugInfo )
-                DebugInfo_pre.textContent += `  NeuralNet\n`;
+                DebugInfo_pre.textContent += `  NeuralNet:\n`;
 
               for ( let neuralNetIndex = 0;
                 neuralNetIndex < testCase.neuralNetCount;
