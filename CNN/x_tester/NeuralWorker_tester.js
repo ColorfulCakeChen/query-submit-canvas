@@ -1371,9 +1371,7 @@ class HeightWidthDepth {
     }
 
     const controls_all = g_Controls.controls_all;
-
     const DebugInfo_pre = controls_all.DebugInfo_pre;
-    DebugInfo_pre.textContent = "";
 
     let progressRoot = progressParent.root_get();
 
@@ -1840,6 +1838,7 @@ function TestButton_onClick( event ) {
     = nNeuralWorker_ImplicitInputModeId;
 
   const bDebugInfo = controls_all.DebugInfo_Toggle_Checkbox.checked;
+  DebugInfo_pre.textContent = "";
 
   // Prepare output table.
   const htmlTableId = "NeuralWorker_Performance_Table";
