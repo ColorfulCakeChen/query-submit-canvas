@@ -1370,6 +1370,11 @@ class HeightWidthDepth {
       }
     }
 
+    const controls_all = g_Controls.controls_all;
+
+    const DebugInfo_pre = controls_all.DebugInfo_pre;
+    DebugInfo_pre.textContent = "";
+
     let progressRoot = progressParent.root_get();
 
     // Temporary progress max (because it is unkown here).
@@ -1444,9 +1449,6 @@ class HeightWidthDepth {
             // Every NeuralWorkerProxies_prepare_async() complete.
             progressToAdvance.value_advance();
             yield progressRoot;
-
-            const controls_all = g_Controls.controls_all;
-            const DebugInfo_pre = controls_all.DebugInfo_pre;
 
             let resultFloat32ArrayArray;
             let previous_output_TypedArrayArray_for_verification;
