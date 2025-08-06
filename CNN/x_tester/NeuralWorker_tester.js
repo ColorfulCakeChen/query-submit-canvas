@@ -1371,7 +1371,10 @@ class HeightWidthDepth {
     }
 
     const controls_all = g_Controls.controls_all;
+
     const DebugInfo_pre = controls_all.DebugInfo_pre;
+    if ( this.bDebugInfo ) {
+      DebugInfo_pre.textContent += `backendName = ${backendName}\n`;
 
     let progressRoot = progressParent.root_get();
 
@@ -1501,7 +1504,6 @@ class HeightWidthDepth {
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
                 if ( this.bDebugInfo ) {
                   const msg = `${testCase.testCaseName}: NeuralWorker, `
-                    + `backendName = ${backendName}, `
                     + `timeTimesIndex = ${timeTimesIndex}, `
                     + `resultFloat32ArrayArray[ 0 ] = [ ${resultFloat32ArrayArray[ 0 ]} ], `
                     + `resultFloat32ArrayArray[ 1 ] = [ ${resultFloat32ArrayArray[ 1 ]} ]`
@@ -1548,7 +1550,6 @@ class HeightWidthDepth {
                 let msg_verify;
                 if ( this.bDebugInfo )
                   msg_verify = `${testCase.testCaseName}: `
-                    + `backendName = ${backendName}, `
                     + `neuralNetIndex = ${neuralNetIndex}`
                     ;
 
