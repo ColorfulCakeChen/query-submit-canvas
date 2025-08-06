@@ -1184,7 +1184,9 @@ class HeightWidthDepth {
 
     let aPerformanceTestCase = PerformanceTestCase.Pool.get_or_create_by(
       testCaseId, testCaseName, neuralNetParamsBase,
-      nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId );
+      nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId,
+      this.bDebugInfo
+    );
 
     this.testCaseMap.set( testCaseName, aPerformanceTestCase );
   }
@@ -1262,9 +1264,7 @@ class HeightWidthDepth {
 
       this.neuralWorker_PerformanceTest_addCase(
         testCaseId, testCaseName, neuralNetParamsBase,
-        theModeInfo.id, this.nNeuralWorker_ImplicitInputModeId,
-        this.bDebugInfo
-      );
+        theModeInfo.id, this.nNeuralWorker_ImplicitInputModeId );
     }
 
   }
@@ -1800,8 +1800,7 @@ async function* testerBackendAll( progressParent,
     );
 
     if ( bDebugInfo ) // horizontal separator line
-      controls_all.DebugInfo_pre.textContent +=
-        `\n${"-".repeat(10)}\n`;
+      controls_all.DebugInfo_pre.textContent += `\n${"-".repeat(10)}\n`;
 
     bAscent_or_Descent = true; // Ascent
     yield* testerBackend( progress_NeuralWorker_tester_cpu,
