@@ -1373,7 +1373,7 @@ class HeightWidthDepth {
     const controls_all = g_Controls.controls_all;
 
     const DebugInfo_pre = controls_all.DebugInfo_pre;
-    if ( this.bDebugInfo ) {
+    if ( this.bDebugInfo )
       DebugInfo_pre.textContent += `backendName = ${backendName}\n`;
 
     let progressRoot = progressParent.root_get();
