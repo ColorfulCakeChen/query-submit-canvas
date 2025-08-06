@@ -1773,6 +1773,8 @@ async function* testerBackendAll( progressParent,
   bDebugInfo,
 ) {
 
+  const controls_all = g_Controls.controls_all;
+
   let progress_NeuralWorker_tester_cpu = progressParent.child_add(
     ValueMax.Percentage.Aggregate.Pool.get_or_create_by() );
 
@@ -1796,6 +1798,10 @@ async function* testerBackendAll( progressParent,
       // "cpu", bAscent_or_Descent,
       bDebugInfo,
     );
+
+    if ( bDebugInfo ) // horizontal separator line
+      controls_all.DebugInfo_pre.textContent +=
+        `\n${"-".repeat(10)}\n`;
 
     bAscent_or_Descent = true; // Ascent
     yield* testerBackend( progress_NeuralWorker_tester_cpu,
