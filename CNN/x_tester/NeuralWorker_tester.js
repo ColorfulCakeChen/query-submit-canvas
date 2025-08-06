@@ -41,6 +41,8 @@ class UIControls {
 
     implicit_input_mode_Select: null,
 
+    DebugInfo_Toggle_Checkbox: null,
+
     Info_TextArea: null,
     TestButton: null,
 
@@ -234,37 +236,43 @@ class PerformanceTestCase extends Recyclable.Root {
    */
   constructor(
     testCaseId, testCaseName, neuralNetParamsBase,
-    nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId ) {
+    nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId,
+    bDebugInfo ) {
 
     super();
     this.#setAsConstructor_self(
       testCaseId, testCaseName, neuralNetParamsBase,
-      nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId
+      nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId,
+      bDebugInfo
     );
   }
 
   /** @override */
   setAsConstructor(
     testCaseId, testCaseName, neuralNetParamsBase,
-    nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId ) {
+    nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId,
+    bDebugInfo ) {
 
     super.setAsConstructor();
     this.#setAsConstructor_self(
       testCaseId, testCaseName, neuralNetParamsBase,
-      nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId
+      nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId,
+      bDebugInfo
     );
   }
 
   /**  */
   #setAsConstructor_self(
     testCaseId, testCaseName, neuralNetParamsBase,
-    nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId ) {
+    nNeuralWorker_ModeId, nNeuralWorker_ImplicitInputModeId,
+    bDebugInfo ) {
 
     this.testCaseId = testCaseId;
     this.testCaseName = testCaseName;
     this.neuralNetParamsBase = neuralNetParamsBase;
     this.nNeuralWorker_ModeId = nNeuralWorker_ModeId;
     this.nNeuralWorker_ImplicitInputModeId = nNeuralWorker_ImplicitInputModeId;
+    this.bDebugInfo = bDebugInfo;
 
     this.neuralNetCount
       = NeuralWorker.Mode.neuralNetCount_get( nNeuralWorker_ModeId );
@@ -292,6 +300,8 @@ class PerformanceTestCase extends Recyclable.Root {
 
     this.weightArrayBuffer_partitionId = undefined;
     this.weightArrayBuffer_partitionCount = undefined;
+
+    this.bDebugInfo = undefined;
 
     this.ImplicitInputModeInfo = undefined;
     this.neuralNetCount = undefined;
@@ -781,12 +791,10 @@ class PerformanceTestCase extends Recyclable.Root {
       let { done, value: [ sourceTensor, sourceTypedArrayAsyncFunction ] }
         = await createTensor_asyncGenerator.next();
 
-!!! ...unfinished... (2025/08/05)
-// Add UI control to toggle whether output to DebugInfo_pre
-
 //!!! (2025/08/05 Temp Added) For debug in mobile phone.
-      this.TableLog_tensor3d( "NeuralNet_try_result_async(): sourceTensor",
-        sourceTensor );
+      if ( this.bDebugInfo )
+        this.TableLog_tensor3d( "NeuralNet_try_result_async(): sourceTensor",
+          sourceTensor );
 
       outputTensor3d = neuralNet.apply( sourceTensor );
       resultFloat32Array = outputTensor3d.dataSync();
@@ -957,6 +965,9 @@ class HeightWidthDepth {
    * @param {boolean} bAscent_or_Descent
    *   - If true, test from largest NeuralWorker.Mode.Singleton.Ids.
    *   - If false, test from smallest NeuralWorker.Mode.Singleton.Ids.
+   *
+   * @param {boolean} bDebugInfo
+   *   If true, display extra debug infomation.
    */
   constructor(
     largerFactor,
@@ -972,7 +983,8 @@ class HeightWidthDepth {
 
     output_channelCount,
   
-    backendName, bAscent_or_Descent ) {
+    backendName, bAscent_or_Descent,
+    bDebugInfo ) {
 
     this.disposeResources();
 
@@ -991,6 +1003,7 @@ class HeightWidthDepth {
 
     this.backendName = backendName;
     this.bAscent_or_Descent = bAscent_or_Descent;
+    this.bDebugInfo = bDebugInfo;
 
     {
       this.ImplicitInputModeInfo = NeuralWorker.ImplicitInputMode.Singleton
@@ -1250,6 +1263,7 @@ class HeightWidthDepth {
       this.neuralWorker_PerformanceTest_addCase(
         testCaseId, testCaseName, neuralNetParamsBase,
         theModeInfo.id, this.nNeuralWorker_ImplicitInputModeId,
+        this.bDebugInfo
       );
     }
 
@@ -1485,7 +1499,7 @@ class HeightWidthDepth {
 
 //!!! (2025/07/31 Temp Added)
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
-                {
+                if ( this.bDebugInfo ) {
                   const msg = `${testCase.testCaseName}: NeuralWorker, `
                     + `backendName = ${backendName}, `
                     + `timeTimesIndex = ${timeTimesIndex}, `
@@ -1531,10 +1545,12 @@ class HeightWidthDepth {
                 neuralNetIndex < testCase.neuralNetCount;
                 ++neuralNetIndex ) {
 
-                let msg_verify = `${testCase.testCaseName}: `
-                  + `backendName = ${backendName}, `
-                  + `neuralNetIndex = ${neuralNetIndex}`
-                  ;
+                let msg_verify;
+                if ( this.bDebugInfo )
+                  msg_verify = `${testCase.testCaseName}: `
+                    + `backendName = ${backendName}, `
+                    + `neuralNetIndex = ${neuralNetIndex}`
+                    ;
 
                 let alignmentMarkValueArray;
                 let previous_output_TypedArray;
@@ -1551,8 +1567,9 @@ class HeightWidthDepth {
                     alignmentMarkValueArray = neuralWorkerProxies
                       .alignmentMarkValueArrayArray[ neuralNetIndex ];
 
-                    msg_verify += `, `
-                      + `alignmentMarkValueArray = [ ${alignmentMarkValueArray} ]`;
+                    if ( this.bDebugInfo )
+                      msg_verify += `, `
+                        + `alignmentMarkValueArray = [ ${alignmentMarkValueArray} ]`;
                   }
 
                   if ( this.ImplicitInputModeInfo
@@ -1561,8 +1578,9 @@ class HeightWidthDepth {
                       = previous_output_TypedArrayArray_for_verification[
                           neuralNetIndex ];
 
-                    msg_verify += `, `
-                      + `previous_output_TypedArray = [ ${previous_output_TypedArray} ]`;
+                    if ( this.bDebugInfo )
+                      msg_verify += `, `
+                        + `previous_output_TypedArray = [ ${previous_output_TypedArray} ]`;
                   }
                 }
 
@@ -1596,7 +1614,7 @@ class HeightWidthDepth {
 
 //!!! (2025/07/31 Temp Added)
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
-                {
+                if ( this.bDebugInfo ) {
                   msg_verify += `, `
                     + `lhsNumberArray (NeuralWorker) = [ ${lhsNumberArray} ], `
                     + `rhsNumberArray (NeuralNet) = [ ${rhsNumberArray} ]`
@@ -1696,6 +1714,7 @@ async function* testerBackend( progressParent,
   output_channelCount,
 
   backendName, bAscent_or_Descent,
+  bDebugInfo,
 ) {
 
   let testSet;
@@ -1710,6 +1729,7 @@ async function* testerBackend( progressParent,
       blockCountTotalRequested,
       output_channelCount,
       backendName, bAscent_or_Descent,
+      bDebugInfo,
     );
 
     let progress_for_testSet = progressParent.child_add(
@@ -1750,6 +1770,7 @@ async function* testerBackendAll( progressParent,
   blockCountTotalRequested = 84, //100, //200, //50, //20, //10,
 
   output_channelCount = 6,
+  bDebugInfo,
 ) {
 
   let progress_NeuralWorker_tester_cpu = progressParent.child_add(
@@ -1773,6 +1794,7 @@ async function* testerBackendAll( progressParent,
 //!!! (2025/07/31 Temp Modified)
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
       // "cpu", bAscent_or_Descent,
+      bDebugInfo,
     );
 
     bAscent_or_Descent = true; // Ascent
@@ -1788,6 +1810,7 @@ async function* testerBackendAll( progressParent,
 //!!! (2025/07/31 Temp Modified)
 // For test mobile (moto e40) mismatch when implict input fill alignment or previous input.
       // "webgl", bAscent_or_Descent,
+      bDebugInfo,
     );
   }
 
@@ -1814,6 +1837,8 @@ function TestButton_onClick( event ) {
   controls_all.implicit_input_mode_Select.value
     = nNeuralWorker_ImplicitInputModeId;
 
+  const bDebugInfo = controls_all.DebugInfo_Toggle_Checkbox.checked;
+
   // Prepare output table.
   const htmlTableId = "NeuralWorker_Performance_Table";
   const digitsCount = 4;
@@ -1835,7 +1860,8 @@ function TestButton_onClick( event ) {
     numeric_controls_valueObject.vocabularyChannelCount,
     numeric_controls_valueObject.vocabularyCountPerInputChannel,
     numeric_controls_valueObject.blockCountTotalRequested,
-    numeric_controls_valueObject.output_channelCount
+    numeric_controls_valueObject.output_channelCount,
+    bDebugInfo
   );
 
   let progressReceiver
