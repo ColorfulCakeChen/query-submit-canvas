@@ -685,9 +685,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
     } else {
       const workerProxy = this.workerProxyArray[ 0 ];
       recreateOk = await workerProxy.NeuralNetArray_recreate_async(
-            weightArrayBuffer_partitionId,
-            bLogDryRunTime
-          );
+        weightArrayBuffer_partitionId,
+        bLogDryRunTime
+      );
     }
 
     return recreateOk;
