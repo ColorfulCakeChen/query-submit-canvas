@@ -47,9 +47,13 @@
 
         <th scope="row">blockCountTotalRequested (>= 2)</th>
         <td>
+          <!-- (2025/08/12) For ( weightArrayBuffer_partitionCount == 2 ) -->
           <input id="blockCountTotalRequested_Number" type="number" value="32"/>
+
           <!-- <input id="blockCountTotalRequested_Number" type="number" value="12"/> -->
-          <!-- <input id="blockCountTotalRequested_Number" type="number" value="39"/> -->
+          <!-- (2025/07/01 Remarked) Old. For ( weightArrayBuffer_partitionCount == 1 )
+          <input id="blockCountTotalRequested_Number" type="number" value="39"/>
+          -->
         </td>
 
       </tr>
@@ -58,10 +62,15 @@
     
         <th scope="row">output_channelCount</th>
         <td>
-          <!-- <input id="output_channelCount_Number" type="number" value="128"/> -->
+          <!-- (2025/07/01 Remarked) Old. For ( weightArrayBuffer_partitionCount == 1 )
+          <input id="output_channelCount_Number" type="number" value="128"/>
+          -->
+
           <!-- (2025/08/05 Temp Remarked) For test mobile phone moto e40
+          < !-- (2025/08/01) For ( weightArrayBuffer_partitionCount == 2 ) -- >
           <input id="output_channelCount_Number" type="number" value="64"/>
           -->
+
           <input id="output_channelCount_Number" type="number" value="8"/>
         </td>
 

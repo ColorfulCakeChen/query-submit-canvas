@@ -628,7 +628,7 @@ class NeuralOrchestra_Base extends
 
     vocabularyChannelCount = 4,
     vocabularyCountPerInputChannel = 256,
-    blockCountTotalRequested = 39,
+    blockCountTotalRequested = 32, //39,
     output_channelCount = 64
   ) {
 
