@@ -427,6 +427,10 @@ class PerformanceTestCase extends Recyclable.Root {
       let bCreateOkPromise = neuralWorkerProxies.NeuralNetArray_create_async(
         neuralNetParamsBase_Array,
         weightArrayBuffer_Array,
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
         weightArrayBuffer_partitionId,
         bLogDryRunTime );
 
@@ -555,6 +559,10 @@ class PerformanceTestCase extends Recyclable.Root {
       const bLogDryRunTime = this.bLogDryRunTime;
       let recreateOk = await neuralWorkerProxies
         .NeuralNetArray_recreate_async(
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
           this.weightArrayBuffer_partitionId,
           bLogDryRunTime );
 
