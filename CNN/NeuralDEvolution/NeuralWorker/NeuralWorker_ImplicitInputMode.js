@@ -25,7 +25,8 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
  * (2025/08/12 Noted)
  *
  * According to testing, some cases will result in different neural worker
- * result between desktop computer and mobile phone:
+ * result between desktop computer and mobile phone (and between NeuralWorker
+ * and NeuralNet of mobile phone):
  * 
  *   - Image (source input) scaling + embedding layer:
  *
