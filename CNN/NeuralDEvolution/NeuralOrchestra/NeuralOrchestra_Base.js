@@ -1821,6 +1821,9 @@ class NeuralOrchestra_Base extends
 
       // 3.2 Create neural networks.
 
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
       // After a versus loaded, always use the first partition (i.e. partition
       // id 0) of the weightArrayBuffer to create the first neural network.
       const weightArrayBuffer_partitionId = 0;
