@@ -267,6 +267,12 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     neuralNetParamsBase_Array,
 
     weightArrayBuffer_Array,
+
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
+
     weightArrayBuffer_partitionId,
 
     bLogDryRunTime ) {
@@ -378,6 +384,12 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to false, if failed.
    */
   async NeuralNetArray_recreate_async(
+
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
+
     weightArrayBuffer_partitionId,
     bLogDryRunTime ) {
 

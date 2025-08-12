@@ -314,6 +314,12 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
     neuralNetParamsBase_Array,
 
     weightArrayBuffer_Array,
+
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
+    
     weightArrayBuffer_partitionId,
 
     bLogDryRunTime ) {
@@ -423,6 +429,12 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *         the maybe adjusted weightArrayBuffer_partitionId.
    */
   async* NeuralNetArray_recreate(
+
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
+
     weightArrayBuffer_partitionId,
     bLogDryRunTime ) {
 
