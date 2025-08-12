@@ -548,7 +548,7 @@ class PerformanceTestCase extends Recyclable.Root {
         ++this.weightArrayBuffer_partitionId;
 
         if ( this.weightArrayBuffer_partitionId
-              >= this.weightArrayBuffer_partitionCount )
+               >= this.weightArrayBuffer_partitionCount )
           this.weightArrayBuffer_partitionId = 0;
       }
 
