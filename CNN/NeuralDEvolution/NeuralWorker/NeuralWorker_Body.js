@@ -412,9 +412,10 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *       will be kept).
    *
    *
-   * @param {number} weightArrayBuffer_partitionId
-   *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
-   * which part of a weightArrayBuffer is used to create current neural network.
+   * @param {number} weightArrayBuffer_partitionId_Array
+   *   An array of integer. Every element is an integer between 0 and
+   * ( weightArrayBuffer_partitionCount - 1 ) means which part of the
+   * weightArrayBuffer is used to create current neural network.
    * 
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and
@@ -423,6 +424,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * @yield {object}
    *   Yield { done: true,
    *           value: {
+???!!!
    *             value: { bRecreateOk, weightArrayBuffer_partitionId } } }.
    *     - bCreateOk: true, if succeeded. false, if failed.
    *     - weightArrayBuffer_partitionId:
@@ -593,6 +595,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         if ( bAllOk )
           result = { value: {
             bRecreateOk: true,
+!!!???
             weightArrayBuffer_partitionId: weightArrayBuffer_partitionId } };
         else
           result = { value: {

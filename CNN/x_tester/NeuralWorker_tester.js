@@ -441,6 +441,11 @@ class PerformanceTestCase extends Recyclable.Root {
           + `Failed to create neural networks by neuralWorkerProxies. `
           + `${neuralWorkerProxies}` );
 
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
+
       if ( neuralWorkerProxies.weightArrayBuffer_partitionId
             !== neuralWorkerProxies.weightArrayBuffer_partitionId_want )
         throw Error( `NeuralWorker_tester.PerformanceTestCase`
@@ -573,6 +578,11 @@ class PerformanceTestCase extends Recyclable.Root {
           + `result ( ${recreateOk} ) `
           + `should be true. `
           + `${neuralWorkerProxies}` );
+
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
 
       if ( neuralWorkerProxies.weightArrayBuffer_partitionId
             !== neuralWorkerProxies.weightArrayBuffer_partitionId_want )

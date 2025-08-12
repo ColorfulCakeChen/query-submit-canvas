@@ -48,6 +48,12 @@ import * as NotUsed from "./NeuralWorker_Body.js";
  * configurations is come from .NeuralNetArray_create_async() parameters and
  * is owned (i.e. kept and destroyed) by this NeuralWorker.Proxy.
  *
+ * 
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
+
  * @member {number} weightArrayBuffer_partitionCount_want
  *   The weightArrayBuffer_partitionCount posted to NeuralWorker_Body. It may
  * be different from weightArrayBuffer_partitionCount because
@@ -58,6 +64,12 @@ import * as NotUsed from "./NeuralWorker_Body.js";
  * least 1. It could be used to create different neural network by using
  * different part of the weightArrayBuffer.
  *
+ * 
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
+
  * @member {number} weightArrayBuffer_partitionId_want
  *   The weightArrayBuffer_partitionId posted to NeuralWorker_Body. It may
  * be different from weightArrayBuffer_partitionId because
@@ -166,6 +178,12 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
   /** @override */
   disposeResources() {
+
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
+
     this.weightArrayBuffer_partitionId_want = undefined;
     this.weightArrayBuffer_partitionId = undefined;
     this.weightArrayBuffer_partitionCount_want = undefined;
@@ -304,6 +322,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
       }
     }
 
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
+
     this.weightArrayBuffer_partitionId_want = weightArrayBuffer_partitionId;
     this.weightArrayBuffer_partitionId = undefined;
 
@@ -321,6 +344,12 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
         neuralNetParamsBase_Array,
 
         weightArrayBuffer_Array,
+
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
+
         weightArrayBuffer_partitionId,
 
         bLogDryRunTime
@@ -349,6 +378,12 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     let bCreateOk;
     ( {
       bCreateOk: bCreateOk,
+
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
+
       weightArrayBuffer_partitionId: this.weightArrayBuffer_partitionId
     } = NeuralNetArray_create_result );
 
@@ -407,6 +442,12 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     // 3.1
     const NeuralNetArray_recreate_promise = this.createPromise_by_postCommandArgs(
       [ "NeuralNetArray_recreate",
+
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
+
         weightArrayBuffer_partitionId,
         bLogDryRunTime
       ],
@@ -419,6 +460,12 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     let bRecreateOk;
     ( {
       bRecreateOk: bRecreateOk,
+
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
+
       weightArrayBuffer_partitionId: this.weightArrayBuffer_partitionId
     } = NeuralNetArray_recreate_result );
 
