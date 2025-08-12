@@ -3,7 +3,7 @@ export { NeuralWorker_ImplicitInputMode as ImplicitInputMode };
 import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
 
 /*
- * Note:
+ * 1.
  *
  * This could be a NeuralNet's parameter (instead of NeuralWorker). But that
  * has a little problem.
@@ -18,6 +18,26 @@ import { Int } from "../../Unpacker/ValueDesc/ValueDesc_Base.js";
  *            NeuralWorker_ImplicitInputMode.
  *
  * Currently, the solution2 is used.
+ *
+ *
+ * 2.
+ *
+ * (2025/08/12 Noted)
+ *
+ * According to testing, some cases will result in different neural worker
+ * result between desktop computer and mobile phone:
+ * 
+ *   - Image (source input) scaling + embedding layer:
+ *
+ *     Although image scaling generates only little difference between desktop
+ *     computer and mobile phone (i.e. pixel value 165 and 166), they are
+ *     totally different vocabulary in the embedding layer. So, the embedded
+ *     results are totally different between desktop computer and mobile phone.
+ *
+ *   - ( bFillAlignmentMark == true ) or ( bFillPreviousOutput == true )
+ *
+ *     Currently, it is still unknown why filling these information will result
+ *     in mismatched between desktop computer and mobile phone.
  *
  */
 
