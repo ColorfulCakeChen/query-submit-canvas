@@ -1193,6 +1193,7 @@ class NeuralOrchestra_Base extends
       new ArrayBuffer( weightArrayBuffer_byteCount )
     ];
 
+    // For compiling, partition ids are arbitrary.
     const weightArrayBuffer_partitionId_Array = [ 0, 0 ];
 
     // (2022//09/26 Remarked)
@@ -1280,6 +1281,52 @@ class NeuralOrchestra_Base extends
 
     let neuralNet_createOk = await neuralNet_create_promise;
     return neuralNet_createOk;
+  }
+
+  /**
+   * Re-create neural networks in all neural web workers.
+   *
+   * This method is called by:
+   *   - alignmentMarkValueArrayArray_swap_asyncPromise()
+   *
+   *
+   * @param {NeuralOrchestra_Base} this
+   *
+   * @param {number[]} weightArrayBuffer_partitionId_Array_want
+   *   An array with ( .length == this.neuralNetParamsBase_Array.length ).
+   * Its every element is an integer between
+   * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
+   * the weightArrayBuffer is used to create current neural network. It will
+   * be kept directly by this NeuralOrchestra_Base object.
+   * 
+   * @param {boolean} bLogDryRunTime
+   *   If true, the neural network dry-run time will be measured twice and
+   * logged to console.
+   *
+   * @return {Promise}
+   *   Return a promise:
+   *   - Resolved to true, if succeeded.
+   *   - Resolved to false, if failed.
+   */
+  static async workerProxies_NeuralNetArray_recreate_async(
+    weightArrayBuffer_partitionId_Array_want,
+    bLogDryRunTime ) {
+
+    { // Checking pre-condition.
+      const funcNameInMessage = "workerProxies_NeuralNetArray_recreate_async";
+
+      NeuralOrchestra_Base
+        .throw_if_workerProxies_busy_except_workerProxies_init
+        .call( this, funcNameInMessage );
+    }
+
+    let neuralNet_recreate_promise
+      = this.workerProxies.NeuralNetArray_recreate_async(
+          weightArrayBuffer_partitionId_Array_want,
+          bLogDryRunTime );
+
+    let neuralNet_recreateOk = await neuralNet_recreate_promise;
+    return neuralNet_recreateOk;
   }
 
 
@@ -1390,17 +1437,61 @@ class NeuralOrchestra_Base extends
    */
   static async alignmentMarkValueArrayArray_swap_asyncPromise( delayPromise ) {
 
+    try {
+      // 1.
+      {
+
+        // 3.2 Create neural networks.
+
+        // After a versus loaded, let neural net 0 uses partition id 0 (and 
+        // neural net 1 uses partition id 1) of the weightArrayBuffer to create
+        // the first neural networks.
+        const weightArrayBuffer_partitionId_Array = [ 0, 1 ];
+
+        let bLogDryRunTime;
+        {
+          // If log message is required, observe dry-run performance and weight
+          // count.
+          if ( this.bLogFetcherEventToConsole )
+            bLogDryRunTime = true;
+
+          // In real-run, no need to observe dry-run performance and weight
+          // count.
+          else
+            bLogDryRunTime = false;
+        }
+
+        let neuralNet_create_promise
+          = NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async.call(
+              this,
+              weightArrayBuffer_Array,
+              weightArrayBuffer_partitionId_Array,
+              bLogDryRunTime );
+
+!!!
+      this.workerProxies.NeuralNetArray_recreate_async(
+    weightArrayBuffer_partitionId_Array_want,
+    bLogDryRunTime )
+
+        neuralNet_createOk = await neuralNet_create_promise;
+        if ( !neuralNet_createOk )
+          throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+            + `Failed to create neural networks. `
+            + `workerProxies={ ${this.workerProxies} }`
+          );
+      }
+
 !!! ...unfinished... (2025/05/16)
 // perhaps, also NeuralNet_recreate_async() with partition id 1 (instead of 0).
 
-    try {
-      // 1.
+
+      // 2.
       let resultOkPromise
         = this.workerProxies.alignmentMarkValueArrayArray_swap_async();
 
       let resultOk = await resultOkPromise;
 
-      // 2.
+      // 3.
       if ( delayPromise )
         await delayPromise;
 
