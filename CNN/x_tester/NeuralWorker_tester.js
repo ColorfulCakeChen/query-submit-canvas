@@ -469,10 +469,10 @@ class PerformanceTestCase extends Recyclable.Root {
             throw Error( `NeuralWorker_tester.PerformanceTestCase`
               + `.${funcNameInMessage}(): .neuralWorkerProxies`
               + `.weightArrayBuffer_partitionId_Array[ ${i} ] `
-              + `( ${neuralWorkerProxies.weightArrayBuffer_partitionId_Array[ i ]} ) `
+              + `( ${weightArrayBuffer_partitionId_Array[ i ]} ) `
               + `should be the same as `
               + `.weightArrayBuffer_partitionId_Array_want[ ${i} ] `
-              + `( ${neuralWorkerProxies.weightArrayBuffer_partitionId_Array_want[ i ]} ) `
+              + `( ${weightArrayBuffer_partitionId_Array_want[ i ]} ) `
               + `${neuralWorkerProxies}` );
       }
 
