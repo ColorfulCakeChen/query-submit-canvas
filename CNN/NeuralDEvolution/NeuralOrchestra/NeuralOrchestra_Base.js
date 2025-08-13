@@ -1826,12 +1826,10 @@ class NeuralOrchestra_Base extends
 
       // 3.2 Create neural networks.
 
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
-
-      // After a versus loaded, always use the first partition (i.e. partition
-      // id 0) of the weightArrayBuffer to create the first neural network.
-      const weightArrayBuffer_partitionId = 0;
+      // After a versus loaded, let neural net 0 uses partition id 0 (and 
+      // neural net 1 uses partition id 1) of the weightArrayBuffer to create
+      // the first neural networks.
+      const weightArrayBuffer_partitionId_Array = [ 0, 1 ];
 
       let bLogDryRunTime;
       {
@@ -1850,7 +1848,7 @@ class NeuralOrchestra_Base extends
         = NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async.call(
             this,
             weightArrayBuffer_Array,
-            weightArrayBuffer_partitionId,
+            weightArrayBuffer_partitionId_Array,
             bLogDryRunTime );
 
       neuralNet_createOk = await neuralNet_create_promise;
