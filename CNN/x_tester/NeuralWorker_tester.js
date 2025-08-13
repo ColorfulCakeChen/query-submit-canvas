@@ -696,8 +696,11 @@ class PerformanceTestCase extends Recyclable.Root {
    * correctness testing.
    */
   async NeuralNet_try_result_async(
+    weightArrayBuffer_partitionId,
     input_TypedArray, input_height, input_width,
     alignmentMarkValueArray, previous_output_TypedArray ) {
+
+    const funcNameInMessage = "NeuralNet_try_result_async";
 
     let resultFloat32Array;
 
@@ -723,10 +726,6 @@ class PerformanceTestCase extends Recyclable.Root {
 
         const weightArrayBuffer_partitionCount
           = this.weightArrayBuffer_partitionCount;
-
-!!! ...unfinished... (2025/08/13)
-        const weightArrayBuffer_partitionId
-          = this.weightArrayBuffer_partitionId;
 
         const weightArrayBuffer_elementCount
           = PerformanceTestCase.random_WeightFloat32Array.length;
@@ -819,7 +818,7 @@ class PerformanceTestCase extends Recyclable.Root {
 
 //!!! (2025/08/05 Temp Added) For debug in mobile phone.
       if ( this.bDebugInfo )
-        this.TableLog_tensor3d( "NeuralNet_try_result_async(): sourceTensor",
+        this.TableLog_tensor3d( `${funcNameInMessage}(): sourceTensor`,
           sourceTensor );
 
       outputTensor3d = neuralNet.apply( sourceTensor );
@@ -1580,7 +1579,10 @@ class HeightWidthDepth {
 
                 if ( this.bDebugInfo )
                   DebugInfo_pre.textContent += `    `
-                    + `neuralNetIndex = ${neuralNetIndex}\n`
+                    + `neuralNetIndex = ${neuralNetIndex}\n`;
+
+                const weightArrayBuffer_partitionId
+                  = this.weightArrayBuffer_partitionId_Array[ neuralNetIndex ];
 
                 let alignmentMarkValueArray;
                 let previous_output_TypedArray;
@@ -1635,6 +1637,7 @@ class HeightWidthDepth {
                 // nConvStageTypeId has been adjusted.
                 let resultFloat32Array = await testCase
                   .NeuralNet_try_result_async(
+                    weightArrayBuffer_partitionId,
                     input_TypedArray, input_height_scaled, input_width_scaled,
                     alignmentMarkValueArray, previous_output_TypedArray );
 
