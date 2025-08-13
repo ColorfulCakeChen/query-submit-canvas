@@ -279,7 +279,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   An array with ( .length == this.neuralNetParamsBase_Array.length ).
    * Its every element is an integer between
    * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
-   * the weightArrayBuffer is used to create current neural network.
+   * the weightArrayBuffer is used to create current neural network. It will
+   * be kept directly by this NeuralWorker_Proxy object.
    * 
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and
@@ -395,7 +396,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   An array with ( .length == this.neuralNetParamsBase_Array.length ).
    * Its every element is an integer between
    * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
-   * the weightArrayBuffer is used to create current neural network.
+   * the weightArrayBuffer is used to create current neural network. It will
+   * be kept directly by this NeuralWorker_Proxy object.
    * 
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and

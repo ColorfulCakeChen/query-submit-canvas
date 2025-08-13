@@ -527,7 +527,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   An array with ( .length == this.neuralNetParamsBase_Array.length ).
    * Its every element is an integer between
    * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
-   * the weightArrayBuffer is used to create current neural network.
+   * the weightArrayBuffer is used to create current neural network. It will
+   * be kept directly by this NeuralWorker_Proxies object.
    *
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and
@@ -607,7 +608,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
           = workerProxyArray[ i ].NeuralNetArray_create_async(
               [ neuralNetParamsBase_Array[ i ] ],
               [ weightArrayBuffer_Array[ i ] ],
-              weightArrayBuffer_partitionId_Array,
+              [ weightArrayBuffer_partitionId_Array_want[ i ] ],
               bLogDryRunTime
             );
       }
@@ -634,7 +635,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       createOk = await workerProxy.NeuralNetArray_create_async(
         neuralNetParamsBase_Array,
         weightArrayBuffer_Array,
-        weightArrayBuffer_partitionId_Array,
+        weightArrayBuffer_partitionId_Array_want,
         bLogDryRunTime
       );
 
@@ -672,7 +673,8 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   An array with ( .length == this.neuralNetParamsBase_Array.length ).
    * Its every element is an integer between
    * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
-   * the weightArrayBuffer is used to create current neural network.
+   * the weightArrayBuffer is used to create current neural network. It will
+   * be kept directly by this NeuralWorker_Proxies object.
    *
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and
@@ -697,24 +699,25 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       this.previous_output_TypedArrayArray = undefined;
     }
 
-
-!!! ...unfinished... (2025/08/13)
     this.weightArrayBuffer_partitionId_Array_want
       = weightArrayBuffer_partitionId_Array_want;
 
-    this.weightArrayBuffer_partitionId_Array = ??? undefined;
+    const weightArrayBuffer_partitionId_Array
+      = this.weightArrayBuffer_partitionId_Array
+      = new Array( weightArrayBuffer_partitionId_Array.length );
 
 
     let recreateOk;
 
     // 1. Every worker creates one neural network.
-    if ( this.workerProxyArray.length > 1 ) { // (i.e. two workers)
+    const workerProxyArray = this.workerProxyArray;
+    if ( workerProxyArray.length > 1 ) { // (i.e. two workers)
 
-      let recreatePromiseArray = new Array( this.workerProxyArray.length );
-      for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
+      let recreatePromiseArray = new Array( workerProxyArray.length );
+      for ( let i = 0; i < workerProxyArray.length; ++i ) {
         recreatePromiseArray[ i ]
-          = this.workerProxyArray[ i ].NeuralNetArray_recreate_async(
-              weightArrayBuffer_partitionId_Array,
+          = workerProxyArray[ i ].NeuralNetArray_recreate_async(
+              [ weightArrayBuffer_partitionId_Array_want[ i ] ],
               bLogDryRunTime
             );
       }
@@ -726,20 +729,31 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         true
       );
 
+      // Collect adjusted weightArrayBuffer_partitionId_Array.
+      {
+        weightArrayBuffer_partitionId_Array[ 0 ]
+          = workerProxyArray[ 0 ].weightArrayBuffer_partitionId_Array[ 0 ];
 
-!!! ...unfinished... (2025/08/13)
-// should collect real weightArrayBuffer_partitionId_Array
+        weightArrayBuffer_partitionId_Array[ 1 ]
+          = workerProxyArray[ 1 ].weightArrayBuffer_partitionId_Array[ 0 ];
+      }
 
     // 2. The only one worker creates all neural networks.
     } else {
       const workerProxy = this.workerProxyArray[ 0 ];
       recreateOk = await workerProxy.NeuralNetArray_recreate_async(
-        weightArrayBuffer_partitionId_Array,
+        weightArrayBuffer_partitionId_Array_want,
         bLogDryRunTime
       );
 
-!!! ...unfinished... (2025/08/13)
-// should collect real weightArrayBuffer_partitionId_Array
+      // Collect adjusted weightArrayBuffer_partitionId_Array.
+      {
+        weightArrayBuffer_partitionId_Array[ 0 ]
+          = workerProxy.weightArrayBuffer_partitionId_Array[ 0 ];
+
+        weightArrayBuffer_partitionId_Array[ 1 ]
+          = workerProxy.weightArrayBuffer_partitionId_Array[ 1 ];
+      }
     }
 
     return recreateOk;
