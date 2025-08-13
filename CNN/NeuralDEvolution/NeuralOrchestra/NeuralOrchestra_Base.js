@@ -1232,9 +1232,12 @@ class NeuralOrchestra_Base extends
    * interpreted as Float32Array. Every element will be transferred to web
    * worker (i.e. their .byteLength will become zero).
    *
-   * @param {number} weightArrayBuffer_partitionId
-   *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
-   * which part of a weightArrayBuffer is used to create current neural network.
+   * @param {number[]} weightArrayBuffer_partitionId_Array_want
+   *   An array with ( .length == this.neuralNetParamsBase_Array.length ).
+   * Its every element is an integer between
+   * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
+   * the weightArrayBuffer is used to create current neural network. It will
+   * be kept directly by this NeuralOrchestra_Base object.
    * 
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and
@@ -1247,7 +1250,7 @@ class NeuralOrchestra_Base extends
    */
   static async workerProxies_NeuralNetArray_create_async(
     weightArrayBuffer_Array,
-    weightArrayBuffer_partitionId,
+    weightArrayBuffer_partitionId_Array_want,
     bLogDryRunTime ) {
 
     { // Checking pre-condition.
@@ -1272,7 +1275,7 @@ class NeuralOrchestra_Base extends
       = this.workerProxies.NeuralNetArray_create_async(
           neuralNetParamsBase_Array,
           weightArrayBuffer_Array,
-          weightArrayBuffer_partitionId,
+          weightArrayBuffer_partitionId_Array_want,
           bLogDryRunTime );
 
     let neuralNet_createOk = await neuralNet_create_promise;
