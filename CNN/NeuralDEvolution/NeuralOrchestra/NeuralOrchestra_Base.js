@@ -187,6 +187,10 @@ import * as DEvolution from "../DEvolution.js";
  *   If true, some debug messages of HttpRequest.Fetcher will be logged to
  * console.
  *
+ * @member {boolean} bLogDryRunTime_when_create_and_recreate
+ *   If true, log neural net dry-run performance and weight count. (Currently,
+ * it is determined according to .bLogFetcherEventToConsole.)
+ *
  *
  * @member {string} sender_clientId
  *   The client id when sending measurement protocol.
@@ -591,6 +595,19 @@ class NeuralOrchestra_Base extends
 
   get previous_output_TypedArrayArray_nonEmpty() {
     return this.workerProxies?.previous_output_TypedArrayArray_nonEmpty;
+  }
+
+
+  get bLogDryRunTime_when_create_and_recreate() {
+    // If log message is required, observe dry-run performance and weight
+    // count.
+    if ( this.bLogFetcherEventToConsole )
+      return true;
+
+    // In real-run, no need to observe dry-run performance and weight
+    // count.
+    else
+      return false;
   }
 
 
@@ -1284,20 +1301,15 @@ class NeuralOrchestra_Base extends
   }
 
   /**
-   * Re-create neural networks in all neural web workers.
+   * Re-create neural networks in all neural web workers with partition id
+   * swapped.
    *
    * This method is called by:
    *   - alignmentMarkValueArrayArray_swap_asyncPromise()
    *
    *
    * @param {NeuralOrchestra_Base} this
-   *
-   * @param {number[]} weightArrayBuffer_partitionId_Array_want
-   *   An array with ( .length == this.neuralNetParamsBase_Array.length ).
-   * Its every element is an integer between
-   * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
-   * the weightArrayBuffer is used to create current neural network. It will
-   * be kept directly by this NeuralOrchestra_Base object.
+   * @param {number[]} this.workerProxies.weightArrayBuffer_partitionId_Array
    * 
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and
@@ -1309,7 +1321,6 @@ class NeuralOrchestra_Base extends
    *   - Resolved to false, if failed.
    */
   static async workerProxies_NeuralNetArray_recreate_async(
-    weightArrayBuffer_partitionId_Array_want,
     bLogDryRunTime ) {
 
     { // Checking pre-condition.
@@ -1320,9 +1331,14 @@ class NeuralOrchestra_Base extends
         .call( this, funcNameInMessage );
     }
 
+    const weightArrayBuffer_partitionId_Array_swapped = [
+      this.workerProxies.weightArrayBuffer_partitionId_Array[ 1 ],
+      this.workerProxies.weightArrayBuffer_partitionId_Array[ 0 ]
+    ];
+
     let neuralNet_recreate_promise
       = this.workerProxies.NeuralNetArray_recreate_async(
-          weightArrayBuffer_partitionId_Array_want,
+          weightArrayBuffer_partitionId_Array_swapped,
           bLogDryRunTime );
 
     let neuralNet_recreateOk = await neuralNet_recreate_promise;
@@ -1438,45 +1454,21 @@ class NeuralOrchestra_Base extends
   static async alignmentMarkValueArrayArray_swap_asyncPromise( delayPromise ) {
 
     try {
-      // 1.
+      // 1. Re-create neural networks (with partition id swapped).
       {
 
-        // 3.2 Create neural networks.
+!!!
+        const bLogDryRunTime = this.bLogDryRunTime_when_create_and_recreate;
 
-        // After a versus loaded, let neural net 0 uses partition id 0 (and 
-        // neural net 1 uses partition id 1) of the weightArrayBuffer to create
-        // the first neural networks.
-        const weightArrayBuffer_partitionId_Array = [ 0, 1 ];
-
-        let bLogDryRunTime;
-        {
-          // If log message is required, observe dry-run performance and weight
-          // count.
-          if ( this.bLogFetcherEventToConsole )
-            bLogDryRunTime = true;
-
-          // In real-run, no need to observe dry-run performance and weight
-          // count.
-          else
-            bLogDryRunTime = false;
-        }
-
-        let neuralNet_create_promise
-          = NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async.call(
+        let neuralNet_recreate_promise
+          = NeuralOrchestra_Base.workerProxies_NeuralNetArray_recreate_async.call(
               this,
-              weightArrayBuffer_Array,
-              weightArrayBuffer_partitionId_Array,
               bLogDryRunTime );
 
-!!!
-      this.workerProxies.NeuralNetArray_recreate_async(
-    weightArrayBuffer_partitionId_Array_want,
-    bLogDryRunTime )
-
-        neuralNet_createOk = await neuralNet_create_promise;
-        if ( !neuralNet_createOk )
+        neuralNet_recreateOk = await neuralNet_recreate_promise;
+        if ( !neuralNet_recreateOk )
           throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-            + `Failed to create neural networks. `
+            + `Failed to re-create neural networks. `
             + `workerProxies={ ${this.workerProxies} }`
           );
       }
@@ -1922,18 +1914,7 @@ class NeuralOrchestra_Base extends
       // the first neural networks.
       const weightArrayBuffer_partitionId_Array = [ 0, 1 ];
 
-      let bLogDryRunTime;
-      {
-        // If log message is required, observe dry-run performance and weight
-        // count.
-        if ( this.bLogFetcherEventToConsole )
-          bLogDryRunTime = true;
-
-        // In real-run, no need to observe dry-run performance and weight
-        // count.
-        else
-          bLogDryRunTime = false;
-      }
+      const bLogDryRunTime = this.bLogDryRunTime_when_create_and_recreate;
 
       let neuralNet_create_promise
         = NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async.call(
