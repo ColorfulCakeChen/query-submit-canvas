@@ -285,12 +285,8 @@ class PerformanceTestCase extends Recyclable.Root {
 
     this.weightArrayBuffer_partitionCount = 2;
 
-
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
-
-
-    this.weightArrayBuffer_partitionId = 0;
+    // partition id 0, and partition id 1
+    this.weightArrayBuffer_partitionId_Array = [ 0, 1 ];
 
     // (2022//09/26 Remarked)
     //this.bLogDryRunTime = true; // For observing dry-run performance.
@@ -304,11 +300,7 @@ class PerformanceTestCase extends Recyclable.Root {
     this.ScaleFiller = undefined;
     this.bLogDryRunTime = undefined;
 
-
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
-
-    this.weightArrayBuffer_partitionId = undefined;
+    this.weightArrayBuffer_partitionId_Array = undefined;
     this.weightArrayBuffer_partitionCount = undefined;
 
     this.bDebugInfo = undefined;
@@ -431,21 +423,14 @@ class PerformanceTestCase extends Recyclable.Root {
           + `( ${neuralWorkerProxies.weightArrayBuffer_partitionCount_want} ) `
           + `${neuralWorkerProxies}` );
 
-
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
-
-      const weightArrayBuffer_partitionId = this.weightArrayBuffer_partitionId;
+      const weightArrayBuffer_partitionId_Array
+        = this.weightArrayBuffer_partitionId_Array;
 
       const bLogDryRunTime = this.bLogDryRunTime;
       let bCreateOkPromise = neuralWorkerProxies.NeuralNetArray_create_async(
         neuralNetParamsBase_Array,
         weightArrayBuffer_Array,
-
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
-
-        weightArrayBuffer_partitionId,
+        weightArrayBuffer_partitionId_Array,
         bLogDryRunTime );
 
       let bCreateOk = await bCreateOkPromise;
@@ -573,22 +558,18 @@ class PerformanceTestCase extends Recyclable.Root {
 
       // 2. If weightArrayBuffer has multiple partition.
 
-      { // Try next partition.
-        ++this.weightArrayBuffer_partitionId;
+      { // Try swap partition id.
+        const [ partition_A, partition_B ]
+          = this.weightArrayBuffer_partitionId_Array;
 
-        if ( this.weightArrayBuffer_partitionId
-               >= this.weightArrayBuffer_partitionCount )
-          this.weightArrayBuffer_partitionId = 0;
+        this.weightArrayBuffer_partitionId_Array[ 0 ] = partition_B;
+        this.weightArrayBuffer_partitionId_Array[ 1 ] = partition_A;
       }
 
       const bLogDryRunTime = this.bLogDryRunTime;
       let recreateOk = await neuralWorkerProxies
         .NeuralNetArray_recreate_async(
-
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
-
-          this.weightArrayBuffer_partitionId,
+          this.weightArrayBuffer_partitionId_Array,
           bLogDryRunTime );
 
       if ( !recreateOk )
@@ -743,6 +724,7 @@ class PerformanceTestCase extends Recyclable.Root {
         const weightArrayBuffer_partitionCount
           = this.weightArrayBuffer_partitionCount;
 
+!!! ...unfinished... (2025/08/13)
         const weightArrayBuffer_partitionId
           = this.weightArrayBuffer_partitionId;
 
