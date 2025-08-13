@@ -251,8 +251,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         if ( this.weightArrayBuffer_Array )
           this.weightArrayBuffer_Array = undefined;
 
-        if ( this.weightArrayBuffer_partitionId_Array )
-          this.weightArrayBuffer_partitionId_Array = undefined;
+        this.weightArrayBuffer_partitionId_Array = undefined;
       }
 
       if ( this.neuralNetParamsBase_Array )
@@ -438,12 +437,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *         may be adjusted.
    */
   async* NeuralNetArray_recreate(
-
-
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
-
-
     weightArrayBuffer_partitionId_Array_want,
     bLogDryRunTime ) {
 
@@ -464,27 +457,28 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       const weightArrayBuffer_partitionElementCount
         = this.weightArrayBuffer_partitionElementCount;
 
-!!!
-      weightArrayBuffer_partitionId_Array_want
-      weightArrayBuffer_partitionId_Array
+      const weightArrayBuffer_partitionId_Array
+        = this.weightArrayBuffer_partitionId_Array
+        = weightArrayBuffer_partitionId_Array_want;
 
-      {
-        // Ensure integer.
-        //
-        // Note: Bitwising OR with zero is for converting to integer (even if
-        //       it is undefined or null or object).
-        weightArrayBuffer_partitionId |= 0;
-
-        // Ensure PartitionId is integer between [ 0, ( PartitionCount - 1 ) ]
-        if ( weightArrayBuffer_partitionId < 0 )
-          weightArrayBuffer_partitionId = 0;
-
-        if ( weightArrayBuffer_partitionId >= weightArrayBuffer_partitionCount )
-          weightArrayBuffer_partitionId = weightArrayBuffer_partitionCount - 1;
-
-!!!
-        this.weightArrayBuffer_partitionId_Array = weightArrayBuffer_partitionId_Array;
-      }
+//!!! (2025/08/13 Remarked) Old codes.
+//       {
+//         // Ensure integer.
+//         //
+//         // Note: Bitwising OR with zero is for converting to integer (even if
+//         //       it is undefined or null or object).
+//         weightArrayBuffer_partitionId |= 0;
+//
+//         // Ensure PartitionId is integer between [ 0, ( PartitionCount - 1 ) ]
+//         if ( weightArrayBuffer_partitionId < 0 )
+//           weightArrayBuffer_partitionId = 0;
+//
+//         if ( weightArrayBuffer_partitionId >= weightArrayBuffer_partitionCount )
+//           weightArrayBuffer_partitionId = weightArrayBuffer_partitionCount - 1;
+//
+//!!!
+//         this.weightArrayBuffer_partitionId_Array = weightArrayBuffer_partitionId_Array;
+//       }
 
       // 0.2 Prepare container for all neural networks.
       {
@@ -497,20 +491,44 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       }
 
       // 1. Create every neural network.
-      const weightArrayBuffer_elementOffsetBegin
-        = weightArrayBuffer_partitionId
-            * weightArrayBuffer_partitionElementCount;
-
-      const weightArrayBuffer_byteOffset
-        = weightArrayBuffer_elementOffsetBegin
-            * Float32Array.BYTES_PER_ELEMENT;
-
       let bAllOk = true;
       for ( let i = 0; i < neuralNetParamsBase_Array.length; ++i ) {
-        let neuralNetParamsBase = neuralNetParamsBase_Array[ i ];
-        let weightArrayBuffer = weightArrayBuffer_Array[ i ];
+        const neuralNetParamsBase = neuralNetParamsBase_Array[ i ];
+        const weightArrayBuffer = weightArrayBuffer_Array[ i ];
 
-        let inputWeightArray = new Float32Array(
+        let weightArrayBuffer_partitionId;
+        {
+          weightArrayBuffer_partitionId
+            = weightArrayBuffer_partitionId_Array[ i ];
+
+          // Ensure integer.
+          //
+          // Note: Bitwising OR with zero is for converting to integer (even if
+          //       it is undefined or null or object).
+          weightArrayBuffer_partitionId |= 0;
+
+          // Ensure PartitionId is integer between [ 0, ( PartitionCount - 1 ) ]
+          {
+            if ( weightArrayBuffer_partitionId < 0 )
+              weightArrayBuffer_partitionId = 0;
+
+            if ( weightArrayBuffer_partitionId >= weightArrayBuffer_partitionCount )
+              weightArrayBuffer_partitionId = weightArrayBuffer_partitionCount - 1;
+          }
+
+          weightArrayBuffer_partitionId_Array[ i ]
+            = weightArrayBuffer_partitionId;
+        }
+
+        const weightArrayBuffer_elementOffsetBegin
+          = weightArrayBuffer_partitionId
+              * weightArrayBuffer_partitionElementCount;
+
+        const weightArrayBuffer_byteOffset
+          = weightArrayBuffer_elementOffsetBegin
+              * Float32Array.BYTES_PER_ELEMENT;
+
+        const inputWeightArray = new Float32Array(
           weightArrayBuffer,
           weightArrayBuffer_byteOffset,
           weightArrayBuffer_partitionElementCount );
@@ -607,12 +625,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         if ( bAllOk )
           result = { value: {
             bRecreateOk: true,
-!!!???
-            weightArrayBuffer_partitionId: weightArrayBuffer_partitionId } };
+            weightArrayBuffer_partitionId_Array:
+              weightArrayBuffer_partitionId_Array } };
         else
           result = { value: {
             bRecreateOk: false,
-            weightArrayBuffer_partitionId: weightArrayBuffer_partitionId } };
+            weightArrayBuffer_partitionId_Array:
+              weightArrayBuffer_partitionId_Array } };
       }
       return result;
 
