@@ -317,16 +317,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    */
   async* NeuralNetArray_create(
     neuralNetParamsBase_Array,
-
     weightArrayBuffer_Array,
-
-
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
-
-    
     weightArrayBuffer_partitionId_Array_want,
-
     bLogDryRunTime ) {
 
     const funcNameInMessage = "NeuralNetArray_create";
@@ -352,7 +344,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         = this.weightArrayBuffer_partitionCount;
 
       this.weightArrayBuffer_partitionElementCount = Math.floor(
-          weightArrayBuffer_elementCount / weightArrayBuffer_partitionCount );
+        weightArrayBuffer_elementCount / weightArrayBuffer_partitionCount );
 
       // 0.2 Ensure there is no NaN value in the weight array. (Force NaN to 0.)
       NeuralWorker_Body.weightArrayBuffer_Array_ensure_no_NaN.call( this );
@@ -364,7 +356,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       let recreate_result_value;
       {
         let recreate_asyncGenerator = this.NeuralNetArray_recreate(
-          weightArrayBuffer_partitionId, bLogDryRunTime );
+          weightArrayBuffer_partitionId_Array_want, bLogDryRunTime );
 
         let recreate_asyncPromise
           = AsyncWorker.Body.asyncGenerator_loopUntilDone_asyncPromise(
@@ -378,13 +370,13 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       if ( recreate_result_value.bRecreateOk )
         result = { value: {
           bCreateOk: true,
-          weightArrayBuffer_partitionId:
-            recreate_result_value.weightArrayBuffer_partitionId } };
+          weightArrayBuffer_partitionId_Array:
+            recreate_result_value.weightArrayBuffer_partitionId_Array } };
       else
         result = { value: {
           bCreateOk: false,
-          weightArrayBuffer_partitionId:
-            recreate_result_value.weightArrayBuffer_partitionId } };
+          weightArrayBuffer_partitionId_Array:
+            recreate_result_value.weightArrayBuffer_partitionId_Array } };
 
       return result;
 
@@ -460,25 +452,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
       const weightArrayBuffer_partitionId_Array
         = this.weightArrayBuffer_partitionId_Array
         = weightArrayBuffer_partitionId_Array_want;
-
-//!!! (2025/08/13 Remarked) Old codes.
-//       {
-//         // Ensure integer.
-//         //
-//         // Note: Bitwising OR with zero is for converting to integer (even if
-//         //       it is undefined or null or object).
-//         weightArrayBuffer_partitionId |= 0;
-//
-//         // Ensure PartitionId is integer between [ 0, ( PartitionCount - 1 ) ]
-//         if ( weightArrayBuffer_partitionId < 0 )
-//           weightArrayBuffer_partitionId = 0;
-//
-//         if ( weightArrayBuffer_partitionId >= weightArrayBuffer_partitionCount )
-//           weightArrayBuffer_partitionId = weightArrayBuffer_partitionCount - 1;
-//
-//!!!
-//         this.weightArrayBuffer_partitionId_Array = weightArrayBuffer_partitionId_Array;
-//       }
 
       // 0.2 Prepare container for all neural networks.
       {
