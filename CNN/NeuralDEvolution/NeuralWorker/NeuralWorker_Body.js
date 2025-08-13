@@ -297,7 +297,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   An array of every neural network's weights. Every element will be
    * interpreted as Float32Array.
    *
-   * @param {number[]} weightArrayBuffer_partitionId_Array
+   * @param {number[]} weightArrayBuffer_partitionId_Array_want
    *   An array with ( .length == neuralNetParamsBase_Array.length ).
    * Its every element is an integer between
    * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
@@ -326,7 +326,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 // The parent and offspring should use different weightArrayBuffer_partitionId
 
     
-    weightArrayBuffer_partitionId,
+    weightArrayBuffer_partitionId_Array_want,
 
     bLogDryRunTime ) {
 
@@ -418,7 +418,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *       will be kept).
    *
    *
-   * @param {number[]} weightArrayBuffer_partitionId_Array
+   * @param {number[]} weightArrayBuffer_partitionId_Array_want
    *   An array with ( .length == this.neuralNetParamsBase_Array.length ).
    * Its every element is an integer between
    * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
@@ -444,7 +444,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 // The parent and offspring should use different weightArrayBuffer_partitionId
 
 
-    weightArrayBuffer_partitionId_Array,
+    weightArrayBuffer_partitionId_Array_want,
     bLogDryRunTime ) {
 
     const funcNameInMessage = "NeuralNetArray_recreate";
@@ -463,7 +463,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
       const weightArrayBuffer_partitionElementCount
         = this.weightArrayBuffer_partitionElementCount;
+
 !!!
+      weightArrayBuffer_partitionId_Array_want
       weightArrayBuffer_partitionId_Array
 
       {

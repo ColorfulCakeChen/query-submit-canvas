@@ -523,7 +523,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    * interpreted as Float32Array. Every element will be transferred to web
    * worker (i.e. their .byteLength will become zero).
    *
-   * @param {number[]} weightArrayBuffer_partitionId_Array
+   * @param {number[]} weightArrayBuffer_partitionId_Array_want
    *   An array with ( .length == this.neuralNetParamsBase_Array.length ).
    * Its every element is an integer between
    * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
@@ -541,7 +541,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
   async NeuralNetArray_create_async(
     neuralNetParamsBase_Array,
     weightArrayBuffer_Array,
-    weightArrayBuffer_partitionId_Array,
+    weightArrayBuffer_partitionId_Array_want,
     bLogDryRunTime ) {
 
     const funcNameInMessage = "NeuralNetArray_create_async";
@@ -588,21 +588,23 @@ class NeuralWorker_Proxies extends Recyclable.Root {
       this.previous_output_TypedArrayArray = undefined;
     }
 
-!!! ...unfinished... (2025/08/13)
     this.weightArrayBuffer_partitionId_Array_want
-      = weightArrayBuffer_partitionId_Array;
+      = weightArrayBuffer_partitionId_Array_want;
 
-    this.weightArrayBuffer_partitionId_Array = ??? undefined;
+    const weightArrayBuffer_partitionId_Array
+      = this.weightArrayBuffer_partitionId_Array
+      = new Array( weightArrayBuffer_partitionId_Array.length );
 
     let createOk;
 
     // 1. Every worker creates one neural network.
-    if ( this.workerProxyArray.length > 1 ) { // (i.e. two workers)
+    const workerProxyArray = this.workerProxyArray;
+    if ( workerProxyArray.length > 1 ) { // (i.e. two workers)
 
-      let createPromiseArray = new Array( this.workerProxyArray.length );
-      for ( let i = 0; i < this.workerProxyArray.length; ++i ) {
+      let createPromiseArray = new Array( workerProxyArray.length );
+      for ( let i = 0; i < workerProxyArray.length; ++i ) {
         createPromiseArray[ i ]
-          = this.workerProxyArray[ i ].NeuralNetArray_create_async(
+          = workerProxyArray[ i ].NeuralNetArray_create_async(
               [ neuralNetParamsBase_Array[ i ] ],
               [ weightArrayBuffer_Array[ i ] ],
               weightArrayBuffer_partitionId_Array,
@@ -617,15 +619,33 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         true
       );
 
+      // Collect adjusted weightArrayBuffer_partitionId_Array.
+      {
+        weightArrayBuffer_partitionId_Array[ 0 ]
+          = workerProxyArray[ 0 ].weightArrayBuffer_partitionId_Array[ 0 ];
+
+        weightArrayBuffer_partitionId_Array[ 1 ]
+          = workerProxyArray[ 1 ].weightArrayBuffer_partitionId_Array[ 0 ];
+      }
+
     // 2. The only one worker creates all neural networks.
     } else {
-      const workerProxy = this.workerProxyArray[ 0 ];
+      const workerProxy = workerProxyArray[ 0 ];
       createOk = await workerProxy.NeuralNetArray_create_async(
         neuralNetParamsBase_Array,
         weightArrayBuffer_Array,
         weightArrayBuffer_partitionId_Array,
         bLogDryRunTime
       );
+
+      // Collect adjusted weightArrayBuffer_partitionId_Array.
+      {
+        weightArrayBuffer_partitionId_Array[ 0 ]
+          = workerProxy.weightArrayBuffer_partitionId_Array[ 0 ];
+
+        weightArrayBuffer_partitionId_Array[ 1 ]
+          = workerProxy.weightArrayBuffer_partitionId_Array[ 1 ];
+      }
     }
 
     return createOk;
@@ -648,7 +668,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - The .previous_output_TypedArrayArray will be cleared.
    *
    *
-   * @param {number[]} weightArrayBuffer_partitionId_Array
+   * @param {number[]} weightArrayBuffer_partitionId_Array_want
    *   An array with ( .length == this.neuralNetParamsBase_Array.length ).
    * Its every element is an integer between
    * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
@@ -664,7 +684,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
    *   - Resolved to false, if failed.
    */
   async NeuralNetArray_recreate_async(
-    weightArrayBuffer_partitionId_Array,
+    weightArrayBuffer_partitionId_Array_want,
     bLogDryRunTime ) {
 
     const funcNameInMessage = "NeuralNetArray_recreate_async";
@@ -680,7 +700,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
 !!! ...unfinished... (2025/08/13)
     this.weightArrayBuffer_partitionId_Array_want
-      = weightArrayBuffer_partitionId_Array;
+      = weightArrayBuffer_partitionId_Array_want;
 
     this.weightArrayBuffer_partitionId_Array = ??? undefined;
 
@@ -706,6 +726,10 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         true
       );
 
+
+!!! ...unfinished... (2025/08/13)
+// should collect real weightArrayBuffer_partitionId_Array
+
     // 2. The only one worker creates all neural networks.
     } else {
       const workerProxy = this.workerProxyArray[ 0 ];
@@ -713,6 +737,9 @@ class NeuralWorker_Proxies extends Recyclable.Root {
         weightArrayBuffer_partitionId_Array,
         bLogDryRunTime
       );
+
+!!! ...unfinished... (2025/08/13)
+// should collect real weightArrayBuffer_partitionId_Array
     }
 
     return recreateOk;
