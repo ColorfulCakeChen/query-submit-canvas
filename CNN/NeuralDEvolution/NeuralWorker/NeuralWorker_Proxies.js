@@ -594,7 +594,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     const weightArrayBuffer_partitionId_Array
       = this.weightArrayBuffer_partitionId_Array
-      = new Array( weightArrayBuffer_partitionId_Array.length );
+      = new Array( weightArrayBuffer_partitionId_Array_want.length );
 
     let createOk;
 
@@ -704,7 +704,7 @@ class NeuralWorker_Proxies extends Recyclable.Root {
 
     const weightArrayBuffer_partitionId_Array
       = this.weightArrayBuffer_partitionId_Array
-      = new Array( weightArrayBuffer_partitionId_Array.length );
+      = new Array( weightArrayBuffer_partitionId_Array_want.length );
 
 
     let recreateOk;
