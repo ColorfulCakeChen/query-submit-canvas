@@ -1582,7 +1582,8 @@ class HeightWidthDepth {
                     + `neuralNetIndex = ${neuralNetIndex}\n`;
 
                 const weightArrayBuffer_partitionId
-                  = this.weightArrayBuffer_partitionId_Array[ neuralNetIndex ];
+                  = testCase.weightArrayBuffer_partitionId_Array[
+                      neuralNetIndex ];
 
                 let alignmentMarkValueArray;
                 let previous_output_TypedArray;
