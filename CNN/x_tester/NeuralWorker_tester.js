@@ -599,20 +599,26 @@ class PerformanceTestCase extends Recyclable.Root {
           + `should be true. `
           + `${neuralWorkerProxies}` );
 
+      {
+        const weightArrayBuffer_partitionId_Array_want
+          = neuralWorkerProxies.weightArrayBuffer_partitionId_Array_want;
 
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
+        const weightArrayBuffer_partitionId_Array
+          = neuralWorkerProxies.weightArrayBuffer_partitionId_Array;
 
-
-      if ( neuralWorkerProxies.weightArrayBuffer_partitionId
-            !== neuralWorkerProxies.weightArrayBuffer_partitionId_want )
-        throw Error( `NeuralWorker_tester.PerformanceTestCase`
-          + `.${funcNameInMessage}(): neuralWorkerProxies`
-          + `.weightArrayBuffer_partitionId `
-          + `( ${neuralWorkerProxies.weightArrayBuffer_partitionId} ) `
-          + `should be the same as .weightArrayBuffer_partitionId_want `
-          + `( ${neuralWorkerProxies.weightArrayBuffer_partitionId_want} ) `
-          + `${neuralWorkerProxies}` );
+        const count = weightArrayBuffer_partitionId_Array_want.length;
+        for ( let i = 0; i < count; ++i )
+          if ( weightArrayBuffer_partitionId_Array[ i ]
+                !== weightArrayBuffer_partitionId_Array_want[ i ] )
+            throw Error( `NeuralWorker_tester.PerformanceTestCase`
+              + `.${funcNameInMessage}(): .neuralWorkerProxies`
+              + `.weightArrayBuffer_partitionId_Array[ ${i} ] `
+              + `( ${weightArrayBuffer_partitionId_Array[ i ]} ) `
+              + `should be the same as `
+              + `.weightArrayBuffer_partitionId_Array_want[ ${i} ] `
+              + `( ${weightArrayBuffer_partitionId_Array_want[ i ]} ) `
+              + `${neuralWorkerProxies}` );
+      }
 
       return recreateOk;
 
