@@ -180,12 +180,6 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 
   /** @override */
   disposeResources() {
-
-
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
-
-
     this.weightArrayBuffer_partitionId_Array_want = undefined;
     this.weightArrayBuffer_partitionId_Array = undefined;
     this.weightArrayBuffer_partitionCount_want = undefined;
