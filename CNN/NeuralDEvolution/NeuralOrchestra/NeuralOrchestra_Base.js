@@ -1301,8 +1301,8 @@ class NeuralOrchestra_Base extends
   }
 
   /**
-   * Re-create neural networks in all neural web workers with partition id
-   * swapped.
+   * Re-create neural networks in all neural web workers with swapped
+   * partition id.
    *
    * This method is called by:
    *   - alignmentMarkValueArrayArray_swap_asyncPromise()
@@ -1454,10 +1454,9 @@ class NeuralOrchestra_Base extends
   static async alignmentMarkValueArrayArray_swap_asyncPromise( delayPromise ) {
 
     try {
-      // 1. Re-create neural networks (with partition id swapped).
+      // 1. Re-create neural networks (with swapped partition id).
+      let neuralNet_recreateOk;
       {
-
-!!!
         const bLogDryRunTime = this.bLogDryRunTime_when_create_and_recreate;
 
         let neuralNet_recreate_promise
@@ -1473,19 +1472,29 @@ class NeuralOrchestra_Base extends
           );
       }
 
-!!! ...unfinished... (2025/05/16)
-// perhaps, also NeuralNet_recreate_async() with partition id 1 (instead of 0).
+      // 2. Swap alignment marks.
+      let alignmentMarkValueArrayArray_swapOk;
+      {
+        let alignmentMarkValueArrayArray_swapOkPromise
+          = this.workerProxies.alignmentMarkValueArrayArray_swap_async();
 
+        alignmentMarkValueArrayArray_swapOk
+          = await alignmentMarkValueArrayArray_swapOkPromise;
 
-      // 2.
-      let resultOkPromise
-        = this.workerProxies.alignmentMarkValueArrayArray_swap_async();
-
-      let resultOk = await resultOkPromise;
+        if ( !alignmentMarkValueArrayArray_swapOk )
+          throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
+            + `Failed to swap alignmentMarkValueArrayArray of neural networks. `
+            + `workerProxies={ ${this.workerProxies} }`
+          );
+      }
 
       // 3.
       if ( delayPromise )
         await delayPromise;
+
+      // 4.
+      let resultOk
+        = neuralNet_recreateOk && alignmentMarkValueArrayArray_swapOk;
 
       this.alignmentMarkValueArrayArray_swapOk = resultOk;
       return resultOk;
