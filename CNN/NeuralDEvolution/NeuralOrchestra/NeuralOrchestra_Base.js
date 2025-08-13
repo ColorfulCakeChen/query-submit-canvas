@@ -252,9 +252,11 @@ import * as DEvolution from "../DEvolution.js";
  * least 1. It could be used to create different neural network by using
  * different part of the weightArrayBuffer.
  * 
- * @member {number} weightArrayBuffer_partitionId
- *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
- * which part of a weightArrayBuffer is used to create current neural network.
+ * @member {number[]} weightArrayBuffer_partitionId_Array
+ *   An array with ( .length == this.neuralNetParamsBase_Array.length ).
+ * Its every element is an integer between
+ * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
+ * the weightArrayBuffer is used to create current neural network.
  * 
  *
  * @member {number} input_height
@@ -561,8 +563,8 @@ class NeuralOrchestra_Base extends
     return this.workerProxies?.weightArrayBuffer_partitionCount;
   }
 
-  get weightArrayBuffer_partitionId() {
-    return this.workerProxies?.weightArrayBuffer_partitionId;
+  get weightArrayBuffer_partitionId_Array() {
+    return this.workerProxies?.weightArrayBuffer_partitionId_Array;
   }
 
 
@@ -1191,7 +1193,7 @@ class NeuralOrchestra_Base extends
       new ArrayBuffer( weightArrayBuffer_byteCount )
     ];
 
-    const weightArrayBuffer_partitionId = 0;
+    const weightArrayBuffer_partitionId_Array = [ 0, 0 ];
 
     // (2022//09/26 Remarked)
     // For observing dry-run performance and weight count.
@@ -1201,7 +1203,7 @@ class NeuralOrchestra_Base extends
       = NeuralOrchestra_Base.workerProxies_NeuralNetArray_create_async.call(
           this,
           weightArrayBuffer_Array,
-          weightArrayBuffer_partitionId,
+          weightArrayBuffer_partitionId_Array,
           bLogDryRunTime );
 
     let createOk = await neuralNet_create_promise;
