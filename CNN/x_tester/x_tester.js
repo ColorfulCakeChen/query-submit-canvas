@@ -55,14 +55,14 @@ const gTestGeneratorFuncMap = new Map( [
   // [ CNN_Operation_tester.tester, true ],
   // [ CNN_Stage_tester.tester, true ],
 
-  [ FeedbackShape_tester.tester, true ],
+  // [ FeedbackShape_tester.tester, true ],
 
   // [ GSheets_tester.tester, true ],
 
   // [ AsyncWorker_tester.tester, true ],
   // [ DEvolution_tester.tester, true ],
 
-  // [ NeuralOrchestra_tester.tester, true ],
+  [ NeuralOrchestra_tester.tester, true ],
 
 ] );
 
