@@ -49,11 +49,6 @@ import * as NotUsed from "./NeuralWorker_Body.js";
  * is owned (i.e. kept and destroyed) by this NeuralWorker.Proxy.
  *
  * 
-
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
-
-
  * @member {number} weightArrayBuffer_partitionCount_want
  *   The weightArrayBuffer_partitionCount posted to NeuralWorker_Body. It may
  * be different from weightArrayBuffer_partitionCount because
@@ -65,11 +60,6 @@ import * as NotUsed from "./NeuralWorker_Body.js";
  * different part of the weightArrayBuffer.
  *
  * 
-
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
-
-
  * @member {number[]} weightArrayBuffer_partitionId_Array_want
  *   The weightArrayBuffer_partitionId_Array posted to NeuralWorker_Body. It
  * may be different from weightArrayBuffer_partitionId_Array because
