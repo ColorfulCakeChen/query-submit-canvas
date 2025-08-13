@@ -70,14 +70,16 @@ import * as NotUsed from "./NeuralWorker_Body.js";
 // The parent and offspring should use different weightArrayBuffer_partitionId
 
 
- * @member {number} weightArrayBuffer_partitionId_want
- *   The weightArrayBuffer_partitionId posted to NeuralWorker_Body. It may
- * be different from weightArrayBuffer_partitionId because
+ * @member {number[]} weightArrayBuffer_partitionId_Array_want
+ *   The weightArrayBuffer_partitionId_Array posted to NeuralWorker_Body. It
+ * may be different from weightArrayBuffer_partitionId_Array because
  * NeuralWorker_Body will adjust it.
  * 
- * @member {number} weightArrayBuffer_partitionId
- *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
- * which part of a weightArrayBuffer is used to create current neural network.
+ * @member {number[]} weightArrayBuffer_partitionId_Array
+ *   An array with ( .length == this.neuralNetParamsBase_Array.length ).
+ * Its every element is an integer between
+ * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
+ * the weightArrayBuffer is used to create current neural network.
  * 
  */
 class NeuralWorker_Proxy extends AsyncWorker.Proxy {
@@ -184,8 +186,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 // The parent and offspring should use different weightArrayBuffer_partitionId
 
 
-    this.weightArrayBuffer_partitionId_want = undefined;
-    this.weightArrayBuffer_partitionId = undefined;
+    this.weightArrayBuffer_partitionId_Array_want = undefined;
+    this.weightArrayBuffer_partitionId_Array = undefined;
     this.weightArrayBuffer_partitionCount_want = undefined;
     this.weightArrayBuffer_partitionCount = undefined;
     this.neuralNetParamsBase_Array_dispose();
@@ -233,8 +235,13 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     this.workerId = workerId;
     this.backendName = backendName;
 
-    this.weightArrayBuffer_partitionCount_want = weightArrayBuffer_partitionCount;
+    this.weightArrayBuffer_partitionCount_want
+      = weightArrayBuffer_partitionCount;
+
     this.weightArrayBuffer_partitionCount = undefined;
+
+    this.weightArrayBuffer_partitionId_Array_want = undefined;
+    this.weightArrayBuffer_partitionId_Array = undefined;
 
     const initWorker_promise = this.createPromise_by_postCommandArgs(
       [ "initWorker",
@@ -268,9 +275,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    * interpreted as Float32Array. Every element will be transferred to web
    * worker (i.e. their .byteLength will become zero).
    *
-   * @param {number} weightArrayBuffer_partitionId
-   *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
-   * which part of a weightArrayBuffer is used to create current neural network.
+   * @param {number[]} weightArrayBuffer_partitionId_Array
+   *   An array with ( .length == this.neuralNetParamsBase_Array.length ).
+   * Its every element is an integer between
+   * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
+   * the weightArrayBuffer is used to create current neural network.
    * 
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and
@@ -283,16 +292,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    */
   async NeuralNetArray_create_async(
     neuralNetParamsBase_Array,
-
     weightArrayBuffer_Array,
-
-
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
-
-
-    weightArrayBuffer_partitionId,
-
+    weightArrayBuffer_partitionId_Array,
     bLogDryRunTime ) {
 
     const funcNameInMessage = "NeuralNetArray_create_async";
@@ -327,8 +328,10 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
 // The parent and offspring should use different weightArrayBuffer_partitionId
 
 
-    this.weightArrayBuffer_partitionId_want = weightArrayBuffer_partitionId;
-    this.weightArrayBuffer_partitionId = undefined;
+    this.weightArrayBuffer_partitionId_Array_want
+      = weightArrayBuffer_partitionId_Array;
+
+    this.weightArrayBuffer_partitionId_Array = undefined;
 
     // 2. Collect the transferable object array. 
     let transferableObjectArray = new Array( weightArrayBuffer_Array.length );
@@ -339,23 +342,16 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     // 3. Inform web work to create neural networks.
 
     // 3.1
-    const NeuralNetArray_create_promise = this.createPromise_by_postCommandArgs(
-      [ "NeuralNetArray_create",
-        neuralNetParamsBase_Array,
-
-        weightArrayBuffer_Array,
-
-
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
-
-
-        weightArrayBuffer_partitionId,
-
-        bLogDryRunTime
-      ],
-      transferableObjectArray
-    );
+    const NeuralNetArray_create_promise
+      = this.createPromise_by_postCommandArgs(
+          [ "NeuralNetArray_create",
+            neuralNetParamsBase_Array,
+            weightArrayBuffer_Array,
+            weightArrayBuffer_partitionId_Array,
+            bLogDryRunTime
+          ],
+          transferableObjectArray
+        );
 
     // 3.2 After sending basic parameters to the neural worker body, generate
     //     inference parameters so that the outside caller could reference
@@ -378,13 +374,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     let bCreateOk;
     ( {
       bCreateOk: bCreateOk,
-
-
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
-
-
-      weightArrayBuffer_partitionId: this.weightArrayBuffer_partitionId
+      weightArrayBuffer_partitionId_Array:
+        this.weightArrayBuffer_partitionId_Array
     } = NeuralNetArray_create_result );
 
     return bCreateOk;
@@ -405,9 +396,11 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *       will be kept).
    *
    *
-   * @param {number} weightArrayBuffer_partitionId
-   *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
-   * which part of a weightArrayBuffer is used to create current neural network.
+   * @param {number[]} weightArrayBuffer_partitionId_Array
+   *   An array with ( .length == this.neuralNetParamsBase_Array.length ).
+   * Its every element is an integer between
+   * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
+   * the weightArrayBuffer is used to create current neural network.
    * 
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and
@@ -419,20 +412,16 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
    *   - Resolved to false, if failed.
    */
   async NeuralNetArray_recreate_async(
-
-
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
-
-
-    weightArrayBuffer_partitionId,
+    weightArrayBuffer_partitionId_Array,
     bLogDryRunTime ) {
 
     const funcNameInMessage = "NeuralNetArray_recreate_async";
 
     // 1. Record neural network configuration.
-    this.weightArrayBuffer_partitionId_want = weightArrayBuffer_partitionId;
-    this.weightArrayBuffer_partitionId = undefined;
+    this.weightArrayBuffer_partitionId_Array_want
+      = weightArrayBuffer_partitionId_Array;
+
+    this.weightArrayBuffer_partitionId_Array = undefined;
 
     // 2. No transferable object array. 
     const transferableObjectArray = undefined;
@@ -440,19 +429,14 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     // 3. Inform web work to re-create neural networks.
 
     // 3.1
-    const NeuralNetArray_recreate_promise = this.createPromise_by_postCommandArgs(
-      [ "NeuralNetArray_recreate",
-
-
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
-
-
-        weightArrayBuffer_partitionId,
-        bLogDryRunTime
-      ],
-      transferableObjectArray
-    );
+    const NeuralNetArray_recreate_promise
+      = this.createPromise_by_postCommandArgs(
+          [ "NeuralNetArray_recreate",
+            weightArrayBuffer_partitionId_Array,
+            bLogDryRunTime
+          ],
+          transferableObjectArray
+        );
 
     // 3.2 Wait result and record (maybe adjusted) partition id.
     const NeuralNetArray_recreate_result = await NeuralNetArray_recreate_promise;
@@ -460,13 +444,8 @@ class NeuralWorker_Proxy extends AsyncWorker.Proxy {
     let bRecreateOk;
     ( {
       bRecreateOk: bRecreateOk,
-
-
-!!! ...unfinished... (2025/08/12)
-// The parent and offspring should use different weightArrayBuffer_partitionId
-
-
-      weightArrayBuffer_partitionId: this.weightArrayBuffer_partitionId
+      weightArrayBuffer_partitionId_Array:
+        this.weightArrayBuffer_partitionId_Array
     } = NeuralNetArray_recreate_result );
 
     return bRecreateOk;

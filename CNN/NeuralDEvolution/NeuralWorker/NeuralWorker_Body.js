@@ -39,10 +39,12 @@ import { tensorflowJsURL } from "./NeuralWorker_Common.js";
  *   A positive integer (or zero) represents how many elements (Float32)
  * one partition of weightArrayBuffer has.
  * 
- * @member {number} weightArrayBuffer_partitionId
- *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
- * which part of a weightArrayBuffer is used to create current neural network.
- * 
+ * @member {number[]} weightArrayBuffer_partitionId_Array
+ *   An array with ( .length == this.neuralNetParamsBase_Array.length ).
+ * Its every element is an integer between
+ * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
+ * the weightArrayBuffer is used to create current neural network.
+ *
  * @member {Uint8ClampedArray[]|Int32Array[]|number[][]} alignmentMarkValueArrayArray
  *   An array with two non-negative integer arrays representing every neural
  * network personating which alignment currently. Every non-negative integer
@@ -114,7 +116,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
     // Release neural network parameters and weights.
     {
-      this.weightArrayBuffer_partitionId = undefined;
+      this.weightArrayBuffer_partitionId_Array = undefined;
       this.weightArrayBuffer_partitionCount = undefined;
       this.weightArrayBuffer_partitionElementCount = undefined;
       this.weightArrayBuffer_elementCount = undefined;
@@ -228,8 +230,6 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         this.neuralNetArray.clear(); // Release old neural networks.
 
       {
-        this.weightArrayBuffer_partitionId = undefined;
-
         {
           // Ensure integer.
           //
@@ -250,6 +250,9 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
         if ( this.weightArrayBuffer_Array )
           this.weightArrayBuffer_Array = undefined;
+
+        if ( this.weightArrayBuffer_partitionId_Array )
+          this.weightArrayBuffer_partitionId_Array = undefined;
       }
 
       if ( this.neuralNetParamsBase_Array )
@@ -294,9 +297,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *   An array of every neural network's weights. Every element will be
    * interpreted as Float32Array.
    *
-   * @param {number} weightArrayBuffer_partitionId
-   *   An integer between 0 and ( weightArrayBuffer_partitionCount - 1 ) means
-   * which part of a weightArrayBuffer is used to create current neural network.
+   * @param {number[]} weightArrayBuffer_partitionId_Array
+   *   An array with ( .length == neuralNetParamsBase_Array.length ).
+   * Its every element is an integer between
+   * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
+   * the weightArrayBuffer is used to create current neural network.
    * 
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and
@@ -305,10 +310,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * @yield {object}
    *   Yield { done: true,
    *           value: {
-   *             value: { bCreateOk, weightArrayBuffer_partitionId } } }.
+   *             value: { bCreateOk, weightArrayBuffer_partitionId_Array } } }.
    *     - bCreateOk: true, if succeeded. false, if failed.
-   *     - weightArrayBuffer_partitionId:
-   *         the maybe adjusted weightArrayBuffer_partitionId.
+   *     - weightArrayBuffer_partitionId_Array:
+   *         similar to weightArrayBuffer_partitionId_Array but element value
+   *         may be adjusted.
    */
   async* NeuralNetArray_create(
     neuralNetParamsBase_Array,
@@ -412,10 +418,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    *       will be kept).
    *
    *
-   * @param {number} weightArrayBuffer_partitionId_Array
-   *   An array of integer. Every element is an integer between 0 and
-   * ( weightArrayBuffer_partitionCount - 1 ) means which part of the
-   * weightArrayBuffer is used to create current neural network.
+   * @param {number[]} weightArrayBuffer_partitionId_Array
+   *   An array with ( .length == this.neuralNetParamsBase_Array.length ).
+   * Its every element is an integer between
+   * [ 0, ( weightArrayBuffer_partitionCount - 1 ) ] indicating which part of
+   * the weightArrayBuffer is used to create current neural network.
    * 
    * @param {boolean} bLogDryRunTime
    *   If true, the neural network dry-run time will be measured twice and
@@ -424,11 +431,11 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
    * @yield {object}
    *   Yield { done: true,
    *           value: {
-???!!!
-   *             value: { bRecreateOk, weightArrayBuffer_partitionId } } }.
+   *             value: { bRecreateOk, weightArrayBuffer_partitionId_Array } } }.
    *     - bCreateOk: true, if succeeded. false, if failed.
-   *     - weightArrayBuffer_partitionId:
-   *         the maybe adjusted weightArrayBuffer_partitionId.
+   *     - weightArrayBuffer_partitionId_Array:
+   *         similar to weightArrayBuffer_partitionId_Array but element value
+   *         may be adjusted.
    */
   async* NeuralNetArray_recreate(
 
@@ -437,7 +444,7 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 // The parent and offspring should use different weightArrayBuffer_partitionId
 
 
-    weightArrayBuffer_partitionId,
+    weightArrayBuffer_partitionId_Array,
     bLogDryRunTime ) {
 
     const funcNameInMessage = "NeuralNetArray_recreate";
@@ -456,6 +463,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
 
       const weightArrayBuffer_partitionElementCount
         = this.weightArrayBuffer_partitionElementCount;
+!!!
+      weightArrayBuffer_partitionId_Array
 
       {
         // Ensure integer.
@@ -471,7 +480,8 @@ export default class NeuralWorker_Body extends AsyncWorker.Body {
         if ( weightArrayBuffer_partitionId >= weightArrayBuffer_partitionCount )
           weightArrayBuffer_partitionId = weightArrayBuffer_partitionCount - 1;
 
-        this.weightArrayBuffer_partitionId = weightArrayBuffer_partitionId;
+!!!
+        this.weightArrayBuffer_partitionId_Array = weightArrayBuffer_partitionId_Array;
       }
 
       // 0.2 Prepare container for all neural networks.

@@ -284,6 +284,12 @@ class PerformanceTestCase extends Recyclable.Root {
 // Is it necessary to become dynamic _partitionCount and _partitionId?
 
     this.weightArrayBuffer_partitionCount = 2;
+
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
+
+
     this.weightArrayBuffer_partitionId = 0;
 
     // (2022//09/26 Remarked)
@@ -297,6 +303,10 @@ class PerformanceTestCase extends Recyclable.Root {
 
     this.ScaleFiller = undefined;
     this.bLogDryRunTime = undefined;
+
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
 
     this.weightArrayBuffer_partitionId = undefined;
     this.weightArrayBuffer_partitionCount = undefined;
@@ -420,6 +430,10 @@ class PerformanceTestCase extends Recyclable.Root {
           + `should be the same as .weightArrayBuffer_partitionCount_want `
           + `( ${neuralWorkerProxies.weightArrayBuffer_partitionCount_want} ) `
           + `${neuralWorkerProxies}` );
+
+
+!!! ...unfinished... (2025/08/12)
+// The parent and offspring should use different weightArrayBuffer_partitionId
 
       const weightArrayBuffer_partitionId = this.weightArrayBuffer_partitionId;
 
