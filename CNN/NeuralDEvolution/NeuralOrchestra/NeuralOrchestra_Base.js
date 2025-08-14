@@ -1469,7 +1469,7 @@ class NeuralOrchestra_Base extends
         neuralNet_recreateOk = await neuralNet_recreate_promise;
         if ( !neuralNet_recreateOk )
           throw Error( `NeuralOrchestra.Base.${funcNameInMessage}(): `
-            + `Failed to re-create neural networks. `
+            + `Failed to re-create neural networks with swapped partition id. `
             + `workerProxies={ ${this.workerProxies} }`
           );
       }
