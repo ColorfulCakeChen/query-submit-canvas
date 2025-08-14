@@ -18,7 +18,12 @@
 
         <th scope="row">explicit_input_width</th>
         <td>
-          <input id="explicit_input_width_Number" type="number" value="114"/>
+          <!-- (2028/08/14) For output_channelCount = 64, so that input_shape= [ 72, 128, 4 ]-->
+          <input id="explicit_input_width_Number" type="number" value="118"/>
+
+          <!-- (2028/08/14) For output_channelCount = 128, so that input_shape= [ 72, 128, 4 ]-->
+          <!-- <input id="explicit_input_width_Number" type="number" value="114"/> -->
+
           <!-- (2025/08/05) For test mobile phone moto e40 -->
           <!-- <input id="explicit_input_width_Number" type="number" value="3"/> -->
         </td>

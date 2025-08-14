@@ -638,7 +638,7 @@ class NeuralOrchestra_Base extends
    */
   static neuralNetParamsBase_create(
     explicit_input_height = 72,
-    explicit_input_width = 128,
+    explicit_input_width = 118, //114, //128,
     explicit_input_channelCount = 4,
 
     nNeuralWorker_ImplicitInputModeId
@@ -648,7 +648,7 @@ class NeuralOrchestra_Base extends
     vocabularyChannelCount = 4,
     vocabularyCountPerInputChannel = 256,
     blockCountTotalRequested = 32, //39,
-    output_channelCount = 64
+    output_channelCount = 64 //128
   ) {
 
     NeuralOrchestra_Base.neuralNetParamsBase_dispose.call( this );
