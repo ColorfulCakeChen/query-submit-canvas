@@ -1302,55 +1302,6 @@ class NeuralOrchestra_Base extends
     return neuralNet_createOk;
   }
 
-//!!! (2025/08/14 Remarked) Integrated into .alignmentMarkValueArrayArray_swap_asyncPromise()
-// Because it will be called when workerProxies busy (for swapping alignment marks),
-// it can not call .throw_if_workerProxies_busy_except_workerProxies_init().
-//
-//   /**
-//    * Re-create neural networks in all neural web workers with swapped
-//    * partition id.
-//    *
-//    * This method is called by:
-//    *   - alignmentMarkValueArrayArray_swap_asyncPromise()
-//    *
-//    *
-//    * @param {NeuralOrchestra_Base} this
-//    * @param {number[]} this.workerProxies.weightArrayBuffer_partitionId_Array
-//    * 
-//    * @param {boolean} bLogDryRunTime
-//    *   If true, the neural network dry-run time will be measured twice and
-//    * logged to console.
-//    *
-//    * @return {Promise}
-//    *   Return a promise:
-//    *   - Resolved to true, if succeeded.
-//    *   - Resolved to false, if failed.
-//    */
-//   static async workerProxies_NeuralNetArray_recreate_async(
-//     bLogDryRunTime ) {
-//
-//     { // Checking pre-condition.
-//       const funcNameInMessage = "workerProxies_NeuralNetArray_recreate_async";
-//
-//       NeuralOrchestra_Base
-//         .throw_if_workerProxies_busy_except_workerProxies_init
-//         .call( this, funcNameInMessage );
-//     }
-//
-//     const weightArrayBuffer_partitionId_Array_swapped = [
-//       this.workerProxies.weightArrayBuffer_partitionId_Array[ 1 ],
-//       this.workerProxies.weightArrayBuffer_partitionId_Array[ 0 ]
-//     ];
-//
-//     let neuralNet_recreate_promise
-//       = this.workerProxies.NeuralNetArray_recreate_async(
-//           weightArrayBuffer_partitionId_Array_swapped,
-//           bLogDryRunTime );
-//
-//     let neuralNet_recreateOk = await neuralNet_recreate_promise;
-//     return neuralNet_recreateOk;
-//   }
-
 
   /**
    *
@@ -1474,15 +1425,6 @@ class NeuralOrchestra_Base extends
       let neuralNet_recreateOk;
       {
         const bLogDryRunTime = this.bLogDryRunTime_when_create_and_recreate;
-
-//!!! (2025/08/14 Remarked)
-// Because it will be called when workerProxies busy (for swapping alignment marks),
-// it can not call .throw_if_workerProxies_busy_except_workerProxies_init().
-//
-//         let neuralNet_recreate_promise
-//           = NeuralOrchestra_Base.workerProxies_NeuralNetArray_recreate_async.call(
-//               this,
-//               bLogDryRunTime );
 
         // Swap weight buffer partition ids:
         //   - from [ 0, 1 ] to [ 1, 0 ], or
