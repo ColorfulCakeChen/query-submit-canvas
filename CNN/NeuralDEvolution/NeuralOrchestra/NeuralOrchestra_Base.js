@@ -157,7 +157,38 @@ import * as DEvolution from "../DEvolution.js";
  * It will get ( stageCount = 3 ).
  *
  *
- * 3.2 Configuration_4_32_64
+ * 4. Configuration for 80K filter weights and execution 2 times per second
+ *
+ *   - explicit_input_height = 72
+ *   - explicit_input_width = 118
+ *   - explicit_input_channelCount = 4
+ *   - vocabularyChannelCount = 4
+ *   - vocabularyCountPerInputChannel = 256
+ *   - blockCountTotalRequested = 32
+ *   - output_channelCount = 64
+ *
+ *
+ * Note1: If ( implicit_input_mode
+ *          == IMPLICIT_INPUT__FILL_ALIGNMENT_MARK__FILL_PREVIOUS_OUTPUT(5) ):
+ *
+ *          - implicit_input_width will be 10
+ *          - input_width will be 128
+ *
+ *
+ * Note2: The ( output_channelCount = 128 ) is important.
+ *
+ *   - If it is lesser (e.g. 32), the stageCount will also be lesser. Because
+ *       image is shrinked less times, its performance will be slower (i.e. can
+ *       not achieve 2 times per second). Although its filter weights will also
+ *       be lesser.
+ *
+ *   - If it is more (e.g. 128), the stageCount will also be more. Because
+ *       image is shrinked more times, its performance will be faster (i.e. can
+ *       exceed 2 times per second). However, its filter weights will also be
+ *       more (than 80K).
+ *
+ *
+ * 4.1 Configuration_4_32_64
  *
  *   - vocabularyChannelCount = 4
  *   - blockCountTotalRequested = 32
