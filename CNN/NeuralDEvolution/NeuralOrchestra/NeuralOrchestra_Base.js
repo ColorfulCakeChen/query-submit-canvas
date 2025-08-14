@@ -722,8 +722,6 @@ class NeuralOrchestra_Base extends
     blockCountTotalRequested,
     output_channelCount,
 
-    weightArrayBuffer_partitionCount,
-
     b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
     init_asyncGenerator_delayPromise,
     versus_load_asyncGenerator_delayPromise ) {
@@ -857,12 +855,16 @@ class NeuralOrchestra_Base extends
     blockCountTotalRequested,
     output_channelCount,
 
-    weightArrayBuffer_partitionCount,
-
     b_return_versus_load_asyncGenerator_instead_of_asyncPromise,
     init_asyncGenerator_delayPromise,
     versus_load_asyncGenerator_delayPromise
   ) {
+
+    // Always use 2 partitions because there are only 2 alignments (one for
+    // parent and the other for offspring) to versus.
+    //
+    // (2025/08/14 Added)
+    const weightArrayBuffer_partitionCount = 2;
 
     try {
       // 0.

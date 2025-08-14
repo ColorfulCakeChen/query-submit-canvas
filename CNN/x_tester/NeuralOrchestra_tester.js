@@ -786,9 +786,6 @@ class TestCase {
           +  `( ${progressToAdvance.valuePercentage} ) should 100.` );
   }
 
-//!!! ...unfinished... (2025/05/15)
-// Test and check .weightArrayBuffer_partitionCount and .weightArrayBuffer_partitionCount
-
   /** */
   async* test_init_load_process_send_asyncGenerator(
     progressParent, neuralOrchestra,
