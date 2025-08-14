@@ -323,11 +323,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
 
     const downloader_apiKey = null;
 
-    // There are 2 alignments (to versus with each other) for a general game.
-    // So there are 2 weightArrayBuffer partitions for the neural networks of
-    // all alignments.
-    const weightArrayBuffer_partitionCount = 2;
-
     const b_return_versus_load_asyncGenerator_instead_of_asyncPromise = false;
 
     let init_asyncPromise
@@ -345,8 +340,6 @@ class NeuralOrchestra_Construct3 extends Recyclable.Root {
           vocabularyChannelCount, vocabularyCountPerInputChannel,
           blockCountTotalRequested,
           output_channelCount,
-
-          weightArrayBuffer_partitionCount,
 
           b_return_versus_load_asyncGenerator_instead_of_asyncPromise
         );

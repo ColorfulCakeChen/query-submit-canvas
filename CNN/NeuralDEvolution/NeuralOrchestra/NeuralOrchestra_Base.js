@@ -861,7 +861,8 @@ class NeuralOrchestra_Base extends
   ) {
 
     // Always use 2 partitions because there are only 2 alignments (one for
-    // parent and the other for offspring) to versus.
+    // parent and the other for offspring) to versus with each other for a
+    // general game.
     //
     // (2025/08/14 Added)
     const weightArrayBuffer_partitionCount = 2;
